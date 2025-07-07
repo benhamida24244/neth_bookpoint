@@ -1,1 +1,9 @@
+@font-face {
+  font-family: Bona;
+  src: url(./Fonts/BonaNova-bold.ttf);
+}
 @import "tailwindcss";
+
+@theme {
+  --font-bona: Bona , "sans-serif"
+}
