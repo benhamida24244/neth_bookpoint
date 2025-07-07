@@ -9,6 +9,7 @@
 }
 @import "tailwindcss";
 
+
 @theme {
   --font-bona: Bona , "sans-serif";
   --font-BonaRegular: BonaRegular , "sans-serif"
