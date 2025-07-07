@@ -2,8 +2,21 @@
   font-family: Bona;
   src: url(./Fonts/BonaNova-bold.ttf);
 }
+
+@font-face {
+  font-family: BonaRegular;
+  src: url(./Fonts/BonaNova-Regular.ttf);
+}
 @import "tailwindcss";
 
 @theme {
-  --font-bona: Bona , "sans-serif"
+  --font-bona: Bona , "sans-serif";
+  --font-BonaRegular: BonaRegular , "sans-serif"
+}
+
+#header {
+  background-image: url(../assets/HomeIcon/Header/walpapper.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: black;
 }
