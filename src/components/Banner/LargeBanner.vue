@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-7xl mx-auto px-4">
+  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <a :href="banner.url">
        <img
       :src="banner.img"
@@ -7,7 +7,6 @@
       class="w-full h-auto rounded-lg shadow-md object-cover"
     />
     </a>
-
   </div>
 </template>
 
