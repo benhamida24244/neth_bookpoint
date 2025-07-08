@@ -119,11 +119,31 @@ const BestSellerBook = [
 </script>
 
 <template>
-  <div class="relative w-full max-w-6xl mx-auto px-4">
+  <div class="relative w-full max-w-6xl mx-auto px-4 mb-8">
     <Swiper
         :modules="[Navigation]"
         :slides-per-view="6"
         :space-between="15"
+        :breakpoints="{
+        320: {
+          slidesPerView: 1.5,
+        },
+        480: {
+          slidesPerView: 2,
+        },
+        640: {
+          slidesPerView: 3,
+        },
+        768: {
+          slidesPerView: 4,
+        },
+        1024: {
+          slidesPerView: 5,
+        },
+        1280: {
+          slidesPerView: 6,
+        }
+      }"
         navigation
         class="mySwiper"
     >
