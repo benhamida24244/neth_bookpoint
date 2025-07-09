@@ -5,6 +5,8 @@ import SmallBannerItem from '@/components/Banner/Small Banner/SmallBannerItem.vu
 import SmallBannerList from '@/components/Banner/Small Banner/SmallBannerList.vue'
 import BookList from '@/components/Book/bookList.vue'
 import CatigoryList from '@/components/Catigory/CatigoryList.vue'
+import Footer from '@/components/Footer/Footer.vue'
+import FooterBtn from '@/components/Footer/FooterBtn.vue'
 import Header from '@/components/Header.vue'
 import Hero from '@/components/Hero.vue'
 import PublishingHousesList from '@/components/Publishing/PublishingHousesList.vue'
@@ -176,5 +178,7 @@ const PublishingHouses = [
     <BookList />
     <h1 class="text-center text-5xl p-6 font-bona">Publishing House</h1>
     <PublishingHousesList :PublishingHouses="PublishingHouses"/>
+    <Footer/>
+    <FooterBtn/>
   </div>
 </template>
