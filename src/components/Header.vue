@@ -35,31 +35,25 @@ const MenuContent = [
     selectUrl: true,
   },
   {
-    name: 'Team',
-    link: '/team',
-    selectUrl: false,
-  },
-  {
-    name: 'Feature',
-    link: '/feature',
-    selectUrl: false,
-  },
-  {
-    name: 'Blog',
-    link: '/blog',
-    selectUrl: false,
-  },
-  {
     name: 'About',
     link: '/about',
     selectUrl: false,
   },
   {
-    name: 'Contact',
-    link: '/contact',
+    name: 'Shop',
+    link: '/shop',
+    selectUrl: false,
+  },
+  {
+    name: 'Delivery theme',
+    link: '/delivery-theme',
+    selectUrl: false,
+  },
+  {
+    name: 'Sellers',
+    link: '/sellers',
     selectUrl: false,
   }
-
 ]
 </script>
 
