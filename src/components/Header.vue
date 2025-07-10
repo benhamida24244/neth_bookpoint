@@ -50,8 +50,8 @@ const MenuContent = [
     selectUrl: false,
   },
   {
-    name: 'Sellers',
-    link: '/sellers',
+    name: 'Authors',
+    link: '/authors',
     selectUrl: false,
   }
 ]
