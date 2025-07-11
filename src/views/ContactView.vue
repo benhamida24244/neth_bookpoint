@@ -1,3 +1,11 @@
+<script setup>
+import { onMounted } from 'vue';
+
+onMounted(()=> {
+  window.scrollTo(0,0)
+})
+</script>
+
 <template>
   <div class="min-h-screen bg-black text-white px-4 py-10 font-BonaRegular">
     <div class="max-w-2xl mx-auto text-center">

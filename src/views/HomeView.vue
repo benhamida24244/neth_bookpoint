@@ -8,6 +8,7 @@ import CatigoryList from '@/components/Catigory/CatigoryList.vue'
 import Footer from '@/components/Footer/Footer.vue'
 import Hero from '@/components/Hero.vue'
 import PublishingHousesList from '@/components/Publishing/PublishingHousesList.vue'
+import { onMounted } from 'vue'
 
 const banner = {
   id: 1,
@@ -149,6 +150,9 @@ const PublishingHouses = [
   }
 ];
 
+onMounted(()=> {
+  window.scrollTo(0,0)
+})
 </script>
 
 <template>

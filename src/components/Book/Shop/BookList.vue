@@ -133,7 +133,7 @@ const BestSellerBook = [
 </script>
 
 <template>
-  <div class="relative flex flex-wrap justify-center w-full max-w-6xl mx-auto px-4 mb-8">
+  <div class="relative flex flex-wrap justify-center w-full max-w-6xl mx-auto px-4">
         <BookItems v-for="book in BestSellerBook" :book="book" />
   </div>
 </template>

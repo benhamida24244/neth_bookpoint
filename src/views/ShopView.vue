@@ -2,11 +2,15 @@
 import LargeBanner from '@/components/Banner/LargeBanner.vue'
 import BookList from '@/components/Book/Shop/BookList.vue';
 import SidebarContent from '@/components/Book/Shop/Sidebar/SidebarContent.vue';
+import { onMounted } from 'vue';
 const imgBanner = {
   id: 1,
   img: 'https://dispatch.barnesandnoble.com/content/dam/ccr/bnstores/books/hero/2025/32464_SkinnyHero_BestBooksSoFar_June2025.jpg',
   url: 'https://www.barnesandnoble.com/',
 }
+onMounted(() => {
+  window.scrollTo(0,0)
+})
 </script>
 
 <template>

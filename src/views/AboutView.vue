@@ -1,5 +1,9 @@
 <script setup>
 import About from '@/assets/AboutIcon/About.png'
+import { onMounted } from 'vue'
+onMounted(()=> {
+  window.scrollTo(0,0)
+})
 </script>
 
 <template>

@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import ShopView from '@/views/ShopView.vue'
-import AuthorsView from '@/views/AuthorsView.vue'
+import AuthorsView from '@/views/Authors/AuthorsView.vue'
 import Delivery_theme from '@/views/Delivery_theme.vue'
 import ContactView from '@/views/ContactView.vue'
+import SingleAuthorPage from '@/views/Authors/SingleAuthorPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,11 @@ const router = createRouter({
     path:'/authors',
     name:'Authors',
     component:AuthorsView,
+    },
+    {
+      path:'/authors/:id',
+      name:'Authors info',
+      component:SingleAuthorPage,
     },
     {
       path:'/delivery-theme',
