@@ -36,7 +36,7 @@ const stats = [
         </ul>
 
         <!-- Action Button -->
-        <a href="#" class="border border-yellow-600 text-white font-bona py-3 px-8 rounded-md uppercase text-sm tracking-wider hover:bg-yellow-500 hover:text-black transition-colors duration-300">
+        <a href="/shop" class="border border-yellow-600 text-white font-bona py-3 px-8 rounded-md uppercase text-sm tracking-wider hover:bg-yellow-500 hover:text-black transition-colors duration-300">
           Explore More
         </a>
       </div>

@@ -2,10 +2,10 @@
 import LogoFooter from '@/assets/HomeIcon/Footer/LogoFooter.png'
 
 const quickLinks = [
-  { name: 'Home', href: '#' },
-  { name: 'About Us', href: '#' },
-  { name: 'Books', href: '#' },
-  { name: 'Contact', href: '#' },
+  { name: 'Home', href: '/' },
+  { name: 'About Us', href: '/about' },
+  { name: 'Books', href: '/shop' },
+  { name: 'Contact', href: 'contact' },
 ];
 
 const branches = ['Galle', 'Kurunegala', 'Kandy', 'Colombo'];
@@ -29,7 +29,7 @@ const branches = ['Galle', 'Kurunegala', 'Kandy', 'Colombo'];
           <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
           <ul>
             <li v-for="link in quickLinks" :key="link.name" class="mb-2">
-              <a :href="link.href" class="hover:text-white transition-colors duration-300">{{ link.name }}</a>
+              <router-link :to="link.href" class="hover:text-white transition-colors duration-300">{{ link.name }}</router-link>
             </li>
           </ul>
         </div>

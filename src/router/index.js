@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import ShopView from '@/views/ShopView.vue'
 import AuthorsView from '@/views/AuthorsView.vue'
+import Delivery_theme from '@/views/Delivery_theme.vue'
+import ContactView from '@/views/ContactView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +28,16 @@ const router = createRouter({
     path:'/authors',
     name:'Authors',
     component:AuthorsView,
+    },
+    {
+      path:'/delivery-theme',
+      name:'Delivery Theme',
+      component:Delivery_theme,
+    },
+    {
+      path:'/contact',
+      name:'Contact Us',
+      component: ContactView,
     }
   ],
 })
