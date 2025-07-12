@@ -6,44 +6,64 @@ import AuthorsView from '@/views/Authors/AuthorsView.vue'
 import Delivery_theme from '@/views/Delivery_theme.vue'
 import ContactView from '@/views/ContactView.vue'
 import SingleAuthorPage from '@/views/Authors/SingleAuthorPage.vue'
+import DefaultLayout from '@/Layout/DefaultLayout.vue'
+import DashboardLayout from '@/Layout/DashboardLayout.vue'
+import NotFound from '@/Layout/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path:'/',
+      name:'Main Page',
+      component:DefaultLayout,
+      children:[
+        {
+      path: '',
       name: 'home',
       component: HomeView,
     },
     {
-      path:'/about',
+      path:'about',
       name:'About',
       component: AboutView,
     },
     {
-      path:'/shop',
+      path:'shop',
       name:'shop',
       component:ShopView,
     },
     {
-    path:'/authors',
+    path:'authors',
     name:'Authors',
     component:AuthorsView,
     },
     {
-      path:'/authors/:id',
+      path:'authors/:id',
       name:'Authors info',
       component:SingleAuthorPage,
     },
     {
-      path:'/delivery-theme',
+      path:'delivery-theme',
       name:'Delivery Theme',
       component:Delivery_theme,
     },
     {
-      path:'/contact',
+      path:'contact',
       name:'Contact Us',
       component: ContactView,
+    }
+      ]
+    },
+    {
+      path:'/dashboard',
+      name:'Dashboard Home',
+      component:DashboardLayout,
+    },
+    {
+      path:'/:pathMatch(.*)*',
+      name:'Not Found',
+      component:NotFound
     }
   ],
 })
