@@ -1,4 +1,5 @@
 <script setup>
+import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue';
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue';
 import DailySalesChart from '@/components/Dashboard/Charts/DailySalesChart.vue';
 import StatCards from '@/components/Dashboard/StatCards.vue';
@@ -56,6 +57,9 @@ const info = [
       <div class="bg-white p-4 rounded-2xl shadow">
         <DailyOrdersChart />
       </div>
+    </div>
+    <div class="bg-white p-4 rounded-2xl shadow max-w-xl mx-auto">
+      <CategorySalesChart/>
     </div>
   </div>
 </template>
