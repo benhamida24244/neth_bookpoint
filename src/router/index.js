@@ -9,6 +9,7 @@ import SingleAuthorPage from '@/views/Authors/SingleAuthorPage.vue'
 import DefaultLayout from '@/Layout/DefaultLayout.vue'
 import DashboardLayout from '@/Layout/DashboardLayout.vue'
 import NotFound from '@/Layout/NotFound.vue'
+import DashboardHome from '@/views/Dashboard/DashboardHome.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +60,11 @@ const router = createRouter({
       path:'/dashboard',
       name:'Dashboard Home',
       component:DashboardLayout,
+      children:[
+        {path:'', name:'Home Dashboard' , component:DashboardHome},
+        
+      ]
+
     },
     {
       path:'/:pathMatch(.*)*',

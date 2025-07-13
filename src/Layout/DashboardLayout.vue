@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import Sidebar from '@/components/Dashboard/Sidebar.vue';
+
+</script>
+
 <template>
-  <h1>This is control panel</h1>
+  <div class="flex">
+  <Sidebar/>
+   <RouterView></RouterView>
+  </div>
 </template>
