@@ -10,6 +10,12 @@ import DefaultLayout from '@/Layout/DefaultLayout.vue'
 import DashboardLayout from '@/Layout/DashboardLayout.vue'
 import NotFound from '@/Layout/NotFound.vue'
 import DashboardHome from '@/views/Dashboard/DashboardHome.vue'
+import Orders from '@/views/Dashboard/Orders.vue'
+import Authors from '@/views/Dashboard/Authors.vue'
+import Settings from '@/views/Dashboard/Settings.vue'
+import PublishingHouse from '@/views/Dashboard/publishing-house.vue'
+import ClientDash from '@/views/Dashboard/ClientDash.vue'
+import Books from '@/views/Dashboard/Books.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,7 +68,13 @@ const router = createRouter({
       component:DashboardLayout,
       children:[
         {path:'', name:'Home Dashboard' , component:DashboardHome},
-        
+        {path:'orders', name:'Orders page' , component:Orders},
+        {path:'clients', name:'clients page' , component:ClientDash},
+        {path:'books', name:'Books page' , component:Books},
+        {path:'authors', name:'Authors page' , component:Authors},
+        {path:'settings', name:'Settings page' , component:Settings},
+        {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
+
       ]
 
     },

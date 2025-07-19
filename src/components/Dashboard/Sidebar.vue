@@ -7,9 +7,11 @@ import {
   Settings,
   PanelBottom,
   Menu as MenuIcon,
-  X
+  X,
+  Book,
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const emit = defineEmits(['close'])
 
@@ -18,12 +20,13 @@ const isOpen = ref(true)
 const isMobile = ref(false)
 
 const Menu = ref([
-  { title: 'Control Panel', icon: PanelBottom },
-  { title: 'Orders', icon: ShoppingCart },
-  { title: 'Clients', icon: Layers },
-  { title: 'Authors', icon: BookOpen },
-  { title: 'Publishing House', icon: Layers },
-  { title: 'Settings', icon: Settings },
+  { title: 'Control Panel', icon: PanelBottom, url: '/dashboard' },
+  { title: 'Orders', icon: ShoppingCart, url: '/dashboard/orders' },
+  { title: 'Books', icon: Book, url: '/dashboard/books' },
+  { title: 'Clients', icon: Layers, url: '/dashboard/clients' },
+  { title: 'Authors', icon: BookOpen, url: '/dashboard/authors' },
+  { title: 'Publishing House', icon: Layers, url: '/dashboard/publishing-house' },
+  { title: 'Settings', icon: Settings, url: '/dashboard/settings' },
 ])
 
 const checkScreenSize = () => {
@@ -49,8 +52,8 @@ const setActiveMenu = (menuTitle) => {
 defineProps({
   MenuOpen: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 onMounted(() => {
@@ -73,12 +76,12 @@ onUnmounted(() => {
 
     <!-- Sidebar -->
     <aside
-    v-motion-slide-visible-left
+      v-motion-slide-visible-left
       :class="[
         'fixed lg:relative h-screen bg-white shadow-2xl rounded-r-2xl flex flex-col z-50 transition-all duration-300',
         isMobile
           ? ['w-[280px] sm:w-[300px]', MenuOpen ? 'translate-x-0' : '-translate-x-full']
-          : 'w-[240px]'
+          : 'w-[240px]',
       ]"
     >
       <!-- Header -->
@@ -86,7 +89,7 @@ onUnmounted(() => {
         <div class="flex items-center gap-2">
           <img :src="Logo" alt="logo" class="h-8 sm:h-10" />
           <span class="font-BonaRegular text-yellow-600 text-base sm:text-lg">
-            Neth BookPoint
+            <router-link to="/">Neth BookPoint</router-link>
           </span>
         </div>
         <button
@@ -127,19 +130,21 @@ onUnmounted(() => {
             ]"
             @click="setActiveMenu(menu.title)"
           >
-            <span
-              :class="[
-                'w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200',
-                active === menu.title
-                  ? 'bg-white text-black shadow-sm'
-                  : 'bg-yellow-600 text-white group-hover:bg-yellow-700'
-              ]"
-            >
-              <component :is="menu.icon" class="w-5 h-5" />
-            </span>
-            <span class="font-BonaRegular text-base font-medium">
-              {{ menu.title }}
-            </span>
+            <RouterLink :to="menu.url" class="flex items-center gap-2 w-full">
+              <span
+                :class="[
+                  'w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200',
+                  active === menu.title
+                    ? 'bg-white text-black shadow-sm'
+                    : 'bg-yellow-600 text-white group-hover:bg-yellow-700',
+                ]"
+              >
+                <component :is="menu.icon" class="w-5 h-5" />
+              </span>
+              <span class="font-BonaRegular text-base font-medium">
+                {{ menu.title }}
+              </span>
+            </RouterLink>
           </li>
         </ul>
       </nav>
@@ -150,16 +155,23 @@ onUnmounted(() => {
           class="w-full flex items-center justify-center gap-2 bg-red-100 text-red-600 hover:bg-red-200 transition-all px-3 py-2 rounded-lg text-sm font-semibold"
           @click="console.log('Log out clicked')"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+            />
           </svg>
           Log Out
         </button>
-        <div class="text-xs text-gray-400 text-center">
-          © 2024 Neth BookPoint
-        </div>
+        <div class="text-xs text-gray-400 text-center">© 2024 Neth BookPoint</div>
       </div>
     </aside>
   </div>
