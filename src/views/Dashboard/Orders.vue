@@ -20,10 +20,10 @@ const StatsCard = [
 ];
 
 const orders = ref([
-  { id: '#001', customer: 'Ali Ahmed', book: '1984', status: 'Completed', price: 29.99, date: '2025-07-12' },
-  { id: '#002', customer: 'Sara Belkacem', book: 'Kafka on the Shore', status: 'Pending', price: 35.00, date: '2025-07-14' },
-  { id: '#003', customer: 'Omar Yacine', book: 'Animal Farm', status: 'Returned', price: 24.99, date: '2025-07-13' },
-  { id: '#004', customer: 'Yasmine H.', book: 'The Alchemist', status: 'Completed', price: 39.99, date: '2025-07-10' },
+  { id:1, customer: 'Ali Ahmed', book: '1984', status: 'Completed', price: 29.99, date: '2025-07-12' },
+  { id:2, customer: 'Sara Belkacem', book: 'Kafka on the Shore', status: 'Pending', price: 35.00, date: '2025-07-14' },
+  { id:3, customer: 'Omar Yacine', book: 'Animal Farm', status: 'Returned', price: 24.99, date: '2025-07-13' },
+  { id:4, customer: 'Yasmine H.', book: 'The Alchemist', status: 'Completed', price: 39.99, date: '2025-07-10' },
 ]);
 
 const filteredOrders = computed(() => {
@@ -105,10 +105,10 @@ const statusColors = {
             <td class="px-4 py-3">${{ order.price.toFixed(2) }}</td>
             <td class="px-4 py-3">{{ order.date }}</td>
             <td class="px-4 py-3 text-center">
-              <button class="text-yellow-600 hover:underline flex items-center gap-1">
+              <RouterLink :to="'/dashboard/orders/' + order.id" class="text-yellow-600 hover:underline flex items-center gap-1">
                 <EyeIcon class="w-4 h-4" />
                 View
-              </button>
+              </RouterLink>
             </td>
           </tr>
           <tr v-if="filteredOrders.length === 0">

@@ -65,6 +65,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize)
 })
 
+// Watch route changes to update the active menu
 watch(
   () => route.path,
   (newPath) => {
