@@ -10,14 +10,15 @@ import {
   X,
   Book,
 } from 'lucide-vue-next'
-import { ref, onMounted, onUnmounted, defineProps, defineEmits } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 
 const emit = defineEmits(['close'])
 
 const active = ref('Control Panel')
 const isOpen = ref(true)
 const isMobile = ref(false)
+const route = useRoute()
 
 const Menu = ref([
   { title: 'Control Panel', icon: PanelBottom, url: '/dashboard' },
@@ -63,6 +64,20 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize)
 })
+
+watch(
+  () => route.path,
+  (newPath) => {
+    const bestMatch = Menu.value
+      .filter((item) => newPath.startsWith(item.url))
+      .reduce((best, item) => (!best || item.url.length > best.url.length ? item : best), null)
+
+    if (bestMatch) {
+      active.value = bestMatch.title
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
