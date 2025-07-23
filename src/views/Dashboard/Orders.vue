@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50">
     <div class="w-full px-4 md:px-6 py-8">
       <!-- Header -->
-      <div class="mb-8">
+      <div class="mb-8 font-BonaRegular">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Order Management</h1>
         <p class="text-gray-600 mt-1">Track and manage all your book orders efficiently</p>
       </div>
@@ -81,9 +81,9 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <button @click="viewOrder(order.id)" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
                     <i class="far fa-eye"></i> View
-                  </button>
+                  </RouterLink>
                 </td>
               </tr>
             </tbody>
