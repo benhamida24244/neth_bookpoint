@@ -17,6 +17,7 @@ import PublishingHouse from '@/views/Dashboard/publishing-house.vue'
 import ClientDash from '@/views/Dashboard/ClientDash.vue'
 import Books from '@/views/Dashboard/Books.vue'
 import OrderDetails from '@/views/Dashboard/OrderDetails.vue'
+import BookDetails from '@/views/Dashboard/BookDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,6 +74,7 @@ const router = createRouter({
         {path:'orders/:id', name:'Orders Info' , component:OrderDetails},
         {path:'clients', name:'clients page' , component:ClientDash},
         {path:'books', name:'Books page' , component:Books},
+        {path:'books/:id', name:'Books info' , component:BookDetails},
         {path:'authors', name:'Authors page' , component:Authors},
         {path:'settings', name:'Settings page' , component:Settings},
         {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
