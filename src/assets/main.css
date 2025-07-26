@@ -1,3 +1,8 @@
+@import "tailwindcss";
+@import "flowbite/src/themes";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
 @font-face {
   font-family: Bona;
   src: url(./Fonts/BonaNova-bold.ttf);
@@ -7,7 +12,6 @@
   font-family: BonaRegular;
   src: url(./Fonts/BonaNova-Regular.ttf);
 }
-@import "tailwindcss";
 
 
 @theme {
