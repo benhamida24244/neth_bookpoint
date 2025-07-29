@@ -9,7 +9,8 @@ const showStatusDropdown = ref(false);
 const showSourceDropdown = ref(false);
 const showSaleDateDropdown = ref(false);
 
-const Clients = [
+const Clients =
+ [
   {
     id: 1,
     name: 'Benhamida Mohammed',

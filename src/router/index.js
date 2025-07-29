@@ -78,6 +78,7 @@ const router = createRouter({
         {path:'books', name:'Books page' , component:Books},
         {path:'books/:id', name:'Books info' , component:BookDetails},
         {path:'authors', name:'Authors page' , component:Authors},
+        {path:'authors/:id', name:'Authors info' , component:SingleAuthorPage},
         {path:'settings', name:'Settings page' , component:Settings},
         {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
 
