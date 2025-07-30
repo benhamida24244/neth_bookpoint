@@ -19,6 +19,8 @@ import Books from '@/views/Dashboard/Books.vue'
 import OrderDetails from '@/views/Dashboard/OrderDetails.vue'
 import BookDetails from '@/views/Dashboard/BookDetails.vue'
 import ClientInfo from '@/views/Dashboard/ClientInfo.vue'
+import CartView from '@/views/CartView.vue'
+import CheckOutPageView from '@/views/CheckOutPageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +64,16 @@ const router = createRouter({
       path:'contact',
       name:'Contact Us',
       component: ContactView,
+    },
+    {
+      path: '/cart',
+      name: 'Cart',
+      component: CartView,
+    },
+    {
+      path: '/checkout',
+      name: 'Checkout',
+      component: CheckOutPageView,
     }
       ]
     },

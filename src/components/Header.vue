@@ -117,7 +117,9 @@ const MenuContent = [
 
       <div class="flex max-lg:ml-auto space-x-4">
         <div class="text-white pt-1 relative cursor-pointer">
-          <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
+          <RouterLink to="/cart" class="text-white hover:text-yellow-700">
+            <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
+          </RouterLink>
           <span class="absolute right-6 bottom-6 text-sm font-medium bg-yellow-600 rounded-lg p-1"
             >15</span
           >
