@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import TallBanner from '@/components/Banner/TallBanner.vue'
 import Cover from '@/assets/Img/Cover.png'
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/Cart'
+import { storeToRefs } from 'pinia'
 
 const isLoading = ref(false)
 const checkout = ref(false)
@@ -14,31 +16,15 @@ const banner = {
   url: '/',
 }
 
-const cartItems = [
-  {
-    id: 101,
-    title: 'The Great Gatsby',
-    author: 'F. Scott Fitzgerald',
-    price: 12.99,
-    quantity: 1,
-    img: 'https://covers.openlibrary.org/b/id/7222246-L.jpg',
-  },
-  {
-    id: 102,
-    title: '1984',
-    author: 'George Orwell',
-    price: 9.99,
-    quantity: 1,
-    img: 'https://covers.openlibrary.org/b/id/153541-L.jpg',
-  },
-]
+const CartStore = useCartStore()
+const { cart } = storeToRefs(CartStore)
 
-// حساب السعر الإجمالي تلقائيًا
+// Total price computation
 const totalPrice = computed(() =>
-  cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+  cart.value.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0).toFixed(2)
 )
 
-// الزر: عند النقر، تفعيل isLoading ثم التنقل
+// Checkout button handler
 const handleCheckout = () => {
   if (isLoading.value) return
 
@@ -46,9 +32,12 @@ const handleCheckout = () => {
   setTimeout(() => {
     checkout.value = true
     isLoading.value = false
-    router.push('/checkout') // افترض وجود صفحة checkout
-  }, 1500) // 1.5 ثانية محاكاة للتحميل
+    router.push('/checkout')
+  }, 1500)
 }
+
+// Optional: If you don’t already have this in the store, you can add it
+
 </script>
 
 <template>
@@ -66,30 +55,36 @@ const handleCheckout = () => {
         </h1>
 
         <!-- Cart Items -->
-        <div v-if="cartItems.length > 0">
+        <div v-if="cart.length > 0">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
-              v-for="item in cartItems"
+              v-for="item in cart"
               :key="item.id"
-              class="flex flex-col items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
+              class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
             >
               <img :src="item.img" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
               <div class="text-center mt-4">
-                <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+                <h2 class="text-lg font-semibold">{{ item.name }}</h2>
                 <p class="text-sm text-gray-500">by {{ item.author }}</p>
-                <p class="text-green-600 font-medium mt-2">$ {{ item.price.toFixed(2) }}</p>
-
-                <label class="block mt-4 text-sm text-gray-700">Quantity:</label>
+                <p class="text-green-600 font-medium mt-2">
+                  $ {{ (item.price || 0).toFixed(2) }}
+                </p>
+                <div class="flex gap-3">
+                  <label class="block mt-4 text-sm text-gray-700">Quantity:</label>
                 <input
                   type="number"
                   min="1"
-                  v-model.number="item.quantity"
+                  :value="item.quantity"
+                  @input="CartStore.updateQuantity(item.id, +$event.target.value)"
                   class="w-16 p-2 border rounded mt-1 text-center"
                 />
+                </div>
+
               </div>
             </div>
           </div>
         </div>
+
         <!-- Empty Cart -->
         <p v-else class="text-gray-500 text-center mt-8">Your cart is currently empty.</p>
 
@@ -99,34 +94,33 @@ const handleCheckout = () => {
             Total Price: <span class="font-bold text-yellow-600">$ {{ totalPrice }}</span>
           </p>
           <button
-  class="mt-4 w-full py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-500 transition-colors duration-300 flex items-center justify-center gap-2"
-  @click="handleCheckout"
-  :disabled="isLoading"
->
-  <svg
-    v-if="isLoading"
-    class="animate-spin h-5 w-5 text-white"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      class="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      stroke-width="4"
-    />
-    <path
-      class="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-    />
-  </svg>
-  <span>{{ isLoading ? 'Processing...' : 'Proceed to Checkout' }}</span>
-</button>
-
+            class="mt-4 w-full py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-500 transition-colors duration-300 flex items-center justify-center gap-2"
+            @click="handleCheckout"
+            :disabled="isLoading"
+          >
+            <svg
+              v-if="isLoading"
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
+            </svg>
+            <span>{{ isLoading ? 'Processing...' : 'Proceed to Checkout' }}</span>
+          </button>
         </div>
       </div>
     </div>

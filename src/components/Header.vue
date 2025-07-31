@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import Logo from '../assets/HomeIcon/Header/Logo.png'
 import { useRoute } from 'vue-router'
 import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
+import { useCartStore } from '@/stores/Cart'
+
 const isMenuOpen = ref(false)
 const route = useRoute()
 const showLogin = ref(false)
@@ -45,29 +48,26 @@ const MenuContent = [
   {
     name: 'Home',
     link: '/',
-    selectUrl: true,
   },
   {
     name: 'About',
     link: '/about',
-    selectUrl: false,
   },
   {
     name: 'Shop',
     link: '/shop',
-    selectUrl: false,
   },
   {
     name: 'Delivery theme',
     link: '/delivery-theme',
-    selectUrl: false,
   },
   {
     name: 'Authors',
     link: '/authors',
-    selectUrl: false,
   },
 ]
+const cartStore = useCartStore()
+const { cartCount } = storeToRefs(cartStore)
 </script>
 
 <template>
@@ -75,15 +75,10 @@ const MenuContent = [
     id="header"
     class="flex shadow-md py-4 px-4 sm:px-10 min-h-[70px] tracking-wide relative z-50"
   >
-    <div class="flex flex-wrap items-center justify-between gap-5 w-full">
-      <RouterLink to="/" class="max-sm:hidden">
-        <div class="flex items-center gap-2">
-          <img :src="Logo" alt="logo" class="w-20" />
-          <p class="text-xl font-bold font-bona text-yellow-600">NETH<br />BOOKPOINT</p>
-        </div>
-      </RouterLink>
-      <RouterLink to="/" class="hidden max-sm:block">
-        <img :src="Logo" alt="logo" class="w-12" />
+    <div class="flex flex-wrap items-center justify-between gap-4 w-full">
+      <RouterLink to="/" class="flex items-center gap-2">
+        <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
+        <p class="text-xl font-bold font-bona text-yellow-600 max-sm:hidden">NETH<br />BOOKPOINT</p>
       </RouterLink>
 
       <div
@@ -116,14 +111,14 @@ const MenuContent = [
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
-        <div class="text-white pt-1 relative cursor-pointer">
-          <RouterLink to="/cart" class="text-white hover:text-yellow-700">
-            <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
-          </RouterLink>
-          <span class="absolute right-6 bottom-6 text-sm font-medium bg-yellow-600 rounded-lg p-1"
-            >15</span
+        <RouterLink to="/cart" class="relative text-white hover:text-yellow-700 self-center">
+          <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
+          <span
+            v-if="cartCount > 0"
+            class="absolute -top-1 -right-2 text-xs font-medium bg-yellow-600 rounded-full px-1.5 py-0.5"
+            >{{ cartCount }}</span
           >
-        </div>
+        </RouterLink>
         <button
           class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
           @click="openLogin"
