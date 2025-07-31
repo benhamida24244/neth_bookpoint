@@ -9,6 +9,8 @@ import {
   Menu as MenuIcon,
   X,
   Book,
+  Clipboard,
+  ServerIcon,
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
@@ -24,7 +26,8 @@ const Menu = ref([
   { title: 'Control Panel', icon: PanelBottom, url: '/dashboard' },
   { title: 'Orders', icon: ShoppingCart, url: '/dashboard/orders' },
   { title: 'Books', icon: Book, url: '/dashboard/books' },
-  { title: 'Clients', icon: Layers, url: '/dashboard/clients' },
+  { title: 'Categories', icon: Layers, url: '/dashboard/categories' },
+  { title: 'Clients', icon: ServerIcon, url: '/dashboard/clients' },
   { title: 'Authors', icon: BookOpen, url: '/dashboard/authors' },
   { title: 'Publishing House', icon: Layers, url: '/dashboard/publishing-house' },
   { title: 'Settings', icon: Settings, url: '/dashboard/settings' },
