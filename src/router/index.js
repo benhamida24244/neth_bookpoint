@@ -22,6 +22,7 @@ import ClientInfo from '@/views/Dashboard/ClientInfo.vue'
 import CartView from '@/views/CartView.vue'
 import CheckOutPageView from '@/views/CheckOutPageView.vue'
 import Categories from '@/views/Dashboard/Categories.vue'
+import CategoriesInfo from '@/views/Dashboard/CategoriesInfo.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,6 +92,7 @@ const router = createRouter({
         {path:'books', name:'Books page' , component:Books},
         {path:'books/:id', name:'Books info' , component:BookDetails},
         {path:'categories', name:'Categories page' , component:Categories},
+        {path:'categories/:id', name:'Categories info' , component:CategoriesInfo},
         {path:'authors', name:'Authors page' , component:Authors},
         {path:'authors/:id', name:'Authors info' , component:SingleAuthorPage},
         {path:'settings', name:'Settings page' , component:Settings},
