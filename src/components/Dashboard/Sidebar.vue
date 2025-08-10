@@ -14,6 +14,11 @@ import {
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/Users'
+import { storeToRefs } from 'pinia'
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
 const emit = defineEmits(['close'])
 
@@ -129,7 +134,7 @@ watch(
             class="w-10 h-10 rounded-full object-cover border-2 border-yellow-600"
           />
           <div>
-            <h2 class="font-semibold text-sm text-gray-800">Admin Name</h2>
+            <h2 class="font-semibold text-sm text-gray-800">{{ user.name }}</h2>
             <p class="text-xs text-gray-500">Administrator</p>
           </div>
         </div>

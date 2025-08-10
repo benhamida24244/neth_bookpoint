@@ -1,34 +1,39 @@
 <script setup>
 import { InfoIcon, CreditCard, Truck, Package } from 'lucide-vue-next';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useCartStore } from '@/stores/Cart';
+import { useCheckoutStore } from '@/stores/Checkout';
+import { useUserStore } from '@/stores/Users';
+import { storeToRefs } from 'pinia';
+
+const icons = {
+  Truck,
+  Package,
+};
 
 const isLoading = ref(false);
 const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
 const selectedPayment = ref('electronic'); // 'electronic', 'tabby', or 'cod'
 
-// Order data
-const orderItems = ref([
-  { name: 'Hasees (Signed Edition)', price: 59.00, quantity: 1 },
-  { name: 'The Crazy Musician (Signed Edition)', price: 46.00, quantity: 1 },
-  { name: 'Legenda Storm (Signed Edition)', price: 49.00, quantity: 1 }
-]);
+const cartStore = useCartStore();
+const { cart: orderItems } = storeToRefs(cartStore);
 
-const shippingOptions = ref([
-  { id: 'delivery', name: 'Home Delivery', price: 24.00, icon: Truck },
-  { id: 'pickup', name: 'Pickup from RedBox Station', price: 12.00, icon: Package }
-]);
+const checkoutStore = useCheckoutStore();
+const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
 
-const paymentOptions = ref([
-  { id: 'electronic', name: 'Electronic Payment', subtitle: 'Secure payment via credit card, Mada or ApplePay' },
-  { id: 'cod', name: 'Cash on Delivery', subtitle: 'Pay when the order arrives' }
-]);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
+onMounted(() => {
+  checkoutStore.fetchCheckoutData();
+});
 
 // Form data structure
 const formData = ref({
-  receiverName: '',
-  email: '',
+  receiverName: user.value.name,
+  email: user.value.email,
   phone: '',
-  address: '',
+  address: user.value.address,
   city: '',
   postalCode: ''
 });
@@ -219,7 +224,7 @@ const handleSubmit = () => {
                       :class="{ 'ring-2 ring-yellow-600 bg-gray-700': selectedShipping === option.id }"
                     >
                       <div class="flex items-center">
-                        <component :is="option.icon" class="w-5 h-5 text-yellow-600 mr-3" />
+                        <component :is="icons[option.icon]" class="w-5 h-5 text-yellow-600 mr-3" />
                         <span class="text-white font-medium">{{ option.name }}</span>
                       </div>
                       <span class="text-yellow-600 font-bold">${{ option.price.toFixed(2) }}</span>
