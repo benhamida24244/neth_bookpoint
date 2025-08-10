@@ -5,8 +5,8 @@
     <!-- صورة الكتاب -->
     <div class="relative mb-3 overflow-hidden rounded-md">
       <img
-        :src="book.img"
-        :alt="book.name"
+        :src="book.cover"
+        :alt="book.title"
         class="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
       />
     </div>
@@ -15,9 +15,9 @@
     <div class="flex flex-grow flex-col items-center text-center space-y-2">
       <h3
         class="font-bona truncate text-md font-bold w-full"
-        :title="book.name"
+        :title="book.title"
       >
-        {{ book.name }}
+        {{ book.title }}
       </h3>
       <p class="font-BonaRegular text-sm text-gray-600">
         {{ book.author }}
@@ -35,7 +35,7 @@
 
       <!-- السعر -->
       <p class="text-lg font-semibold text-gray-800">
-        ${{ book.price.toFixed(2) }}
+        ${{ book.price }}
       </p>
 
       <!-- زر الإضافة إلى السلة -->
@@ -48,17 +48,14 @@
   </div>
 </template>
 
-<script setup lang="ts">
-interface Book {
-  id: number
-  name: string
-  author: string
-  rating: number
-  price: number
-  img: string
-}
+<script setup>
 
-defineProps<{
-  book: Book
-}>()
+defineProps({
+  book: {
+    type: Object,
+    required: true
+  }
+})
+
+
 </script>

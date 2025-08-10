@@ -3,187 +3,40 @@ import { ref, computed } from 'vue'
 import BookList from '@/components/Book/Shop/BookList.vue'
 import { useRoute } from 'vue-router'
 import BookCategoryList from '@/components/Book/BookCategoryList.vue'
+import { useCategoriesStore } from '@/stores/Categories'
+import { storeToRefs } from 'pinia'
 
-const isOpenEdit = ref(false)
 const route = useRoute()
 const currentId = parseInt(route.params.id)
+const categoriesStore = useCategoriesStore()
 
-const categories = ref([
-  {
-    id: 1,
-    name: 'Mystery & Thriller',
-    icon: 'pi-search',
-    description: 'Exploring suspense and thrillers.',
-    status: 'active',
-    orders: 43,
-    nmBook: 12,
-    createdAt: '2025-07-10T12:00:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 2,
-    name: 'Science Fiction',
-    icon: 'pi-globe',
-    description: 'Futuristic and scientific imagination.',
-    status: 'active',
-    orders: 58,
-    nmBook: 25,
-    createdAt: '2025-07-09T11:30:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 3,
-    name: 'Fantasy',
-    icon: 'pi-sparkles',
-    description: 'Magical and mythical worlds.',
-    status: 'active',
-    orders: 75,
-    nmBook: 33,
-    createdAt: '2025-07-08T15:10:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 4,
-    name: 'Romance',
-    icon: 'pi-heart-fill',
-    description: 'Love and emotional stories.',
-    status: 'active',
-    orders: 92,
-    nmBook: 40,
-    createdAt: '2025-07-07T09:05:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 5,
-    name: 'History',
-    icon: 'pi-book',
-    description: 'Historical events and biographies.',
-    status: 'inactive',
-    orders: 21,
-    nmBook: 18,
-    createdAt: '2025-07-06T18:45:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 6,
-    name: 'Kids',
-    icon: 'pi-prime',
-    description: 'Fun stories for children.',
-    status: 'active',
-    orders: 110,
-    nmBook: 50,
-    createdAt: '2025-07-05T10:20:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 7,
-    name: 'Biography',
-    icon: 'pi-user',
-    description: 'Life stories of influential people.',
-    status: 'active',
-    orders: 35,
-    nmBook: 15,
-    createdAt: '2025-07-04T13:00:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 8,
-    name: 'Cooking',
-    icon: 'pi-apple',
-    description: 'Recipes and culinary arts.',
-    status: 'active',
-    orders: 48,
-    nmBook: 22,
-    createdAt: '2025-07-03T16:50:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 9,
-    name: 'Self-Help',
-    icon: 'pi-sun',
-    description: 'Guides for personal development.',
-    status: 'inactive',
-    orders: 65,
-    nmBook: 28,
-    createdAt: '2025-07-02T11:15:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-  {
-    id: 10,
-    name: 'Comics & Graphic Novels',
-    icon: 'pi-palette',
-    description: 'Visual storytelling.',
-    status: 'active',
-    orders: 88,
-    nmBook: 45,
-    createdAt: '2025-07-01T20:00:00Z',
-    color: 'bg-yellow-700',
-    url: '#',
-  },
-])
+// Use storeToRefs to maintain reactivity for state properties
+const { isOpenEdit, formattedStatistics } = storeToRefs(categoriesStore)
 
-const statistics = ref([
-  {
-    id: 1,
-    name: 'Total Orders',
-    icon: 'fas fa-layer-group',
-    value: 21,
-    color: 'bg-blue-500',
-    ariaLabel: '21 total orders',
-  },
-  {
-    id: 2,
-    name: 'Total Books',
-    icon: 'fas fa-book',
-    value: 234,
-    color: 'bg-green-500',
-    ariaLabel: '234 total books',
-  },
-  {
-    id: 3,
-    name: 'Total Profit',
-    icon: 'fas fa-dollar-sign',
-    value: 2343,
-    color: 'bg-yellow-500',
-    ariaLabel: '$2,343 total profit',
-    prefix: '$',
-  },
-])
-
-const isLoading = ref(false)
-
+// Get current category from store getter
 const currentCategory = computed(() => {
-  return (
-    categories.value.find((cat) => cat.id === currentId) || {
-      name: 'Unknown Category',
-      description: 'No description available.',
-    }
-  )
+  return categoriesStore.getCurrentCategory(currentId)
 })
 
-const formattedStatistics = computed(() => {
-  return statistics.value.map((stat) => ({
-    ...stat,
-    displayValue: stat.prefix
-      ? `${stat.prefix}${stat.value.toLocaleString()}`
-      : stat.value.toLocaleString(),
-  }))
-})
-
-const handleEdite = () => {
-  isOpenEdit.value = !isOpenEdit.value
+// Methods that call store actions with currentId
+const handleEdit = () => {
+  categoriesStore.handleEdit()
 }
-const handleImageError = (event) => {
-  event.target.src = '/placeholder-book.jpg'
+
+const editName = () => {
+  categoriesStore.editName(currentId)
+}
+
+const editImage = () => {
+  categoriesStore.editImage(currentId)
+}
+
+const editDescription = () => {
+  categoriesStore.editDescription(currentId)
+}
+
+const unpublish = () => {
+  categoriesStore.unpublish(currentId)
 }
 </script>
 
@@ -209,7 +62,7 @@ const handleImageError = (event) => {
   <!-- زر التعديل الرئيسي -->
   <button
     class="bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-yellow-700 transition-colors duration-300 font-BonaRegular"
-    @click="handleEdite"
+    @click="handleEdit"
   >
     Edit
   </button>

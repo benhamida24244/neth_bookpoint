@@ -62,9 +62,9 @@ const handleCheckout = () => {
               :key="item.id"
               class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
             >
-              <img :src="item.img" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
+              <img :src="item.cover" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
               <div class="text-center mt-4">
-                <h2 class="text-lg font-semibold">{{ item.name }}</h2>
+                <h2 class="text-lg font-semibold">{{ item.title }}</h2>
                 <p class="text-sm text-gray-500">by {{ item.author }}</p>
                 <p class="text-green-600 font-medium mt-2">
                   $ {{ (item.price || 0).toFixed(2) }}

@@ -143,47 +143,50 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, onMounted } from 'vue'
+<script setup>
+import { useOrdersStore } from '@/stores/Orders'
+import { ref, computed } from 'vue'
 
-export default {
-  name: 'OrderManagement',
-  setup() {
+    const ordersStore = useOrdersStore()
+
     const activeFilter = ref('all')
     const searchQuery = ref('')
 
-    const stats = ref([
-      {
-        label: 'Total Orders',
-        value: '592',
-        icon: 'fas fa-list-ol text-blue-500',
-        iconBg: 'bg-blue-50'
-      },
-      {
-        label: 'Avg Delivery Time',
-        value: '3 days',
-        icon: 'far fa-clock text-green-500',
-        iconBg: 'bg-green-50'
-      },
-      {
-        label: 'Pending Orders',
-        value: '84',
-        icon: 'fas fa-truck text-yellow-500',
-        iconBg: 'bg-yellow-50'
-      },
-      {
-        label: 'Returned Orders',
-        value: '18',
-        icon: 'fas fa-undo text-red-500',
-        iconBg: 'bg-red-50'
-      },
-      {
-        label: 'Completed Orders',
-        value: '470',
-        icon: 'fas fa-check-circle text-emerald-500',
-        iconBg: 'bg-emerald-50'
-      }
-    ])
+    const stats = computed(() => {
+      const allOrders = ordersStore.orders;
+      return [
+        {
+          label: 'Total Orders',
+          value: allOrders.length,
+          icon: 'fas fa-list-ol text-blue-500',
+          iconBg: 'bg-blue-50'
+        },
+        {
+          label: 'Avg Delivery Time',
+          value: '3 days', // This cannot be calculated from current data
+          icon: 'far fa-clock text-green-500',
+          iconBg: 'bg-green-50'
+        },
+        {
+          label: 'Pending Orders',
+          value: allOrders.filter(o => o.status === 'Pending').length,
+          icon: 'fas fa-truck text-yellow-500',
+          iconBg: 'bg-yellow-50'
+        },
+        {
+          label: 'Returned Orders',
+          value: allOrders.filter(o => o.status === 'Returned').length,
+          icon: 'fas fa-undo text-red-500',
+          iconBg: 'bg-red-50'
+        },
+        {
+          label: 'Completed Orders',
+          value: allOrders.filter(o => o.status === 'Completed').length,
+          icon: 'fas fa-check-circle text-emerald-500',
+          iconBg: 'bg-emerald-50'
+        }
+      ]
+    })
 
     const filters = ref([
       { label: 'All Orders', value: 'all' },
@@ -192,43 +195,8 @@ export default {
       { label: 'Returned', value: 'Returned' }
     ])
 
-    const orders = ref([
-      {
-        id: 1,
-        customer: 'Ali Ahmed',
-        book: '1984',
-        status: 'Completed',
-        price: '$29.99',
-        date: '2025-07-12'
-      },
-      {
-        id: 2,
-        customer: 'Sara Belkacem',
-        book: 'Kafka on the Shore',
-        status: 'Pending',
-        price: '$35.00',
-        date: '2025-07-14'
-      },
-      {
-        id: 3,
-        customer: 'Omar Yacine',
-        book: 'Animal Farm',
-        status: 'Returned',
-        price: '$24.99',
-        date: '2025-07-13'
-      },
-      {
-        id: 4,
-        customer: 'Yasmine H.',
-        book: 'The Alchemist',
-        status: 'Completed',
-        price: '$39.99',
-        date: '2025-07-10'
-      }
-    ])
-
     const filteredOrders = computed(() => {
-      let filtered = orders.value
+      let filtered = ordersStore.orders
 
       // Filter by status
       if (activeFilter.value !== 'all') {
@@ -257,23 +225,7 @@ export default {
       return statusClasses[status] || 'bg-gray-50 text-gray-700'
     }
 
-    const viewOrder = (orderId) => {
-      console.log('Viewing order:', orderId)
-      // Add your view order logic here
-    }
 
-    return {
-      activeFilter,
-      searchQuery,
-      stats,
-      filters,
-      orders,
-      filteredOrders,
-      getStatusClass,
-      viewOrder
-    }
-  }
-}
 </script>
 
 <style scoped>

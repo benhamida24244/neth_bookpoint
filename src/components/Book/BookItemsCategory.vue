@@ -16,12 +16,12 @@ const cartStore = useCartStore();
 <template>
   <div class="group relative cursor-pointer w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg  hover:shadow-lg">
     <div class="relative mb-2 overflow-hidden rounded-md">
-      <img :src="book.img" :alt="book.name" class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out" />
+      <img :src="book.cover" :alt="book.title" class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out" />
 
     </div>
 
     <div class="mt-auto text-center">
-      <h3 class="font-bold text-md font-bona truncate" :title="book.name">{{ book.name }}</h3>
+      <h3 class="font-bold text-md font-bona truncate" :title="book.title">{{ book.title }}</h3>
       <p class="text-sm text-gray-500 font-BonaRegular underline">{{ book.author }}</p>
 
       <!-- ⭐️ التقييم بالنجوم -->

@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon } from '@heroicons/vue/24/outline'
+import { useBooksStore } from '@/stores/Books'
 
 // Book Status Constants
 const BOOK_STATUS = {
@@ -47,205 +48,96 @@ const props = defineProps({
     required: false
   }
 })
-
 const emit = defineEmits(['bookUpdated', 'statusChanged'])
 
 // Composables
 const route = useRoute()
 const router = useRouter()
 
-// State Management
+// State
 const isLoading = ref(true)
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
 
-// Mock data - in real app this would come from API
-const books = ref([
-  {
-    id: 1,
-    title: 'Vue.js for Beginners: A Comprehensive Guide',
-    author: 'Sarah Chen',
-    cover: 'https://m.media-amazon.com/images/I/71h02AXdgTL._UF1000,1000_QL80_.jpg',
-    description: 'An approachable guide for aspiring Vue.js developers that covers everything from basic concepts to advanced techniques. Learn how to build modern, reactive web applications with Vue.js 3 and the Composition API.',
-    stock: 132,
-    publishingHouse: 'Dragon House Publishing',
-    publisherDate: '2023-09-15',
-    pages: 320,
-    category: 'Programming',
-    language: 'English',
-    status: 'published',
-    price: '$29.99',
-    rating: 4.5,
-    quantity: 1,
-    pricing: {
-      basePrice: 29.99,
-      shipping: 5.99,
-      tax: 2.40,
-      discount: 0
-    },
-    dates: {
-      created: '2023-09-01T10:00:00Z',
-      updated: '2023-09-15T14:30:00Z'
-    }
-  },
-  {
-    id: 2,
-    title: 'Advanced Tailwind CSS: Building Modern Interfaces',
-    author: 'Michael B. Davis',
-    cover: 'https://m.media-amazon.com/images/I/5125KM6SBQL._UF1000,1000_QL80_.jpg',
-    description: 'Dive deep into Tailwind CSS with this advanced guide that teaches you how to create stunning, responsive user interfaces. Master utility-first CSS and learn best practices for scalable design systems.',
-    stock: 45,
-    publishingHouse: 'Modern Web Solutions',
-    publisherDate: '2024-03-20',
-    pages: 280,
-    category: 'Web Design',
-    language: 'English',
-    status: 'pending',
-    price: '$34.50',
-    rating: 4.8,
-    quantity: 1,
-    pricing: {
-      basePrice: 34.50,
-      shipping: 5.99,
-      tax: 2.76,
-      discount: 5.00
-    },
-    dates: {
-      created: '2024-03-01T09:00:00Z',
-      updated: '2024-03-20T16:45:00Z'
-    }
-  },
-  {
-    id: 3,
-    title: 'Mastering Laravel: From Novice to Artisan',
-    author: 'Jessica Lee',
-    cover: 'https://m.media-amazon.com/images/I/61NLKoD4kVL._UF1000,1000_QL80_.jpg',
-    description: 'Unlock the full potential of Laravel with this comprehensive guide that takes you from basic concepts to advanced architectural patterns. Learn to build robust, scalable web applications with PHP\'s most popular framework.',
-    stock: 18,
-    publishingHouse: 'Artisan Press',
-    publisherDate: '2022-11-01',
-    pages: 410,
-    category: 'Web Development',
-    language: 'English',
-    status: 'draft',
-    price: '$49.99',
-    rating: 4.7,
-    quantity: 1,
-    pricing: {
-      basePrice: 49.99,
-      shipping: 7.99,
-      tax: 4.00,
-      discount: 10.00
-    },
-    dates: {
-      created: '2022-10-15T11:30:00Z',
-      updated: '2022-11-01T13:20:00Z'
-    }
-  },
-  {
-    id: 4,
-    title: 'The Art of Clean Code',
-    author: 'Robert C. Martin',
-    cover: 'https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg',
-    description: 'A must-read for every programmer. This book teaches you principles of writing clean, maintainable, efficient code that stands the test of time and collaborative development.',
-    stock: 210,
-    publishingHouse: 'Prentice Hall',
-    publisherDate: '2008-08-01',
-    pages: 464,
-    category: 'Software Engineering',
-    language: 'English',
-    status: 'published',
-    price: '$45.00',
-    rating: 4.9,
-    quantity: 1,
-    pricing: {
-      basePrice: 45.00,
-      shipping: 6.99,
-      tax: 3.60,
-      discount: 0
-    },
-    dates: {
-      created: '2008-07-15T08:00:00Z',
-      updated: '2008-08-01T12:00:00Z'
-    }
-  },
-  {
-    id: 5,
-    title: 'Data Science with Python',
-    author: 'Wes McKinney',
-    cover: 'https://m.media-amazon.com/images/I/51WiLueukxL._SX379_BO1,204,203,200_.jpg',
-    description: 'An in-depth introduction to data science tools and techniques using Python. Learn pandas, NumPy, matplotlib, and other essential libraries for data analysis and visualization.',
-    stock: 78,
-    publishingHouse: 'O\'Reilly Media',
-    publisherDate: '2017-10-25',
-    pages: 560,
-    category: 'Data Science',
-    language: 'English',
-    status: 'published',
-    price: '$59.95',
-    rating: 4.6,
-    quantity: 1,
-    pricing: {
-      basePrice: 59.95,
-      shipping: 8.99,
-      tax: 4.80,
-      discount: 0
-    },
-    dates: {
-      created: '2017-10-01T14:00:00Z',
-      updated: '2017-10-25T10:30:00Z'
-    }
-  }
-])
+// Store (assume Pinia store exposes reactive `books`)
+const booksStore = useBooksStore()
+const books = computed(() => booksStore.books) // safe access as computed
 
-// Computed Properties
+// bookId: prefer prop, otherwise route param (Number or null)
 const bookId = computed(() => {
-  return props.bookId || parseInt(route.params.id)
+  if (props.bookId !== undefined && props.bookId !== null && props.bookId !== '') {
+    return Number(props.bookId)
+  }
+  const id = route.params.id
+  return id ? Number(id) : null
 })
 
+// selectedBook (may be undefined if not found)
 const selectedBook = computed(() => {
-  return books.value.find(book => book.id === bookId.value)
+  const id = bookId.value
+  if (!id || !Array.isArray(books.value)) return null
+  return books.value.find(book => Number(book.id) === id) || null
 })
+
+// safer numeric helpers for pricing
+const toNumber = (v) => {
+  const n = Number(v)
+  return Number.isFinite(n) ? n : 0
+}
 
 const bookTotal = computed(() => {
-  if (!selectedBook.value?.pricing) return 0
-  const { basePrice, shipping, tax, discount } = selectedBook.value.pricing
+  const book = selectedBook.value
+  if (!book || !book.pricing) return 0
+  const basePrice = toNumber(book.pricing.basePrice)
+  const shipping = toNumber(book.pricing.shipping)
+  const tax = toNumber(book.pricing.tax)
+  const discount = toNumber(book.pricing.discount)
   return basePrice + shipping + tax - discount
 })
 
 const subtotal = computed(() => {
-  if (!selectedBook.value?.pricing) return 0
-  return selectedBook.value.pricing.basePrice * (selectedBook.value.quantity || 1)
+  const book = selectedBook.value
+  if (!book || !book.pricing) return 0
+  const qty = toNumber(book.quantity || 1)
+  return toNumber(book.pricing.basePrice) * qty
 })
 
 const statusConfig = computed(() => {
-  if (!selectedBook.value) return null
-  return STATUS_CONFIG[selectedBook.value.status]
+  const book = selectedBook.value
+  if (!book) return null
+  return STATUS_CONFIG[book.status] || null
 })
 
 const statusOptions = computed(() => {
   return Object.values(BOOK_STATUS).map(status => ({
     value: status,
-    label: STATUS_CONFIG[status].label,
+    label: (STATUS_CONFIG[status] && STATUS_CONFIG[status].label) ? STATUS_CONFIG[status].label : status,
     disabled: false
   }))
 })
 
 const formattedBookDate = computed(() => {
-  if (!selectedBook.value?.dates?.created) return ''
-  return new Date(selectedBook.value.dates.created).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  const book = selectedBook.value
+  const dateStr = book?.dates?.created
+  if (!dateStr) return ''
+  try {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return ''
+  }
 })
 
 const stockStatusText = computed(() => {
-  if (!selectedBook.value) return ''
-  const stock = selectedBook.value.stock
+  const book = selectedBook.value
+  if (!book) return ''
+  const stock = toNumber(book.stock)
   if (stock > 100) return 'In Stock'
   if (stock > 20) return 'Limited Stock'
   if (stock > 0) return `Only ${stock} copies remaining!`
@@ -253,52 +145,59 @@ const stockStatusText = computed(() => {
 })
 
 const stockStatusColor = computed(() => {
-  if (!selectedBook.value) return 'text-gray-600'
-  const stock = selectedBook.value.stock
+  const book = selectedBook.value
+  if (!book) return 'text-gray-600'
+  const stock = toNumber(book.stock)
   if (stock > 100) return 'text-green-600'
   if (stock > 20) return 'text-yellow-600'
   if (stock > 0) return 'text-red-600'
   return 'text-red-800'
 })
 
-// Methods
+// renderStars: returns counts (safe for missing rating)
+const renderStars = (rating) => {
+  const r = Number.isFinite(Number(rating)) ? Number(rating) : 0
+  const fullStars = Math.floor(r)
+  const hasHalfStar = (r - fullStars) >= 0.5
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
+  return {
+    full: fullStars,
+    half: hasHalfStar,
+    empty: emptyStars
+  }
+}
+
+// Actions
 const updateBookStatus = async (newStatus) => {
-  if (!selectedBook.value || isUpdating.value) return
+  const book = selectedBook.value
+  if (!book || isUpdating.value) return
 
   try {
     isUpdating.value = true
     error.value = null
 
-    // Simulate API call
+    // simulate API
     await new Promise(resolve => setTimeout(resolve, 1000))
 
-    const oldStatus = selectedBook.value.status
-    selectedBook.value.status = newStatus
+    const oldStatus = book.status
+    // mutate the actual store object (Pinia reactive object assumed)
+    book.status = newStatus
 
-    // Update dates based on status
     const now = new Date().toISOString()
-    if (newStatus === BOOK_STATUS.SHIPPED && !selectedBook.value.dates.shipped) {
-      selectedBook.value.dates.shipped = now
+    book.dates = book.dates || {}
+    if (newStatus === BOOK_STATUS.SHIPPED && !book.dates.shipped) {
+      book.dates.shipped = now
     }
-    if (newStatus === BOOK_STATUS.PUBLISHED && !selectedBook.value.dates.published) {
-      selectedBook.value.dates.published = now
+    if (newStatus === BOOK_STATUS.PUBLISHED && !book.dates.published) {
+      book.dates.published = now
     }
-
-    selectedBook.value.dates.updated = now
+    book.dates.updated = now
 
     showSuccessMessage.value = true
-    setTimeout(() => {
-      showSuccessMessage.value = false
-    }, 3000)
+    setTimeout(() => (showSuccessMessage.value = false), 3000)
 
-    emit('statusChanged', {
-      bookId: selectedBook.value.id,
-      oldStatus,
-      newStatus
-    })
-
-    emit('bookUpdated', selectedBook.value)
-
+    emit('statusChanged', { bookId: book.id, oldStatus, newStatus })
+    emit('bookUpdated', book)
   } catch (err) {
     error.value = 'There was an error updating the book status. Please try again.'
     console.error('Error updating book status:', err)
@@ -307,67 +206,45 @@ const updateBookStatus = async (newStatus) => {
   }
 }
 
-const goBack = () => {
-  router.go(-1)
-}
-
-const printBook = () => {
-  window.print()
-}
-
+const goBack = () => router.go(-1)
+const printBook = () => window.print()
 const downloadInvoice = () => {
   console.log('Downloading invoice for book:', bookId.value)
-  // Implementation for downloading invoice
+  // implement real download here
 }
+const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-const getCurrentDate = () => {
-  return new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
-const renderStars = (rating) => {
-  const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 !== 0
-  const emptyStars = 5 - Math.ceil(rating)
-
-  return {
-    full: fullStars,
-    half: hasHalfStar,
-    empty: emptyStars
-  }
-}
-
-// Lifecycle
-onMounted(async () => {
+// loadBook: centralise loading logic (can be extended to call API)
+const loadBook = async () => {
   try {
     isLoading.value = true
     error.value = null
 
-    // Simulate API call
+    // simulate API latency
     await new Promise(resolve => setTimeout(resolve, 500))
 
     if (!selectedBook.value) {
       error.value = 'Book not found'
     }
-
   } catch (err) {
     error.value = 'Error loading book data'
     console.error('Error loading book:', err)
   } finally {
     isLoading.value = false
   }
+}
+
+// lifecycle
+onMounted(() => {
+  loadBook()
 })
 
-// Watchers
-watch(() => route.params.id, (newId) => {
-  if (newId) {
-    onMounted()
-  }
+// watch bookId (props or route change)
+watch(() => bookId.value, (newId, oldId) => {
+  if (newId !== oldId) loadBook()
 })
 </script>
+
 
 <template>
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
