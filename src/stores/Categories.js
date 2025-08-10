@@ -174,8 +174,19 @@ export const useCategoriesStore = defineStore("categories", {
           ? `${stat.prefix}${stat.value.toLocaleString()}`
           : stat.value.toLocaleString(),
       }))
-    }
+    },
+    getNew: (state) => {
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+  return state.categories.filter(category => {
+    const createdDate = new Date(category.createdAt);
+    return createdDate >= threeMonthsAgo;
+  });
+}
+
   },
+
 
   actions: {
     handleEdit() {
