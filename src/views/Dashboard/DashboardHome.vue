@@ -1,4 +1,7 @@
 <script setup>
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useDashboardStore } from '@/stores/Dashboard'
 import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue'
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue'
 import DailySalesChart from '@/components/Dashboard/Charts/DailySalesChart.vue'
@@ -10,30 +13,37 @@ import LatestOrdersTable from '@/components/Dashboard/Table/LatestOrdersTable.vu
 import RecentBook from '@/components/Dashboard/Table/RecentBook.vue'
 import { BookOpen, ShoppingCart, Users, DollarSign } from 'lucide-vue-next'
 
+const dashboardStore = useDashboardStore()
+const { stats } = storeToRefs(dashboardStore)
+
+onMounted(() => {
+  dashboardStore.fetchDashboardData()
+})
+
 const info = [
   {
     id: 1,
     name: 'Books',
     icon: BookOpen,
-    Num: 120,
+    Num: stats.value.books,
   },
   {
     id: 2,
     name: 'Orders Today',
     icon: ShoppingCart,
-    Num: 12,
+    Num: stats.value.ordersToday,
   },
   {
     id: 3,
     name: 'Clients',
     icon: Users,
-    Num: 120,
+    Num: stats.value.clients,
   },
   {
     id: 4,
     name: 'Sales Today',
     icon: DollarSign,
-    Num: '3423 $',
+    Num: `${stats.value.salesToday} $`,
   },
 ]
 </script>
