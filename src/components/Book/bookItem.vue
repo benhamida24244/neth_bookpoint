@@ -30,6 +30,7 @@ const cartStore = useCartStore();
     <div class="mt-auto text-center">
       <h3 class="font-bold text-md font-bona truncate" :title="book.title">{{ book.title }}</h3>
       <p class="text-sm text-gray-500 font-BonaRegular underline">{{ book.author }}</p>
+      <p class="text-black font-bold font-BonaRegular ">{{ book.price }} </p>
 
       <!-- ⭐️ التقييم بالنجوم -->
       <div class="flex justify-center mt-2">
