@@ -3,14 +3,28 @@
   <div class="p-6 max-w-xl mx-auto space-y-8">
     <h1 class="text-2xl font-bold">Settings</h1>
 
-    <!-- Appearance -->
+    <!-- Primary Color Selection -->
     <div class="space-y-4">
-      <h2 class="text-xl font-semibold">Appearance</h2>
-      <select v-model="settingsStore.theme" class="w-full p-2 border rounded">
-        <option value="light">🌞 Yellow</option>
-        <option value="dark">🌙 Green</option>
-        <option value="custom">🎨 Red</option>
-      </select>
+      <h2 class="text-xl font-semibold">Primary Color</h2>
+      <p class="text-gray-600">Choose a primary color for the application theme. The change will be applied instantly.</p>
+      <div class="flex items-center space-x-4">
+        <button
+          v-for="color in primaryColors"
+          :key="color.name"
+          @click="settingsStore.setPrimaryColor(color.hex)"
+          class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"
+          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor === color.hex, 'border-transparent': settingsStore.primaryColor !== color.hex }"
+        >
+          <span class="w-6 h-6 rounded-md" :style="{ backgroundColor: color.hex }"></span>
+          <span class="ml-2 font-medium">{{ color.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="space-y-4">
+        <h2 class="text-xl font-semibold">Live Preview</h2>
+        <ExampleComponent />
     </div>
 
     <!-- Localization -->
@@ -34,22 +48,20 @@
       </select>
     </div>
 
-    <!-- Save Button -->
-    <button @click="saveSettings" class="mt-6 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
-      Save Changes
-    </button>
   </div>
 </template>
 
 <script setup>
 import { useSettingsStore } from '@/stores/settings'
+import ExampleComponent from '@/components/Theme/ExampleComponent.vue'
+import { ref } from 'vue'
 
 const settingsStore = useSettingsStore()
 
-function saveSettings() {
-  settingsStore.setTheme(settingsStore.theme)
-  settingsStore.setCurrency(settingsStore.currency)
-  settingsStore.setLanguage(settingsStore.language)
-  alert('✅ Settings saved!')
-}
+const primaryColors = ref([
+  { name: 'Yellow', hex: '#D97706' }, // bg-yellow-600
+  { name: 'Green', hex: '#16A34A' },  // bg-green-600
+  { name: 'Red', hex: '#DC2626' }    // bg-red-600
+])
+
 </script>

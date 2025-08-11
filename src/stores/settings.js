@@ -2,12 +2,14 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const theme = ref(localStorage.getItem('theme') || 'light')
+  // Renamed 'theme' to 'primaryColor' for clarity and set a default hex value.
+  const primaryColor = ref(localStorage.getItem('primaryColor') || '#D97706') // Default to yellow-600
   const currency = ref(localStorage.getItem('currency') || '$')
   const language = ref(localStorage.getItem('language') || 'en')
 
-  watch(theme, (newTheme) => {
-    localStorage.setItem('theme', newTheme)
+  // This watcher persists the primary color choice to localStorage.
+  watch(primaryColor, (newColor) => {
+    localStorage.setItem('primaryColor', newColor)
   })
 
   watch(currency, (newCurrency) => {
@@ -18,8 +20,18 @@ export const useSettingsStore = defineStore('settings', () => {
     localStorage.setItem('language', newLanguage)
   })
 
-  function setTheme(newTheme) {
-    theme.value = newTheme
+  /**
+   * Sets the primary color for the application.
+   * It updates the state, saves to localStorage (via watcher),
+   * and applies the color as a CSS variable to the root element.
+   * @param {string} newColor - The hex value of the new primary color.
+   */
+  function setPrimaryColor(newColor) {
+    primaryColor.value = newColor
+    // This is the key part for reactivity. We set the CSS variable here.
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--color-primary', newColor)
+    }
   }
 
   function setCurrency(newCurrency) {
@@ -31,10 +43,10 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   return {
-    theme,
+    primaryColor,
     currency,
     language,
-    setTheme,
+    setPrimaryColor,
     setCurrency,
     setLanguage
   }
