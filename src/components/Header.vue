@@ -78,7 +78,7 @@ const { cartCount } = storeToRefs(cartStore)
     <div class="flex flex-wrap items-center justify-between gap-4 w-full">
       <RouterLink to="/" class="flex items-center gap-2">
         <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
-        <p class="text-xl font-bold font-bona text-yellow-600 max-sm:hidden">NETH<br />BOOKPOINT</p>
+        <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">NETH<br />BOOKPOINT</p>
       </RouterLink>
 
       <div
