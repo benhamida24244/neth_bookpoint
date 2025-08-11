@@ -1,5 +1,6 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books'
+import { useSettingsStore } from '@/stores/settings'
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
@@ -12,6 +13,8 @@ const filters = ref([
   { label: 'Pending', value: 'pending' },
   { label: 'Draft', value: 'draft' },
 ])
+
+const settingStore = useSettingsStore()
 
 // استدعاء الـ Store
 const bookStore = useBooksStore()
@@ -218,7 +221,7 @@ const getStatusClass = (status) => {
                     {{ book.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price + settingStore.currency}}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {{ book.publisherDate }}
                 </td>

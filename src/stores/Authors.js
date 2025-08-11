@@ -24,7 +24,7 @@ export const useAuthorStore = defineStore("authors" ,{
     img: 'https://prodimage.images-bn.com/pimages/9781338878929_p0_v1_s600x595.jpg',
     nmbBook: 24,
     description: 'The creative genius behind the enchanting world of Harry Potter. Her magical storytelling has inspired a global generation of readers and dreamers.',
-    SpendMuch: 1500,
+    SpendMuch: 100,
     Orders_count: 120,
     Country: 'British',
     email: 'jk.rowling@example.com',
@@ -117,6 +117,6 @@ export const useAuthorStore = defineStore("authors" ,{
   }
     ]
   }),
-  
+
 }
 )

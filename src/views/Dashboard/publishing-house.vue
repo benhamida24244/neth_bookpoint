@@ -1,6 +1,7 @@
 <script setup>
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 import { ref, computed } from 'vue';
+import { useSettingsStore } from '@/stores/settings';
 
 const searchQuery = ref('');
 const selectedCountry = ref('');
@@ -87,11 +88,22 @@ const getSortIcon = (field) => {
   return sortOrder.value === 'asc' ? '↑' : '↓';
 };
 
+const settingStore = useSettingsStore()
+// A map to convert currency symbols from settings to ISO 4217 codes.
+const currencyCodeMap = {
+  '$': 'USD',
+  '€': 'EUR',
+  'DA': 'DZD'
+};
+
 // Format currency helper
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+  // Get the ISO code from the map, defaulting to USD if not found.
+  const currencyCode = currencyCodeMap[settingStore.currency] || 'USD';
+
+  return new Intl.NumberFormat(settingStore.language, {
     style: 'currency',
-    currency: 'USD',
+    currency: currencyCode,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }).format(amount);
@@ -99,7 +111,7 @@ const formatCurrency = (amount) => {
 
 // Format number helper
 const formatNumber = (number) => {
-  return new Intl.NumberFormat('en-US').format(number);
+  return new Intl.NumberFormat(settingStore.language).format(number);
 };
 </script>
 
@@ -248,7 +260,7 @@ const formatNumber = (number) => {
                 @click="handleSort('spendMuch')"
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
               >
-                Total Spent {{ getSortIcon('spendMuch') }}
+                Rewards {{ getSortIcon('spendMuch') }}
               </th>
               <th
                 @click="handleSort('nmbBook')"

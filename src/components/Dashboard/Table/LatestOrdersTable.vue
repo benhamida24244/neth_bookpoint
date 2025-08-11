@@ -1,11 +1,14 @@
 <script setup>
+import { useSettingsStore } from '@/stores/settings';
+
+const settingsStore = useSettingsStore()
 const orders = [
   {
     id: '#ORD1234',
     client: 'Ali Bensalem',
     email: 'ali@example.com',
     status: 'Pending',
-    total: '120.00 SAR',
+    total: 120.00,
     payment: 'Credit Card',
     date: '2025-07-10'
   },
@@ -14,7 +17,7 @@ const orders = [
     client: 'Fatima Khaled',
     email: 'fatima@example.com',
     status: 'Shipped',
-    total: '89.50 SAR',
+    total: 89.50,
     payment: 'Cash on Delivery',
     date: '2025-07-09'
   },
@@ -23,7 +26,7 @@ const orders = [
     client: 'Yassine M.',
     email: 'yassine@example.com',
     status: 'Cancelled',
-    total: '45.00 SAR',
+    total: 45.00,
     payment: 'Bank Transfer',
     date: '2025-07-08'
   }
@@ -68,7 +71,7 @@ const statusColor = {
               {{ order.status }}
             </span>
           </td>
-          <td class="py-2 px-3 font-semibold">{{ order.total }}</td>
+          <td class="py-2 px-3 font-semibold">{{ order.total + settingsStore.currency }}</td>
           <td class="py-2 px-3">{{ order.payment }}</td>
           <td class="py-2 px-3">{{ order.date }}</td>
         </tr>

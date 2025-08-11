@@ -78,7 +78,7 @@
                     {{ order.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price + settingsStore.currency }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                   <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
@@ -145,7 +145,10 @@
 
 <script setup>
 import { useOrdersStore } from '@/stores/Orders'
+import { useSettingsStore } from '@/stores/settings'
 import { ref, computed } from 'vue'
+
+const settingsStore = useSettingsStore()
 
     const ordersStore = useOrdersStore()
 

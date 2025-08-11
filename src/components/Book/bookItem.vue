@@ -1,6 +1,7 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books';
 import { useCartStore } from '@/stores/Cart';
+import { useSettingsStore } from '@/stores/settings';
 
 defineProps({
   book: {
@@ -11,7 +12,7 @@ defineProps({
 
 const booksStore = useBooksStore();
 const cartStore = useCartStore();
-
+const settingsStore = useSettingsStore()
 </script>
 <template>
   <div class="group relative cursor-pointer w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg  hover:shadow-lg">
@@ -30,7 +31,7 @@ const cartStore = useCartStore();
     <div class="mt-auto text-center">
       <h3 class="font-bold text-md font-bona truncate" :title="book.title">{{ book.title }}</h3>
       <p class="text-sm text-gray-500 font-BonaRegular underline">{{ book.author }}</p>
-      <p class="text-black font-bold font-BonaRegular ">{{ book.price }} </p>
+      <p class="text-black font-bold font-BonaRegular ">{{ book.price + settingsStore.currency }} </p>
 
       <!-- ⭐️ التقييم بالنجوم -->
       <div class="flex justify-center mt-2">

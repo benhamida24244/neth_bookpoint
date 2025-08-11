@@ -12,6 +12,7 @@ import StatCards from '@/components/Dashboard/StatCards.vue'
 import LatestOrdersTable from '@/components/Dashboard/Table/LatestOrdersTable.vue'
 import RecentBook from '@/components/Dashboard/Table/RecentBook.vue'
 import { BookOpen, ShoppingCart, Users, DollarSign } from 'lucide-vue-next'
+import { useSettingsStore } from '@/stores/settings'
 
 const dashboardStore = useDashboardStore()
 const { stats } = storeToRefs(dashboardStore)
@@ -20,6 +21,7 @@ onMounted(() => {
   dashboardStore.fetchDashboardData()
 })
 
+const settingStore = useSettingsStore()
 const info = [
   {
     id: 1,
@@ -43,7 +45,7 @@ const info = [
     id: 4,
     name: 'Sales Today',
     icon: DollarSign,
-    Num: `${stats.value.salesToday} $`,
+    Num: `${stats.value.salesToday} ${settingStore.currency}`,
   },
 ]
 </script>

@@ -9,7 +9,7 @@ const { publishingHouses } = storeToRefs(publishingHouseStore);
 const route = useRoute();
 
 const showEditModal = ref(false);
-const editForm = ref({ name: '', description: '', img: '' });
+const editForm = ref({ name: '', description: '', img: '', country: '' });
 
 const currentPublishingHouse = computed(() => {
   const houseId = Number(route.params.id);
@@ -21,6 +21,7 @@ function openEditModal() {
   if (currentPublishingHouse.value) {
     editForm.value = {
       name: currentPublishingHouse.value.name,
+      country: currentPublishingHouse.value.country,
       description: currentPublishingHouse.value.description,
       img: currentPublishingHouse.value.img
     };
@@ -31,6 +32,7 @@ function openEditModal() {
 function savePublishingHouse() {
   if (!currentPublishingHouse.value) return;
   currentPublishingHouse.value.name = editForm.value.name;
+  currentPublishingHouse.value.country = editForm.value.country;
   currentPublishingHouse.value.description = editForm.value.description;
   currentPublishingHouse.value.img = editForm.value.img;
   showEditModal.value = false;
@@ -83,6 +85,8 @@ function savePublishingHouse() {
 
         <label class="block mb-2 font-medium">Name</label>
         <input v-model="editForm.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
+        <label class="block mb-2 font-medium">Country</label>
+        <input v-model="editForm.country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>

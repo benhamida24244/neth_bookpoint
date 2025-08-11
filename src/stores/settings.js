@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 
 export const useSettingsStore = defineStore('settings', () => {
   const theme = ref(localStorage.getItem('theme') || 'light')
-  const currency = ref(localStorage.getItem('currency') || 'USD')
+  const currency = ref(localStorage.getItem('currency') || '$')
   const language = ref(localStorage.getItem('language') || 'en')
 
   watch(theme, (newTheme) => {

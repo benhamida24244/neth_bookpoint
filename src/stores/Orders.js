@@ -8,7 +8,7 @@ export const useOrdersStore = defineStore("orders", {
         customer: 'Ali Ahmed',
         book: '1984',
         status: 'Completed',
-        price: '$29.99',
+        price: 29.99,
         date: '2025-07-12'
       },
       {
@@ -16,7 +16,7 @@ export const useOrdersStore = defineStore("orders", {
         customer: 'Sara Belkacem',
         book: 'Kafka on the Shore',
         status: 'Pending',
-        price: '$35.00',
+        price: 35.00,
         date: '2025-07-14'
       },
       {
@@ -24,7 +24,7 @@ export const useOrdersStore = defineStore("orders", {
         customer: 'Omar Yacine',
         book: 'Animal Farm',
         status: 'Returned',
-        price: '$24.99',
+        price: 24.99,
         date: '2025-07-13'
       },
       {
@@ -32,7 +32,7 @@ export const useOrdersStore = defineStore("orders", {
         customer: 'Yasmine H.',
         book: 'The Alchemist',
         status: 'Completed',
-        price: '$39.99',
+        price: 39.99,
         date: '2025-07-10'
       }
     ],

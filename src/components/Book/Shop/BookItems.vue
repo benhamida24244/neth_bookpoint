@@ -35,7 +35,7 @@
 
       <!-- السعر -->
       <p class="text-lg font-semibold text-gray-800">
-        ${{ book.price }}
+        {{ book.price + settingsStore.currency }}
       </p>
 
       <!-- زر الإضافة إلى السلة -->
@@ -49,6 +49,8 @@
 </template>
 
 <script setup>
+import { useSettingsStore } from '@/stores/settings';
+
 
 defineProps({
   book: {
@@ -57,5 +59,6 @@ defineProps({
   }
 })
 
+const settingsStore = useSettingsStore()
 
 </script>

@@ -7,9 +7,9 @@
     <div class="space-y-4">
       <h2 class="text-xl font-semibold">Appearance</h2>
       <select v-model="settingsStore.theme" class="w-full p-2 border rounded">
-        <option value="light">🌞 Light</option>
-        <option value="dark">🌙 Dark</option>
-        <option value="custom">🎨 Custom</option>
+        <option value="light">🌞 Yellow</option>
+        <option value="dark">🌙 Green</option>
+        <option value="custom">🎨 Red</option>
       </select>
     </div>
 
@@ -20,9 +20,9 @@
       <!-- Currency -->
       <label class="block font-medium">Currency</label>
       <select v-model="settingsStore.currency" class="w-full p-2 border rounded">
-        <option value="USD">💵 USD</option>
-        <option value="EUR">💶 EUR</option>
-        <option value="DZD">🇩🇿 DZD</option>
+        <option value="$">💵 USD</option>
+        <option value="€">💶 EUR</option>
+        <option value="DA">🇩🇿 DZD</option>
       </select>
 
       <!-- Language -->
