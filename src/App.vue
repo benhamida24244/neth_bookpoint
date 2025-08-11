@@ -1,15 +1,13 @@
 <script setup>
 import { useSettingsStore } from './stores/settings'
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 
+// This ensures that when the app is loaded, the primary color from the
+// store (and localStorage) is applied as a CSS variable to the document.
 onMounted(() => {
-  document.documentElement.className = settingsStore.theme
-})
-
-watch(() => settingsStore.theme, (newTheme) => {
-  document.documentElement.className = newTheme
+  settingsStore.setPrimaryColor(settingsStore.primaryColor)
 })
 </script>
 <template>
