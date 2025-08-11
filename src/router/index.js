@@ -23,6 +23,8 @@ import CartView from '@/views/CartView.vue'
 import CheckOutPageView from '@/views/CheckOutPageView.vue'
 import Categories from '@/views/Dashboard/Categories.vue'
 import CategoriesInfo from '@/views/Dashboard/CategoriesInfo.vue'
+import AuthorDetails from '@/views/Dashboard/AuthorDetails.vue'
+import PHouseDetails from '@/views/Dashboard/PHouseDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,7 +56,7 @@ const router = createRouter({
     },
     {
       path:'authors/:id',
-      name:'Authors info',
+      name:'public Authors info',
       component:SingleAuthorPage,
     },
     {
@@ -94,9 +96,10 @@ const router = createRouter({
         {path:'categories', name:'Categories page' , component:Categories},
         {path:'categories/:id', name:'Categories info' , component:CategoriesInfo},
         {path:'authors', name:'Authors page' , component:Authors},
-        {path:'authors/:id', name:'Authors info' , component:SingleAuthorPage},
+        {path:'authors/:id', name:'dashboard Authors info' , component:AuthorDetails},
         {path:'settings', name:'Settings page' , component:Settings},
         {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
+        {path:'publishing-house/:id', name:'Publishing House Info' , component:PHouseDetails},
 
       ]
 
