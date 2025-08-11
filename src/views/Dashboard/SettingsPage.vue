@@ -6,7 +6,7 @@
     <!-- Appearance -->
     <div class="space-y-4">
       <h2 class="text-xl font-semibold">Appearance</h2>
-      <select v-model="theme" class="w-full p-2 border rounded">
+      <select v-model="settingsStore.theme" class="w-full p-2 border rounded">
         <option value="light">🌞 Light</option>
         <option value="dark">🌙 Dark</option>
         <option value="custom">🎨 Custom</option>
@@ -19,7 +19,7 @@
 
       <!-- Currency -->
       <label class="block font-medium">Currency</label>
-      <select v-model="currency" class="w-full p-2 border rounded">
+      <select v-model="settingsStore.currency" class="w-full p-2 border rounded">
         <option value="USD">💵 USD</option>
         <option value="EUR">💶 EUR</option>
         <option value="DZD">🇩🇿 DZD</option>
@@ -27,7 +27,7 @@
 
       <!-- Language -->
       <label class="block font-medium">Language</label>
-      <select v-model="language" class="w-full p-2 border rounded">
+      <select v-model="settingsStore.language" class="w-full p-2 border rounded">
         <option value="en">🇺🇸 English</option>
         <option value="fr">🇫🇷 French</option>
         <option value="ar">🇩🇿 Arabic</option>
@@ -42,17 +42,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 
-const theme = ref('light')
-const currency = ref('USD')
-const language = ref('en')
+const settingsStore = useSettingsStore()
 
 function saveSettings() {
-  // Save to localStorage or API
-  localStorage.setItem('theme', theme.value)
-  localStorage.setItem('currency', currency.value)
-  localStorage.setItem('language', language.value)
+  settingsStore.setTheme(settingsStore.theme)
+  settingsStore.setCurrency(settingsStore.currency)
+  settingsStore.setLanguage(settingsStore.language)
   alert('✅ Settings saved!')
 }
 </script>

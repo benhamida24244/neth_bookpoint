@@ -12,7 +12,7 @@ import NotFound from '@/Layout/NotFound.vue'
 import DashboardHome from '@/views/Dashboard/DashboardHome.vue'
 import Orders from '@/views/Dashboard/Orders.vue'
 import Authors from '@/views/Dashboard/Authors.vue'
-import Settings from '@/views/Dashboard/Settings.vue'
+import SettingsPage from '@/views/Dashboard/SettingsPage.vue'
 import PublishingHouse from '@/views/Dashboard/publishing-house.vue'
 import ClientDash from '@/views/Dashboard/ClientDash.vue'
 import Books from '@/views/Dashboard/Books.vue'
@@ -97,7 +97,7 @@ const router = createRouter({
         {path:'categories/:id', name:'Categories info' , component:CategoriesInfo},
         {path:'authors', name:'Authors page' , component:Authors},
         {path:'authors/:id', name:'dashboard Authors info' , component:AuthorDetails},
-        {path:'settings', name:'Settings page' , component:Settings},
+        {path:'settings', name:'Settings page' , component:SettingsPage},
         {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
         {path:'publishing-house/:id', name:'Publishing House Info' , component:PHouseDetails},
 
