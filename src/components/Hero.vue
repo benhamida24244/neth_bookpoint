@@ -18,7 +18,7 @@
         <div class="max-w-4xl text-center mx-auto">
           <!-- Title -->
           <div class="mt-5 max-w-5xl">
-            <h1 class="block font-bona text-yellow-500 text-4xl md:text-5xl lg:text-5xl">
+            <h1 class="block font-bona text-[var(--color-light)] text-4xl md:text-5xl lg:text-5xl">
               The Book Lover's Dreamland Awaits!
             </h1>
           </div>
@@ -40,8 +40,8 @@
                   <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                       <i class="pi pi-search text-gray-400"></i>
                   </div>
-                  <input type="search" id="search-input" class="block w-full p-4 ps-10 text-sm text-white border border-yellow-500 rounded-full bg-black/30 backdrop-blur-sm focus:ring-yellow-500 focus:border-yellow-500 placeholder-gray-400" placeholder="Search for a book..." required />
-                  <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm px-4 py-2">Search</button>
+                  <input type="search" id="search-input" class="block w-full p-4 ps-10 text-sm text-white border border-[var(--color-primary)] rounded-full bg-black/30 backdrop-blur-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] placeholder-gray-400" placeholder="Search for a book..." required />
+                  <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-[var(--color-light)] font-medium rounded-full text-sm px-4 py-2">Search</button>
               </div>
             </form>
           </div>

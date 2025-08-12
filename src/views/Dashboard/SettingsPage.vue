@@ -12,10 +12,9 @@
           v-for="color in primaryColors"
           :key="color.name"
           @click="settingsStore.setPrimaryColor(color.hex)"
-          class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"
-          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor === color.hex, 'border-transparent': settingsStore.primaryColor !== color.hex }"
+          class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor.primary === color.hex.primary, 'border-transparent': settingsStore.primaryColor.primary !== color.hex.primary }"
         >
-          <span class="w-6 h-6 rounded-md" :style="{ backgroundColor: color.hex }"></span>
+          <span class="w-6 h-6 rounded-md" :style="{ backgroundColor: color.hex.primary }"></span>
           <span class="ml-2 font-medium">{{ color.name }}</span>
         </button>
       </div>
@@ -59,9 +58,21 @@ import { ref } from 'vue'
 const settingsStore = useSettingsStore()
 
 const primaryColors = ref([
-  { name: 'Yellow', hex: '#D97706' }, // bg-yellow-600
-  { name: 'Green', hex: '#16A34A' },  // bg-green-600
-  { name: 'Red', hex: '#DC2626' }    // bg-red-600
+  { name: 'Yellow', hex: {
+    primary: '#c67913',
+    light: '#F0B100',
+    hover: '#A65F00'
+  }}, // bg-yellow-600
+  { name: 'Green', hex: {
+    primary: '#16A34A',
+    light: '#4ADE80',
+    hover: '#15803D'
+  }},  // bg-green-600
+  { name: 'Red', hex: {
+    primary: '#DC2626',
+    light: '#FCA5A5',
+    hover: '#B91C1C'
+  }}    // bg-red-600
 ])
 
 </script>

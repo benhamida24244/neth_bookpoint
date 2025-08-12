@@ -8,7 +8,13 @@ import CatigoryList from '@/components/Catigory/CatigoryList.vue'
 import Footer from '@/components/Footer/Footer.vue'
 import Hero from '@/components/Hero.vue'
 import PublishingHousesList from '@/components/Publishing/PublishingHousesList.vue'
+import { useAuthorStore } from '@/stores/Authors'
+import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { onMounted } from 'vue'
+
+const PublishingHousesStore = usePublishingHouseStore()
+const authorsStore = useAuthorStore()
+
 
 const banner = {
   id: 1,
@@ -60,95 +66,9 @@ const smallBannerTwo = [
     url: 'https://www.barnesandnoble.com/w/buckeye-patrick-ryan/1146518591?ean=9798217155095',
   },
 ]
-const authors = [
-  {
-    id: 1,
-    name: 'Stephen King',
-    url: 'https://www.barnesandnoble.com/b/contributor/stephen-king/_/N-2k9Z8q8',
-    img: 'https://prodimage.images-bn.com/pimages/9781501142970_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 2,
-    name: 'J.K. Rowling',
-    url: 'https://www.barnesandnoble.com/b/contributor/j-k-rowling/_/N-2k9Z8q8Z1z141yl',
-    img: 'https://prodimage.images-bn.com/pimages/9781338878929_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 3,
-    name: 'Colleen Hoover',
-    url: 'https://www.barnesandnoble.com/b/contributor/colleen-hoover/_/N-2k9Z8q8Z1z141yc',
-    img: 'https://prodimage.images-bn.com/pimages/9781501110344_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 4,
-    name: 'James Patterson',
-    url: 'https://www.barnesandnoble.com/b/contributor/james-patterson/_/N-2k9Z8q8Z1z141yo',
-    img: 'https://prodimage.images-bn.com/pimages/9780316407090_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 5,
-    name: 'Agatha Christie',
-    url: 'https://www.barnesandnoble.com/b/contributor/agatha-christie/_/N-2k9Z8q8Z1z141y9',
-    img: 'https://prodimage.images-bn.com/pimages/9780062073488_p0_v2_s600x595.jpg'
-  },
-  {
-    id: 6,
-    name: 'George R. R. Martin',
-    url: 'https://www.barnesandnoble.com/b/contributor/george-r-r-martin/_/N-2k9Z8q8Z1z141yt',
-    img: 'https://prodimage.images-bn.com/pimages/9780553573404_p0_v2_s600x595.jpg'
-  },
-  {
-    id: 7,
-    name: 'Brandon Sanderson',
-    url: 'https://www.barnesandnoble.com/b/contributor/brandon-sanderson/_/N-2k9Z8q8Z1z141xe',
-    img: 'https://prodimage.images-bn.com/pimages/9780765376671_p0_v3_s600x595.jpg'
-  },
-  {
-    id: 8,
-    name: 'Margaret Atwood',
-    url: 'https://www.barnesandnoble.com/b/contributor/margaret-atwood/_/N-2k9Z8q8Z1z141yx',
-    img: 'https://prodimage.images-bn.com/pimages/9780385490818_p0_v2_s600x595.jpg'
-  }
-];
 
-const PublishingHouses = [
-  {
-    id: 1,
-    name: 'Penguin Random House',
-    url: 'https://www.barnesandnoble.com/b/publisher/penguin-random-house/_/N-2k9Z8q8Z1z13a2z',
-    img: 'https://prodimage.images-bn.com/pimages/9780143127741_p0_v2_s600x595.jpg'
-  },
-  {
-    id: 2,
-    name: 'HarperCollins',
-    url: 'https://www.barnesandnoble.com/b/publisher/harpercollins-publishers/_/N-2k9Z8q8Z1z13m1e',
-    img: 'https://prodimage.images-bn.com/pimages/9780062316097_p0_v2_s600x595.jpg'
-  },
-  {
-    id: 3,
-    name: 'Simon & Schuster',
-    url: 'https://www.barnesandnoble.com/b/publisher/simon-schuster/_/N-2k9Z8q8Z1z13m0m',
-    img: 'https://prodimage.images-bn.com/pimages/9781501128035_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 4,
-    name: 'Hachette Book Group',
-    url: 'https://www.barnesandnoble.com/b/publisher/hachette-book-group/_/N-2k9Z8q8Z1z13m1k',
-    img: 'https://prodimage.images-bn.com/pimages/9780316499019_p0_v1_s600x595.jpg'
-  },
-  {
-    id: 5,
-    name: 'Macmillan Publishers',
-    url: 'https://www.barnesandnoble.com/b/publisher/macmillan-publishers/_/N-2k9Z8q8Z1z13m1j',
-    img: 'https://prodimage.images-bn.com/pimages/9781250272751_p0_v2_s600x595.jpg'
-  },
-  {
-    id: 6,
-    name: 'Scholastic Inc.',
-    url: 'https://www.barnesandnoble.com/b/publisher/scholastic-inc/_/N-2k9Z8q8Z1z13m1n',
-    img: 'https://prodimage.images-bn.com/pimages/9781338878929_p0_v1_s600x595.jpg'
-  }
-];
+const authors = authorsStore.authors
+const PublishingHouses = PublishingHousesStore.publishingHouses
 
 onMounted(()=> {
   window.scrollTo(0,0)

@@ -101,8 +101,8 @@ const { cartCount } = storeToRefs(cartStore)
           >
             <RouterLink
               :to="item.link"
-              class="hover:text-yellow-600 text-white block font-medium text-[15px]"
-              :class="{ 'text-yellow-500': isActive(item.link) }"
+              class="hover:text-[var(--color-hover)] text-white block font-medium text-[15px]"
+              :class="{ 'text-[var(--color-primary)]': isActive(item.link) }"
               @click="handleLinkClick"
               >{{ item.name }}</RouterLink
             >
@@ -111,11 +111,11 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
-        <RouterLink to="/cart" class="relative text-white hover:text-yellow-700 self-center">
+        <RouterLink to="/cart" class="relative text-white hover:text-[var(--color-hover)] self-center">
           <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
           <span
             v-if="cartCount > 0"
-            class="absolute -top-1 -right-2 text-xs font-medium bg-yellow-600 rounded-full px-1.5 py-0.5"
+            class="absolute -top-1 -right-2 text-xs font-medium bg-[var(--color-primary)] rounded-full px-1.5 py-0.5"
             >{{ cartCount }}</span
           >
         </RouterLink>
@@ -127,14 +127,14 @@ const { cartCount } = storeToRefs(cartStore)
         </button>
         <button
           @click="openRegister"
-          class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-yellow-600 bg-yellow-600 hover:bg-yellow-700 transition-all"
+          class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
         >
           Sign up
         </button>
 
         <button
           id="toggleOpen"
-          class="lg:hidden cursor-pointer text-yellow-600"
+          class="lg:hidden cursor-pointer text-[var(--color-primary)]"
           @click="toggleMenu"
         >
           <svg

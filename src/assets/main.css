@@ -6,9 +6,7 @@
   The value here is a fallback, the actual color is set
   dynamically from the Pinia store in `stores/settings.js`.
 */
-:root {
-  --color-primary: #D97706; /* Default: yellow-600 */
-}
+
 
 @font-face {
   font-family: Bona;

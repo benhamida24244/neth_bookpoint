@@ -13,7 +13,7 @@ const branches = ['Galle', 'Kurunegala', 'Kandy', 'Colombo'];
 </script>
 
 <template>
-  <footer class="bg-black border-t border-yellow-700 font-BonaRegular text-gray-300">
+  <footer class="bg-black border-t border-[var(--color-hover)] font-BonaRegular text-gray-300">
     <div class="container mx-auto px-6 py-12">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- About Section -->

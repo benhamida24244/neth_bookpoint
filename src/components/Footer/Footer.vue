@@ -20,14 +20,14 @@ const stats = [
       <!-- Content Section -->
       <div class="flex flex-col justify-center items-center md:items-start text-center md:text-left">
         <h2 class="text-4xl lg:text-5xl font-bona mb-6">
-          Your Favorite <span class="text-yellow-600">Reads <br>Are Here!</span>
+          Your Favorite <span class="text-[var(--color-primary)]">Reads <br>Are Here!</span>
         </h2>
         <p class="text-white/90 mb-8 max-w-lg font-BonaRegular">
           Buy your favorite books online with ease! Enjoy exclusive offers and discounts on selected titles. Dive into our collection and find special deals that make reading more affordable. Shop now and unlock more savings with every purchase!
         </p>
 
         <!-- Stats Section -->
-        <ul class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 font-BonaRegular text-yellow-600 mb-8 capitalize">
+        <ul class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 font-BonaRegular text-[var(--color-primary)] mb-8 capitalize">
           <li v-for="stat in stats" :key="stat.id" class="whitespace-nowrap">
             <span class="font-bold text-2xl font-bona">{{ stat.Number }}</span>
             <br>
@@ -36,7 +36,7 @@ const stats = [
         </ul>
 
         <!-- Action Button -->
-        <a href="/shop" class="border border-yellow-600 text-white font-bona py-3 px-8 rounded-md uppercase text-sm tracking-wider hover:bg-yellow-500 hover:text-black transition-colors duration-300">
+        <a href="/shop" class="border border-[var(--color-primary)] text-white font-bona py-3 px-8 rounded-md uppercase text-sm tracking-wider hover:bg-[var(--color-light)] hover:text-black transition-colors duration-300">
           Explore More
         </a>
       </div>
