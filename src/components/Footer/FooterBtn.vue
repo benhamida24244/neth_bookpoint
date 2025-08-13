@@ -14,7 +14,15 @@ const quickLinks = computed(() => [
   { name: translations.value.header?.contact || 'Contact', href: '/contact' },
 ]);
 
-const branches = ['Galle', 'Kurunegala', 'Kandy', 'Colombo'];
+const branches = computed(() => {
+  const branchTranslations = translations.value.footer?.branchList || {};
+  return [
+    branchTranslations.galle || 'Galle',
+    branchTranslations.kurunegala || 'Kurunegala',
+    branchTranslations.kandy || 'Kandy',
+    branchTranslations.colombo || 'Colombo'
+  ];
+});
 
 </script>
 
@@ -66,7 +74,7 @@ const branches = ['Galle', 'Kurunegala', 'Kandy', 'Colombo'];
 
       <!-- Bottom Bar -->
       <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm">
-        <p>&copy; 2025 | Neth BookPoint. All Rights Reserved.</p>
+        <p>{{ translations.footer?.copyright || '© 2025 | Neth BookPoint. All Rights Reserved.' }}</p>
       </div>
     </div>
   </footer>

@@ -20,6 +20,63 @@
     "stat1": "book listings",
     "stat2": "registered members",
     "stat3": "Branch Count",
-    "explore": "Explore More"
+    "explore": "Explore More",
+    "branchList": {
+      "galle": "Galle",
+      "kurunegala": "Kurunegala",
+      "kandy": "Kandy",
+      "colombo": "Colombo"
+    },
+    "copyright": "© 2025 | Neth BookPoint. All Rights Reserved."
+  },
+  "home": {
+    "bestsellers": "BestSellers",
+    "everyonesTalkingAbout": "Everyone's Talking About",
+    "ourBestPaperbacks": "Our Best Paperbacks",
+    "shopByCategory": "Shop by Category",
+    "ourBestYABooks": "Our Best YA Books",
+    "authors": "Authors",
+    "signedAndSpecialEditions": "Signed & Special Editions",
+    "publishingHouse": "Publishing House"
+  },
+  "about": {
+    "title": "About Us",
+    "welcome": "Welcome to <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, your trusted source for a diverse range of books catering to every reader's taste. Established with the mission to foster a love for reading in our community, we pride ourselves on providing excellent service and a wide selection of books. Our journey began in 2021, and since then, we have grown to become a beloved destination for book lovers. Below, you'll find information about our four branches, their locations, and contact numbers.",
+    "branchesTitle": "Our Branches",
+    "kurunegalaBranch": {
+      "title": "Kurunegala Branch",
+      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+    },
+    "kandyBranch": {
+      "title": "Kandy Branch",
+      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+    },
+    "colomboBranch": {
+      "title": "Colombo Branch",
+      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+    },
+    "commitmentTitle": "Our Commitment",
+    "commitmentText": "At <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, we are committed to providing a welcoming and inspiring environment for all book enthusiasts. Our branches are staffed with knowledgeable and friendly team members ready to assist you in finding the perfect book. Whether you're looking for the latest bestseller, a rare find, or a cozy place to read, we're your destination. We believe in the power of reading to transform lives and build community. Join us at one of our branches or explore our offerings online. We're here to support your reading journey and make your book shopping experience enjoyable and fulfilling."
+  },
+  "delivery": {
+    "title": "We’re Always Happy to Serve You!",
+    "welcome": "We welcome your orders with love and are always ready to serve you!",
+    "deliveryTime": "Orders within <strong>Neth BookPoint</strong> are usually delivered within <strong>48 working hours</strong>.<br />For other cities in the Kingdom, delivery takes between <strong>2–5 working days</strong>.",
+    "optionsTitle": "Delivery Options",
+    "homeDelivery": "<span class=\\\"font-semibold\\\">Home Delivery – 24 SAR:</span> May not be available in some remote cities or villages.",
+    "lockerPickup": "<span class=\\\"font-semibold\\\">Pickup from RedBox Locker – 9 SAR:</span> Not supported in some cities.",
+    "freeDelivery": "<span class=\\\"font-semibold\\\">Free Delivery for orders of 300 SAR or more!</span>",
+    "whatsapp": "Contact Us on WhatsApp",
+    "note": "Please note: Orders cannot be canceled after payment is completed."
+  },
+  "authors": {
+    "stephenKing": "An icon of horror, supernatural fiction, and suspense. Known as the \\\"King of Horror,\\\" his captivating stories have terrified and thrilled readers for decades.",
+    "jkRowling": "The creative genius behind the enchanting world of Harry Potter. Her magical storytelling has inspired a global generation of readers and dreamers.",
+    "colleenHoover": "A powerhouse in contemporary romance and young adult fiction. Hoover is celebrated for her emotionally charged novels that explore love, heartbreak, and resilience.",
+    "jamesPatterson": "One of the world's most prolific and bestselling authors. Patterson is a master of the thriller genre, known for his fast-paced plots and unforgettable characters.",
+    "agathaChristie": "The undisputed \\\"Queen of Crime.\\\" Christie penned timeless detective novels, creating iconic sleuths like Hercule Poirot and Miss Marple who continue to captivate.",
+    "georgeRRMartin": "The architect of the epic fantasy saga \\\"A Song of Ice and Fire.\\\" Martin is renowned for his intricate world-building and morally complex characters.",
+    "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \\\"Cosmere\\\" universe. Sanderson is a prolific and beloved storyteller.",
+    "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \\\"The Handmaid's Tale.\\\""
   }
 }
