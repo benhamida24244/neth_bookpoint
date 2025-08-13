@@ -1,4 +1,23 @@
 {
+       "orderSummary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "vat": "الضريبة (15%)",
+    "total": "المجموع الكلي",
+    "freeShippingNotice": "أضف ${{amount}} للحصول على شحن مجاني!",
+    "customerInformation": "معلومات العميل",
+    "receiverName": "اسم المستلم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "city": "المدينة",
+    "postalCode": "الرمز البريدي",
+    "quantity": "الكمية",
+    "shippingOptions": "خيارات الشحن",
+    "paymentMethods": "طرق الدفع",
+    "placeOrder": "تقديم الطلب",
+    "backToCart": "العودة إلى السلة",
+    "processing": "جاري المعالجة...",
   "header": {
     "home": "الرئيسية",
     "about": "حولنا",
@@ -22,62 +41,62 @@
     "stat3": "عدد الفروع",
     "explore": "اكتشف المزيد",
     "branchList": {
-      "galle": "Galle",
-      "kurunegala": "Kurunegala",
-      "kandy": "Kandy",
-      "colombo": "Colombo"
+      "galle": "غال",
+      "kurunegala": "كورونيغالا",
+      "kandy": "كاندي",
+      "colombo": "كولومبو"
     },
-    "copyright": "© 2025 | Neth BookPoint. All Rights Reserved."
+    "copyright": "© 2025 | Neth BookPoint. جميع الحقوق محفوظة."
   },
   "home": {
-    "bestsellers": "BestSellers",
-    "everyonesTalkingAbout": "Everyone's Talking About",
-    "ourBestPaperbacks": "Our Best Paperbacks",
-    "shopByCategory": "Shop by Category",
-    "ourBestYABooks": "Our Best YA Books",
-    "authors": "Authors",
-    "signedAndSpecialEditions": "Signed & Special Editions",
-    "publishingHouse": "Publishing House"
+    "bestsellers": "الأكثر مبيعًا",
+    "everyonesTalkingAbout": "الجميع يتحدث عن",
+    "ourBestPaperbacks": "أفضل كتبنا الورقية",
+    "shopByCategory": "تسوق حسب الفئة",
+    "ourBestYABooks": "أفضل كتب اليافعين لدينا",
+    "authors": "المؤلفون",
+    "signedAndSpecialEditions": "إصدارات موقعة وخاصة",
+    "publishingHouse": "دار النشر"
   },
   "about": {
-    "title": "About Us",
-    "welcome": "Welcome to <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, your trusted source for a diverse range of books catering to every reader's taste. Established with the mission to foster a love for reading in our community, we pride ourselves on providing excellent service and a wide selection of books. Our journey began in 2021, and since then, we have grown to become a beloved destination for book lovers. Below, you'll find information about our four branches, their locations, and contact numbers.",
-    "branchesTitle": "Our Branches",
+    "title": "حولنا",
+    "welcome": "مرحبًا بك في <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>، مصدرك الموثوق لمجموعة متنوعة من الكتب التي تلبي ذوق كل قارئ. تأسسنا بهدف تعزيز حب القراءة في مجتمعنا، ونفخر بتقديم خدمة ممتازة ومجموعة واسعة من الكتب. بدأت رحلتنا في عام 2021، ومنذ ذلك الحين نمونا لنصبح وجهة مفضلة لعشاق الكتب. أدناه ستجد معلومات عن فروعنا الأربعة، مواقعها، وأرقام الاتصال بها.",
+    "branchesTitle": "فروعنا",
     "kurunegalaBranch": {
-      "title": "Kurunegala Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "فرع كورونيغالا",
+      "details": "الشارع الرئيسي، مركز المدينة<br />هاتف: 123-456-7890<br />ساعات العمل: الإثنين–السبت، 9 صباحًا–7 مساءً؛ الأحد، 10 صباحًا–5 مساءً<br />🎓 خصومات للطلاب، 🧠 ورش عمل، 📖 أماكن للدراسة"
     },
     "kandyBranch": {
-      "title": "Kandy Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "فرع كاندي",
+      "details": "الشارع الرئيسي، مركز المدينة<br />هاتف: 123-456-7890<br />ساعات العمل: الإثنين–السبت، 9 صباحًا–7 مساءً؛ الأحد، 10 صباحًا–5 مساءً<br />🎓 خصومات للطلاب، 🧠 ورش عمل، 📖 أماكن للدراسة"
     },
     "colomboBranch": {
-      "title": "Colombo Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "فرع كولومبو",
+      "details": "الشارع الرئيسي، مركز المدينة<br />هاتف: 123-456-7890<br />ساعات العمل: الإثنين–السبت، 9 صباحًا–7 مساءً؛ الأحد، 10 صباحًا–5 مساءً<br />🎓 خصومات للطلاب، 🧠 ورش عمل، 📖 أماكن للدراسة"
     },
-    "commitmentTitle": "Our Commitment",
-    "commitmentText": "At <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, we are committed to providing a welcoming and inspiring environment for all book enthusiasts. Our branches are staffed with knowledgeable and friendly team members ready to assist you in finding the perfect book. Whether you're looking for the latest bestseller, a rare find, or a cozy place to read, we're your destination. We believe in the power of reading to transform lives and build community. Join us at one of our branches or explore our offerings online. We're here to support your reading journey and make your book shopping experience enjoyable and fulfilling."
+    "commitmentTitle": "التزامنا",
+    "commitmentText": "في <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>، نحن ملتزمون بتوفير بيئة ترحيبية وملهمة لجميع عشاق الكتب. فروعنا تضم فريقًا من الأعضاء الودودين وذوي المعرفة الجاهزين لمساعدتك في العثور على الكتاب المثالي. سواء كنت تبحث عن أحدث الكتب الأكثر مبيعًا، أو عن كتاب نادر، أو عن مكان مريح للقراءة، فنحن وجهتك. نحن نؤمن بقوة القراءة في تغيير الحياة وبناء المجتمع. انضم إلينا في أحد فروعنا أو استكشف عروضنا عبر الإنترنت. نحن هنا لدعم رحلتك القرائية وجعل تجربة شراء الكتب ممتعة وثرية."
   },
   "delivery": {
-    "title": "We’re Always Happy to Serve You!",
-    "welcome": "We welcome your orders with love and are always ready to serve you!",
-    "deliveryTime": "Orders within <strong>Neth BookPoint</strong> are usually delivered within <strong>48 working hours</strong>.<br />For other cities in the Kingdom, delivery takes between <strong>2–5 working days</strong>.",
-    "optionsTitle": "Delivery Options",
-    "homeDelivery": "<span class=\\\"font-semibold\\\">Home Delivery – 24 SAR:</span> May not be available in some remote cities or villages.",
-    "lockerPickup": "<span class=\\\"font-semibold\\\">Pickup from RedBox Locker – 9 SAR:</span> Not supported in some cities.",
-    "freeDelivery": "<span class=\\\"font-semibold\\\">Free Delivery for orders of 300 SAR or more!</span>",
-    "whatsapp": "Contact Us on WhatsApp",
-    "note": "Please note: Orders cannot be canceled after payment is completed."
+    "title": "نسعد دائمًا بخدمتك!",
+    "welcome": "نستقبل طلباتك بكل حب ونكون دائمًا على استعداد لخدمتك!",
+    "deliveryTime": "يتم توصيل الطلبات داخل <strong>Neth BookPoint</strong> عادةً خلال <strong>48 ساعة عمل</strong>.<br />أما لبقية المدن في المملكة، فيستغرق التوصيل من <strong>2–5 أيام عمل</strong>.",
+    "optionsTitle": "خيارات التوصيل",
+    "homeDelivery": "<span class=\"font-semibold\">التوصيل إلى المنزل – 24 ريال سعودي:</span> قد لا يتوفر في بعض المدن أو القرى النائية.",
+    "lockerPickup": "<span class=\"font-semibold\">الاستلام من خزائن RedBox – 9 ريال سعودي:</span> غير متاح في بعض المدن.",
+    "freeDelivery": "<span class=\"font-semibold\">توصيل مجاني للطلبات التي تبلغ 300 ريال سعودي أو أكثر!</span>",
+    "whatsapp": "تواصل معنا عبر الواتساب",
+    "note": "ملاحظة: لا يمكن إلغاء الطلبات بعد إتمام الدفع."
   },
   "authors": {
-    "stephenKing": "An icon of horror, supernatural fiction, and suspense. Known as the \\\"King of Horror,\\\" his captivating stories have terrified and thrilled readers for decades.",
-    "jkRowling": "The creative genius behind the enchanting world of Harry Potter. Her magical storytelling has inspired a global generation of readers and dreamers.",
-    "colleenHoover": "A powerhouse in contemporary romance and young adult fiction. Hoover is celebrated for her emotionally charged novels that explore love, heartbreak, and resilience.",
-    "jamesPatterson": "One of the world's most prolific and bestselling authors. Patterson is a master of the thriller genre, known for his fast-paced plots and unforgettable characters.",
-    "agathaChristie": "The undisputed \\\"Queen of Crime.\\\" Christie penned timeless detective novels, creating iconic sleuths like Hercule Poirot and Miss Marple who continue to captivate.",
-    "georgeRRMartin": "The architect of the epic fantasy saga \\\"A Song of Ice and Fire.\\\" Martin is renowned for his intricate world-building and morally complex characters.",
-    "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \\\"Cosmere\\\" universe. Sanderson is a prolific and beloved storyteller.",
-    "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \\\"The Handmaid's Tale.\\\""
+    "stephenKing": "أيقونة في أدب الرعب والخيال الخارق والتشويق. يُعرف بلقب \"ملك الرعب\"، وقد أرعبت وأثارت قصصه المشوقة القراء لعقود.",
+    "jkRowling": "العبقرية الإبداعية وراء العالم الساحر لهاري بوتر. أسلوبها القصصي السحري ألهم جيلًا عالميًا من القراء والحالمين.",
+    "colleenHoover": "قوة بارزة في أدب الرومانسية المعاصرة وأدب اليافعين. تشتهر رواياتها المليئة بالعاطفة التي تستكشف الحب وكسر القلب والقدرة على التعافي.",
+    "jamesPatterson": "واحد من أكثر المؤلفين غزارة وإقبالًا في العالم. يتقن كتابة التشويق، ويشتهر بحبكاته السريعة وشخصياته التي لا تُنسى.",
+    "agathaChristie": "«ملكة الجريمة» بلا منازع. كتبت روايات تحرٍ خالدة وابتكرت محققين أسطوريين مثل هيركيول بوارو وملكة ماربل الذين لا يزالون يجذبون القراء.",
+    "georgeRRMartin": "مهندس ملحمة الفانتازيا الشهيرة «أغنية الجليد والنار». يُعرف ببراعته في بناء العوالم المعقدة والشخصيات ذات الأبعاد الأخلاقية المتشابكة.",
+    "brandonSanderson": "سيد الفانتازيا الحديثة، مشهور بأنظمته السحرية التفصيلية وعالم «كوزمير» المترابط. كاتب غزير الإنتاج ومحبوب.",
+    "margaretAtwood": "قامة أدبية بارزة تتنوع أعمالها بين الخيال المستقبلي والخيال التاريخي والشعر. مشهورة برؤيتها الحادة وتعليقاتها الاجتماعية ورواياتها مثل «حكاية الجارية»."
   },
   "hero": {
     "title": "أرض أحلام محبي الكتب في انتظارك!",

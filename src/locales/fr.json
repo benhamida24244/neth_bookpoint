@@ -1,11 +1,31 @@
 {
+  
+"orderSummary": "Résumé de la commande",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "vat": "TVA (15%)",
+    "total": "Total général",
+    "freeShippingNotice": "Ajoutez ${{amount}} pour bénéficier de la livraison gratuite !",
+    "customerInformation": "Informations client",
+    "receiverName": "Nom du destinataire",
+    "email": "Email",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "quantity": "Quantité",
+    "shippingOptions": "Options de livraison",
+    "paymentMethods": "Méthodes de paiement",
+    "placeOrder": "Passer la commande",
+    "backToCart": "Retour au panier",
+    "processing": "Traitement en cours...",
   "header": {
     "home": "Accueil",
     "about": "À propos",
     "shop": "Boutique",
     "delivery_theme": "Thème de livraison",
     "authors": "Auteurs",
-    "login": "Connexion",
+    "login": "Se connecter",
     "signup": "S'inscrire",
     "contact": "Contact"
   },
@@ -14,10 +34,10 @@
     "quickLinks": "Liens rapides",
     "branches": "Nos succursales",
     "followUs": "Suivez-nous",
-    "promoTitle1": "Vos favoris",
-    "promoTitle2": "Les lectures sont ici !",
-    "promoDescription": "Achetez vos livres préférés en ligne en toute simplicité ! Profitez d'offres et de réductions exclusives sur une sélection de titres. Plongez dans notre collection et trouvez des offres spéciales qui rendent la lecture plus abordable. Achetez maintenant et débloquez plus d'économies à chaque achat !",
-    "stat1": "annonces de livres",
+    "promoTitle1": "Vos lectures",
+    "promoTitle2": "préférées sont ici !",
+    "promoDescription": "Achetez vos livres préférés en ligne en toute simplicité ! Profitez d'offres exclusives et de réductions sur une sélection de titres. Plongez dans notre collection et trouvez des offres spéciales qui rendent la lecture plus abordable. Achetez maintenant et débloquez plus d'économies à chaque achat !",
+    "stat1": "listes de livres",
     "stat2": "membres inscrits",
     "stat3": "Nombre de succursales",
     "explore": "Explorer plus",
@@ -27,56 +47,123 @@
       "kandy": "Kandy",
       "colombo": "Colombo"
     },
-    "copyright": "© 2025 | Neth BookPoint. All Rights Reserved."
+    "copyright": "© 2025 | Neth BookPoint. Tous droits réservés."
   },
   "home": {
-    "bestsellers": "BestSellers",
-    "everyonesTalkingAbout": "Everyone's Talking About",
-    "ourBestPaperbacks": "Our Best Paperbacks",
-    "shopByCategory": "Shop by Category",
-    "ourBestYABooks": "Our Best YA Books",
-    "authors": "Authors",
-    "signedAndSpecialEditions": "Signed & Special Editions",
-    "publishingHouse": "Publishing House"
+    "bestsellers": "Meilleures ventes",
+    "everyonesTalkingAbout": "Tout le monde en parle",
+    "ourBestPaperbacks": "Nos meilleurs livres de poche",
+    "shopByCategory": "Acheter par catégorie",
+    "ourBestYABooks": "Nos meilleurs livres YA",
+    "authors": "Auteurs",
+    "signedAndSpecialEditions": "Éditions signées et spéciales",
+    "publishingHouse": "Maison d'édition"
   },
   "about": {
-    "title": "About Us",
-    "welcome": "Welcome to <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, your trusted source for a diverse range of books catering to every reader's taste. Established with the mission to foster a love for reading in our community, we pride ourselves on providing excellent service and a wide selection of books. Our journey began in 2021, and since then, we have grown to become a beloved destination for book lovers. Below, you'll find information about our four branches, their locations, and contact numbers.",
-    "branchesTitle": "Our Branches",
+    "title": "À propos de nous",
+    "welcome": "Bienvenue chez <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, votre source de confiance pour une gamme diversifiée de livres qui répondent aux goûts de chaque lecteur. Fondée avec la mission de favoriser l'amour de la lecture dans notre communauté, nous sommes fiers de fournir un excellent service et un large choix de livres. Notre parcours a commencé en 2021, et depuis, nous sommes devenus une destination prisée des amateurs de livres. Ci-dessous, vous trouverez des informations sur nos quatre succursales, leurs emplacements et leurs numéros de contact.",
+    "branchesTitle": "Nos succursales",
     "kurunegalaBranch": {
-      "title": "Kurunegala Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "Succursale de Kurunegala",
+      "details": "Main Street, City Center<br />Contact : 123-456-7890<br />Heures : Lun–Sam, 9h–19h ; Dim, 10h–17h<br />🎓 Réductions pour étudiants, 🧠 Ateliers, 📖 Espaces d'étude"
     },
     "kandyBranch": {
-      "title": "Kandy Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "Succursale de Kandy",
+      "details": "Main Street, City Center<br />Contact : 123-456-7890<br />Heures : Lun–Sam, 9h–19h ; Dim, 10h–17h<br />🎓 Réductions pour étudiants, 🧠 Ateliers, 📖 Espaces d'étude"
     },
     "colomboBranch": {
-      "title": "Colombo Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "title": "Succursale de Colombo",
+      "details": "Main Street, City Center<br />Contact : 123-456-7890<br />Heures : Lun–Sam, 9h–19h ; Dim, 10h–17h<br />🎓 Réductions pour étudiants, 🧠 Ateliers, 📖 Espaces d'étude"
     },
-    "commitmentTitle": "Our Commitment",
-    "commitmentText": "At <span class=\\\"text-[var(--color-primary)] font-semibold\\\">Neth BookPoint</span>, we are committed to providing a welcoming and inspiring environment for all book enthusiasts. Our branches are staffed with knowledgeable and friendly team members ready to assist you in finding the perfect book. Whether you're looking for the latest bestseller, a rare find, or a cozy place to read, we're your destination. We believe in the power of reading to transform lives and build community. Join us at one of our branches or explore our offerings online. We're here to support your reading journey and make your book shopping experience enjoyable and fulfilling."
+    "commitmentTitle": "Notre engagement",
+    "commitmentText": "Chez <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, nous nous engageons à fournir un environnement accueillant et inspirant pour tous les passionnés de livres. Nos succursales sont dotées de membres d'équipe compétents et sympathiques, prêts à vous aider à trouver le livre parfait. Que vous recherchiez le dernier best-seller, une découverte rare ou un endroit confortable pour lire, nous sommes votre destination. Nous croyons au pouvoir de la lecture pour transformer des vies et bâtir une communauté. Rejoignez-nous dans l'une de nos succursales ou explorez nos offres en ligne. Nous sommes là pour soutenir votre parcours de lecture et rendre votre expérience d'achat de livres agréable et enrichissante."
   },
   "delivery": {
-    "title": "We’re Always Happy to Serve You!",
-    "welcome": "We welcome your orders with love and are always ready to serve you!",
-    "deliveryTime": "Orders within <strong>Neth BookPoint</strong> are usually delivered within <strong>48 working hours</strong>.<br />For other cities in the Kingdom, delivery takes between <strong>2–5 working days</strong>.",
-    "optionsTitle": "Delivery Options",
-    "homeDelivery": "<span class=\\\"font-semibold\\\">Home Delivery – 24 SAR:</span> May not be available in some remote cities or villages.",
-    "lockerPickup": "<span class=\\\"font-semibold\\\">Pickup from RedBox Locker – 9 SAR:</span> Not supported in some cities.",
-    "freeDelivery": "<span class=\\\"font-semibold\\\">Free Delivery for orders of 300 SAR or more!</span>",
-    "whatsapp": "Contact Us on WhatsApp",
-    "note": "Please note: Orders cannot be canceled after payment is completed."
+    "title": "Nous sommes toujours heureux de vous servir !",
+    "welcome": "Nous accueillons vos commandes avec amour et sommes toujours prêts à vous servir !",
+    "deliveryTime": "Les commandes passées chez <strong>Neth BookPoint</strong> sont généralement livrées sous <strong>48 heures ouvrables</strong>.<br />Pour les autres villes du Royaume, la livraison prend entre <strong>2 et 5 jours ouvrables</strong>.",
+    "optionsTitle": "Options de livraison",
+    "homeDelivery": "<span class=\"font-semibold\">Livraison à domicile – 24 SAR :</span> Peut ne pas être disponible dans certaines villes ou villages isolés.",
+    "lockerPickup": "<span class=\"font-semibold\">Retrait au casier RedBox – 9 SAR :</span> Non pris en charge dans certaines villes.",
+    "freeDelivery": "<span class=\"font-semibold\">Livraison gratuite pour les commandes de 300 SAR ou plus !</span>",
+    "whatsapp": "Contactez-nous sur WhatsApp",
+    "note": "Veuillez noter : les commandes ne peuvent pas être annulées une fois le paiement effectué."
   },
   "authors": {
-    "stephenKing": "An icon of horror, supernatural fiction, and suspense. Known as the \\\"King of Horror,\\\" his captivating stories have terrified and thrilled readers for decades.",
-    "jkRowling": "The creative genius behind the enchanting world of Harry Potter. Her magical storytelling has inspired a global generation of readers and dreamers.",
-    "colleenHoover": "A powerhouse in contemporary romance and young adult fiction. Hoover is celebrated for her emotionally charged novels that explore love, heartbreak, and resilience.",
-    "jamesPatterson": "One of the world's most prolific and bestselling authors. Patterson is a master of the thriller genre, known for his fast-paced plots and unforgettable characters.",
-    "agathaChristie": "The undisputed \\\"Queen of Crime.\\\" Christie penned timeless detective novels, creating iconic sleuths like Hercule Poirot and Miss Marple who continue to captivate.",
-    "georgeRRMartin": "The architect of the epic fantasy saga \\\"A Song of Ice and Fire.\\\" Martin is renowned for his intricate world-building and morally complex characters.",
-    "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \\\"Cosmere\\\" universe. Sanderson is a prolific and beloved storyteller.",
-    "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \\\"The Handmaid's Tale.\\\""
+    "stephenKing": "Une icône de l'horreur, de la fiction surnaturelle et du suspense. Connu comme le « Roi de l'horreur », ses histoires captivantes ont terrifié et passionné les lecteurs pendant des décennies.",
+    "jkRowling": "Le génie créatif derrière le monde enchanteur d'Harry Potter. Ses récits magiques ont inspiré une génération mondiale de lecteurs et de rêveurs.",
+    "colleenHoover": "Une figure incontournable de la romance contemporaine et de la fiction pour jeunes adultes. Hoover est célébrée pour ses romans chargés d'émotion qui explorent l'amour, le chagrin et la résilience.",
+    "jamesPatterson": "L'un des auteurs les plus prolifiques et les plus vendus au monde. Patterson est un maître du genre thriller, connu pour ses intrigues au rythme effréné et ses personnages inoubliables.",
+    "agathaChristie": "La « Reine du crime » incontestée. Christie a écrit des romans policiers intemporels, créant des détectives emblématiques comme Hercule Poirot et Miss Marple qui continuent de captiver.",
+    "georgeRRMartin": "L'architecte de la saga de fantasy épique « Le Trône de Fer ». Martin est réputé pour la construction complexe de ses mondes et ses personnages moralement complexes.",
+    "brandonSanderson": "Un maître de la fantasy moderne, célèbre pour ses systèmes de magie détaillés et l'univers interconnecté du « Cosmere ». Sanderson est un conteur prolifique et très apprécié.",
+    "margaretAtwood": "Un titan littéraire dont l'œuvre englobe la fiction spéculative, la fiction historique et la poésie. Atwood est acclamée pour son commentaire social acéré et ses romans visionnaires comme « La Servante écarlate »."
+  },
+  "hero": {
+    "title": "Le pays des rêves des amoureux des livres vous attend !",
+    "subtitle": "Bienvenue au paradis ultime des amoureux des livres ! Rejoignez notre communauté et contribuez à la bibliothèque de récits en constante évolution, où chaque livre a une chance d'inspirer quelqu'un de nouveau.",
+    "searchPlaceholder": "Rechercher un livre...",
+    "searchButton": "Rechercher"
+  },
+  "dashboard": {
+    "overview": "Aperçu du tableau de bord",
+    "books": "Livres",
+    "ordersToday": "Commandes du jour",
+    "clients": "Clients",
+    "salesToday": "Ventes du jour",
+    "sidebar": {
+      "dashboard": "Tableau de bord",
+      "books": "Livres",
+      "addBook": "Ajouter un livre",
+      "categories": "Catégories",
+      "authors": "Auteurs",
+      "publishingHouses": "Maisons d'édition",
+      "users": "Utilisateurs",
+      "clients": "Clients",
+      "orders": "Commandes",
+      "messages": "Messages",
+      "settings": "Paramètres",
+      "logout": "Se déconnecter"
+    },
+    "clientInfo": {
+      "title": "Détails du client",
+      "back": "Retour",
+      "updatedSuccess": "Client mis à jour avec succès",
+      "loading": "Chargement des données client...",
+      "error": "Erreur",
+      "tryAgain": "Réessayer",
+      "sendEmail": "Envoyer un e-mail",
+      "callClient": "Appeler le client",
+      "print": "Imprimer",
+      "downloadReport": "Télécharger le rapport",
+      "totalOrders": "Total des commandes",
+      "totalSpent": "Total dépensé",
+      "averageOrder": "Commande moyenne",
+      "memberSince": "Membre depuis",
+      "personalInformation": "Informations personnelles",
+      "fullName": "Nom complet",
+      "emailAddress": "Adresse e-mail",
+      "phoneNumber": "Numéro de téléphone",
+      "country": "Pays",
+      "registrationDate": "Date d'inscription",
+      "lastOrder": "Dernière commande",
+      "address": "Adresse",
+      "notes": "Notes",
+      "statusManagement": "Gestion du statut",
+      "currentStatus": "Statut actuel",
+      "changeStatus": "Changer le statut",
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "pending": "En attente"
+      }
+    },
+    "categories": {
+      "title": "Tableau de bord des catégories",
+      "subtitle": "Suivez et gérez efficacement toutes vos catégories.",
+      "totalCategories": "Total des catégories",
+      "activeCategories": "Catégories actives",
+      "newThisMonth": "Nouveautés ce mois-ci"
+    }
   }
 }

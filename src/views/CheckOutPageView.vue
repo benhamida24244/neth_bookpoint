@@ -5,6 +5,8 @@ import { useCartStore } from '@/stores/Cart';
 import { useCheckoutStore } from '@/stores/Checkout';
 import { useUserStore } from '@/stores/Users';
 import { storeToRefs } from 'pinia';
+import { useLanguageStore } from '@/stores/language'
+
 
 const icons = {
   Truck,
@@ -14,6 +16,10 @@ const icons = {
 const isLoading = ref(false);
 const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
 const selectedPayment = ref('electronic'); // 'electronic', 'tabby', or 'cod'
+
+const languageStore = useLanguageStore()
+const { translations } = storeToRefs(languageStore)
+
 
 const cartStore = useCartStore();
 const { cart: orderItems } = storeToRefs(cartStore);
@@ -39,14 +45,16 @@ const formData = ref({
 });
 
 // Form field configuration
-const formFields = [
-  { key: 'receiverName', placeholder: 'Receiver Name', type: 'text', required: true },
-  { key: 'email', placeholder: 'Email Address', type: 'email', required: true },
-  { key: 'phone', placeholder: 'Phone Number', type: 'tel', required: true },
-  { key: 'address', placeholder: 'Street Address', type: 'text', required: selectedShipping.value === 'delivery' },
-  { key: 'city', placeholder: 'City', type: 'text', required: true },
-  { key: 'postalCode', placeholder: 'Postal Code', type: 'text', required: false }
-];
+const formFields = computed(() =>
+  [
+    { key: 'receiverName', placeholder: translations.value.receiverName, type: 'text', required: true },
+    { key: 'email', placeholder: translations.value.email, type: 'email', required: true },
+    { key: 'phone', placeholder: translations.value.phone, type: 'tel', required: true },
+    { key: 'address', placeholder: translations.value.address, type: 'text', required: selectedShipping.value === 'delivery' },
+    { key: 'city', placeholder: translations.value.city, type: 'text', required: true },
+    { key: 'postalCode', placeholder: translations.value.postalCode, type: 'text', required: false }
+  ]
+);
 
 // Computed values
 const subtotal = computed(() =>
@@ -109,7 +117,7 @@ const handleSubmit = () => {
         <!-- Order Summary Sidebar -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Order Summary</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">{{ translations.orderSummary }}</h2>
 
             <!-- Order Items -->
             <div class="space-y-4 mb-6">
@@ -129,19 +137,19 @@ const handleSubmit = () => {
             <!-- Totals -->
             <div class="border-t pt-4 space-y-2">
               <div class="flex justify-between text-gray-600">
-                <span>Subtotal</span>
+                <span>{{ translations.subtotal }}</span>
                 <span>${{ subtotal.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
-                <span>Shipping</span>
+                <span>{{ translations.shipping }}</span>
                 <span>${{ shippingCost.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 text-sm">
-                <span>VAT (15%)</span>
+                <span>{{ translations.vat }} (15%)</span>
                 <span>${{ vatAmount.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
-                <span>Total</span>
+                <span>{{ translations.total }}</span>
                 <span class="text-[var(--color-primary)]">${{ grandTotal.toFixed(2) }}</span>
               </div>
             </div>
@@ -149,7 +157,7 @@ const handleSubmit = () => {
             <!-- Free Shipping Notice -->
             <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ amountNeededForFreeShipping.toFixed(2) }} to get free shipping!
+                Add ${{ amountNeededForFreeShipping.toFixed(2) }} {{ translations.freeShippingNotice }}
               </p>
             </div>
           </div>
@@ -170,7 +178,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <InfoIcon class="w-5 h-5 mr-2" />
-                  Customer Information
+                 {{translations.customerInformation}}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div
@@ -202,7 +210,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <Truck class="w-5 h-5 mr-2" />
-                  Shipping Options
+                  {{translations.shippingOptions}}
                 </h3>
                 <div class="space-y-3">
                   <div
@@ -237,7 +245,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <CreditCard class="w-5 h-5 mr-2" />
-                  Payment Methods
+                  {{translations.paymentMethods}}
                 </h3>
                 <div class="space-y-3">
                   <div
@@ -279,20 +287,20 @@ const handleSubmit = () => {
                   :disabled="isLoading"
                   class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  <span v-if="!isLoading">Place Order</span>
+                  <span v-if="!isLoading">{{translations.placeOrder}}</span>
                   <span v-else class="flex items-center">
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Processing...
+                    {{translations.processing}}
                   </span>
                 </button>
                 <RouterLink
                   to="/cart"
                   class="bg-transparent hover:bg-[var(--color-primary)] hover:text-black text-white border-2 border-[var(--color-primary)] font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
                 >
-                  Back to Cart
+                 {{translations.backToCart}}
                 </RouterLink>
               </div>
             </form>

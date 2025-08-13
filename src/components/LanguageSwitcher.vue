@@ -29,7 +29,7 @@ const setLanguage = (lang) => {
     <div class="flex items-center">
       <button
         @click="showMenu = !showMenu"
-        class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
+        class="px-4 py-2 text-sm rounded-full font-medium font-BonaRegular cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
       >
         {{ currentLanguage.name }}
       </button>
