@@ -6,6 +6,20 @@
     "delivery_theme": "Thème de livraison",
     "authors": "Auteurs",
     "login": "Connexion",
-    "signup": "S'inscrire"
+    "signup": "S'inscrire",
+    "contact": "Contact"
+  },
+  "footer": {
+    "about": "Visitez nos succursales et inscrivez-vous sur notre plateforme en ligne pour profiter d'un maximum d'avantages !",
+    "quickLinks": "Liens rapides",
+    "branches": "Nos succursales",
+    "followUs": "Suivez-nous",
+    "promoTitle1": "Vos favoris",
+    "promoTitle2": "Les lectures sont ici !",
+    "promoDescription": "Achetez vos livres préférés en ligne en toute simplicité ! Profitez d'offres et de réductions exclusives sur une sélection de titres. Plongez dans notre collection et trouvez des offres spéciales qui rendent la lecture plus abordable. Achetez maintenant et débloquez plus d'économies à chaque achat !",
+    "stat1": "annonces de livres",
+    "stat2": "membres inscrits",
+    "stat3": "Nombre de succursales",
+    "explore": "Explorer plus"
   }
 }

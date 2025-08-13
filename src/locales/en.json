@@ -6,6 +6,20 @@
     "delivery_theme": "Delivery theme",
     "authors": "Authors",
     "login": "Login",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "contact": "Contact"
+  },
+  "footer": {
+    "about": "Visit our branches and register for our online platform to enjoy maximum benefits!",
+    "quickLinks": "Quick Links",
+    "branches": "Our Branches",
+    "followUs": "Follow Us",
+    "promoTitle1": "Your Favorite",
+    "promoTitle2": "Reads Are Here!",
+    "promoDescription": "Buy your favorite books online with ease! Enjoy exclusive offers and discounts on selected titles. Dive into our collection and find special deals that make reading more affordable. Shop now and unlock more savings with every purchase!",
+    "stat1": "book listings",
+    "stat2": "registered members",
+    "stat3": "Branch Count",
+    "explore": "Explore More"
   }
 }
