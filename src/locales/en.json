@@ -1,0 +1,11 @@
+{
+  "header": {
+    "home": "Home",
+    "about": "About",
+    "shop": "Shop",
+    "delivery_theme": "Delivery theme",
+    "authors": "Authors",
+    "login": "Login",
+    "signup": "Sign up"
+  }
+}
