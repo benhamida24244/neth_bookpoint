@@ -78,5 +78,72 @@
     "georgeRRMartin": "The architect of the epic fantasy saga \\\"A Song of Ice and Fire.\\\" Martin is renowned for his intricate world-building and morally complex characters.",
     "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \\\"Cosmere\\\" universe. Sanderson is a prolific and beloved storyteller.",
     "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \\\"The Handmaid's Tale.\\\""
+  },
+  "hero": {
+    "title": "أرض أحلام محبي الكتب في انتظارك!",
+    "subtitle": "مرحباً بك في جنة محبي الكتب! انضم إلى مجتمعنا وساهم في مكتبة القصص المتطورة باستمرار، حيث كل كتاب لديه فرصة لإلهام شخص جديد.",
+    "searchPlaceholder": "ابحث عن كتاب...",
+    "searchButton": "بحث"
+  },
+  "dashboard": {
+    "overview": "نظرة عامة على لوحة التحكم",
+    "books": "الكتب",
+    "ordersToday": "طلبات اليوم",
+    "clients": "العملاء",
+    "salesToday": "مبيعات اليوم",
+    "sidebar": {
+      "dashboard": "لوحة التحكم",
+      "books": "الكتب",
+      "addBook": "إضافة كتاب",
+      "categories": "الفئات",
+      "authors": "المؤلفون",
+      "publishingHouses": "دور النشر",
+      "users": "المستخدمون",
+      "clients": "العملاء",
+      "orders": "الطلبات",
+      "messages": "الرسائل",
+      "settings": "الإعدادات",
+      "logout": "تسجيل الخروج"
+    },
+    "clientInfo": {
+      "title": "تفاصيل العميل",
+      "back": "رجوع",
+      "updatedSuccess": "تم تحديث العميل بنجاح",
+      "loading": "جاري تحميل بيانات العميل...",
+      "error": "خطأ",
+      "tryAgain": "حاول مرة أخرى",
+      "sendEmail": "إرسال بريد إلكتروني",
+      "callClient": "الاتصال بالعميل",
+      "print": "طباعة",
+      "downloadReport": "تحميل التقرير",
+      "totalOrders": "إجمالي الطلبات",
+      "totalSpent": "إجمالي الإنفاق",
+      "averageOrder": "متوسط الطلب",
+      "memberSince": "عضو منذ",
+      "personalInformation": "المعلومات الشخصية",
+      "fullName": "الاسم الكامل",
+      "emailAddress": "البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "country": "الدولة",
+      "registrationDate": "تاريخ التسجيل",
+      "lastOrder": "آخر طلب",
+      "address": "العنوان",
+      "notes": "ملاحظات",
+      "statusManagement": "إدارة الحالة",
+      "currentStatus": "الحالة الحالية",
+      "changeStatus": "تغيير الحالة",
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "pending": "قيد الانتظار"
+      }
+    },
+    "categories": {
+      "title": "لوحة تحكم الفئات",
+      "subtitle": "تتبع وإدارة جميع الفئات الخاصة بك بكفاءة.",
+      "totalCategories": "إجمالي الفئات",
+      "activeCategories": "الفئات النشطة",
+      "newThisMonth": "جديد هذا الشهر"
+    }
   }
 }

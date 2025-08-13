@@ -78,5 +78,72 @@
     "georgeRRMartin": "The architect of the epic fantasy saga \\\"A Song of Ice and Fire.\\\" Martin is renowned for his intricate world-building and morally complex characters.",
     "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \\\"Cosmere\\\" universe. Sanderson is a prolific and beloved storyteller.",
     "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \\\"The Handmaid's Tale.\\\""
+  },
+  "hero": {
+    "title": "The Book Lover's Dreamland Awaits!",
+    "subtitle": "Welcome to the ultimate book lover's paradise! Join our community and contribute to the ever-evolving library of stories, where every book has a chance to inspire someone new.",
+    "searchPlaceholder": "Search for a book...",
+    "searchButton": "Search"
+  },
+  "dashboard": {
+    "overview": "Dashboard Overview",
+    "books": "Books",
+    "ordersToday": "Orders Today",
+    "clients": "Clients",
+    "salesToday": "Sales Today",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "books": "Books",
+      "addBook": "Add Book",
+      "categories": "Categories",
+      "authors": "Authors",
+      "publishingHouses": "Publishing Houses",
+      "users": "Users",
+      "clients": "Clients",
+      "orders": "Orders",
+      "messages": "Messages",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "clientInfo": {
+      "title": "Client Details",
+      "back": "Back",
+      "updatedSuccess": "Client updated successfully",
+      "loading": "Loading client data...",
+      "error": "Error",
+      "tryAgain": "Try Again",
+      "sendEmail": "Send Email",
+      "callClient": "Call Client",
+      "print": "Print",
+      "downloadReport": "Download Report",
+      "totalOrders": "Total Orders",
+      "totalSpent": "Total Spent",
+      "averageOrder": "Average Order",
+      "memberSince": "Member Since",
+      "personalInformation": "Personal Information",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "country": "Country",
+      "registrationDate": "Registration Date",
+      "lastOrder": "Last Order",
+      "address": "Address",
+      "notes": "Notes",
+      "statusManagement": "Status Management",
+      "currentStatus": "Current Status",
+      "changeStatus": "Change Status",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending"
+      }
+    },
+    "categories": {
+      "title": "Categories Dashboard",
+      "subtitle": "Track and manage all your categories efficiently.",
+      "totalCategories": "Total Categories",
+      "activeCategories": "Active Categories",
+      "newThisMonth": "New This Month"
+    }
   }
 }
