@@ -39,7 +39,7 @@ const stats = computed(() => [
   {
     label: 'Total Publishers',
     value: (bookStore.getTotalPublishedBooks || []).length.toString(),
-    icon: 'fas fa-building text-yellow-500',
+    icon: 'fas fa-building text-[var(--color-light)]',
     iconBg: 'bg-yellow-50',
   },
   {
@@ -75,7 +75,7 @@ const filteredBooks = computed(() => {
 const getStatusClass = (status) => {
   const statusClasses = {
     published: 'bg-green-50 text-green-700',
-    pending: 'bg-yellow-50 text-yellow-700',
+    pending: 'bg-yellow-50 text-[var(--color-primary)]',
     draft: 'bg-red-50 text-red-700',
   }
   return statusClasses[status] || 'bg-gray-50 text-gray-700'
@@ -117,7 +117,7 @@ const getStatusClass = (status) => {
             :class="[
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
               activeFilter === filter.value
-                ? 'bg-yellow-600 text-white border-yellow-600'
+                ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
                 : 'hover:bg-gray-50',
             ]"
           >
@@ -130,7 +130,7 @@ const getStatusClass = (status) => {
             v-model="searchQuery"
             type="text"
             placeholder="Search books..."
-            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500"
+            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
           />
           <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
         </div>
@@ -228,7 +228,7 @@ const getStatusClass = (status) => {
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                   <RouterLink
                     :to="`/dashboard/books/${book.id}`"
-                    class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium"
+                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
                   >
                     <i class="far fa-eye"></i> View
                   </RouterLink>

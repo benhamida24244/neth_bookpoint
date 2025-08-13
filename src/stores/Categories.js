@@ -14,7 +14,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 43,
         nmBook: 12,
         createdAt: '2025-07-10T12:00:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -26,7 +26,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 58,
         nmBook: 25,
         createdAt: '2025-07-09T11:30:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -38,7 +38,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 75,
         nmBook: 33,
         createdAt: '2025-07-08T15:10:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -50,7 +50,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 92,
         nmBook: 40,
         createdAt: '2025-07-07T09:05:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -62,7 +62,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 21,
         nmBook: 18,
         createdAt: '2025-07-06T18:45:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -74,7 +74,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 110,
         nmBook: 50,
         createdAt: '2025-07-05T10:20:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -86,7 +86,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 35,
         nmBook: 15,
         createdAt: '2025-07-04T13:00:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -98,7 +98,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 48,
         nmBook: 22,
         createdAt: '2025-07-03T16:50:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -110,7 +110,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 65,
         nmBook: 28,
         createdAt: '2025-07-02T11:15:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
       {
@@ -122,7 +122,7 @@ export const useCategoriesStore = defineStore("categories", {
         orders: 88,
         nmBook: 45,
         createdAt: '2025-07-01T20:00:00Z',
-        color: 'bg-yellow-700',
+        color: 'bg-[var(--color-primary)]',
         url: '#',
       },
     ],
@@ -148,7 +148,7 @@ export const useCategoriesStore = defineStore("categories", {
         name: 'Total Profit',
         icon: 'fas fa-dollar-sign',
         value: 2343,
-        color: 'bg-yellow-500',
+        color: 'bg-[var(--color-light)]',
         ariaLabel: '$2,343 total profit',
         prefix: '$',
       },

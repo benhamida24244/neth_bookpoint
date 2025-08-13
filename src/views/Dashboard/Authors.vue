@@ -85,11 +85,11 @@ const getSortIcon = (field) => {
           v-model="searchQuery"
           placeholder="Search for Author"
           type="text"
-          class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-yellow-600"
+          class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         />
         <select
           v-model="selectedCountry"
-          class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600"
+          class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         >
           <option value="">All Countries</option>
           <option v-for="country in countries" :key="country" :value="country">
@@ -109,7 +109,7 @@ const getSortIcon = (field) => {
         <button class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
           Add Author
         </button>
-        <button class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 flex-1 lg:flex-none">
+        <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none">
           Export
         </button>
       </div>
@@ -125,7 +125,7 @@ const getSortIcon = (field) => {
         :class="[
           'px-3 py-1 text-xs rounded-full border transition-colors',
           sortBy === field
-            ? 'bg-yellow-600 text-white border-yellow-600'
+            ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
             : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
         ]"
       >
@@ -138,7 +138,7 @@ const getSortIcon = (field) => {
     <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
       <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
         <p class="text-lg font-bold text-gray-600">Total Authors:</p>
-        <span class="ml-2 text-yellow-600 font-bold text-lg">{{ filteredAuthors.length }}</span>
+        <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{ filteredAuthors.length }}</span>
       </div>
       <div class="flex items-center bg-green-50 px-4 py-2 rounded-lg">
         <p class="text-lg font-bold text-gray-600">Total Orders:</p>
@@ -169,7 +169,7 @@ const getSortIcon = (field) => {
             <p><span class="font-medium">Email:</span> {{ author.email }}</p>
           </div>
           <div class="mt-3">
-            <button class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+            <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -223,12 +223,12 @@ const getSortIcon = (field) => {
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ author.nmbBook }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ author.Country }}</td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <button class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
-                   <RouterLink :to="`/dashboard/authors/${author.id}`" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                   <RouterLink :to="`/dashboard/authors/${author.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     View
                   </RouterLink>
                 </button>
@@ -247,7 +247,7 @@ const getSortIcon = (field) => {
         <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
         <button
           @click="clearFilters"
-          class="mt-4 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+          class="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)]"
         >
           Clear Filters
         </button>

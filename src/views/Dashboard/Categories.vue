@@ -26,7 +26,7 @@ const cartsCategories = computed(() => [
     name: 'New This Month',
     icon: 'fas fa-star text-white',
     value: categoriesStore.getNew.length.toString(), // لأنه getter يُتعامل معه كمصفوفة مباشرة
-    color: 'bg-yellow-500',
+    color: 'bg-[var(--color-light)]',
   },
 ])
 </script>

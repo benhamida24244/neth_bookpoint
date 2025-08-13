@@ -19,7 +19,7 @@ const STATUS_CONFIG = {
     label: 'Completed'
   },
   [ORDER_STATUS.PENDING]: {
-    color: 'text-yellow-700 bg-yellow-100',
+    color: 'text-[var(--color-primary)] bg-yellow-100',
     icon: ClockIcon,
     label: 'Pending'
   },

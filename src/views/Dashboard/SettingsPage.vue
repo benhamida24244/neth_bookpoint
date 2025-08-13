@@ -1,4 +1,3 @@
-<!-- SettingsPage.vue -->
 <template>
   <div class="p-6 max-w-xl mx-auto space-y-8">
     <h1 class="text-2xl font-bold">Settings</h1>
@@ -12,7 +11,8 @@
           v-for="color in primaryColors"
           :key="color.name"
           @click="settingsStore.setPrimaryColor(color.hex)"
-          class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor.primary === color.hex.primary, 'border-transparent': settingsStore.primaryColor.primary !== color.hex.primary }"
+          class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"
+          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor.primary === color.hex.primary, 'border-transparent': settingsStore.primaryColor.primary !== color.hex.primary }"
         >
           <span class="w-6 h-6 rounded-md" :style="{ backgroundColor: color.hex.primary }"></span>
           <span class="ml-2 font-medium">{{ color.name }}</span>
@@ -22,8 +22,8 @@
 
     <!-- Live Preview -->
     <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Live Preview</h2>
-        <ExampleComponent />
+      <h2 class="text-xl font-semibold">Live Preview</h2>
+      <ExampleComponent />
     </div>
 
     <!-- Localization -->
@@ -46,7 +46,6 @@
         <option value="ar">🇩🇿 Arabic</option>
       </select>
     </div>
-
   </div>
 </template>
 
@@ -54,6 +53,12 @@
 import { useSettingsStore } from '@/stores/settings'
 import ExampleComponent from '@/components/Theme/ExampleComponent.vue'
 import { ref } from 'vue'
+import walpapper from '@/assets/HomeIcon/Header/walpapper.png'
+import walpappergreen from '@/assets/HomeIcon/Header/walpappergreen.png'
+import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
+import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
+import HeroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
+import HeroCoverRed from '@/assets/HomeIcon/Hero/HeroCoverRed.png'
 
 const settingsStore = useSettingsStore()
 
@@ -61,18 +66,23 @@ const primaryColors = ref([
   { name: 'Yellow', hex: {
     primary: '#c67913',
     light: '#F0B100',
-    hover: '#A65F00'
-  }}, // bg-yellow-600
+    hover: '#A65F00',
+    headerWallpaper: walpapper,
+    heroWallpaper: HeroCover
+  }},
   { name: 'Green', hex: {
     primary: '#16A34A',
     light: '#4ADE80',
-    hover: '#15803D'
-  }},  // bg-green-600
+    hover: '#15803D',
+    headerWallpaper: walpappergreen,
+    heroWallpaper: HeroCoverGreen
+  }},
   { name: 'Red', hex: {
     primary: '#DC2626',
     light: '#FCA5A5',
-    hover: '#B91C1C'
-  }}    // bg-red-600
+    hover: '#B91C1C',
+    headerWallpaper: walpapperRed,
+    heroWallpaper: HeroCoverRed
+  }}
 ])
-
 </script>

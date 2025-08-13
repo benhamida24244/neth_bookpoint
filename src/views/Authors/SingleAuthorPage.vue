@@ -99,7 +99,7 @@ onMounted(() => {
           <!-- Decorative elements -->
           <div class="flex justify-center mb-6">
             <div
-              class="h-px bg-gradient-to-r from-transparent via-yellow-600 to-transparent w-24"
+              class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent w-24"
             ></div>
           </div>
 
@@ -108,12 +108,12 @@ onMounted(() => {
             <div class="flex justify-center">
               <div class="relative group">
                 <div
-                  class="absolute -inset-4 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-300"
+                  class="absolute -inset-4 bg-gradient-to-r from-[var(--color-primary)] to-yellow-400 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-300"
                 ></div>
                 <img
                   :src="selectedAuthor.img"
                   :alt="selectedAuthor.name"
-                  class="relative w-64 h-64 object-cover rounded-full shadow-2xl ring-4 ring-yellow-600/20 group-hover:ring-yellow-600/40 transition-all duration-300"
+                  class="relative w-64 h-64 object-cover rounded-full shadow-2xl ring-4 ring-[var(--color-primary)]/20 group-hover:ring-[var(--color-primary)]/40 transition-all duration-300"
                 />
               </div>
             </div>
@@ -121,10 +121,10 @@ onMounted(() => {
             <!-- Author Info -->
             <div class="text-white font-BonaRegular space-y-6">
               <div>
-                <h1 class="text-4xl md:text-5xl font-bold text-yellow-600 mb-3 leading-tight">
+                <h1 class="text-4xl md:text-5xl font-bold text-[var(--color-primary)] mb-3 leading-tight">
                   {{ selectedAuthor.name }}
                 </h1>
-                <div class="h-1 bg-gradient-to-r from-yellow-600 to-transparent w-20 mb-6"></div>
+                <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-20 mb-6"></div>
               </div>
 
               <p class="text-gray-300 text-lg leading-relaxed italic">
@@ -138,7 +138,7 @@ onMounted(() => {
                 >
                   <span class="text-2xl">📚</span>
                   <div>
-                    <p class="text-yellow-600 font-bold text-xl">{{ selectedAuthor.nmbBook }}</p>
+                    <p class="text-[var(--color-primary)] font-bold text-xl">{{ selectedAuthor.nmbBook }}</p>
                     <p class="text-gray-400 text-sm">Books</p>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ onMounted(() => {
                 >
                   <span class="text-2xl">⭐</span>
                   <div>
-                    <p class="text-yellow-600 font-bold text-xl">Author</p>
+                    <p class="text-[var(--color-primary)] font-bold text-xl">Author</p>
                     <p class="text-gray-400 text-sm">Featured</p>
                   </div>
                 </div>
@@ -205,11 +205,11 @@ onMounted(() => {
     <div class="bg-black">
       <div class="max-w-6xl mx-auto px-4 py-8">
         <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-yellow-600 font-BonaRegular mb-4">
+          <h2 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular mb-4">
             Books by {{ selectedAuthor?.name }}
           </h2>
           <div
-            class="h-px bg-gradient-to-r from-transparent via-yellow-600/50 to-transparent w-32 mx-auto"
+            class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"
           ></div>
         </div>
         <BookList />

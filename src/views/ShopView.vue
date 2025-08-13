@@ -22,7 +22,7 @@ onMounted(() => {
       </aside>
       <!-- Main Content -->
       <main class="flex-1">
-        <p class="font-bold text-yellow-600 text-2xl text-center mb-2">Explore All Books Here</p>
+        <p class="font-bold text-[var(--color-primary)] text-2xl text-center mb-2">Explore All Books Here</p>
         <p class="text-center mb-4 text-gray-700">
           Discover the best books to read right now including trending titles, bookseller
           recommendations, new releases and more.

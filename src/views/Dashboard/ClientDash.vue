@@ -57,13 +57,13 @@ const toggleDropdown = (dropdown) => {
         v-model="searchQuery"
         placeholder="Search for Clients"
         type="text"
-        class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg w-full sm:w-1/2 lg:w-1/3 focus:outline-none focus:ring-2 focus:ring-yellow-600"
+        class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg w-full sm:w-1/2 lg:w-1/3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
       />
       <div class="flex gap-3 w-full sm:w-auto">
         <button class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 sm:flex-none">
           Add Client
         </button>
-        <button class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 flex-1 sm:flex-none">
+        <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 sm:flex-none">
           Export
         </button>
       </div>
@@ -87,7 +87,7 @@ const toggleDropdown = (dropdown) => {
           </div>
           <input
             type="date"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full pl-10 p-2.5"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5"
             placeholder="Registration Date"
           />
         </div>
@@ -101,7 +101,7 @@ const toggleDropdown = (dropdown) => {
           </div>
           <input
             type="date"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full pl-10 p-2.5"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5"
             placeholder="Last Order Date"
           />
         </div>
@@ -115,7 +115,7 @@ const toggleDropdown = (dropdown) => {
           </div>
           <input
             type="number"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full pl-10 p-2.5"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5"
             placeholder="Min Total Spend"
           />
         </div>
@@ -127,7 +127,7 @@ const toggleDropdown = (dropdown) => {
               <path d="M8.5 1.5A1.5 1.5 0 0 0 7 3v.5H4.5a2 2 0 0 0-2 2V9a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V5.5a2 2 0 0 0-2-2H13V3a1.5 1.5 0 0 0-1.5-1.5h-3z"/>
             </svg>
           </div>
-          <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full pl-10 p-2.5">
+          <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5">
             <option value="">Shipping Method</option>
             <option value="standard">Standard</option>
             <option value="express">Express</option>
@@ -143,7 +143,7 @@ const toggleDropdown = (dropdown) => {
           <p class="text-sm font-bold text-gray-600 mb-2">Status</p>
           <button
             @click="toggleDropdown('status')"
-            class="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
+            class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedStatus || 'Select Status' }}
@@ -170,7 +170,7 @@ const toggleDropdown = (dropdown) => {
           <p class="text-sm font-bold text-gray-600 mb-2">Source</p>
           <button
             @click="toggleDropdown('source')"
-            class="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
+            class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedSource || 'Select Source' }}
@@ -197,7 +197,7 @@ const toggleDropdown = (dropdown) => {
           <p class="text-sm font-bold text-gray-600 mb-2">Sale Date</p>
           <button
             @click="toggleDropdown('saleDate')"
-            class="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
+            class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedSaleDate || 'Select Period' }}
@@ -223,7 +223,7 @@ const toggleDropdown = (dropdown) => {
         <div class="flex items-end">
           <button
             @click="selectedStatus = ''; selectedSource = ''; selectedSaleDate = ''"
-            class="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 w-full"
+            class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 w-full"
           >
             Clear Filters
           </button>
@@ -234,7 +234,7 @@ const toggleDropdown = (dropdown) => {
       <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
         <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
           <p class="text-lg font-bold text-gray-600">Total Clients:</p>
-          <span class="ml-2 text-yellow-600 font-bold text-lg">{{ filteredClients.length }}</span>
+          <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{ filteredClients.length }}</span>
         </div>
         <div class="flex items-center bg-green-50 px-4 py-2 rounded-lg">
           <p class="text-lg font-bold text-gray-600">Total Orders:</p>
@@ -260,7 +260,7 @@ const toggleDropdown = (dropdown) => {
               <p><span class="font-medium">Spent:</span> ${{ client.SpendMuch }}</p>
             </div>
             <div class="mt-3">
-              <button class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+              <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -298,12 +298,12 @@ const toggleDropdown = (dropdown) => {
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ client.SpendMuch }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Country }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <button class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                  <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                     </svg>
-                     <RouterLink :to="`/dashboard/clients/${client.id}`" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                     <RouterLink :to="`/dashboard/clients/${client.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     View
                   </RouterLink>
                   </button>

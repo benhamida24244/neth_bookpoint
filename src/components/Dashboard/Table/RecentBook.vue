@@ -29,7 +29,7 @@ const books = [
 
 <template>
   <div class="bg-white p-6 rounded-2xl shadow-md">
-    <h2 class="text-xl font-bold text-yellow-600 font-BonaRegular mb-4">
+    <h2 class="text-xl font-bold text-[var(--color-primary)] font-BonaRegular mb-4">
       📚 Recent Books
     </h2>
 

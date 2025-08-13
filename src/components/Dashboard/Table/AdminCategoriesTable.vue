@@ -63,7 +63,7 @@ const sortedCategories = computed(() =>
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <RouterLink
                 :to="`/dashboard/categories/${category.id}`"
-                class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium"
+                class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
               >
                 <i class="far fa-eye"></i> View
               </RouterLink>

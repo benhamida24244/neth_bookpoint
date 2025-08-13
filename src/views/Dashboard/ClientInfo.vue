@@ -16,7 +16,7 @@ const STATUS_CONFIG = {
   },
   pending: {
     label: 'Pending',
-    color: 'bg-yellow-100 text-yellow-800',
+    color: 'bg-yellow-100 text-[var(--color-hover)]',
     icon: '⏳'
   }
 }
@@ -332,7 +332,7 @@ watch(() => route.params.id, (newId) => {
       <div v-else-if="selectedClient" class="space-y-8">
         <!-- Client Header Card -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-yellow-600 to-black px-6 py-8">
+          <div class="bg-gradient-to-r from-[var(--color-primary)] to-black px-6 py-8">
             <div class="flex items-center space-x-6">
               <img
                 :src="selectedClient.avatar"

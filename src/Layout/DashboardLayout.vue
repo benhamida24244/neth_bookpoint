@@ -26,7 +26,7 @@ const CloseMenu = () => {
     <main class="flex-1 ml-0 lg:ml-[240px] w-full min-h-screen overflow-x-hidden relative">
       <!-- زر فتح القائمة في الهاتف -->
       <div
-        class="h-12 w-12 bg-yellow-600 left-5 top-5 rounded-full fixed lg:hidden flex items-center justify-center text-white z-50"
+        class="h-12 w-12 bg-[var(--color-primary)] left-5 top-5 rounded-full fixed lg:hidden flex items-center justify-center text-white z-50"
         :class="MenuIsOpen ? 'hidden' : 'block'"
         @click="OpenMenu"
       >

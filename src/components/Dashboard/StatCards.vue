@@ -11,7 +11,7 @@ defineProps({
 
 <template>
   <div
-    class=" border border-yellow-600 p-5 font-BonaRegular rounded-xl shadow-md text-black flex flex-col items-center justify-center gap-2 transition-transform hover:scale-105"
+    class=" border border-[var(--color-primary)] p-5 font-BonaRegular rounded-xl shadow-md text-black flex flex-col items-center justify-center gap-2 transition-transform hover:scale-105"
   >
     <component :is="item.icon" class="w-8 h-8 text-text-black" />
 

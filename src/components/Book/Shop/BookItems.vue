@@ -28,7 +28,7 @@
         <span v-for="i in 5" :key="i">
           <i
             class="pi mx-px text-base"
-            :class="i <= book.rating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-300'"
+            :class="i <= book.rating ? 'pi-star-fill text-[var(--color-light)]' : 'pi-star text-gray-300'"
           ></i>
         </span>
       </div>
@@ -40,7 +40,7 @@
 
       <!-- زر الإضافة إلى السلة -->
       <button
-        class="mt-2 rounded-full bg-yellow-600 px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-yellow-700"
+        class="mt-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-primary)]"
       >
         Add to Cart
       </button>

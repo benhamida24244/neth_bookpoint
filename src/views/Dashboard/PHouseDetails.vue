@@ -48,13 +48,13 @@ function savePublishingHouse() {
       <div class="p-8 flex-grow relative">
         <button
           @click="openEditModal"
-          class="absolute right-6 top-6 bg-yellow-500 px-4 py-2 rounded-lg text-white font-semibold hover:bg-yellow-600 transition"
+          class="absolute right-6 top-6 bg-[var(--color-light)] px-4 py-2 rounded-lg text-white font-semibold hover:bg-[var(--color-primary)] transition"
         >
           ✏️ Edit
         </button>
-        <div class="uppercase tracking-wide text-sm text-yellow-600 font-semibold">{{ currentPublishingHouse.country }}</div>
+        <div class="uppercase tracking-wide text-sm text-[var(--color-primary)] font-semibold">{{ currentPublishingHouse.country }}</div>
         <h1 class="block mt-1 text-4xl leading-tight font-bold text-gray-900">{{ currentPublishingHouse.name }}</h1>
-        <a :href="`mailto:${currentPublishingHouse.email}`" class="mt-2 text-gray-500 hover:text-yellow-700 transition-colors block">{{ currentPublishingHouse.email }}</a>
+        <a :href="`mailto:${currentPublishingHouse.email}`" class="mt-2 text-gray-500 hover:text-[var(--color-primary)] transition-colors block">{{ currentPublishingHouse.email }}</a>
         <a :href="currentPublishingHouse.url" target="_blank" class="mt-1 text-blue-600 hover:underline block">{{ currentPublishingHouse.url }}</a>
         <p class="mt-4 text-gray-700">{{ currentPublishingHouse.description }}</p>
 
@@ -96,7 +96,7 @@ function savePublishingHouse() {
 
         <div class="flex justify-end gap-2 mt-4">
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
-          <button @click="savePublishingHouse" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Save</button>
+          <button @click="savePublishingHouse" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]">Save</button>
         </div>
       </div>
     </div>

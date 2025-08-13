@@ -1,13 +1,5 @@
 @import "tailwindcss";
 
-/*
-  Define the primary color variable for the entire application.
-  This is used by Tailwind's JIT compiler.
-  The value here is a fallback, the actual color is set
-  dynamically from the Pinia store in `stores/settings.js`.
-*/
-
-
 @font-face {
   font-family: Bona;
   src: url(./Fonts/BonaNova-bold.ttf);
@@ -18,15 +10,13 @@
   src: url(./Fonts/BonaNova-Regular.ttf);
 }
 
-
 @theme {
   --font-bona: Bona , "sans-serif";
   --font-BonaRegular: BonaRegular , "sans-serif";
 }
 
 #header {
-  background-image: url(../assets/HomeIcon/Header/walpapper.png);
   background-position: center;
   background-repeat: no-repeat;
-  background-color: black;
+  background-size: cover;
 }

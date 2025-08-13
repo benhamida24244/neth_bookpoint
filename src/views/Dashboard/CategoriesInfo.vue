@@ -47,12 +47,12 @@ const unpublish = () => {
         <div class="flex justify-center lg:justify-start">
           <div class="relative">
             <div
-              class="h-64 w-64 sm:h-80 sm:w-80 rounded-full shadow-2xl shadow-yellow-600/30 bg-yellow-800 flex items-center justify-center text-white text-9xl"
+              class="h-64 w-64 sm:h-80 sm:w-80 rounded-full shadow-2xl shadow-[var(--color-primary)]/30 bg-[var(--color-hover)] flex items-center justify-center text-white text-9xl"
             >
               <i class="pi" :class="currentCategory.icon"></i>
             </div>
             <div
-              class="absolute inset-0 rounded-full bg-gradient-to-tr from-yellow-600/20 to-transparent pointer-events-none"
+              class="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-primary)]/20 to-transparent pointer-events-none"
             ></div>
           </div>
         </div>
@@ -61,7 +61,7 @@ const unpublish = () => {
          <div class="flex flex-col gap-4 absolute right-2 top-2">
   <!-- زر التعديل الرئيسي -->
   <button
-    class="bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-yellow-700 transition-colors duration-300 font-BonaRegular"
+    class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[var(--color-primary)] transition-colors duration-300 font-BonaRegular"
     @click="handleEdit"
   >
     Edit
@@ -99,13 +99,13 @@ const unpublish = () => {
   </div>
 </div>
 
-          <div class="h-1 bg-gradient-to-r from-yellow-600 to-transparent w-full max-w-xs"></div>
+          <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-full max-w-xs"></div>
           <h1
-            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-yellow-700 leading-tight font-BonaRegular"
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary)] leading-tight font-BonaRegular"
           >
             {{ currentCategory.name }}
           </h1>
-          <div class="h-1 bg-gradient-to-r from-yellow-600 to-transparent w-20"></div>
+          <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-20"></div>
           <p class="text-gray-700 text-base sm:text-lg leading-relaxed max-w-2xl font-BonaRegular">
             {{ currentCategory.description }}
           </p>
@@ -114,7 +114,7 @@ const unpublish = () => {
             <div
               v-for="stat in formattedStatistics"
               :key="stat.id"
-              class="flex items-center gap-4 border border-yellow-600/30 rounded-xl p-4 bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:border-yellow-600/50"
+              class="flex items-center gap-4 border border-[var(--color-primary)]/30 rounded-xl p-4 bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:border-[var(--color-primary)]/50"
               :aria-label="stat.ariaLabel"
             >
               <div :class="[stat.color, 'p-3 rounded-full shadow-md']" class="flex-shrink-0">
@@ -132,12 +132,12 @@ const unpublish = () => {
       <section class="max-w-7xl mx-auto px-4 py-12 lg:py-16">
         <header class="text-center mb-12">
           <h2
-            class="text-2xl sm:text-3xl lg:text-4xl font-bold text-yellow-600 mb-4 font-BonaRegular"
+            class="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-primary)] mb-4 font-BonaRegular"
           >
             Books in {{ currentCategory.name }}
           </h2>
           <div
-            class="h-px bg-gradient-to-r from-transparent via-yellow-600/50 to-transparent w-32 mx-auto"
+            class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"
           ></div>
         </header>
 
@@ -145,7 +145,7 @@ const unpublish = () => {
           <BookCategoryList :category="currentCategory.name" />
           <template #fallback>
             <div class="flex justify-center items-center py-12">
-              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)]"></div>
             </div>
           </template>
         </Suspense>

@@ -53,7 +53,7 @@ const info = [
 <template>
   <div class="w-full min-h-screen px-6 py-8 bg-gray-50">
     <!-- عنوان -->
-    <h1 class="text-3xl font-bold text-yellow-600 font-BonaRegular text-center mb-8">
+    <h1 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular text-center mb-8">
       Dashboard Overview
     </h1>
 

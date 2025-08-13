@@ -35,7 +35,7 @@ const notifications = [
 
 <template>
   <div class="bg-white p-6 rounded-2xl shadow-md">
-    <h2 class="text-xl font-bold text-yellow-600 font-BonaRegular mb-4">
+    <h2 class="text-xl font-bold text-[var(--color-primary)] font-BonaRegular mb-4">
       🔔 Latest Notifications
     </h2>
 
@@ -50,7 +50,7 @@ const notifications = [
             'rounded-full p-2',
             notif.type === 'success' && 'bg-green-100 text-green-600',
             notif.type === 'info' && 'bg-blue-100 text-blue-600',
-            notif.type === 'warning' && 'bg-yellow-100 text-yellow-600',
+            notif.type === 'warning' && 'bg-yellow-100 text-[var(--color-primary)]',
             notif.type === 'error' && 'bg-red-100 text-red-600',
           ]"
         >

@@ -1,7 +1,17 @@
-<script setup></script>
+<script setup>
+import { useSettingsStore } from '@/stores/settings'
+import {computed} from 'vue'
+const settingsStore = useSettingsStore()
+
+// نحضر رابط صورة الخلفية من ال store بشكل reactive
+const heroBackground = computed(() => {
+  const wallpaper = settingsStore.primaryColor.heroWallpaper || ''
+  return wallpaper ? `url("${wallpaper}")` : ''
+})
+</script>
 <template>
   <!-- Hero -->
-  <div class="bg-[url(./HomeIcon/Hero/HeroCover.png)] bg-no-repeat bg-cover bg-center h-[85vh] relative overflow-hidden">
+  <div class="hero bg-no-repeat bg-cover bg-center h-[85vh] relative overflow-hidden" :style="{ backgroundImage: heroBackground }">
     <!-- Gradients -->
     <div aria-hidden="true" class="flex absolute -top-96 start-1/2 transform -translate-x-1/2">
       <div

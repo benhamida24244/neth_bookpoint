@@ -13,7 +13,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
       class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl w-full flex flex-col md:flex-row font-BonaRegular"
     >
       <!-- صورة جانبية -->
-      <div class="hidden md:block w-1/2 bg-yellow-600">
+      <div class="hidden md:block w-1/2 bg-[var(--color-primary)]">
         <img :src="coverAspect" alt="register-cover" class="h-full w-full object-cover" />
       </div>
 
@@ -38,7 +38,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-yellow-600 mb-2">Create Your Account</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Create Your Account</h2>
           <p class="text-sm text-gray-600 italic">
             Join the Neth BookPoint community and enjoy a personalized book experience.
           </p>
@@ -51,7 +51,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
             type="text"
             required
             placeholder="Full Name"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <input
@@ -59,7 +59,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
             type="email"
             required
             placeholder="Email Address"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <input
@@ -67,7 +67,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
             type="password"
             required
             placeholder="Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <input
@@ -75,7 +75,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
             type="password"
             required
             placeholder="Confirm Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <button
@@ -108,7 +108,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
         <!-- تحويل لتسجيل الدخول -->
         <p class="mt-6 text-center text-sm text-gray-600">
           Already have an account?
-          <span @click="$emit('openLogin')" class="text-yellow-600 font-semibold hover:underline"
+          <span @click="$emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
             >Login</span
           >
         </p>

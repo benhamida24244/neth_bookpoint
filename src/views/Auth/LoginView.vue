@@ -11,7 +11,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
   >
     <div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl w-full flex flex-col md:flex-row font-BonaRegular">
       <!-- صورة الغلاف -->
-      <div class="hidden md:block w-1/2 bg-yellow-600">
+      <div class="hidden md:block w-1/2 bg-[var(--color-primary)]">
         <img :src="coverAspect" alt="login-cover" class="h-full w-full object-cover" />
       </div>
 
@@ -30,7 +30,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-yellow-600 mb-2">Welcome to Neth BookPoint!</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Welcome to Neth BookPoint!</h2>
           <p class="text-sm text-gray-600 italic">
             Discover a seamless way to explore books and enjoy exclusive features.
           </p>
@@ -43,7 +43,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
             type="email"
             required
             placeholder="Email Address"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <input
@@ -51,11 +51,11 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
             type="password"
             required
             placeholder="Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-600 focus:outline-none"
+            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <div class="text-right text-sm">
-            <a href="/forgot-password" class="text-yellow-600 hover:underline">Forgot password?</a>
+            <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">Forgot password?</a>
           </div>
 
           <button
@@ -89,7 +89,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
         <p class="mt-6 text-center text-sm text-gray-600">
           Don’t have an account?
           <span
-          class="text-yellow-600 font-semibold hover:underline"
+          class="text-[var(--color-primary)] font-semibold hover:underline"
           @click="$emit('openRegister')"
           >Sign up</span>
         </p>

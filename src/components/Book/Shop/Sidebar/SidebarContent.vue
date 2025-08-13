@@ -1,11 +1,11 @@
 <template>
   <aside class="w-full bg-white text-gray-900 p-4 font-BonaRegular rounded-lg shadow-md overflow-y-auto">
     <!-- عنوان -->
-    <h2 class="text-xl font-bold text-yellow-600 mb-6">Filter & Categories</h2>
+    <h2 class="text-xl font-bold text-[var(--color-primary)] mb-6">Filter & Categories</h2>
 
     <!-- الفئات الرئيسية -->
     <section class="mb-6">
-      <h3 class="text-yellow-600 font-semibold mb-3">Popular Sections</h3>
+      <h3 class="text-[var(--color-primary)] font-semibold mb-3">Popular Sections</h3>
       <ul class="space-y-1 text-sm">
         <li v-for="item in popularSections" :key="item">
           <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
@@ -16,10 +16,10 @@
 
     <!-- حسب الموضوع -->
     <section class="mb-6">
-      <h3 class="text-yellow-600 font-semibold mb-3">Subjects</h3>
+      <h3 class="text-[var(--color-primary)] font-semibold mb-3">Subjects</h3>
       <ul class="space-y-1 text-sm">
         <li v-for="item in subjects" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition" :class="{'text-yellow-600 font-medium': item === 'See All Subjects'}">{{ item }}</a>
+          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition" :class="{'text-[var(--color-primary)] font-medium': item === 'See All Subjects'}">{{ item }}</a>
         </li>
       </ul>
     </section>
@@ -27,7 +27,7 @@
 
     <!-- حسب السعر -->
     <section class="mb-6">
-      <h3 class="text-yellow-600 font-semibold mb-3">Price</h3>
+      <h3 class="text-[var(--color-primary)] font-semibold mb-3">Price</h3>
       <ul class="space-y-1 text-sm">
         <li v-for="item in prices" :key="item">
           <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
@@ -38,7 +38,7 @@
 
     <!-- حسب العمر -->
     <section class="mb-6">
-      <h3 class="text-yellow-600 font-semibold mb-3">Age</h3>
+      <h3 class="text-[var(--color-primary)] font-semibold mb-3">Age</h3>
       <ul class="space-y-1 text-sm">
         <li v-for="item in ages" :key="item">
           <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
@@ -49,7 +49,7 @@
 
     <!-- حسب اللغة -->
     <section>
-      <h3 class="text-yellow-600 font-semibold mb-3">Language</h3>
+      <h3 class="text-[var(--color-primary)] font-semibold mb-3">Language</h3>
       <ul class="columns-2 gap-4 text-sm space-y-1">
         <li v-for="item in languages" :key="item">
           <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>

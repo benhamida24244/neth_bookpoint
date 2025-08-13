@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref , computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import Logo from '../assets/HomeIcon/Header/Logo.png'
 import { useRoute } from 'vue-router'
 import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
+import { useSettingsStore } from '@/stores/settings'
 
 const isMenuOpen = ref(false)
 const route = useRoute()
@@ -44,6 +45,14 @@ const isActive = (link) => {
   return route.path === link
 }
 
+const settingsStore = useSettingsStore()
+
+// نحضر رابط صورة الخلفية من ال store بشكل reactive
+const headerBackground = computed(() => {
+  const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
+  return wallpaper ? `url("${wallpaper}") center/cover no-repeat` : ''
+})
+
 const MenuContent = [
   {
     name: 'Home',
@@ -73,6 +82,7 @@ const { cartCount } = storeToRefs(cartStore)
 <template>
   <header
     id="header"
+    :style="{ background: headerBackground }"
     class="flex shadow-md py-4 px-4 sm:px-10 min-h-[70px] tracking-wide relative z-50"
   >
     <div class="flex flex-wrap items-center justify-between gap-4 w-full">

@@ -29,7 +29,7 @@ const cartStore = useCartStore();
         <span v-for="i in 5" :key="i">
           <i
             class="pi"
-            :class="i <= book.rating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-400'"
+            :class="i <= book.rating ? 'pi-star-fill text-[var(--color-light)]' : 'pi-star text-gray-400'"
             style="font-size: 1rem; margin: 0 1px"
           ></i>
         </span>

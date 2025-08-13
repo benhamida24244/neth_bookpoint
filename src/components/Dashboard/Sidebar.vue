@@ -112,14 +112,14 @@ watch(
       <div class="flex items-center justify-between bg-black text-white py-4 px-6 rounded-se-2xl">
         <div class="flex items-center gap-2">
           <img :src="Logo" alt="logo" class="h-8 sm:h-10" />
-          <span class="font-BonaRegular text-yellow-600 text-base sm:text-lg">
+          <span class="font-BonaRegular text-[var(--color-primary)] text-base sm:text-lg">
             <router-link to="/">Neth BookPoint</router-link>
           </span>
         </div>
         <button
           v-if="isMobile"
           @click="emit('close')"
-          class="lg:hidden text-white hover:text-yellow-600 transition-colors"
+          class="lg:hidden text-white hover:text-[var(--color-primary)] transition-colors"
         >
           <X class="w-6 h-6" />
         </button>
@@ -131,7 +131,7 @@ watch(
           <img
             src="https://i.pravatar.cc/40"
             alt="Admin"
-            class="w-10 h-10 rounded-full object-cover border-2 border-yellow-600"
+            class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-primary)]"
           />
           <div>
             <h2 class="font-semibold text-sm text-gray-800">{{ user.name }}</h2>
@@ -149,7 +149,7 @@ watch(
             :class="[
               'flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 group',
               active === menu.title
-                ? 'bg-yellow-600 text-black shadow-md'
+                ? 'bg-[var(--color-primary)] text-black shadow-md'
                 : 'text-gray-800 hover:bg-yellow-100 hover:shadow-sm',
             ]"
             @click="setActiveMenu(menu.title)"
@@ -160,7 +160,7 @@ watch(
                   'w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200',
                   active === menu.title
                     ? 'bg-white text-black shadow-sm'
-                    : 'bg-yellow-600 text-white group-hover:bg-yellow-700',
+                    : 'bg-[var(--color-primary)] text-white group-hover:bg-[var(--color-primary)]',
                 ]"
               >
                 <component :is="menu.icon" class="w-5 h-5" />

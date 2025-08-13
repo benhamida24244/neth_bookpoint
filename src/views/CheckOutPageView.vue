@@ -122,7 +122,7 @@ const handleSubmit = () => {
                   <p class="font-medium text-gray-800 text-sm">{{ item.name }}</p>
                   <p class="text-gray-600 text-xs">Quantity: {{ item.quantity }}</p>
                 </div>
-                <span class="font-bold text-yellow-600">${{ item.price.toFixed(2) }}</span>
+                <span class="font-bold text-[var(--color-primary)]">${{ item.price.toFixed(2) }}</span>
               </div>
             </div>
 
@@ -142,13 +142,13 @@ const handleSubmit = () => {
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
                 <span>Total</span>
-                <span class="text-yellow-600">${{ grandTotal.toFixed(2) }}</span>
+                <span class="text-[var(--color-primary)]">${{ grandTotal.toFixed(2) }}</span>
               </div>
             </div>
 
             <!-- Free Shipping Notice -->
             <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p class="text-yellow-800 text-sm text-center">
+              <p class="text-[var(--color-hover)] text-sm text-center">
                 Add ${{ amountNeededForFreeShipping.toFixed(2) }} to get free shipping!
               </p>
             </div>
@@ -158,7 +158,7 @@ const handleSubmit = () => {
         <!-- Main Checkout Form -->
         <div class="lg:col-span-2">
           <div class="bg-black rounded-2xl shadow-2xl overflow-hidden">
-            <div class="bg-gradient-to-r from-yellow-600 to-yellow-500 p-6">
+            <div class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] p-6">
               <h1 class="text-black text-3xl font-bold text-center">
                 Payment & Shipping Details
               </h1>
@@ -168,7 +168,7 @@ const handleSubmit = () => {
 
               <!-- Customer Information -->
               <div class="mb-8">
-                <h3 class="text-yellow-600 text-xl font-bold mb-4 flex items-center">
+                <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <InfoIcon class="w-5 h-5 mr-2" />
                   Customer Information
                 </h3>
@@ -180,7 +180,7 @@ const handleSubmit = () => {
                   >
                     <label
                       :for="field.key"
-                      class="block text-yellow-600 text-sm font-medium mb-2"
+                      class="block text-[var(--color-primary)] text-sm font-medium mb-2"
                     >
                       {{ field.placeholder }}
                       <span v-if="field.required" class="text-red-400">*</span>
@@ -192,7 +192,7 @@ const handleSubmit = () => {
                       :placeholder="field.placeholder"
                       v-model="formData[field.key]"
                       :required="field.required"
-                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all duration-200 placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -200,7 +200,7 @@ const handleSubmit = () => {
 
               <!-- Shipping Options -->
               <div class="mb-8">
-                <h3 class="text-yellow-600 text-xl font-bold mb-4 flex items-center">
+                <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <Truck class="w-5 h-5 mr-2" />
                   Shipping Options
                 </h3>
@@ -221,13 +221,13 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="flex items-center justify-between p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-yellow-600 bg-gray-700': selectedShipping === option.id }"
+                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedShipping === option.id }"
                     >
                       <div class="flex items-center">
-                        <component :is="icons[option.icon]" class="w-5 h-5 text-yellow-600 mr-3" />
+                        <component :is="icons[option.icon]" class="w-5 h-5 text-[var(--color-primary)] mr-3" />
                         <span class="text-white font-medium">{{ option.name }}</span>
                       </div>
-                      <span class="text-yellow-600 font-bold">${{ option.price.toFixed(2) }}</span>
+                      <span class="text-[var(--color-primary)] font-bold">${{ option.price.toFixed(2) }}</span>
                     </label>
                   </div>
                 </div>
@@ -235,7 +235,7 @@ const handleSubmit = () => {
 
               <!-- Payment Options -->
               <div class="mb-8">
-                <h3 class="text-yellow-600 text-xl font-bold mb-4 flex items-center">
+                <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <CreditCard class="w-5 h-5 mr-2" />
                   Payment Methods
                 </h3>
@@ -256,15 +256,15 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="block p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-yellow-600 bg-gray-700': selectedPayment === option.id }"
+                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedPayment === option.id }"
                     >
                       <div class="flex items-center justify-between">
                         <div>
                           <div class="text-white font-medium">{{ option.name }}</div>
                           <div class="text-gray-400 text-sm mt-1">{{ option.subtitle }}</div>
                         </div>
-                        <div class="w-4 h-4 rounded-full border-2 border-yellow-600 flex items-center justify-center">
-                          <div v-if="selectedPayment === option.id" class="w-2 h-2 bg-yellow-600 rounded-full"></div>
+                        <div class="w-4 h-4 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center">
+                          <div v-if="selectedPayment === option.id" class="w-2 h-2 bg-[var(--color-primary)] rounded-full"></div>
                         </div>
                       </div>
                     </label>
@@ -277,7 +277,7 @@ const handleSubmit = () => {
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <span v-if="!isLoading">Place Order</span>
                   <span v-else class="flex items-center">
@@ -290,7 +290,7 @@ const handleSubmit = () => {
                 </button>
                 <RouterLink
                   to="/cart"
-                  class="bg-transparent hover:bg-yellow-600 hover:text-black text-white border-2 border-yellow-600 font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
+                  class="bg-transparent hover:bg-[var(--color-primary)] hover:text-black text-white border-2 border-[var(--color-primary)] font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
                 >
                   Back to Cart
                 </RouterLink>

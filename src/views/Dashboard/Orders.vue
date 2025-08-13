@@ -30,7 +30,7 @@
             :class="[
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
               activeFilter === filter.value
-                ? 'bg-yellow-600 text-white border-yellow-600'
+                ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
                 : 'hover:bg-gray-50'
             ]"
           >
@@ -43,7 +43,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search orders..."
-            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500"
+            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
           >
           <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
         </div>
@@ -81,7 +81,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price + settingsStore.currency }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-yellow-600 hover:text-yellow-700 flex items-center gap-1 text-sm font-medium">
+                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     <i class="far fa-eye"></i> View
                   </RouterLink>
                 </td>
@@ -121,7 +121,7 @@
                   <span class="sr-only">Previous</span>
                   <i class="fas fa-chevron-left"></i>
                 </button>
-                <button class="z-10 bg-yellow-50 border-yellow-500 text-yellow-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                <button class="z-10 bg-yellow-50 border-[var(--color-light)] text-[var(--color-primary)] relative inline-flex items-center px-4 py-2 border text-sm font-medium">
                   1
                 </button>
                 <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
@@ -173,7 +173,7 @@ const settingsStore = useSettingsStore()
         {
           label: 'Pending Orders',
           value: allOrders.filter(o => o.status === 'Pending').length,
-          icon: 'fas fa-truck text-yellow-500',
+          icon: 'fas fa-truck text-[var(--color-light)]',
           iconBg: 'bg-yellow-50'
         },
         {
@@ -222,7 +222,7 @@ const settingsStore = useSettingsStore()
     const getStatusClass = (status) => {
       const statusClasses = {
         'Completed': 'bg-green-50 text-green-700',
-        'Pending': 'bg-yellow-50 text-yellow-700',
+        'Pending': 'bg-yellow-50 text-[var(--color-primary)]',
         'Returned': 'bg-red-50 text-red-700'
       }
       return statusClasses[status] || 'bg-gray-50 text-gray-700'

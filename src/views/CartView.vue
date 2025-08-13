@@ -50,7 +50,7 @@ const handleCheckout = () => {
 
       <!-- Cart Section -->
       <div class="lg:w-2/3 w-full bg-white rounded-lg shadow p-6">
-        <h1 class="text-3xl font-bold mb-6 font-BonaRegular text-yellow-800 text-center">
+        <h1 class="text-3xl font-bold mb-6 font-BonaRegular text-[var(--color-hover)] text-center">
           Your Cart Details
         </h1>
 
@@ -91,10 +91,10 @@ const handleCheckout = () => {
         <!-- Total + Button -->
         <div class="w-full mt-10">
           <p class="text-center text-2xl font-BonaRegular">
-            Total Price: <span class="font-bold text-yellow-600">$ {{ totalPrice }}</span>
+            Total Price: <span class="font-bold text-[var(--color-hover)]">$ {{ totalPrice }}</span>
           </p>
           <button
-            class="mt-4 w-full py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-500 transition-colors duration-300 flex items-center justify-center gap-2"
+            class="mt-4 w-full py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-hover)] transition-colors duration-300 flex items-center justify-center gap-2"
             @click="handleCheckout"
             :disabled="isLoading"
           >

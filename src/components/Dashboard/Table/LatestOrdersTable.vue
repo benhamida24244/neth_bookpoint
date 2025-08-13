@@ -33,7 +33,7 @@ const orders = [
 ]
 
 const statusColor = {
-  Pending: 'text-yellow-600 bg-yellow-100',
+  Pending: 'text-[var(--color-primary)] bg-yellow-100',
   Shipped: 'text-green-600 bg-green-100',
   Cancelled: 'text-red-600 bg-red-100'
 }
@@ -41,7 +41,7 @@ const statusColor = {
 
 <template>
   <div class="bg-white shadow-md rounded-2xl p-5 overflow-x-auto">
-    <h2 class="text-xl font-bold font-BonaRegular text-yellow-600 mb-4">📦 Latest Orders</h2>
+    <h2 class="text-xl font-bold font-BonaRegular text-[var(--color-primary)] mb-4">📦 Latest Orders</h2>
     <table class="w-full text-left border-collapse">
       <thead>
         <tr class="text-gray-700 border-b">

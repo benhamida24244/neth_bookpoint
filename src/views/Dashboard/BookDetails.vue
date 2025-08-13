@@ -15,7 +15,7 @@ const BOOK_STATUS = {
 
 const STATUS_CONFIG = {
   [BOOK_STATUS.PUBLISHED]: { color: 'text-green-700 bg-green-100', icon: CheckCircleIcon, label: 'Published' },
-  [BOOK_STATUS.PENDING]: { color: 'text-yellow-700 bg-yellow-100', icon: ClockIcon, label: 'Pending' },
+  [BOOK_STATUS.PENDING]: { color: 'text-[var(--color-primary)] bg-yellow-100', icon: ClockIcon, label: 'Pending' },
   [BOOK_STATUS.DRAFT]: { color: 'text-red-700 bg-red-100', icon: XCircleIcon, label: 'Draft' },
   [BOOK_STATUS.PROCESSING]: { color: 'text-blue-700 bg-blue-100', icon: TruckIcon, label: 'Processing' },
   [BOOK_STATUS.SHIPPED]: { color: 'text-purple-700 bg-purple-100', icon: TruckIcon, label: 'Shipped' }
@@ -91,7 +91,7 @@ const stockStatusText = computed(() => {
 const stockStatusColor = computed(() => {
   const stock = Number(selectedBook.value?.stock || 0)
   if (stock > 100) return 'text-green-600'
-  if (stock > 20) return 'text-yellow-600'
+  if (stock > 20) return 'text-[var(--color-primary)]'
   if (stock > 0) return 'text-red-600'
   return 'text-red-800'
 })
@@ -377,7 +377,7 @@ watch(bookId, (newId, oldId) => {
 <template>
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
     <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
-      <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-600"></div>
+      <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-[var(--color-primary)]"></div>
     </div>
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">
@@ -505,7 +505,7 @@ watch(bookId, (newId, oldId) => {
               <p class="text-sm text-gray-500 mt-1">{{ getCurrentDate() }}</p>
             </div>
             <div class="flex space-x-3">
-              <button @click="printBook" class="px-5 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">Print</button>
+              <button @click="printBook" class="px-5 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition-colors">Print</button>
               <button @click="goBack" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Back</button>
             </div>
           </div>
@@ -517,7 +517,7 @@ watch(bookId, (newId, oldId) => {
           </div>
           <div class="flex-grow">
             <h2 class="font-bold text-3xl text-gray-900 mb-2">{{ selectedBook.title }}</h2>
-            <div class="w-24 h-1 bg-yellow-500 mb-4 rounded-full"></div>
+            <div class="w-24 h-1 bg-[var(--color-light)] mb-4 rounded-full"></div>
             <div class="space-y-2 mb-6 text-gray-700">
                 <p><strong>Author:</strong> {{ selectedBook.author }}</p>
                 </div>
