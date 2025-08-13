@@ -11,9 +11,13 @@ import PublishingHousesList from '@/components/Publishing/PublishingHousesList.v
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { onMounted } from 'vue'
+import { useLanguageStore } from '@/stores/language'
+import { storeToRefs } from 'pinia'
 
 const PublishingHousesStore = usePublishingHouseStore()
 const authorsStore = useAuthorStore()
+const languageStore = useLanguageStore()
+const { translations } = storeToRefs(languageStore)
 
 
 const banner = {
@@ -78,26 +82,26 @@ onMounted(()=> {
 <template>
   <Hero />
   <div class="w-full">
-    <h1 class="text-center text-5xl p-6 font-bona">BestSellers</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.bestsellers || 'BestSellers' }}</h1>
     <BookList />
     <LargeBanner :banner="banner" />
     <SmallBannerList :smallBanner="smallBanner" />
     <LargeBanner :banner="bannerTow" />
-    <h1 class="text-center text-5xl p-6 font-bona">Everyone's Talking About</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.everyonesTalkingAbout || 'Everyone\'s Talking About' }}</h1>
     <BookList />
     <SmallBannerList :smallBanner="smallBannerTwo" />
-    <h1 class="text-center text-5xl p-6 font-bona">Our Best Paperbacks</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestPaperbacks || 'Our Best Paperbacks' }}</h1>
     <BookList />
-    <h1 class="text-center text-5xl p-6 font-bona">Shop by Category</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.shopByCategory || 'Shop by Category' }}</h1>
     <CatigoryList />
     <LargeBanner :banner="bannerThree" />
-    <h1 class="text-center text-5xl p-6 font-bona">Our Best YA Books</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestYABooks || 'Our Best YA Books' }}</h1>
     <BookList />
-    <h1 class="text-center text-5xl p-6 font-bona">Authors</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.authors || 'Authors' }}</h1>
     <AuthorList :authors="authors"/>
-    <h1 class="text-center text-5xl p-6 font-bona">Signed & Special Editions</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.signedAndSpecialEditions || 'Signed & Special Editions' }}</h1>
     <BookList />
-    <h1 class="text-center text-5xl p-6 font-bona">Publishing House</h1>
+    <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.publishingHouse || 'Publishing House' }}</h1>
     <PublishingHousesList :PublishingHouses="PublishingHouses"/>
     <Footer/>
   </div>

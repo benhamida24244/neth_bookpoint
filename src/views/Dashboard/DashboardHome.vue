@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/stores/Dashboard'
+import { useLanguageStore } from '@/stores/language'
 import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue'
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue'
 import DailySalesChart from '@/components/Dashboard/Charts/DailySalesChart.vue'
@@ -16,45 +17,47 @@ import { useSettingsStore } from '@/stores/settings'
 
 const dashboardStore = useDashboardStore()
 const { stats } = storeToRefs(dashboardStore)
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 
 onMounted(() => {
   dashboardStore.fetchDashboardData()
 })
 
 const settingStore = useSettingsStore()
-const info = [
+const info = computed(() => [
   {
     id: 1,
-    name: 'Books',
+    name: translations.value.dashboard?.books,
     icon: BookOpen,
-    Num: stats.value.books,
+    Num: stats.value.books
   },
   {
     id: 2,
-    name: 'Orders Today',
+    name: translations.value.dashboard?.ordersToday,
     icon: ShoppingCart,
-    Num: stats.value.ordersToday,
+    Num: stats.value.ordersToday
   },
   {
     id: 3,
-    name: 'Clients',
+    name: translations.value.dashboard?.clients,
     icon: Users,
-    Num: stats.value.clients,
+    Num: stats.value.clients
   },
   {
     id: 4,
-    name: 'Sales Today',
+    name: translations.value.dashboard?.salesToday,
     icon: DollarSign,
-    Num: `${stats.value.salesToday} ${settingStore.currency}`,
-  },
-]
+    Num: `${stats.value.salesToday} ${settingStore.currency}`
+  }
+])
 </script>
 
 <template>
   <div class="w-full min-h-screen px-6 py-8 bg-gray-50">
     <!-- عنوان -->
     <h1 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular text-center mb-8">
-      Dashboard Overview
+      {{ translations.dashboard?.overview }}
     </h1>
 
     <!-- بطاقات الإحصائيات -->
@@ -90,10 +93,10 @@ const info = [
       عرض غلاف + اسم الكتاب + تاريخ النشر -->
 
     <div class="mt-6 px-4">
-      <RecentBook/>
+      <RecentBook />
     </div>
     <div class="mt-6 px-4">
-      <RecentNotification/>
+      <RecentNotification />
     </div>
   </div>
 </template>

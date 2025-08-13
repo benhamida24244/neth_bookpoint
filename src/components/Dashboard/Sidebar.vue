@@ -10,15 +10,18 @@ import {
   X,
   Book,
   Clipboard,
-  ServerIcon,
+  ServerIcon
 } from 'lucide-vue-next'
-import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue'
+import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/Users'
+import { useLanguageStore } from '@/stores/language'
 import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 
 const emit = defineEmits(['close'])
 
@@ -27,15 +30,27 @@ const isOpen = ref(true)
 const isMobile = ref(false)
 const route = useRoute()
 
-const Menu = ref([
-  { title: 'Control Panel', icon: PanelBottom, url: '/dashboard' },
-  { title: 'Orders', icon: ShoppingCart, url: '/dashboard/orders' },
-  { title: 'Books', icon: Book, url: '/dashboard/books' },
-  { title: 'Categories', icon: Layers, url: '/dashboard/categories' },
-  { title: 'Clients', icon: ServerIcon, url: '/dashboard/clients' },
-  { title: 'Authors', icon: BookOpen, url: '/dashboard/authors' },
-  { title: 'Publishing House', icon: Layers, url: '/dashboard/publishing-house' },
-  { title: 'Settings', icon: Settings, url: '/dashboard/settings' },
+const Menu = computed(() => [
+  {
+    title: translations.value.dashboard?.sidebar?.dashboard,
+    icon: PanelBottom,
+    url: '/dashboard'
+  },
+  { title: translations.value.dashboard?.sidebar?.orders, icon: ShoppingCart, url: '/dashboard/orders' },
+  { title: translations.value.dashboard?.sidebar?.books, icon: Book, url: '/dashboard/books' },
+  {
+    title: translations.value.dashboard?.sidebar?.categories,
+    icon: Layers,
+    url: '/dashboard/categories'
+  },
+  { title: translations.value.dashboard?.sidebar?.clients, icon: ServerIcon, url: '/dashboard/clients' },
+  { title: translations.value.dashboard?.sidebar?.authors, icon: BookOpen, url: '/dashboard/authors' },
+  {
+    title: translations.value.dashboard?.sidebar?.publishingHouses,
+    icon: Layers,
+    url: '/dashboard/publishing-house'
+  },
+  { title: translations.value.dashboard?.sidebar?.settings, icon: Settings, url: '/dashboard/settings' }
 ])
 
 const checkScreenSize = () => {
@@ -61,8 +76,8 @@ const setActiveMenu = (menuTitle) => {
 defineProps({
   MenuOpen: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
 onMounted(() => {
@@ -105,7 +120,7 @@ watch(
         'fixed lg:relative h-screen bg-white shadow-2xl rounded-r-2xl flex flex-col z-50 transition-all duration-300',
         isMobile
           ? ['w-[280px] sm:w-[300px]', MenuOpen ? 'translate-x-0' : '-translate-x-full']
-          : 'w-[240px]',
+          : 'w-[240px]'
       ]"
     >
       <!-- Header -->
@@ -150,7 +165,7 @@ watch(
               'flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 group',
               active === menu.title
                 ? 'bg-[var(--color-primary)] text-black shadow-md'
-                : 'text-gray-800 hover:bg-yellow-100 hover:shadow-sm',
+                : 'text-gray-800 hover:bg-yellow-100 hover:shadow-sm'
             ]"
             @click="setActiveMenu(menu.title)"
           >
@@ -160,7 +175,7 @@ watch(
                   'w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200',
                   active === menu.title
                     ? 'bg-white text-black shadow-sm'
-                    : 'bg-[var(--color-primary)] text-white group-hover:bg-[var(--color-primary)]',
+                    : 'bg-[var(--color-primary)] text-white group-hover:bg-[var(--color-primary)]'
                 ]"
               >
                 <component :is="menu.icon" class="w-5 h-5" />
@@ -193,7 +208,7 @@ watch(
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
             />
           </svg>
-          Log Out
+          {{ translations.dashboard?.sidebar?.logout }}
         </button>
         <div class="text-xs text-gray-400 text-center">© 2024 Neth BookPoint</div>
       </div>

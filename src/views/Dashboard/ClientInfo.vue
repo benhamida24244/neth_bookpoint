@@ -1,25 +1,29 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useLanguageStore } from '@/stores/language'
+
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 
 // Client Status Configuration
-const STATUS_CONFIG = {
+const STATUS_CONFIG = computed(() => ({
   active: {
-    label: 'Active',
+    label: translations.value.dashboard?.clientInfo?.status?.active,
     color: 'bg-green-100 text-green-800',
     icon: '✓'
   },
   inactive: {
-    label: 'Inactive',
+    label: translations.value.dashboard?.clientInfo?.status?.inactive,
     color: 'bg-red-100 text-red-800',
     icon: '✗'
   },
   pending: {
-    label: 'Pending',
+    label: translations.value.dashboard?.clientInfo?.status?.pending,
     color: 'bg-yellow-100 text-[var(--color-hover)]',
     icon: '⏳'
   }
-}
+}))
 
 // Props and Emits
 const props = defineProps({
@@ -133,18 +137,20 @@ const clients = ref([
     averageOrderValue: 160,
     memberSince: '2024-09-03',
     notes: 'Premium customer with excellent payment history'
-  },
+  }
 ])
 
 // Computed Properties
 const selectedClient = computed(() => {
   const clientId = props.clientId || parseInt(route.params.id)
-  return clients.value.find(client => client.id === clientId)
+  return clients.value.find((client) => client.id === clientId)
 })
 
 const statusConfig = computed(() => {
   if (!selectedClient.value) return null
-  return STATUS_CONFIG[selectedClient.value.status] || STATUS_CONFIG.pending
+  return (
+    STATUS_CONFIG.value[selectedClient.value.status] || STATUS_CONFIG.value.pending
+  )
 })
 
 const formattedRegistrationDate = computed(() => {
@@ -169,25 +175,25 @@ const clientStats = computed(() => {
   if (!selectedClient.value) return []
   return [
     {
-      label: 'Total Orders',
+      label: translations.value.dashboard?.clientInfo?.totalOrders,
       value: selectedClient.value.Orders_count,
       icon: '📦',
       color: 'text-blue-600'
     },
     {
-      label: 'Total Spent',
+      label: translations.value.dashboard?.clientInfo?.totalSpent,
       value: `$${selectedClient.value.SpendMuch.toLocaleString()}`,
       icon: '💰',
       color: 'text-green-600'
     },
     {
-      label: 'Average Order',
+      label: translations.value.dashboard?.clientInfo?.averageOrder,
       value: `$${selectedClient.value.averageOrderValue}`,
       icon: '📊',
       color: 'text-purple-600'
     },
     {
-      label: 'Member Since',
+      label: translations.value.dashboard?.clientInfo?.memberSince,
       value: new Date(selectedClient.value.Registration_date).getFullYear(),
       icon: '📅',
       color: 'text-orange-600'
@@ -236,13 +242,15 @@ const updateClientStatus = async (newStatus) => {
   try {
     isUpdating.value = true
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const clientIndex = clients.value.findIndex(c => c.id === selectedClient.value.id)
+    const clientIndex = clients.value.findIndex((c) => c.id === selectedClient.value.id)
     if (clientIndex !== -1) {
       clients.value[clientIndex].status = newStatus
       showSuccessMessage.value = true
-      setTimeout(() => { showSuccessMessage.value = false }, 3000)
+      setTimeout(() => {
+        showSuccessMessage.value = false
+      }, 3000)
       emit('statusChanged', { clientId: selectedClient.value.id, status: newStatus })
     }
   } catch (err) {
@@ -255,7 +263,9 @@ const updateClientStatus = async (newStatus) => {
 const sendEmail = () => {
   const client = selectedClient.value
   const subject = encodeURIComponent(`Regarding your account - ${client.name}`)
-  const body = encodeURIComponent(`Dear ${client.name},\n\nI hope this email finds you well.\n\nBest regards,\nCustomer Service Team`)
+  const body = encodeURIComponent(
+    `Dear ${client.name},\n\nI hope this email finds you well.\n\nBest regards,\nCustomer Service Team`
+  )
   window.open(`mailto:${client.email}?subject=${subject}&body=${body}`)
 }
 
@@ -269,7 +279,7 @@ onMounted(async () => {
     isLoading.value = true
     error.value = null
     // Simulate loading time
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 800))
 
     if (!selectedClient.value) {
       error.value = 'Client not found'
@@ -282,9 +292,12 @@ onMounted(async () => {
   }
 })
 
-watch(() => route.params.id, (newId) => {
-  if (newId) onMounted()
-})
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) onMounted()
+  }
+)
 </script>
 
 <template>
@@ -299,16 +312,26 @@ watch(() => route.params.id, (newId) => {
               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
-              Back
+              {{ translations.dashboard?.clientInfo?.back }}
             </button>
-            <h1 class="text-3xl font-bold text-gray-900">Client Details</h1>
+            <h1 class="text-3xl font-bold text-gray-900">
+              {{ translations.dashboard?.clientInfo?.title }}
+            </h1>
           </div>
 
           <!-- Success Message -->
-          <div v-if="showSuccessMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-            ✓ Client updated successfully
+          <div
+            v-if="showSuccessMessage"
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"
+          >
+            ✓ {{ translations.dashboard?.clientInfo?.updatedSuccess }}
           </div>
         </div>
       </div>
@@ -316,15 +339,22 @@ watch(() => route.params.id, (newId) => {
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-16">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-gray-600">Loading client data...</span>
+        <span class="ml-3 text-gray-600">{{
+          translations.dashboard?.clientInfo?.loading
+        }}</span>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-        <div class="text-red-600 text-lg font-medium mb-2">⚠️ Error</div>
+        <div class="text-red-600 text-lg font-medium mb-2">
+          ⚠️ {{ translations.dashboard?.clientInfo?.error }}
+        </div>
         <p class="text-red-700">{{ error }}</p>
-        <button @click="onMounted" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-          Try Again
+        <button
+          @click="onMounted"
+          class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
+          {{ translations.dashboard?.clientInfo?.tryAgain }}
         </button>
       </div>
 
@@ -364,9 +394,14 @@ watch(() => route.params.id, (newId) => {
                 class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
-                Send Email
+                {{ translations.dashboard?.clientInfo?.sendEmail }}
               </button>
 
               <button
@@ -374,9 +409,14 @@ watch(() => route.params.id, (newId) => {
                 class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
                 </svg>
-                Call Client
+                {{ translations.dashboard?.clientInfo?.callClient }}
               </button>
 
               <button
@@ -384,9 +424,14 @@ watch(() => route.params.id, (newId) => {
                 class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
               >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                  />
                 </svg>
-                Print
+                {{ translations.dashboard?.clientInfo?.print }}
               </button>
 
               <button
@@ -394,9 +439,14 @@ watch(() => route.params.id, (newId) => {
                 class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
-                Download Report
+                {{ translations.dashboard?.clientInfo?.downloadReport }}
               </button>
             </div>
           </div>
@@ -424,47 +474,73 @@ watch(() => route.params.id, (newId) => {
           <!-- Personal Information -->
           <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <svg
+                class="w-5 h-5 mr-2 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
               </svg>
-              Personal Information
+              {{ translations.dashboard?.clientInfo?.personalInformation }}
             </h3>
 
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Full Name</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.fullName
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.name }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Email Address</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.emailAddress
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.email }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Phone Number</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.phoneNumber
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.phone }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Country</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.country
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.Country }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Registration Date</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.registrationDate
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ formattedRegistrationDate }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Last Order</label>
+                  <label class="text-sm font-medium text-gray-500">{{
+                    translations.dashboard?.clientInfo?.lastOrder
+                  }}</label>
                   <p class="text-gray-900 font-medium">{{ formattedLastOrderDate }}</p>
                 </div>
               </div>
 
               <div>
-                <label class="text-sm font-medium text-gray-500">Address</label>
+                <label class="text-sm font-medium text-gray-500">{{
+                  translations.dashboard?.clientInfo?.address
+                }}</label>
                 <p class="text-gray-900 font-medium">{{ selectedClient.address }}</p>
               </div>
 
               <div>
-                <label class="text-sm font-medium text-gray-500">Notes</label>
+                <label class="text-sm font-medium text-gray-500">{{
+                  translations.dashboard?.clientInfo?.notes
+                }}</label>
                 <p class="text-gray-700">{{ selectedClient.notes }}</p>
               </div>
             </div>
@@ -473,15 +549,27 @@ watch(() => route.params.id, (newId) => {
           <!-- Status Management -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                class="w-5 h-5 mr-2 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              Status Management
+              {{ translations.dashboard?.clientInfo?.statusManagement }}
             </h3>
 
             <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-gray-500 mb-2 block">Current Status</label>
+                <label class="text-sm font-medium text-gray-500 mb-2 block">{{
+                  translations.dashboard?.clientInfo?.currentStatus
+                }}</label>
                 <span
                   :class="statusConfig.color"
                   class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium"
@@ -491,7 +579,9 @@ watch(() => route.params.id, (newId) => {
               </div>
 
               <div>
-                <label class="text-sm font-medium text-gray-500 mb-2 block">Change Status</label>
+                <label class="text-sm font-medium text-gray-500 mb-2 block">{{
+                  translations.dashboard?.clientInfo?.changeStatus
+                }}</label>
                 <div class="space-y-2">
                   <button
                     v-for="(config, status) in STATUS_CONFIG"
@@ -505,7 +595,11 @@ watch(() => route.params.id, (newId) => {
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     ]"
                   >
-                    <span v-if="isUpdating && selectedClient.status !== status" class="animate-spin inline-block w-4 h-4 mr-2">⚙️</span>
+                    <span
+                      v-if="isUpdating && selectedClient.status !== status"
+                      class="animate-spin inline-block w-4 h-4 mr-2"
+                      >⚙️</span
+                    >
                     {{ config.icon }} {{ config.label }}
                   </button>
                 </div>
