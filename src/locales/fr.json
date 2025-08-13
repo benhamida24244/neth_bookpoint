@@ -1,0 +1,11 @@
+{
+  "header": {
+    "home": "Accueil",
+    "about": "À propos",
+    "shop": "Boutique",
+    "delivery_theme": "Thème de livraison",
+    "authors": "Auteurs",
+    "login": "Connexion",
+    "signup": "S'inscrire"
+  }
+}

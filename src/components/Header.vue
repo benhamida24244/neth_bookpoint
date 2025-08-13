@@ -1,5 +1,5 @@
 <script setup>
-import { ref , computed } from 'vue'
+import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import Logo from '../assets/HomeIcon/Header/Logo.png'
 import { useRoute } from 'vue-router'
@@ -7,12 +7,18 @@ import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
+import { useLanguageStore } from '@/stores/language'
+import { useUserStore } from '@/stores/Users'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
+// Ref for mobile menu state
 const isMenuOpen = ref(false)
 const route = useRoute()
+// Refs for login and register modal state
 const showLogin = ref(false)
 const showRegister = ref(false)
 
+// Functions to control login and register modals
 const openLogin = () => {
   showLogin.value = !showLogin.value
   showRegister.value = false
@@ -25,56 +31,65 @@ const CloseModal = () => {
   showLogin.value = false
   showRegister.value = false
 }
+
+// Function to toggle the mobile menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
 
+// Function to close the mobile menu
 const closeMenu = (e) => {
-  // التحقق من أن النقر كان على الخلفية (backdrop) وليس على القائمة نفسها
   if (e.target === e.currentTarget) {
     isMenuOpen.value = false
   }
 }
 
-// دالة لإغلاق القائمة عند النقر على رابط
 const handleLinkClick = () => {
   isMenuOpen.value = false
 }
 
+// Function to check if a route is active
 const isActive = (link) => {
   return route.path === link
 }
 
+// Pinia stores
 const settingsStore = useSettingsStore()
+const languageStore = useLanguageStore()
+const userStore = useUserStore()
 
-// نحضر رابط صورة الخلفية من ال store بشكل reactive
+// Reactive state from stores
+const { translations } = storeToRefs(languageStore)
+const { isLoggedIn } = storeToRefs(userStore)
+
 const headerBackground = computed(() => {
   const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
   return wallpaper ? `url("${wallpaper}") center/cover no-repeat` : ''
 })
 
-const MenuContent = [
+const MenuContent = computed(() => [
   {
-    name: 'Home',
+    name: translations.value.header?.home || 'Home',
     link: '/',
   },
   {
-    name: 'About',
+    name: translations.value.header?.about || 'About',
     link: '/about',
   },
   {
-    name: 'Shop',
+    name: translations.value.header?.shop || 'Shop',
     link: '/shop',
   },
   {
-    name: 'Delivery theme',
+    name: translations.value.header?.delivery_theme || 'Delivery theme',
     link: '/delivery-theme',
   },
   {
-    name: 'Authors',
+    name: translations.value.header?.authors || 'Authors',
     link: '/authors',
   },
-]
+])
+
 const cartStore = useCartStore()
 const { cartCount } = storeToRefs(cartStore)
 </script>
@@ -88,7 +103,9 @@ const { cartCount } = storeToRefs(cartStore)
     <div class="flex flex-wrap items-center justify-between gap-4 w-full">
       <RouterLink to="/" class="flex items-center gap-2">
         <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
-        <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">NETH<br />BOOKPOINT</p>
+        <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
+          NETH<br />BOOKPOINT
+        </p>
       </RouterLink>
 
       <div
@@ -107,6 +124,7 @@ const { cartCount } = storeToRefs(cartStore)
           </li>
           <li
             v-for="item in MenuContent"
+            :key="item.name"
             class="max-lg:border-b max-lg:border-gray-300 max-lg:py-3 px-3"
           >
             <RouterLink
@@ -121,7 +139,11 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
-        <RouterLink to="/cart" class="relative text-white hover:text-[var(--color-hover)] self-center">
+        <LanguageSwitcher />
+        <RouterLink
+          to="/cart"
+          class="relative text-white hover:text-[var(--color-hover)] self-center"
+        >
           <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
           <span
             v-if="cartCount > 0"
@@ -129,18 +151,29 @@ const { cartCount } = storeToRefs(cartStore)
             >{{ cartCount }}</span
           >
         </RouterLink>
-        <button
-          class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
-          @click="openLogin"
-        >
-          Login
-        </button>
-        <button
-          @click="openRegister"
-          class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
-        >
-          Sign up
-        </button>
+        <div v-if="isLoggedIn" class="flex items-center">
+          <RouterLink to="/profile">
+            <img
+              src="https://randomuser.me/api/portraits/men/75.jpg"
+              alt="User Avatar"
+              class="w-10 h-10 rounded-full"
+            />
+          </RouterLink>
+        </div>
+        <template v-else>
+          <button
+            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
+            @click="openLogin"
+          >
+            {{ translations.header?.login || 'Login' }}
+          </button>
+          <button
+            @click="openRegister"
+            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
+          >
+            {{ translations.header?.signup || 'Sign up' }}
+          </button>
+        </template>
 
         <button
           id="toggleOpen"
