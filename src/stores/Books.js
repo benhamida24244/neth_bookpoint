@@ -170,5 +170,24 @@ export const useBooksStore = defineStore('books', {
       })
       return uniqueCategories
     }
+  },
+  actions: {
+    addBook(book) {
+      const newBook = {
+        id: this.books.length + 1,
+        status: 'draft',
+        ...book
+      };
+      this.books.push(newBook);
+    },
+    updateBook(updatedBook) {
+      const index = this.books.findIndex(book => book.id === updatedBook.id);
+      if (index !== -1) {
+        this.books[index] = updatedBook;
+      }
+    },
+    deleteBook(bookId) {
+      this.books = this.books.filter(book => book.id !== bookId);
+    }
   }
 })

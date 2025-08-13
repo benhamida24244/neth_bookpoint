@@ -91,5 +91,13 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
   }
 ]
   }),
-
+  actions: {
+    addPublisher(publisher) {
+      const newPublisher = {
+        id: this.publishingHouses.length + 1,
+        ...publisher
+      };
+      this.publishingHouses.push(newPublisher);
+    }
+  }
 })

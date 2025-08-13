@@ -2,10 +2,12 @@
 import AdminCategoriesTable from '@/components/Dashboard/Table/AdminCategoriesTable.vue'
 import { useCategoriesStore } from '@/stores/Categories'
 import { useLanguageStore } from '@/stores/language'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import AddCategoryModal from '@/components/Dashboard/Modals/AddCategoryModal.vue'
 
 const categoriesStore = useCategoriesStore()
 const categories = computed(() => categoriesStore.categories)
+const showAddCategoryModal = ref(false)
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
 
@@ -32,16 +34,35 @@ const cartsCategories = computed(() => [
     color: 'bg-[var(--color-light)]'
   }
 ])
+
+const handleSaveCategory = (newCategory) => {
+  categoriesStore.addCategory(newCategory)
+  showAddCategoryModal.value = false
+  alert('Category added successfully!')
+}
 </script>
 
 <template>
   <div class="p-8">
+    <AddCategoryModal
+      :show="showAddCategoryModal"
+      @close="showAddCategoryModal = false"
+      @save="handleSaveCategory"
+    />
     <!-- Title -->
-    <header class="font-BonaRegular mb-8">
-      <h1 class="font-bold text-3xl text-gray-800">
-        {{ translations.dashboard?.categories?.title }}
-      </h1>
-      <p class="text-gray-500 text-base">{{ translations.dashboard?.categories?.subtitle }}</p>
+    <header class="font-BonaRegular mb-8 flex justify-between items-center">
+      <div>
+        <h1 class="font-bold text-3xl text-gray-800">
+          {{ translations.dashboard?.categories?.title }}
+        </h1>
+        <p class="text-gray-500 text-base">{{ translations.dashboard?.categories?.subtitle }}</p>
+      </div>
+      <button
+        @click="showAddCategoryModal = true"
+        class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-dark)] transition-colors duration-200"
+      >
+        Add New Category
+      </button>
     </header>
 
     <!-- Stats Cards -->

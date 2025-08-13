@@ -3,10 +3,16 @@ import { useBooksStore } from '@/stores/Books'
 import { useSettingsStore } from '@/stores/settings'
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
+import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
 
 // الفلاتر
 const activeFilter = ref('All Books')
 const searchQuery = ref('')
+const showAddBookModal = ref(false)
+const showEditBookModal = ref(false)
+const selectedBook = ref(null)
+
 const filters = ref([
   { label: 'All Books', value: 'All Books' },
   { label: 'Published', value: 'published' },
@@ -80,10 +86,38 @@ const getStatusClass = (status) => {
   }
   return statusClasses[status] || 'bg-gray-50 text-gray-700'
 }
+
+const handleSaveBook = (newBook) => {
+  bookStore.addBook(newBook)
+  showAddBookModal.value = false
+  alert('Book added successfully!')
+}
+
+const openEditModal = (book) => {
+  selectedBook.value = book
+  showEditBookModal.value = true
+}
+
+const handleUpdateBook = (updatedBook) => {
+  bookStore.updateBook(updatedBook)
+  showEditBookModal.value = false
+  alert('Book updated successfully!')
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
+    <AddBookModal
+      :show="showAddBookModal"
+      @close="showAddBookModal = false"
+      @save="handleSaveBook"
+    />
+    <EditBookModal
+      :show="showEditBookModal"
+      :book="selectedBook"
+      @close="showEditBookModal = false"
+      @save="handleUpdateBook"
+    />
     <div class="w-full px-4 md:px-6 py-8">
       <div class="max-w-7xl mx-auto mb-8 font-BonaRegular">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Books Dashboard</h1>
@@ -125,14 +159,22 @@ const getStatusClass = (status) => {
           </button>
         </div>
 
-        <div class="relative w-full md:w-auto">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search books..."
-            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
-          />
-          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        <div class="flex items-center gap-4">
+          <div class="relative w-full md:w-auto">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search books..."
+              class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
+            />
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <button
+            @click="showAddBookModal = true"
+            class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-dark)] transition-colors duration-200"
+          >
+            Add New Book
+          </button>
         </div>
       </div>
 
@@ -226,12 +268,12 @@ const getStatusClass = (status) => {
                   {{ book.publisherDate }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <RouterLink
-                    :to="`/dashboard/books/${book.id}`"
-                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
+                  <button
+                    @click="openEditModal(book)"
+                    class="text-indigo-600 hover:text-indigo-900"
                   >
-                    <i class="far fa-eye"></i> View
-                  </RouterLink>
+                    Edit
+                  </button>
                 </td>
               </tr>
             </tbody>

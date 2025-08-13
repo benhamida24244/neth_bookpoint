@@ -234,6 +234,21 @@ export const useCategoriesStore = defineStore("categories", {
         this.categories[currentCategoryIndex].status = 'inactive'
         alert('Category unpublished.')
       }
+    },
+    addCategory(category) {
+      const newCategory = {
+        id: this.categories.length + 1,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        ...category
+      };
+      this.categories.push(newCategory);
+    },
+    updateCategory(updatedCategory) {
+      const index = this.categories.findIndex(category => category.id === updatedCategory.id);
+      if (index !== -1) {
+        this.categories[index] = updatedCategory;
+      }
     }
   }
 })
