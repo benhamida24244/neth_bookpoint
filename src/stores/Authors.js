@@ -117,6 +117,13 @@ export const useAuthorStore = defineStore("authors" ,{
   }
     ]
   }),
-
-}
-)
+  actions: {
+    addAuthor(author) {
+      const newAuthor = {
+        id: this.authors.length + 1,
+        ...author
+      };
+      this.authors.push(newAuthor);
+    }
+  }
+})
