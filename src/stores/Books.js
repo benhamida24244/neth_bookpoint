@@ -41,7 +41,7 @@ export const useBooksStore = defineStore('books', {
     publishingHouse: 'Modern Web Solutions',
     publisherDate: '2024-03-20',
     pages: 280,
-    category: 'Web Design',
+    category: 'Web Development',
     language: 'English',
     status: 'pending',
     price: 34.50,
