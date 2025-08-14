@@ -121,7 +121,13 @@ export const useAuthorStore = defineStore("authors" ,{
     addAuthor(author) {
       const newAuthor = {
         id: this.authors.length + 1,
-        ...author
+        ...author,
+        nmbBook: 0,
+        SpendMuch: 0,
+        Orders_count: 0,
+        email: 'N/A',
+        phone: 'N/A',
+        Registration_date: new Date().toISOString().slice(0, 10)
       };
       this.authors.push(newAuthor);
     }

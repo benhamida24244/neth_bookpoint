@@ -1,7 +1,9 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors';
 import { ref, computed } from 'vue';
+import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue';
 
+const addAuthorModal = ref(null);
 const searchQuery = ref('');
 const selectedCountry = ref('');
 const sortBy = ref('name');
@@ -77,6 +79,7 @@ const getSortIcon = (field) => {
 
 <template>
   <div class="w-full sm:px-8 lg:px-16 mt-8">
+    <AddAuthorModal ref="addAuthorModal" />
     <!-- Header Section -->
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
       <!-- Search and Filters -->
@@ -106,7 +109,7 @@ const getSortIcon = (field) => {
 
       <!-- Action Buttons -->
       <div class="flex gap-3 w-full lg:w-auto">
-        <button class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
+        <button @click="addAuthorModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
           Add Author
         </button>
         <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none">
