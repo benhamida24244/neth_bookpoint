@@ -1,18 +1,24 @@
 <script setup>
-import AuthorList from '@/components/Author/AuthorList.vue'
-import LargeBanner from '@/components/Banner/LargeBanner.vue'
-import SmallBannerItem from '@/components/Banner/Small Banner/SmallBannerItem.vue'
-import SmallBannerList from '@/components/Banner/Small Banner/SmallBannerList.vue'
-import BookList from '@/components/Book/bookList.vue'
-import CatigoryList from '@/components/Catigory/CatigoryList.vue'
-import Footer from '@/components/Footer/Footer.vue'
-import Hero from '@/components/Hero.vue'
-import PublishingHousesList from '@/components/Publishing/PublishingHousesList.vue'
+// LAZY LOADING: defineAsyncComponent is used to load components only when they're needed.
+// This splits the code into smaller chunks, improving initial page load performance.
+import { defineAsyncComponent, onMounted } from 'vue'
+
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
-import { onMounted } from 'vue'
 import { useLanguageStore } from '@/stores/language'
 import { storeToRefs } from 'pinia'
+
+// LAZY LOADING EXAMPLE:
+// Each component below is now loaded asynchronously. Instead of being bundled with the
+// parent page, it will be fetched from the server the first time it's rendered.
+const AuthorList = defineAsyncComponent(() => import('@/components/Author/AuthorList.vue'))
+const LargeBanner = defineAsyncComponent(() => import('@/components/Banner/LargeBanner.vue'))
+const SmallBannerList = defineAsyncComponent(() => import('@/components/Banner/Small Banner/SmallBannerList.vue'))
+const BookList = defineAsyncComponent(() => import('@/components/Book/bookList.vue'))
+const CatigoryList = defineAsyncComponent(() => import('@/components/Catigory/CatigoryList.vue'))
+const Footer = defineAsyncComponent(() => import('@/components/Footer/Footer.vue'))
+const Hero = defineAsyncComponent(() => import('@/components/Hero.vue'))
+const PublishingHousesList = defineAsyncComponent(() => import('@/components/Publishing/PublishingHousesList.vue'))
 
 const PublishingHousesStore = usePublishingHouseStore()
 const authorsStore = useAuthorStore()
