@@ -2,6 +2,8 @@
 import { useBooksStore } from '@/stores/Books';
 import { useCartStore } from '@/stores/Cart';
 import { useSettingsStore } from '@/stores/settings';
+import { RouterLink } from 'vue-router';
+
 
 defineProps({
   book: {
@@ -28,7 +30,7 @@ const settingsStore = useSettingsStore()
       </div>
     </div>
 
-    <div class="mt-auto text-center">
+    <RouterLink :to="`/book/${book.id}`" class="mt-auto text-center">
       <h3 class="font-bold text-md font-bona truncate" :title="book.title">{{ book.title }}</h3>
       <p class="text-sm text-gray-500 font-BonaRegular underline">{{ book.author }}</p>
       <p class="text-black font-bold font-BonaRegular ">{{ book.price + settingsStore.currency }} </p>
@@ -43,6 +45,6 @@ const settingsStore = useSettingsStore()
           ></i>
         </span>
       </div>
-    </div>
+    </RouterLink>
   </div>
 </template>
