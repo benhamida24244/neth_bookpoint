@@ -88,7 +88,8 @@ const getStatusClass = (status) => {
 }
 
 const handleSaveBook = (newBook) => {
-  bookStore.addBook(newBook)
+  const dataNow = new Date().toISOString().split('T')[0]
+  bookStore.addBook(newBook, dataNow)
   showAddBookModal.value = false
   alert('Book added successfully!')
 }
@@ -267,7 +268,13 @@ const handleUpdateBook = (updatedBook) => {
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {{ book.publisherDate }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                <td class="mt-3 px-6 py-4 whitespace-nowrap text-center text-sm flex gap-3">
+                  <RouterLink
+                    :to="`/dashboard/books/${book.id}`"
+                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
+                  >
+                    <i class="far fa-eye"></i> View
+                  </RouterLink>
                   <button
                     @click="openEditModal(book)"
                     class="text-indigo-600 hover:text-indigo-900"

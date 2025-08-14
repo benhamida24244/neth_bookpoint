@@ -172,12 +172,13 @@ export const useBooksStore = defineStore('books', {
     }
   },
   actions: {
-    addBook(book) {
+    addBook(book, publisherDate) {
       const newBook = {
         id: this.books.length + 1,
         status: 'draft',
-        ...book
-      };
+        ...book,
+        publisherDate
+      }
       this.books.push(newBook);
     },
     updateBook(updatedBook) {

@@ -21,7 +21,7 @@ const newBook = ref({
   description: '',
   price: null,
   author: '',
-  publisher: '',
+  publishingHouse: '',
   cover: '',
 })
 
@@ -34,7 +34,7 @@ function closeModal() {
 
 function saveBook() {
   // Basic validation
-  if (!newBook.value.title || !newBook.value.author || !newBook.value.publisher) {
+  if (!newBook.value.title || !newBook.value.author || !newBook.value.publishingHouse) {
     alert('Please fill in all required fields.')
     return
   }
@@ -53,7 +53,7 @@ const handleSaveAttribute = (name) => {
     newBook.value.author = name
   } else if (attributeType.value === 'publisher') {
     publishingHouseStore.addPublisher({ name })
-    newBook.value.publisher = name
+    newBook.value.publishingHouse = name
   }
 }
 </script>
@@ -143,13 +143,13 @@ const handleSaveAttribute = (name) => {
               </div>
             </div>
             <div>
-              <label for="publisher" class="block text-sm font-medium text-gray-700"
+              <label for="publishingHouse" class="block text-sm font-medium text-gray-700"
                 >Publisher</label
               >
               <div class="flex items-center gap-2">
                 <select
-                  v-model="newBook.publisher"
-                  id="publisher"
+                  v-model="newBook.publishingHouse"
+                  id="publishingHouse"
                   class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
