@@ -95,7 +95,14 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
     addPublisher(publisher) {
       const newPublisher = {
         id: this.publishingHouses.length + 1,
-        ...publisher
+        ...publisher,
+        ordersCount: 0,
+        spendMuch: 0,
+        nmbBook: 0,
+        foundedYear: new Date().getFullYear(),
+        email: 'N/A',
+        phone: 'N/A',
+        url: 'N/A'
       };
       this.publishingHouses.push(newPublisher);
     }

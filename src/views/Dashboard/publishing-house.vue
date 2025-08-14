@@ -2,7 +2,11 @@
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 import { ref, computed } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
+import { useI18n } from 'vue-i18n';
+import AddPublisherModal from '@/components/Dashboard/Modals/AddPublisherModal.vue';
 
+const { t } = useI18n();
+const addPublisherModal = ref(null);
 const searchQuery = ref('');
 const selectedCountry = ref('');
 const sortBy = ref('name');
@@ -117,13 +121,14 @@ const formatNumber = (number) => {
 
 <template>
   <div class="w-full sm:px-8 lg:px-16 mt-8">
+    <AddPublisherModal ref="addPublisherModal" />
     <!-- Header Section -->
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
       <!-- Search and Filters -->
       <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-2/3">
         <input
           v-model="searchQuery"
-          placeholder="Search for Publishing House"
+          :placeholder="t('dashboard.sidebar.publishingHouses')"
           type="text"
           class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         />
@@ -146,7 +151,7 @@ const formatNumber = (number) => {
 
       <!-- Action Buttons -->
       <div class="flex gap-3 w-full lg:w-auto">
-        <button class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors flex-1 lg:flex-none">
+        <button @click="addPublisherModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors flex-1 lg:flex-none">
           Add Publisher
         </button>
         <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] transition-colors flex-1 lg:flex-none">
@@ -247,14 +252,14 @@ const formatNumber = (number) => {
                 @click="handleSort('name')"
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
               >
-                Name {{ getSortIcon('name') }}
+                {{ t('dashboard.clientInfo.fullName') }} {{ getSortIcon('name') }}
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
               <th
                 @click="handleSort('ordersCount')"
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
               >
-                Orders {{ getSortIcon('ordersCount') }}
+                {{ t('dashboard.sidebar.orders') }} {{ getSortIcon('ordersCount') }}
               </th>
               <th
                 @click="handleSort('spendMuch')"
