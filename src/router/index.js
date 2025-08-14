@@ -25,6 +25,7 @@ import Categories from '@/views/Dashboard/Categories.vue'
 import CategoriesInfo from '@/views/Dashboard/CategoriesInfo.vue'
 import AuthorDetails from '@/views/Dashboard/AuthorDetails.vue'
 import PHouseDetails from '@/views/Dashboard/PHouseDetails.vue'
+import BookDetailsView from '@/views/BookDetailsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,6 +84,11 @@ const router = createRouter({
       path: '/profile',
       name: 'Profile',
       component: () => import('../views/ProfileView.vue'),
+    },
+    {
+      path: '/book/:id',
+      name: 'BookDetails',
+      component: BookDetailsView,
     }
       ]
     },
