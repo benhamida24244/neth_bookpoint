@@ -2,15 +2,22 @@
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/Users'
 import { useCartStore } from '@/stores/Cart'
-import {computed} from 'vue'
+import { useOrdersStore } from '@/stores/Orders'
+import { computed } from 'vue'
 
 // Pinia stores
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const ordersStore = useOrdersStore()
 
 // Reactive state
-const { currentUser } = storeToRefs(userStore)
-const { cart, shippedOrders } = storeToRefs(cartStore) // نفترض أنك أضفت shippedOrders في الستيت
+const { user: currentUser } = storeToRefs(userStore)
+const { cart } = storeToRefs(cartStore)
+const { orders } = storeToRefs(ordersStore)
+
+const userOrders = computed(() =>
+  orders.value.filter(order => order.customer.email === currentUser.value.email)
+)
 
 // حساب إجمالي السعر
 const totalPrice = computed(() =>
@@ -60,20 +67,33 @@ const totalPrice = computed(() =>
       </div>
     </div>
 
-    <!-- Shipped Orders -->
+    <!-- Order History -->
     <div class="bg-white shadow-lg rounded-xl p-6">
-      <h2 class="text-xl font-bold mb-4 text-gray-800">Shipped Orders</h2>
-      <div v-if="shippedOrders && shippedOrders.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="order in shippedOrders" :key="order.id" class="border rounded-lg p-4 bg-green-50 shadow-sm">
-          <img :src="order.image" :alt="order.name" class="w-full h-40 object-cover rounded-md mb-3" />
-          <p class="font-semibold">{{ order.name }}</p>
-          <p class="text-sm text-gray-600">Quantity: {{ order.quantity }}</p>
-          <p class="text-sm text-gray-600">Price: ${{ order.price }}</p>
-          <span class="text-green-700 text-sm font-semibold mt-2 inline-block">Shipped</span>
+      <h2 class="text-xl font-bold mb-4 text-gray-800">Order History</h2>
+      <div v-if="userOrders.length > 0" class="space-y-6">
+        <div v-for="order in userOrders" :key="order.id" class="border rounded-lg p-4 bg-gray-50 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <p class="font-semibold">Order #{{ order.id }}</p>
+              <p class="text-sm text-gray-600">Date: {{ order.date }}</p>
+            </div>
+            <span class="text-green-700 text-sm font-semibold px-2 py-1 bg-green-100 rounded-full">{{ order.status }}</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div v-for="item in order.items" :key="item.id" class="border rounded-lg p-3 bg-white">
+              <img :src="item.image" :alt="item.name" class="w-full h-32 object-cover rounded-md mb-3" />
+              <p class="font-semibold text-sm">{{ item.name }}</p>
+              <p class="text-xs text-gray-600">Quantity: {{ item.quantity }}</p>
+              <p class="text-xs text-gray-600">Price: ${{ item.price }}</p>
+            </div>
+          </div>
+           <div class="mt-4 text-right">
+            <span class="text-lg font-bold">Total: ${{ order.totals.total.toFixed(2) }}</span>
+          </div>
         </div>
       </div>
       <div v-else class="text-gray-500">
-        No shipped orders yet.
+        You have no past orders.
       </div>
     </div>
   </div>

@@ -4,8 +4,10 @@ import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/Cart';
 import { useCheckoutStore } from '@/stores/Checkout';
 import { useUserStore } from '@/stores/Users';
+import { useOrdersStore } from '@/stores/Orders';
 import { storeToRefs } from 'pinia';
-import { useLanguageStore } from '@/stores/language'
+import { useRouter } from 'vue-router';
+import { useLanguageStore } from '@/stores/language';
 
 
 const icons = {
@@ -20,7 +22,6 @@ const selectedPayment = ref('paypal'); // 'paypal', or 'visa'
 const languageStore = useLanguageStore()
 const { translations } = storeToRefs(languageStore)
 
-
 const cartStore = useCartStore();
 const { cart: orderItems } = storeToRefs(cartStore);
 
@@ -29,6 +30,9 @@ const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+
+const ordersStore = useOrdersStore();
+const router = useRouter();
 
 const visaCardDetails = ref({
   cardholderName: '',
@@ -113,9 +117,11 @@ const handleSubmit = () => {
 
   // Simulate API call
   setTimeout(() => {
+    ordersStore.addOrder(orderData);
+    cartStore.clearCart();
     isLoading.value = false;
-    alert('Order submitted successfully!');
-  }, 2000);
+    router.push('/payment-success');
+  }, 1000);
 };
 </script>
 

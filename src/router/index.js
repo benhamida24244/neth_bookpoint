@@ -26,6 +26,7 @@ import CategoriesInfo from '@/views/Dashboard/CategoriesInfo.vue'
 import AuthorDetails from '@/views/Dashboard/AuthorDetails.vue'
 import PHouseDetails from '@/views/Dashboard/PHouseDetails.vue'
 import BookDetailsView from '@/views/BookDetailsView.vue'
+import PaymentSuccess from '@/views/PaymentSuccess.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,6 +90,11 @@ const router = createRouter({
       path: '/book/:id',
       name: 'BookDetails',
       component: BookDetailsView,
+    },
+    {
+      path: '/payment-success',
+      name: 'PaymentSuccess',
+      component: PaymentSuccess,
     }
       ]
     },

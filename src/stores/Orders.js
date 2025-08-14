@@ -1,42 +1,23 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-export const useOrdersStore = defineStore("orders", {
+export const useOrdersStore = defineStore('orders', {
   state: () => ({
-    orders: [
-      {
-        id: 1,
-        customer: 'Ali Ahmed',
-        book: '1984',
-        status: 'Completed',
-        price: 29.99,
-        date: '2025-07-12'
-      },
-      {
-        id: 2,
-        customer: 'Sara Belkacem',
-        book: 'Kafka on the Shore',
-        status: 'Pending',
-        price: 35.00,
-        date: '2025-07-14'
-      },
-      {
-        id: 3,
-        customer: 'Omar Yacine',
-        book: 'Animal Farm',
-        status: 'Returned',
-        price: 24.99,
-        date: '2025-07-13'
-      },
-      {
-        id: 4,
-        customer: 'Yasmine H.',
-        book: 'The Alchemist',
-        status: 'Completed',
-        price: 39.99,
-        date: '2025-07-10'
-      }
-    ],
+    orders: []
   }),
-
+  getters: {
+    latestOrder: (state) => {
+      return state.orders.length > 0 ? state.orders[state.orders.length - 1] : null
+    }
   },
-);
+  actions: {
+    addOrder(orderData) {
+      const newOrder = {
+        id: this.orders.length + 1,
+        date: new Date().toISOString().slice(0, 10),
+        status: 'Completed',
+        ...orderData
+      }
+      this.orders.push(newOrder)
+    }
+  }
+})
