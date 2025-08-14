@@ -7,7 +7,7 @@ const showModal = ref(false);
 
 const newAuthor = ref({
   name: '',
-  country: '',
+  Country: '',
   description: '',
   img: ''
 });
@@ -24,7 +24,7 @@ const closeModal = () => {
 const resetForm = () => {
   newAuthor.value = {
     name: '',
-    country: '',
+    Country: '',
     description: '',
     img: ''
   };
@@ -49,7 +49,7 @@ defineExpose({
       <input v-model="newAuthor.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
       <label class="block mb-2 font-medium">Country</label>
-      <input v-model="newAuthor.country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
+      <input v-model="newAuthor.Country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
       <label class="block mb-2 font-medium">Description</label>
       <textarea v-model="newAuthor.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
