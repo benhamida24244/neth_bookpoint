@@ -22,6 +22,7 @@ const newBook = ref({
   price: null,
   author: '',
   publisher: '',
+  cover: '',
 })
 
 const authors = computed(() => authorStore.authors)
@@ -83,7 +84,7 @@ const handleSaveAttribute = (name) => {
                 v-model="newBook.title"
                 type="text"
                 id="title"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
@@ -93,7 +94,7 @@ const handleSaveAttribute = (name) => {
                 v-model.number="newBook.price"
                 type="number"
                 id="price"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
@@ -108,13 +109,23 @@ const handleSaveAttribute = (name) => {
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               ></textarea>
             </div>
+            <div class="md:col-span-2">
+              <label for="cover" class="block text-sm font-medium text-gray-700">Cover URL</label>
+              <input
+                v-model="newBook.cover"
+                id="cover"
+                type="text"
+                placeholder="https://example.com/image.jpg"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
             <div>
               <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
               <div class="flex items-center gap-2">
                 <select
                   v-model="newBook.author"
                   id="author"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
                   <option disabled value="">Select an author</option>
@@ -125,7 +136,7 @@ const handleSaveAttribute = (name) => {
                 <button
                   @click="openAddAttributeModal('author')"
                   type="button"
-                  class="px-3 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700"
+                  class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
                   New
                 </button>
@@ -139,7 +150,7 @@ const handleSaveAttribute = (name) => {
                 <select
                   v-model="newBook.publisher"
                   id="publisher"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
                   <option disabled value="">Select a publisher</option>
@@ -154,7 +165,7 @@ const handleSaveAttribute = (name) => {
                 <button
                   @click="openAddAttributeModal('publisher')"
                   type="button"
-                  class="px-3 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700"
+                  class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
                   New
                 </button>
@@ -172,7 +183,7 @@ const handleSaveAttribute = (name) => {
         </button>
         <button
           @click="saveBook"
-          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
+          class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-hover)]"
         >
           Save Book
         </button>

@@ -221,9 +221,9 @@ export const useCategoriesStore = defineStore("categories", {
       const currentCategory = this.getCurrentCategory(currentId)
       const currentCategoryIndex = this.getCurrentCategoryIndex(currentId)
 
-      const newImage = prompt('Enter new category image URL:', currentCategory.image || '')
+      const newImage = prompt('Enter new category image URL:', currentCategory.icon || '')
       if (newImage && currentCategoryIndex !== -1) {
-        this.categories[currentCategoryIndex].image = newImage
+        this.categories[currentCategoryIndex].icon = newImage
       }
     },
 
