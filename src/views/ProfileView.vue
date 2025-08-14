@@ -4,11 +4,13 @@ import { useUserStore } from '@/stores/Users'
 import { useCartStore } from '@/stores/Cart'
 import { useOrdersStore } from '@/stores/Orders'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 // Pinia stores
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const ordersStore = useOrdersStore()
+const { t } = useI18n()
 
 // Reactive state
 const { user: currentUser } = storeToRefs(userStore)
@@ -31,9 +33,9 @@ const totalPrice = computed(() =>
       <!-- Header Section -->
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] bg-clip-text text-transparent mb-2">
-          My Dashboard
+          {{ t('profile.title') }}
         </h1>
-        <p class="text-gray-600 text-lg">Manage your profile, cart, and orders</p>
+        <p class="text-gray-600 text-lg">{{ t('profile.subtitle') }}</p>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -50,8 +52,8 @@ const totalPrice = computed(() =>
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-1">My Profile</h2>
-                <p class="text-green-600 text-sm font-medium">Active Account</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ t('profile.myProfile') }}</h2>
+                <p class="text-green-600 text-sm font-medium">{{ t('profile.activeAccount') }}</p>
               </div>
             </div>
 
@@ -63,7 +65,7 @@ const totalPrice = computed(() =>
                   </svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500 font-medium">Name</p>
+                  <p class="text-sm text-gray-500 font-medium">{{ t('profile.name') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.name }}</p>
                 </div>
               </div>
@@ -75,7 +77,7 @@ const totalPrice = computed(() =>
                   </svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500 font-medium">Email</p>
+                  <p class="text-sm text-gray-500 font-medium">{{ t('profile.email') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.email }}</p>
                 </div>
               </div>
@@ -88,7 +90,7 @@ const totalPrice = computed(() =>
                   </svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500 font-medium">Address</p>
+                  <p class="text-sm text-gray-500 font-medium">{{ t('profile.address') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.address }}</p>
                 </div>
               </div>
@@ -109,12 +111,12 @@ const totalPrice = computed(() =>
                     </svg>
                   </div>
                   <div>
-                    <h2 class="text-2xl font-bold">Shopping Cart</h2>
-                    <p class="text-blue-100">{{ cart.length }} items in your cart</p>
+                    <h2 class="text-2xl font-bold">{{ t('profile.shoppingCart') }}</h2>
+                    <p class="text-blue-100">{{ t('profile.itemsInCart', { count: cart.length }) }}</p>
                   </div>
                 </div>
                 <div v-if="cart.length > 0" class="text-right">
-                  <p class="text-blue-100 text-sm">Total</p>
+                  <p class="text-blue-100 text-sm">{{ t('profile.total') }}</p>
                   <p class="text-2xl font-bold">${{ totalPrice.toFixed(2) }}</p>
                 </div>
               </div>
@@ -131,7 +133,7 @@ const totalPrice = computed(() =>
                   <div class="space-y-2">
                     <h3 class="font-semibold text-gray-800 line-clamp-2">{{ item.name }}</h3>
                     <div class="flex justify-between items-center text-sm text-gray-600">
-                      <span>Qty: {{ item.quantity }}</span>
+                      <span>{{ t('profile.quantity') }}: {{ item.quantity }}</span>
                       <span class="font-medium">${{ item.price }}</span>
                     </div>
                     <div class="text-right">
@@ -148,8 +150,8 @@ const totalPrice = computed(() =>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v5a2 2 0 11-4 0v-5m4 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v5"></path>
                   </svg>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">Your cart is empty</h3>
-                <p class="text-gray-500">Add some items to get started</p>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">{{ t('profile.emptyCart') }}</h3>
+                <p class="text-gray-500">{{ t('profile.emptyCartSuggestion') }}</p>
               </div>
             </div>
           </div>
@@ -164,8 +166,8 @@ const totalPrice = computed(() =>
                   </svg>
                 </div>
                 <div>
-                  <h2 class="text-2xl font-bold">Order History</h2>
-                  <p class="text-emerald-100">{{ userOrders.length }} total orders</p>
+                  <h2 class="text-2xl font-bold">{{ t('profile.orderHistory') }}</h2>
+                  <p class="text-emerald-100">{{ t('profile.totalOrders', { count: userOrders.length }) }}</p>
                 </div>
               </div>
             </div>
@@ -182,7 +184,7 @@ const totalPrice = computed(() =>
                           <span class="text-blue-600 font-bold text-sm">#{{ order.id }}</span>
                         </div>
                         <div>
-                          <p class="font-semibold text-gray-800">Order #{{ order.id }}</p>
+                          <p class="font-semibold text-gray-800">{{ t('profile.order') }} #{{ order.id }}</p>
                           <p class="text-sm text-gray-600">{{ order.date }}</p>
                         </div>
                       </div>
@@ -191,7 +193,7 @@ const totalPrice = computed(() =>
                           {{ order.status }}
                         </span>
                         <div class="text-right">
-                          <p class="text-sm text-gray-500">Total</p>
+                          <p class="text-sm text-gray-500">{{ t('profile.total') }}</p>
                           <p class="text-xl font-bold text-gray-800">${{ order.totals.total.toFixed(2) }}</p>
                         </div>
                       </div>
@@ -209,7 +211,7 @@ const totalPrice = computed(() =>
                         <div class="space-y-1">
                           <p class="font-semibold text-sm text-gray-800 line-clamp-2">{{ item.name }}</p>
                           <div class="flex justify-between text-xs text-gray-600">
-                            <span>Qty: {{ item.quantity }}</span>
+                            <span>{{ t('profile.quantity') }}: {{ item.quantity }}</span>
                             <span class="font-medium">${{ item.price }}</span>
                           </div>
                         </div>
@@ -225,8 +227,8 @@ const totalPrice = computed(() =>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">No orders yet</h3>
-                <p class="text-gray-500">Your order history will appear here</p>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">{{ t('profile.noOrders') }}</h3>
+                <p class="text-gray-500">{{ t('profile.noOrdersSuggestion') }}</p>
               </div>
             </div>
           </div>

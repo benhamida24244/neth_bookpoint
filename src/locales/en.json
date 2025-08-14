@@ -186,5 +186,25 @@
       "activeCategories": "Active Categories",
       "newThisMonth": "New This Month"
     }
+  },
+  "profile": {
+    "title": "My Dashboard",
+    "subtitle": "Manage your profile, cart, and orders",
+    "myProfile": "My Profile",
+    "activeAccount": "Active Account",
+    "name": "Name",
+    "email": "Email",
+    "address": "Address",
+    "shoppingCart": "Shopping Cart",
+    "itemsInCart": "{count} items in your cart",
+    "total": "Total",
+    "emptyCart": "Your cart is empty",
+    "emptyCartSuggestion": "Add some items to get started",
+    "orderHistory": "Order History",
+    "totalOrders": "{count} total orders",
+    "order": "Order",
+    "noOrders": "No orders yet",
+    "noOrdersSuggestion": "Your order history will appear here",
+    "quantity": "Qty"
   }
 }

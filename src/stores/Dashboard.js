@@ -34,56 +34,43 @@ export const useDashboardStore = defineStore('dashboard', {
   }),
   actions: {
     async fetchDashboardData() {
+      // TODO: Replace with actual API calls
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      this.stats = {
-        books: 120,
-        ordersToday: 12,
-        clients: 120,
-        salesToday: 3423,
-      };
+      // Example of how to fetch and update the state:
+      // try {
+      //   const response = await fetch('/api/dashboard-stats');
+      //   const data = await response.json();
+      //   this.stats = data;
+      // } catch (error) {
+      //   console.error('Error fetching dashboard stats:', error);
+      // }
 
-      this.dailySales = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        data: [120, 150, 180, 220, 200, 250, 230],
-      };
+      // Fetch daily sales data
+      // this.dailySales = await fetch('/api/daily-sales').then(res => res.json());
 
-      this.dailyOrders = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        data: [10, 12, 15, 18, 16, 20, 19],
-      };
+      // Fetch daily orders data
+      // this.dailyOrders = await fetch('/api/daily-orders').then(res => res.json());
 
-      this.categorySales = {
-        labels: ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
-        data: [300, 250, 200, 180, 150],
-      };
+      // Fetch category sales data
+      // this.categorySales = await fetch('/api/category-sales').then(res => res.json());
 
-      this.publishingHouse = {
-        labels: ['Penguin', 'HarperCollins', 'Simon & Schuster', 'Hachette', 'Macmillan'],
-        data: [500, 450, 400, 350, 300],
-      };
+      // Fetch publishing house data
+      // this.publishingHouse = await fetch('/api/publishing-house').then(res => res.json());
 
-      this.ordersByCountry = {
-        labels: ['USA', 'UK', 'Canada', 'Australia', 'Germany'],
-        data: [40, 30, 20, 15, 10],
-      };
+      // Fetch orders by country data
+      // this.ordersByCountry = await fetch('/api/orders-by-country').then(res => res.json());
 
-      this.latestOrders = [
-        { id: 1, customer: 'John Doe', total: 59.99, status: 'Paid' },
-        { id: 2, customer: 'Jane Smith', total: 46.00, status: 'Pending' },
-        { id: 3, customer: 'Bob Johnson', total: 49.00, status: 'Paid' },
-      ];
+      // Fetch latest orders
+      // this.latestOrders = await fetch('/api/latest-orders').then(res => res.json());
 
-      this.recentBooks = [
-        { id: 1, name: 'Hasees (Signed Edition)', img: 'https://m.media-amazon.com/images/I/81WcnNQ-TBL._AC_UF1000,1000_QL80_.jpg' },
-        { id: 2, name: 'The Crazy Musician (Signed Edition)', img: 'https://blog-cdn.reedsy.com/directories/gallery/248/large_65b0ae90317f7596d6f95bfdd6131398.jpg' },
-      ];
+      // Fetch recent books
+      // this.recentBooks = await fetch('/api/recent-books').then(res => res.json());
 
-      this.recentNotifications = [
-        { id: 1, message: 'New order #1234 has been placed.', time: '10 minutes ago' },
-        { id: 2, message: 'A new user has registered.', time: '1 hour ago' },
-      ];
+      // Fetch recent notifications
+      // this.recentNotifications = await fetch('/api/recent-notifications').then(res => res.json());
     },
   },
 });

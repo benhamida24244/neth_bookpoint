@@ -186,5 +186,25 @@
       "activeCategories": "الفئات النشطة",
       "newThisMonth": "جديد هذا الشهر"
     }
+  },
+  "profile": {
+    "title": "لوحة التحكم الخاصة بي",
+    "subtitle": "إدارة ملفك الشخصي، عربة التسوق، والطلبات",
+    "myProfile": "ملفي الشخصي",
+    "activeAccount": "حساب نشط",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "shoppingCart": "عربة التسوق",
+    "itemsInCart": "{count} عناصر في عربة التسوق الخاصة بك",
+    "total": "المجموع",
+    "emptyCart": "عربة التسوق فارغة",
+    "emptyCartSuggestion": "أضف بعض العناصر للبدء",
+    "orderHistory": "سجل الطلبات",
+    "totalOrders": "{count} إجمالي الطلبات",
+    "order": "طلب",
+    "noOrders": "لا توجد طلبات حتى الآن",
+    "noOrdersSuggestion": "سيظهر سجل طلباتك هنا",
+    "quantity": "الكمية"
   }
 }

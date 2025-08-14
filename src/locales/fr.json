@@ -186,5 +186,25 @@
       "activeCategories": "Catégories actives",
       "newThisMonth": "Nouveautés ce mois-ci"
     }
+  },
+  "profile": {
+    "title": "Mon tableau de bord",
+    "subtitle": "Gérez votre profil, votre panier et vos commandes",
+    "myProfile": "Mon profil",
+    "activeAccount": "Compte actif",
+    "name": "Nom",
+    "email": "Email",
+    "address": "Adresse",
+    "shoppingCart": "Panier d'achat",
+    "itemsInCart": "{count} articles dans votre panier",
+    "total": "Total",
+    "emptyCart": "Votre panier est vide",
+    "emptyCartSuggestion": "Ajoutez des articles pour commencer",
+    "orderHistory": "Historique des commandes",
+    "totalOrders": "{count} commandes au total",
+    "order": "Commande",
+    "noOrders": "Aucune commande pour l'instant",
+    "noOrdersSuggestion": "L'historique de vos commandes apparaîtra ici",
+    "quantity": "Qté"
   }
 }

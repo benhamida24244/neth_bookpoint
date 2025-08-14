@@ -1,32 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '@/views/AboutView.vue'
-import ShopView from '@/views/ShopView.vue'
-import AuthorsView from '@/views/Authors/AuthorsView.vue'
-import Delivery_theme from '@/views/Delivery_theme.vue'
-import ContactView from '@/views/ContactView.vue'
-import SingleAuthorPage from '@/views/Authors/SingleAuthorPage.vue'
-import DefaultLayout from '@/Layout/DefaultLayout.vue'
-import DashboardLayout from '@/Layout/DashboardLayout.vue'
-import NotFound from '@/Layout/NotFound.vue'
-import DashboardHome from '@/views/Dashboard/DashboardHome.vue'
-import Orders from '@/views/Dashboard/Orders.vue'
-import Authors from '@/views/Dashboard/Authors.vue'
-import SettingsPage from '@/views/Dashboard/SettingsPage.vue'
-import PublishingHouse from '@/views/Dashboard/publishing-house.vue'
-import ClientDash from '@/views/Dashboard/ClientDash.vue'
-import Books from '@/views/Dashboard/Books.vue'
-import OrderDetails from '@/views/Dashboard/OrderDetails.vue'
-import BookDetails from '@/views/Dashboard/BookDetails.vue'
-import ClientInfo from '@/views/Dashboard/ClientInfo.vue'
-import CartView from '@/views/CartView.vue'
-import CheckOutPageView from '@/views/CheckOutPageView.vue'
-import Categories from '@/views/Dashboard/Categories.vue'
-import CategoriesInfo from '@/views/Dashboard/CategoriesInfo.vue'
-import AuthorDetails from '@/views/Dashboard/AuthorDetails.vue'
-import PHouseDetails from '@/views/Dashboard/PHouseDetails.vue'
-import BookDetailsView from '@/views/BookDetailsView.vue'
-import PaymentSuccess from '@/views/PaymentSuccess.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,52 +6,52 @@ const router = createRouter({
     {
       path:'/',
       name:'Main Page',
-      component:DefaultLayout,
+      component: () => import('@/Layout/DefaultLayout.vue'),
       children:[
         {
       path: '',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path:'about',
       name:'About',
-      component: AboutView,
+      component: () => import('@/views/AboutView.vue'),
     },
     {
       path:'shop',
       name:'shop',
-      component:ShopView,
+      component:() => import('@/views/ShopView.vue'),
     },
     {
     path:'authors',
     name:'Authors',
-    component:AuthorsView,
+    component:() => import('@/views/Authors/AuthorsView.vue'),
     },
     {
       path:'authors/:id',
       name:'public Authors info',
-      component:SingleAuthorPage,
+      component:() => import('@/views/Authors/SingleAuthorPage.vue'),
     },
     {
       path:'delivery-theme',
       name:'Delivery Theme',
-      component:Delivery_theme,
+      component:() => import('@/views/Delivery_theme.vue'),
     },
     {
       path:'contact',
       name:'Contact Us',
-      component: ContactView,
+      component: () => import('@/views/ContactView.vue'),
     },
     {
       path: '/cart',
       name: 'Cart',
-      component: CartView,
+      component: () => import('@/views/CartView.vue'),
     },
     {
       path: '/checkout',
       name: 'Checkout',
-      component: CheckOutPageView,
+      component: () => import('@/views/CheckOutPageView.vue'),
     },
     {
       path: '/profile',
@@ -89,34 +61,34 @@ const router = createRouter({
     {
       path: '/book/:id',
       name: 'BookDetails',
-      component: BookDetailsView,
+      component: () => import('@/views/BookDetailsView.vue'),
     },
     {
       path: '/payment-success',
       name: 'PaymentSuccess',
-      component: PaymentSuccess,
+      component: () => import('@/views/PaymentSuccess.vue'),
     }
       ]
     },
     {
       path:'/dashboard',
       name:'Dashboard Home',
-      component:DashboardLayout,
+      component:() => import('@/Layout/DashboardLayout.vue'),
       children:[
-        {path:'', name:'Home Dashboard' , component:DashboardHome},
-        {path:'orders', name:'Orders page' , component:Orders},
-        {path:'orders/:id', name:'Orders Info' , component:OrderDetails},
-        {path:'clients', name:'clients page' , component:ClientDash},
-        {path:'clients/:id', name:'clients Info' , component:ClientInfo},
-        {path:'books', name:'Books page' , component:Books},
-        {path:'books/:id', name:'Books info' , component:BookDetails},
-        {path:'categories', name:'Categories page' , component:Categories},
-        {path:'categories/:id', name:'Categories info' , component:CategoriesInfo},
-        {path:'authors', name:'Authors page' , component:Authors},
-        {path:'authors/:id', name:'dashboard Authors info' , component:AuthorDetails},
-        {path:'settings', name:'Settings page' , component:SettingsPage},
-        {path:'publishing-house', name:'Publishing House page' , component:PublishingHouse},
-        {path:'publishing-house/:id', name:'Publishing House Info' , component:PHouseDetails},
+        {path:'', name:'Home Dashboard' , component:() => import('@/views/Dashboard/DashboardHome.vue')},
+        {path:'orders', name:'Orders page' , component:() => import('@/views/Dashboard/Orders.vue')},
+        {path:'orders/:id', name:'Orders Info' , component:() => import('@/views/Dashboard/OrderDetails.vue')},
+        {path:'clients', name:'clients page' , component:() => import('@/views/Dashboard/ClientDash.vue')},
+        {path:'clients/:id', name:'clients Info' , component:() => import('@/views/Dashboard/ClientInfo.vue')},
+        {path:'books', name:'Books page' , component:() => import('@/views/Dashboard/Books.vue')},
+        {path:'books/:id', name:'Books info' , component:() => import('@/views/Dashboard/BookDetails.vue')},
+        {path:'categories', name:'Categories page' , component:() => import('@/views/Dashboard/Categories.vue')},
+        {path:'categories/:id', name:'Categories info' , component:() => import('@/views/Dashboard/CategoriesInfo.vue')},
+        {path:'authors', name:'Authors page' , component:() => import('@/views/Dashboard/Authors.vue')},
+        {path:'authors/:id', name:'dashboard Authors info' , component:() => import('@/views/Dashboard/AuthorDetails.vue')},
+        {path:'settings', name:'Settings page' , component:() => import('@/views/Dashboard/SettingsPage.vue')},
+        {path:'publishing-house', name:'Publishing House page' , component:() => import('@/views/Dashboard/publishing-house.vue')},
+        {path:'publishing-house/:id', name:'Publishing House Info' , component:() => import('@/views/Dashboard/PHouseDetails.vue')},
 
       ]
 
@@ -124,7 +96,7 @@ const router = createRouter({
     {
       path:'/:pathMatch(.*)*',
       name:'Not Found',
-      component:NotFound
+      component:() => import('@/Layout/NotFound.vue')
     }
   ],
 })
