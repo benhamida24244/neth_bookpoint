@@ -1,9 +1,8 @@
 // stores/Books.js
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
-export const useBooksStore = defineStore('books', {
-  state: () => ({
-     books: [
+// Static data for books. In a real application, this would come from an API.
+const staticBooks = [
   {
     id: 1,
     title: 'Vue.js for Beginners: A Comprehensive Guide',
@@ -139,9 +138,23 @@ export const useBooksStore = defineStore('books', {
       updated: '2017-10-25T10:30:00Z'
     }
   }
-],
+];
+
+export const useBooksStore = defineStore('books', {
+  state: () => ({
+    // Flag to indicate if books are being loaded
+    isLoading: false,
+    // Array to hold the books data, initially empty
+    books: [],
   }),
-   getters: {
+  getters: {
+    /**
+     * Getter to return all books.
+     * @param {object} state - The store state.
+     * @returns {Array} - The array of books.
+     */
+    allBooks: (state) => state.books,
+
     getTotalAuthors(state) {
       // نرجع قائمة المؤلفين الفريدة
       const uniqueAuthors = []
@@ -172,6 +185,18 @@ export const useBooksStore = defineStore('books', {
     }
   },
   actions: {
+    /**
+     * Action to fetch books from a simulated API.
+     */
+    async fetchBooks() {
+      this.isLoading = true;
+      // Simulate an API call with a timeout
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // In a real application, you would fetch data from an API here.
+      this.books = staticBooks;
+      this.isLoading = false;
+    },
+
     addBook(book, publisherDate) {
       const newBook = {
         id: this.books.length + 1,
