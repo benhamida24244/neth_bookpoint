@@ -15,7 +15,7 @@ const icons = {
 
 const isLoading = ref(false);
 const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
-const selectedPayment = ref('electronic'); // 'electronic', 'tabby', or 'cod'
+const selectedPayment = ref('paypal'); // 'paypal', or 'visa'
 
 const languageStore = useLanguageStore()
 const { translations } = storeToRefs(languageStore)
@@ -29,6 +29,13 @@ const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+
+const visaCardDetails = ref({
+  cardholderName: '',
+  cardNumber: '',
+  expirationDate: '',
+  cvv: ''
+});
 
 onMounted(() => {
   checkoutStore.fetchCheckoutData();
@@ -97,6 +104,10 @@ const handleSubmit = () => {
       total: grandTotal.value
     }
   };
+
+  if (selectedPayment.value === 'visa') {
+    orderData.visaCard = visaCardDetails.value;
+  }
 
   console.log('Order submitted:', orderData);
 
@@ -276,6 +287,36 @@ const handleSubmit = () => {
                         </div>
                       </div>
                     </label>
+                  </div>
+                </div>
+
+                <!-- PayPal Button -->
+                <div v-if="selectedPayment === 'paypal'" class="mt-6">
+                  <button type="button" class="w-full bg-[#0070BA] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#005ea6]">
+                    <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" alt="PayPal" class="h-6 mr-2">
+                    <span>Pay with PayPal</span>
+                  </button>
+                </div>
+
+                <!-- Visa Card Form -->
+                <div v-if="selectedPayment === 'visa'" class="mt-6 space-y-4">
+                  <div>
+                    <label for="cardholderName" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Cardholder Name</label>
+                    <input id="cardholderName" type="text" v-model="visaCardDetails.cardholderName" placeholder="John Doe" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                  </div>
+                  <div>
+                    <label for="cardNumber" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Card Number</label>
+                    <input id="cardNumber" type="text" v-model="visaCardDetails.cardNumber" placeholder="**** **** **** ****" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label for="expirationDate" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Expiration Date (MM/YY)</label>
+                      <input id="expirationDate" type="text" v-model="visaCardDetails.expirationDate" placeholder="MM/YY" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                    </div>
+                    <div>
+                      <label for="cvv" class="block text-[var(--color-primary)] text-sm font-medium mb-2">CVV</label>
+                      <input id="cvv" type="text" v-model="visaCardDetails.cvv" placeholder="***" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                    </div>
                   </div>
                 </div>
               </div>

@@ -22,8 +22,8 @@ export const useCheckoutStore = defineStore('checkout', {
       ];
 
       this.paymentOptions = [
-        { id: 'electronic', name: 'Electronic Payment', subtitle: 'Secure payment via credit card, Mada or ApplePay' },
-        { id: 'cod', name: 'Cash on Delivery', subtitle: 'Pay when the order arrives' },
+        { id: 'paypal', name: 'PayPal', subtitle: 'Pay with your PayPal account' },
+        { id: 'visa', name: 'Visa Card', subtitle: 'Pay with your Visa credit card' },
       ];
     },
     updateOrderSummary(summary) {
