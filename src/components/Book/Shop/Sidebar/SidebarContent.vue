@@ -1,9 +1,9 @@
 <template>
   <aside class="w-full bg-white text-gray-900 p-4 font-BonaRegular rounded-lg shadow-md overflow-y-auto">
-    <!-- عنوان -->
+    <!-- Title -->
     <h2 class="text-xl font-bold text-[var(--color-primary)] mb-6">Filter & Categories</h2>
 
-    <!-- الفئات الرئيسية -->
+    <!-- Popular Sections -->
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Popular Sections</h3>
       <ul class="space-y-1 text-sm">
@@ -14,18 +14,23 @@
     </section>
     <hr class="my-4 border-gray-200" />
 
-    <!-- حسب الموضوع -->
+    <!-- Subjects -->
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Subjects</h3>
-      <ul class="space-y-1 text-sm">
-        <li v-for="item in subjects" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition" :class="{'text-[var(--color-primary)] font-medium': item === 'See All Subjects'}">{{ item }}</a>
+      <!-- Show a loading message while fetching categories -->
+      <div v-if="isLoading" class="text-sm text-gray-500">Loading categories...</div>
+      <!-- Show a message if there are no categories -->
+      <div v-else-if="allCategories.length === 0" class="text-sm text-gray-500">No categories available.</div>
+      <!-- Display the list of categories -->
+      <ul v-else class="space-y-1 text-sm">
+        <li v-for="category in allCategories" :key="category.id">
+          <a :href="category.url" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ category.name }}</a>
         </li>
       </ul>
     </section>
     <hr class="my-4 border-gray-200" />
 
-    <!-- حسب السعر -->
+    <!-- Price -->
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Price</h3>
       <ul class="space-y-1 text-sm">
@@ -60,6 +65,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useCategoriesStore } from '@/stores/Categories';
+
+// Access the categories store
+const categoriesStore = useCategoriesStore();
+
+// Get all categories from the store using the allCategories getter
+const allCategories = computed(() => categoriesStore.allCategories);
+
+// Get the loading state from the store
+const isLoading = computed(() => categoriesStore.isLoading);
+
+console.log('allCategories', allCategories.value);
+
 const popularSections = [
   'Customer Favorites', 'Bestsellers', 'Teens & YA Bestsellers', 'Kids Bestsellers',
   'NY Times® Bestsellers', 'New Releases', 'Coming Soon', 'Special Values',
@@ -67,13 +86,6 @@ const popularSections = [
   'B&N Collectible Editions', 'Special Collections', 'Best Books of 2025 (So Far)',
   'Our Monthly Picks', 'Book Club Selections', 'B&N Exclusives',
   'The Paperback Store', 'Book Awards', 'Boxed Sets', 'Signed & Special Editions'
-];
-
-const subjects = [
-  'Art, Architecture & Photography', 'Bibles & Christianity', 'Biography', 'Business',
-  'Cookbooks, Food & Wine', 'Fiction', 'Graphic Novels & Comics', 'Diet, Health & Fitness',
-  'History', 'Manga', 'Mystery & Thrillers', 'Religion', 'Romance',
-  'Science Fiction & Fantasy', 'Self-Help & Relationships', 'See All Subjects'
 ];
 
 const prices = [
