@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useAuthorStore = defineStore("authors" ,{
   state:() => ({
-    authors: [
+     Staticauthors: [
       {
     id: 1,
     name: 'Stephen King',
@@ -115,7 +115,8 @@ export const useAuthorStore = defineStore("authors" ,{
     phone: '+1-555-0108',
     Registration_date: '2018-04-03'
   }
-    ]
+    ],
+    authors: []
   }),
   actions: {
     addAuthor(author) {

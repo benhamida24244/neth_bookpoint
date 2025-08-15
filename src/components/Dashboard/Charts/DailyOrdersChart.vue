@@ -1,5 +1,6 @@
 <script setup>
 import { Line } from 'vue-chartjs'
+import { useOrdersStore } from '@/stores/Orders'
 import {
   Chart as ChartJS,
   Title,
@@ -13,14 +14,16 @@ import {
 
 // تسجيل المكونات المطلوبة
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale)
+const OrdersStore = useOrdersStore()
+const Orders = OrdersStore.orders
 
 // بيانات الطلبات اليومية (افتراضية حاليًا)
 const chartData = {
-  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  labels: Orders.map(order => order.date),
   datasets: [
     {
       label: 'Daily Orders',
-      data: [15, 22, 18, 30, 25, 28, 21],
+      data: Orders.map(order => order.bookCount),
       borderColor: '#4ade80', // أخضر Tailwind
       backgroundColor: 'rgba(74, 222, 128, 0.2)',
       fill: true,

@@ -1,36 +1,10 @@
 <script setup>
+import { useOrdersStore } from '@/stores/Orders';
 import { useSettingsStore } from '@/stores/settings';
 
 const settingsStore = useSettingsStore()
-const orders = [
-  {
-    id: '#ORD1234',
-    client: 'Ali Bensalem',
-    email: 'ali@example.com',
-    status: 'Pending',
-    total: 120.00,
-    payment: 'Credit Card',
-    date: '2025-07-10'
-  },
-  {
-    id: '#ORD1235',
-    client: 'Fatima Khaled',
-    email: 'fatima@example.com',
-    status: 'Shipped',
-    total: 89.50,
-    payment: 'Cash on Delivery',
-    date: '2025-07-09'
-  },
-  {
-    id: '#ORD1236',
-    client: 'Yassine M.',
-    email: 'yassine@example.com',
-    status: 'Cancelled',
-    total: 45.00,
-    payment: 'Bank Transfer',
-    date: '2025-07-08'
-  }
-]
+const ordersStore = useOrdersStore()
+const orders = ordersStore.getRecentOrders
 
 const statusColor = {
   Pending: 'text-[var(--color-primary)] bg-yellow-100',
@@ -54,6 +28,7 @@ const statusColor = {
           <th class="py-3 px-3">Date</th>
         </tr>
       </thead>
+
       <tbody>
         <tr
           v-for="order in orders"
@@ -77,5 +52,15 @@ const statusColor = {
         </tr>
       </tbody>
     </table>
+            <!-- Empty State -->
+        <div v-if="orders.length === 0" class="p-12 text-center">
+          <div
+            class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
+          >
+            <i class="far fa-file-alt text-gray-400 text-3xl"></i>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">No orders found</h3>
+
+        </div>
   </div>
 </template>

@@ -154,7 +154,7 @@ export const useBooksStore = defineStore('books', {
      * @returns {Array} - The array of books.
      */
     allBooks: (state) => state.books,
-
+    RecentBooks: (state) => state.books.filter(book => book.status === 'published').slice(-5),
     getTotalAuthors(state) {
       // نرجع قائمة المؤلفين الفريدة
       const uniqueAuthors = []

@@ -1,25 +1,25 @@
 <script setup>
 import { useLanguageStore } from '@/stores/language'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n' // أضف هذا السطر
 
 const languageStore = useLanguageStore()
 const showMenu = ref(false)
+const { locale } = useI18n() // أضف هذا السطر
 
-// Define the available languages
 const languages = [
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' },
   { code: 'ar', name: 'العربية' },
 ]
 
-// Computed property to get the current language
 const currentLanguage = computed(() => {
   return languages.find((lang) => lang.code === languageStore.language)
 })
 
-// Function to change the language
 const setLanguage = (lang) => {
   languageStore.setLanguage(lang)
+  locale.value = lang // أضف هذا السطر لتغيير لغة i18n
   showMenu.value = false
 }
 </script>

@@ -7,16 +7,19 @@ import {
   Legend,
   ArcElement
 } from 'chart.js'
+import { useOrdersStore } from '@/stores/Orders'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
+const orderStore = useOrdersStore()
+const orders = orderStore.orders
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
 const chartData = {
-  labels: ['Algeria', 'China', 'India', 'United Kingdom', 'Other'],
+  labels: orders.map((order) => order.country),
   datasets: [
     {
       label: 'Publishing Houses',
-      data: [20, 90, 60, 89, 65],
+      data: orders.map((order) => order.bookCount),
       backgroundColor: [
         '#facc15', // Yellow
         '#60a5fa', // Blue

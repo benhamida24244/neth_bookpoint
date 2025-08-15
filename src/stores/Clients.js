@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useClientsStore = defineStore("clients", {
   state: () => ({
-    clients: [
+    staticClients: [
   {
     id: 1,
     name: 'Benhamida Mohammed',
@@ -54,6 +54,7 @@ export const useClientsStore = defineStore("clients", {
     Country: 'Algeria'
   },
 ],
+    clients: []
   }),
 
   actions: {

@@ -8,7 +8,6 @@ import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue
 import DailySalesChart from '@/components/Dashboard/Charts/DailySalesChart.vue'
 import OrdersByTheCountry from '@/components/Dashboard/Charts/OrdersByTheCountry.vue'
 import PublishingHouse from '@/components/Dashboard/Charts/PublishingHouse.vue'
-import RecentNotification from '@/components/Dashboard/RecentNotification.vue'
 import StatCards from '@/components/Dashboard/StatCards.vue'
 import LatestOrdersTable from '@/components/Dashboard/Table/LatestOrdersTable.vue'
 import RecentBook from '@/components/Dashboard/Table/RecentBook.vue'
@@ -66,10 +65,8 @@ const info = computed(() => [
     </div>
 
     <!-- مخططات مستقبلية أو عناصر أخرى -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <DailySalesChart />
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mt-5">
+
       <div class="bg-white p-4 rounded-2xl shadow">
         <DailyOrdersChart />
       </div>
@@ -95,8 +92,6 @@ const info = computed(() => [
     <div class="mt-6 px-4">
       <RecentBook />
     </div>
-    <div class="mt-6 px-4">
-      <RecentNotification />
-    </div>
+
   </div>
 </template>

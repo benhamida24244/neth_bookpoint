@@ -1,30 +1,9 @@
 <script setup>
-const books = [
-  {
-    id: 1,
-    title: 'The Silent Patient',
-    cover: 'https://prodimage.images-bn.com/pimages/9781250301697_p0_v5_s600x595.jpg',
-    date: '2025-07-10',
-  },
-  {
-    id: 2,
-    title: 'Atomic Habits',
-    cover: 'https://prodimage.images-bn.com/pimages/9780735211292_p0_v2_s600x595.jpg',
-    date: '2025-07-09',
-  },
-  {
-    id: 3,
-    title: 'It Ends With Us',
-    cover: 'https://prodimage.images-bn.com/pimages/9781501110368_p0_v1_s600x595.jpg',
-    date: '2025-07-07',
-  },
-  {
-    id: 4,
-    title: 'The Alchemist',
-    cover: 'https://prodimage.images-bn.com/pimages/9780061122415_p0_v2_s600x595.jpg',
-    date: '2025-07-06',
-  },
-]
+import { useBooksStore } from '@/stores/Books';
+
+
+const bookStore = useBooksStore()
+const RecentBooks = bookStore.RecentBooks
 </script>
 
 <template>
@@ -32,10 +11,19 @@ const books = [
     <h2 class="text-xl font-bold text-[var(--color-primary)] font-BonaRegular mb-4">
       📚 Recent Books
     </h2>
-
+    <!-- Empty State -->
+        <div v-if="RecentBooks.length === 0" class="p-12 text-center">
+          <div
+            class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
+          >
+            <i class="far fa-file-alt text-gray-400 text-3xl"></i>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
+          
+        </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       <div
-        v-for="book in books"
+        v-for="book in RecentBooks"
         :key="book.id"
         class="bg-gray-50 rounded-xl p-3 shadow-sm hover:shadow-lg transition cursor-pointer"
       >

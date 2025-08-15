@@ -7,16 +7,19 @@ import {
   Legend,
   ArcElement
 } from 'chart.js'
+import { useCategoriesStore } from '@/stores/Categories'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
+const CategoriesStore = useCategoriesStore()
+const Categories = CategoriesStore.categories
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
 const chartData = {
-  labels: ['Penguin', 'HarperCollins', 'Macmillan', 'Simon & Schuster', 'Other'],
+  labels: Categories.map((category) => category.name),
   datasets: [
     {
       label: 'Publishing Houses',
-      data: [150, 90, 70, 60, 40],
+      data: Categories.map((category) => category.bookCount),
       backgroundColor: [
         '#facc15', // Yellow
         '#60a5fa', // Blue

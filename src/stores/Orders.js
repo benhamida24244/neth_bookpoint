@@ -7,6 +7,9 @@ export const useOrdersStore = defineStore('orders', {
   getters: {
     latestOrder: (state) => {
       return state.orders.length > 0 ? state.orders[state.orders.length - 1] : null
+    },
+    getRecentOrders: (state) => {
+      return state.orders.slice(-5)
     }
   },
   actions: {

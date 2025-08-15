@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const usePublishingHouseStore = defineStore("publishingHouse", {
   state: () => ({
-     publishingHouses: [
+    staticpublishingHouses: [
   {
     id: 1,
     name: 'Penguin Random House',
@@ -89,7 +89,8 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
     spendMuch: 980000,
     nmbBook: 12500
   }
-]
+],
+     publishingHouses: []
   }),
   actions: {
     addPublisher(publisher) {
