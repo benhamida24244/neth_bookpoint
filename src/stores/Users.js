@@ -7,7 +7,7 @@ export const useUserStore = defineStore('users', {
       email: 'benhamida6@gmail.com',
       address: '123 Main St, Anytown, USA',
     },
-    isAuthenticated: true,
+    isAuthenticated: false,
   }),
   getters: {
     isLoggedIn: (state) => state.isAuthenticated,

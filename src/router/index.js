@@ -94,6 +94,11 @@ const router = createRouter({
 
     },
     {
+      path:'/loginAdmin',
+      name:'Admin Login',
+      component:() => import('@/views/Auth/LoginAdmin.vue')
+    },
+    {
       path:'/:pathMatch(.*)*',
       name:'Not Found',
       component:() => import('@/Layout/NotFound.vue')
