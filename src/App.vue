@@ -5,6 +5,9 @@ import { onMounted } from 'vue'
 import { useLanguageStore } from '@/stores/language'
 
 const settingsStore = useSettingsStore()
+if (settingsStore.primaryColor) {
+  settingsStore.setPrimaryColor(settingsStore.defaultColor)
+}
 const languageStore = useLanguageStore()
 
 // This ensures that when the app is loaded, the primary color from the

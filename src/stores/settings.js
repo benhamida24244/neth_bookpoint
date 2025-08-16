@@ -1,14 +1,17 @@
 // src/stores/settings.js
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import walpapper from '@/assets/HomeIcon/Header/walpapper.png'
+import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
 
 export const useSettingsStore = defineStore('settings', () => {
   // Default (headerWallpaper يمكن أن يبقى فارغاً حتى يمرر المكون مسار الصورة)
   const defaultColor = {
-    primary: '#c67913',
+   primary: '#c67913',
     light: '#F0B100',
     hover: '#A65F00',
-    headerWallpaper: '' // سيُستبدل بصيغة URL عند الضغط من SettingsPage
+    headerWallpaper: walpapper,
+    heroWallpaper: HeroCover // سيُستبدل بصيغة URL عند الضغط من SettingsPage
   }
 
   const getInitialColor = () => {

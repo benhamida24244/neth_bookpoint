@@ -59,9 +59,6 @@ import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
 import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
 import HeroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
 import HeroCoverRed from '@/assets/HomeIcon/Hero/HeroCoverRed.png'
-
-const settingsStore = useSettingsStore()
-
 const primaryColors = ref([
   { name: 'Yellow', hex: {
     primary: '#c67913',
@@ -85,4 +82,5 @@ const primaryColors = ref([
     heroWallpaper: HeroCoverRed
   }}
 ])
+const settingsStore = useSettingsStore()
 </script>
