@@ -16,8 +16,8 @@ const LargeBanner = defineAsyncComponent(() => import('@/components/Banner/Large
 const SmallBannerList = defineAsyncComponent(() => import('@/components/Banner/Small Banner/SmallBannerList.vue'))
 const BookList = defineAsyncComponent(() => import('@/components/Book/bookList.vue'))
 const CatigoryList = defineAsyncComponent(() => import('@/components/Catigory/CatigoryList.vue'))
-const Footer = defineAsyncComponent(() => import('@/components/Footer/Footer.vue'))
-const Hero = defineAsyncComponent(() => import('@/components/Hero.vue'))
+const TheFooter = defineAsyncComponent(() => import('@/components/Footer/TheFooter.vue'))
+const TheHero = defineAsyncComponent(() => import('@/components/TheHero.vue'))
 const PublishingHousesList = defineAsyncComponent(() => import('@/components/Publishing/PublishingHousesList.vue'))
 
 const PublishingHousesStore = usePublishingHouseStore()
@@ -86,7 +86,7 @@ onMounted(()=> {
 </script>
 
 <template>
-  <Hero />
+  <TheHero />
   <div class="w-full">
     <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.bestsellers || 'BestSellers' }}</h1>
     <BookList />
@@ -109,6 +109,6 @@ onMounted(()=> {
     <BookList />
     <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.publishingHouse || 'Publishing House' }}</h1>
     <PublishingHousesList :PublishingHouses="PublishingHouses"/>
-    <Footer/>
+    <TheFooter/>
   </div>
 </template>

@@ -1,17 +1,10 @@
 <script setup>
-import { useBooksStore } from '@/stores/Books';
-import { useCartStore } from '@/stores/Cart';
-
 defineProps({
   book: {
     type: Object,
     required: true
   }
 });
-
-const booksStore = useBooksStore();
-const cartStore = useCartStore();
-
 </script>
 <template>
   <div class="group relative cursor-pointer w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg  hover:shadow-lg">

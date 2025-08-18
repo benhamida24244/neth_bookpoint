@@ -1,5 +1,4 @@
 <script setup>
-import { useBooksStore } from '@/stores/Books';
 import { useCartStore } from '@/stores/Cart';
 import { useSettingsStore } from '@/stores/settings';
 import { RouterLink } from 'vue-router';
@@ -12,7 +11,6 @@ defineProps({
   }
 });
 
-const booksStore = useBooksStore();
 const cartStore = useCartStore();
 const settingsStore = useSettingsStore()
 </script>

@@ -21,7 +21,7 @@ const getStatusClass = (status) => {
 }
 
 const sortedCategories = computed(() =>
-  props.categories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  [...props.categories].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 )
 </script>
 

@@ -6,10 +6,8 @@ import {
   Layers,
   Settings,
   PanelBottom,
-  Menu as MenuIcon,
   X,
   Book,
-  Clipboard,
   ServerIcon
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed } from 'vue'

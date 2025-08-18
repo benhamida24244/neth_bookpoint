@@ -20,7 +20,7 @@ export const useSettingsStore = defineStore('settings', () => {
       try {
         const parsed = JSON.parse(stored)
         if (parsed && typeof parsed === 'object' && parsed.primary) return parsed
-      } catch (e) {
+      } catch {
         // فشل التحليل -> استخدم الافتراضي
       }
     }

@@ -1,6 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
-import BookList from '@/components/Book/Shop/BookList.vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import BookCategoryList from '@/components/Book/BookCategoryList.vue'
 import { useCategoriesStore } from '@/stores/Categories'

@@ -74,11 +74,6 @@ const statusConfig = computed(() => {
   return book ? STATUS_CONFIG[book.status] || null : null
 })
 
-const statusOptions = computed(() => Object.values(BOOK_STATUS).map(status => ({
-  value: status,
-  label: STATUS_CONFIG[status]?.label || status,
-  disabled: false
-})))
 
 const stockStatusText = computed(() => {
   const stock = Number(selectedBook.value?.stock || 0)
@@ -112,13 +107,6 @@ const parsePrice = (price) => {
   return Number.isFinite(num) ? num : 0
 }
 
-const renderStars = (rating) => {
-  const r = Number.isFinite(Number(rating)) ? Number(rating) : 0
-  const fullStars = Math.floor(r)
-  const hasHalfStar = (r - fullStars) >= 0.5
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
-  return { full: fullStars, half: hasHalfStar, empty: emptyStars }
-}
 
 // --- Core Logic Functions ---
 
@@ -325,7 +313,7 @@ const toggleOfferStatus = async (offerToUpdate) => {
     updateDiscountedPrice()
     showSuccess(`Offer ${offerToUpdate.active ? 'activated' : 'deactivated'}!`)
     emit('bookUpdated', book)
-  } catch (err) {
+  } catch {
     error.value = 'Error updating offer status.'
   } finally {
     isUpdating.value = false
@@ -344,7 +332,7 @@ const removeOffer = async (offerId) => {
     updateDiscountedPrice()
     showSuccess('Offer removed successfully!')
     emit('bookUpdated', book)
-  } catch (err) {
+  } catch {
     error.value = 'Error removing offer.'
   } finally {
     isUpdating.value = false
@@ -361,7 +349,6 @@ const togglePublishStatus = async () => {
 // --- Misc Actions ---
 const goBack = () => router.go(-1)
 const printBook = () => window.print()
-const downloadInvoice = () => console.log('Downloading invoice for book:', bookId.value)
 const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
 // --- Lifecycle & Watchers ---

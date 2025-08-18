@@ -4,7 +4,7 @@ import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import AddAttributeModal from './AddAttributeModal.vue'
 
-const props = defineProps({
+defineProps({
   show: Boolean,
 })
 

@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from '@/components/Dashboard/Sidebar.vue'
+import AppSidebar from '@/components/Dashboard/AppSidebar.vue'
 import { ref } from 'vue'
 import { Menu } from 'lucide-vue-next'
 
@@ -16,11 +16,11 @@ const CloseMenu = () => {
   <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar ثابت على الحاسوب -->
     <aside class="fixed top-0 left-0 h-screen w-[240px] z-50 hidden lg:block">
-      <Sidebar :MenuOpen="true" />
+      <AppSidebar :MenuOpen="true" />
     </aside>
 
     <!-- Sidebar متجاوب في الهاتف -->
-    <Sidebar v-if="MenuIsOpen" :MenuOpen="true" @close="CloseMenu" class="lg:hidden" />
+    <AppSidebar v-if="MenuIsOpen" :MenuOpen="true" @close="CloseMenu" class="lg:hidden" />
 
     <!-- Main content -->
     <main class="flex-1 ml-0 lg:ml-[240px] w-full min-h-screen overflow-x-hidden relative">
