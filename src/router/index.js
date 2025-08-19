@@ -41,6 +41,7 @@ const router = createRouter({
         { path: 'books/:id', name: 'Books info', component: () => import('@/views/Dashboard/BookDetails.vue') },
         { path: 'categories', name: 'Categories page', component: () => import('@/views/Dashboard/Categories.vue') },
         { path: 'categories/:id', name: 'Categories info', component: () => import('@/views/Dashboard/CategoriesInfo.vue') },
+        { path: 'categories/edit/:id', name: 'Edit Category', component: () => import('@/views/Dashboard/EditCategory.vue') },
         { path: 'authors', name: 'Authors page', component: () => import('@/views/Dashboard/Authors.vue') },
         { path: 'authors/:id', name: 'dashboard Authors info', component: () => import('@/views/Dashboard/AuthorDetails.vue') },
         { path: 'settings', name: 'Settings page', component: () => import('@/views/Dashboard/SettingsPage.vue') },
