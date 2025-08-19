@@ -129,6 +129,11 @@ export const adminAddPublisher = (publisherData) => api.post("/admin/publishers"
 export const adminUpdatePublisher = (publisherId, publisherData) => api.put(`/admin/publishers/${publisherId}`, publisherData);
 export const adminDeletePublisher = (publisherId) => api.delete(`/admin/publishers/${publisherId}`);
 
+// --- إدارة المؤلفين (Admin Authors CRUD) ---
+export const adminAddAuthor = (authorData) => api.post("/admin/authors", authorData);
+export const adminUpdateAuthor = (authorId, authorData) => api.put(`/admin/authors/${authorId}`, authorData);
+export const adminDeleteAuthor = (authorId) => api.delete(`/admin/authors/${authorId}`);
+
 // --- إدارة الإعدادات (Admin Settings) ---
 export const adminUpdateSettings = (settingsData) => api.post("/admin/settings", settingsData);
 
@@ -182,6 +187,9 @@ const apiService = {
   adminAddPublisher,
   adminUpdatePublisher,
   adminDeletePublisher,
+  adminAddAuthor,
+  adminUpdateAuthor,
+  adminDeleteAuthor,
   adminUpdateSettings,
   uploadBookCover,
   uploadPublisherLogo,

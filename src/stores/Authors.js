@@ -1,136 +1,69 @@
 import { defineStore } from "pinia";
+import apiService from "@/services/api.js";
 
-export const useAuthorStore = defineStore("authors" ,{
-  state:() => ({
-     Staticauthors: [
-      {
-    id: 1,
-    name: 'Stephen King',
-    url: 'https://www.barnesandnoble.com/b/contributor/stephen-king/_/N-2k9Z8q8',
-    img: 'https://prodimage.images-bn.com/pimages/9781501142970_p0_v1_s600x595.jpg',
-    nmbBook: 87,
-    descriptionKey: 'authors.stephenKing',
-    SpendMuch: 1500,
-    Orders_count: 120,
-    Country: 'American',
-    email: 'stephen.king@example.com',
-    phone: '+1-555-0101',
-    Registration_date: '2020-01-15'
-  },
-  {
-    id: 2,
-    name: 'J.K. Rowling',
-    url: 'https://www.barnesandnoble.com/b/contributor/j-k-rowling/_/N-2k9Z8q8Z1z141yl',
-    img: 'https://prodimage.images-bn.com/pimages/9781338878929_p0_v1_s600x595.jpg',
-    nmbBook: 24,
-    descriptionKey: 'authors.jkRowling',
-    SpendMuch: 100,
-    Orders_count: 120,
-    Country: 'British',
-    email: 'jk.rowling@example.com',
-    phone: '+44-555-0102',
-    Registration_date: '2019-08-22'
-  },
-  {
-    id: 3,
-    name: 'Colleen Hoover',
-    url: 'https://www.barnesandnoble.com/b/contributor/colleen-hoover/_/N-2k9Z8q8Z1z141yc',
-    img: 'https://prodimage.images-bn.com/pimages/9781501110344_p0_v1_s600x595.jpg',
-    nmbBook: 22,
-    descriptionKey: 'authors.colleenHoover',
-    SpendMuch: 2200,
-    Orders_count: 89,
-    Country: 'American',
-    email: 'colleen.hoover@example.com',
-    phone: '+1-555-0103',
-    Registration_date: '2021-03-10'
-  },
-  {
-    id: 4,
-    name: 'James Patterson',
-    url: 'https://www.barnesandnoble.com/b/contributor/james-patterson/_/N-2k9Z8q8Z1z141yo',
-    img: 'https://prodimage.images-bn.com/pimages/9780316407090_p0_v1_s600x595.jpg',
-    nmbBook: 350,
-    descriptionKey: 'authors.jamesPatterson',
-    SpendMuch: 3500,
-    Orders_count: 156,
-    Country: 'American',
-    email: 'james.patterson@example.com',
-    phone: '+1-555-0104',
-    Registration_date: '2018-11-05'
-  },
-  {
-    id: 5,
-    name: 'Agatha Christie',
-    url: 'https://www.barnesandnoble.com/b/contributor/agatha-christie/_/N-2k9Z8q8Z1z141y9',
-    img: 'https://prodimage.images-bn.com/pimages/9780062073488_p0_v2_s600x595.jpg',
-    nmbBook: 80,
-    descriptionKey: 'authors.agathaChristie',
-    SpendMuch: 1800,
-    Orders_count: 95,
-    Country: 'British',
-    email: 'agatha.christie@example.com',
-    phone: '+44-555-0105',
-    Registration_date: '2017-06-12'
-  },
-  {
-    id: 6,
-    name: 'George R. R. Martin',
-    url: 'https://www.barnesandnoble.com/b/contributor/george-r-r-martin/_/N-2k9Z8q8Z1z141yt',
-    img: 'https://prodimage.images-bn.com/pimages/9780553573404_p0_v2_s600x595.jpg',
-    nmbBook: 34,
-    descriptionKey: 'authors.georgeRRMartin',
-    SpendMuch: 2800,
-    Orders_count: 134,
-    Country: 'American',
-    email: 'george.martin@example.com',
-    phone: '+1-555-0106',
-    Registration_date: '2019-02-28'
-  },
-  {
-    id: 7,
-    name: 'Brandon Sanderson',
-    url: 'https://www.barnesandnoble.com/b/contributor/brandon-sanderson/_/N-2k9Z8q8Z1z141xe',
-    img: 'https://prodimage.images-bn.com/pimages/9780765376671_p0_v3_s600x595.jpg',
-    nmbBook: 58,
-    descriptionKey: 'authors.brandonSanderson',
-    SpendMuch: 2100,
-    Orders_count: 98,
-    Country: 'American',
-    email: 'brandon.sanderson@example.com',
-    phone: '+1-555-0107',
-    Registration_date: '2020-09-14'
-  },
-  {
-    id: 8,
-    name: 'Margaret Atwood',
-    url: 'https://www.barnesandnoble.com/b/contributor/margaret-atwood/_/N-2k9Z8q8Z1z141yx',
-    img: 'https://prodimage.images-bn.com/pimages/9780385490818_p0_v2_s600x595.jpg',
-    nmbBook: 65,
-    descriptionKey: 'authors.margaretAtwood',
-    SpendMuch: 1900,
-    Orders_count: 87,
-    Country: 'Canadian',
-    email: 'margaret.atwood@example.com',
-    phone: '+1-555-0108',
-    Registration_date: '2018-04-03'
-  }
-    ],
-    authors: []
+export const useAuthorStore = defineStore("authors", {
+  state: () => ({
+    authors: [],
+    loading: false,
+    error: null,
   }),
   actions: {
-    addAuthor(author) {
-      const newAuthor = {
-        id: this.authors.length + 1,
-        ...author,
-        nmbBook: 0,
-        SpendMuch: 0,
-        Orders_count: 0,
-        email: 'N/A',
-        phone: 'N/A',
-        Registration_date: new Date().toISOString().slice(0, 10)
-      };
-      this.authors.push(newAuthor);
-    }
-  }
-})
+    async fetchAuthors() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.getAuthors();
+        this.authors = response.data.data; // Adjust based on your API response structure
+      } catch (error) {
+        this.error = "Failed to fetch authors.";
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async addAuthor(authorData) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.adminAddAuthor(authorData);
+        await this.fetchAuthors(); // Refresh the list after adding
+      } catch (error) {
+        this.error = "Failed to add author.";
+        console.error(error);
+        throw error; // Re-throw to be caught in the component
+      } finally {
+        this.loading = false;
+      }
+    },
+    async updateAuthor(authorId, authorData) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.adminUpdateAuthor(authorId, authorData);
+        await this.fetchAuthors(); // Refresh the list after updating
+      } catch (error) {
+        this.error = "Failed to update author.";
+        console.error(error);
+        throw error; // Re-throw to be caught in the component
+      } finally {
+        this.loading = false;
+      }
+    },
+    async deleteAuthor(authorId) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.adminDeleteAuthor(authorId);
+        // Optimistic update: remove from local array before refetching
+        this.authors = this.authors.filter((author) => author.id !== authorId);
+        // Or simply refetch:
+        // await this.fetchAuthors();
+      } catch (error) {
+        this.error = "Failed to delete author.";
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
