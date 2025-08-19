@@ -2,13 +2,19 @@
 import AdminCategoriesTable from '@/components/Dashboard/Table/AdminCategoriesTable.vue'
 import { useCategoriesStore } from '@/stores/Categories'
 import { useLanguageStore } from '@/stores/language'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import AddCategoryModal from '@/components/Dashboard/Modals/AddCategoryModal.vue'
 
 const categoriesStore = useCategoriesStore()
+const languageStore = useLanguageStore()
+
+onMounted(async () => {
+  await categoriesStore.fetchCategories()
+})
+
+// Make categories reactive by using computed
 const categories = computed(() => categoriesStore.categories)
 const showAddCategoryModal = ref(false)
-const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
 
 const cartsCategories = computed(() => [
@@ -23,22 +29,21 @@ const cartsCategories = computed(() => [
     id: 2,
     name: translations.value.dashboard?.categories?.activeCategories,
     icon: 'fas fa-check-circle text-white',
-    value: categories.value.filter((category) => category.status === 'active').length.toString(),
+    value: categories.value.filter((category) => category.status === 1).length.toString(),
     color: 'bg-green-500'
   },
   {
     id: 3,
     name: translations.value.dashboard?.categories?.newThisMonth,
     icon: 'fas fa-star text-white',
-    value: categoriesStore.getNew.length.toString(), // لأنه getter يُتعامل معه كمصفوفة مباشرة
+    value: categoriesStore.getNew.length.toString(),
     color: 'bg-[var(--color-light)]'
   }
 ])
 
-const handleSaveCategory = (newCategory) => {
-  categoriesStore.addCategory(newCategory)
+const handleCategoryAdded = async () => {
+  await categoriesStore.fetchCategories()
   showAddCategoryModal.value = false
-  alert('Category added successfully!')
 }
 </script>
 
@@ -47,7 +52,7 @@ const handleSaveCategory = (newCategory) => {
     <AddCategoryModal
       :show="showAddCategoryModal"
       @close="showAddCategoryModal = false"
-      @save="handleSaveCategory"
+      @save="handleCategoryAdded"
     />
     <!-- Title -->
     <header class="font-BonaRegular mb-8 flex justify-between items-center">
@@ -82,6 +87,6 @@ const handleSaveCategory = (newCategory) => {
       </div>
     </div>
     <!-- Categories Table -->
-    <AdminCategoriesTable :categories="categories" />
+    <AdminCategoriesTable/>
   </div>
 </template>

@@ -204,6 +204,7 @@ export const useBooksStore = defineStore('books', {
         ...book,
         publisherDate
       }
+
       this.books.push(newBook);
     },
     updateBook(updatedBook) {

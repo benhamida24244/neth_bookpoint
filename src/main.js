@@ -3,6 +3,7 @@ import 'primeicons/primeicons.css'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 
 import { createApp } from 'vue'

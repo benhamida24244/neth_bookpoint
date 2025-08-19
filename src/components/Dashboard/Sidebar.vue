@@ -28,6 +28,7 @@ const emit = defineEmits(['close'])
 const active = ref('Control Panel')
 const isOpen = ref(true)
 const isMobile = ref(false)
+const isLogout = ref(false)
 const route = useRoute()
 
 const Menu = computed(() => [
@@ -58,6 +59,11 @@ const checkScreenSize = () => {
   if (!isMobile.value) {
     isOpen.value = false
   }
+}
+
+const logOut = () => {
+  isLogout.value = true
+  emit('logout')
 }
 
 const closeSidebar = () => {
@@ -192,7 +198,7 @@ watch(
       <div class="px-4 py-4 border-t border-gray-200 flex flex-col gap-2">
         <button
           class="w-full flex items-center justify-center gap-2 bg-red-100 text-red-600 hover:bg-red-200 transition-all px-3 py-2 rounded-lg text-sm font-semibold"
-          @click="console.log('Log out clicked')"
+          @click="logOut"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

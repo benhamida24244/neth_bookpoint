@@ -1,16 +1,24 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useCategoriesStore } from '@/stores/Categories'
 
-const props = defineProps({
-  categories: {
-    type: Array,
-    required: true,
-  },
+const categoriesStore = useCategoriesStore()
+
+onMounted(async () => {
+  await categoriesStore.fetchCategories()
 })
 
+// Make categories reactive by using computed
+const categories = computed(() => categoriesStore.categories)
+
 const getStatusClass = (status) => {
-  switch (status.toLowerCase()) {
+  // backend status ممكن يكون 1 / 0 بدل active/inactive
+  const normalized = typeof status === 'number'
+    ? (status === 1 ? 'active' : 'inactive')
+    : status?.toString().toLowerCase()
+
+  switch (normalized) {
     case 'active':
       return 'bg-green-100 text-green-800'
     case 'inactive':
@@ -20,8 +28,11 @@ const getStatusClass = (status) => {
   }
 }
 
+// sortedCategories لازم يكون computed جديد
 const sortedCategories = computed(() =>
-  props.categories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  [...categories.value].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  )
 )
 </script>
 
@@ -50,15 +61,14 @@ const sortedCategories = computed(() =>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ category.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span :class="[getStatusClass(category.status), 'px-3 py-1 rounded-full text-xs font-medium']">
-                {{ category.status }}
+                {{ typeof category.status === 'number' ? (category.status === 1 ? 'Active' : 'Inactive') : category.status }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ category.orders }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ category.nmBook }}</td>
 
-
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ new Date(category.createdAt).toLocaleDateString() }}
+              {{ new Date(category.created_at).toLocaleDateString() }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <RouterLink

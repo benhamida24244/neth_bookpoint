@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-
+import {adminAddCategory} from '@/services/api.js'
 const props = defineProps({
   show: Boolean,
 })
@@ -16,13 +16,20 @@ function closeModal() {
   emit('close')
 }
 
-function saveCategory() {
+const saveCategory = async () => {
   if (!newCategory.value.name) {
     alert('Please enter a category name.')
     return
   }
-  emit('save', { ...newCategory.value })
-  closeModal()
+  try {
+    await adminAddCategory(newCategory.value)
+    newCategory.value = { name: '', description: '' }
+    emit('save')
+    closeModal()
+  } catch (error) {
+    console.error('Error saving category:', error)
+    alert('Failed to save category. Please try again.')
+  }
 }
 </script>
 

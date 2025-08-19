@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import {getCategories} from '@/services/api.js'
 // Static data for categories. In a real application, this would come from an API.
 const staticCategories = [
   {
@@ -194,7 +194,7 @@ export const useCategoriesStore = defineStore("categories", {
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
   return state.categories.filter(category => {
-    const createdDate = new Date(category.createdAt);
+    const createdDate = new Date(category.created_at);
     return createdDate >= threeMonthsAgo;
   });
 }
@@ -206,14 +206,21 @@ export const useCategoriesStore = defineStore("categories", {
     /**
      * Action to fetch categories from a simulated API.
      */
-    async fetchCategories() {
-      this.isLoading = true;
-      // Simulate an API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // In a real application, you would fetch data from an API here.
-      this.categories = staticCategories;
-      this.isLoading = false;
-    },
+async fetchCategories() {
+  this.isLoading = true;
+  try {
+    const response = await getCategories();
+    this.categories = response.data.data; // <-- هنا نصل مباشرة للـ Array
+    console.log(this.categories);
+    this.isLoading = false;
+    return this.categories;
+  } catch (error) {
+    console.error('Failed to fetch categories:', error);
+    this.isLoading = false;
+    return [];
+  }
+},
+
 
     handleEdit() {
       this.isOpenEdit = !this.isOpenEdit
@@ -264,7 +271,7 @@ export const useCategoriesStore = defineStore("categories", {
     addCategory(category) {
       const newCategory = {
         id: this.categories.length + 1,
-        status: 'active',
+        status: 1,
         createdAt: new Date().toISOString(),
         ...category
       };
