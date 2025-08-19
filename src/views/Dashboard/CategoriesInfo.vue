@@ -1,42 +1,77 @@
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useCategoriesStore } from '@/stores/Categories';
-import { storeToRefs } from 'pinia';
-import BookCategoryList from '@/components/Book/BookCategoryList.vue';
+import { computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useCategoriesStore } from '@/stores/Categories'
+import { storeToRefs } from 'pinia'
+import BookCategoryList from '@/components/Book/BookCategoryList.vue'
 
-const route = useRoute();
-const router = useRouter();
-const categoriesStore = useCategoriesStore();
-const { category, isLoading, error, formattedStatistics } = storeToRefs(categoriesStore);
+const route = useRoute()
+const router = useRouter()
+const categoriesStore = useCategoriesStore()
+const { category, isLoading, error } = storeToRefs(categoriesStore)
 
-const currentId = parseInt(route.params.id);
+const currentId = Number(route.params.id)
 
-onMounted(() => {
-  categoriesStore.fetchCategory(currentId);
-});
+onMounted(async () => {
+  try {
+    await categoriesStore.fetchCategory(currentId)
+  } catch (err) {
+    console.error('Failed to load category:', err)
+  }
+})
 
 const goToEditPage = () => {
-  router.push(`/dashboard/categories/edit/${currentId}`);
-};
+  router.push(`/dashboard/categories/edit/${currentId}`)
+}
 
 const handleDeleteCategory = async () => {
   if (confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
     try {
-      await categoriesStore.deleteCategory(currentId);
-      alert('Category deleted successfully.');
-      router.push('/dashboard/categories');
+      await categoriesStore.deleteCategory(currentId)
+      alert('Category deleted successfully.')
+      router.push('/dashboard/categories')
     } catch (err) {
-      alert('Failed to delete category. Please try again.');
-      console.error(err);
+      console.error('Delete failed:', err)
+      alert('Failed to delete category. Please try again.')
     }
   }
-};
+}
 
-// Use a computed property for the category to ensure reactivity and provide a fallback.
-const currentCategory = computed(() => category.value || { name: 'Loading...', description: '...' });
+const currentCategory = computed(
+  () => category.value || { name: 'Loading...', description: '...', icon: 'pi-tag' }
+)
 
+// إحصائيات افتراضية (إلى أن تبنيها من API أو store)
+const formattedStatistics = computed(() => [
+  {
+    id: 1,
+    name: 'Total Books',
+    displayValue: currentCategory.value.books_count ?? 0,
+    icon: 'fas fa-book',
+    color: 'bg-blue-500',
+    ariaLabel: 'Total number of books in category'
+  },
+  {
+    id: 2,
+    name: 'Orders',
+    displayValue: currentCategory.value.orders_count ?? 0,
+    icon: 'fas fa-shopping-cart',
+    color: 'bg-green-500',
+    ariaLabel: 'Total number of orders for this category'
+  },
+  {
+    id: 3,
+    name: 'Profit',
+    displayValue: currentCategory.value.total_profit
+      ? `$${currentCategory.value.total_profit}`
+      : '$0',
+    icon: 'fas fa-dollar-sign',
+    color: 'bg-yellow-500',
+    ariaLabel: 'Total profit from category'
+  }
+])
 </script>
+
 
 <template>
   <div class="w-full min-h-screen bg-gray-50 py-8 px-4 sm:py-16">
@@ -85,7 +120,7 @@ const currentCategory = computed(() => category.value || { name: 'Loading...', d
             {{ currentCategory.description }}
           </p>
 
-          <!-- Stats -->
+          <!-- Total profit | Number of Orders and Number of Books -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             <div v-for="stat in formattedStatistics" :key="stat.id" class="flex items-center gap-4 border border-[var(--color-primary)]/30 rounded-xl p-4 bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:border-[var(--color-primary)]/50" :aria-label="stat.ariaLabel">
               <div :class="[stat.color, 'p-3 rounded-full shadow-md']" class="flex-shrink-0">

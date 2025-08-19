@@ -8,9 +8,12 @@ const router = useRouter();
 const categoriesStore = useCategoriesStore();
 
 const categoryId = parseInt(route.params.id);
+// ✅ **Added icon and status properties**
 const categoryData = ref({
   name: '',
-  description: ''
+  description: '',
+  icon: '',
+  status: '', // Default to an empty string or a sensible default like 'active'
 });
 
 // Fetch the category data when the component mounts
@@ -23,11 +26,15 @@ watch(() => categoriesStore.category, (newCategory) => {
   if (newCategory) {
     categoryData.value.name = newCategory.name;
     categoryData.value.description = newCategory.description;
+    // ✅ **Populate icon and status from the store**
+    categoryData.value.icon = newCategory.icon;
+    categoryData.value.status = newCategory.status;
   }
 });
 
 const handleUpdateCategory = async () => {
   try {
+    // The entire categoryData object (including icon and status) will be sent
     await categoriesStore.updateCategory(categoryId, categoryData.value);
     alert('Category updated successfully!');
     router.push('/dashboard/categories');
@@ -83,7 +90,36 @@ const cancelEdit = () => {
               class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
             ></textarea>
           </div>
-        </div>
+
+          <div>
+            <label for="category-icon" class="block text-sm font-medium text-gray-700">
+              Icon (e.g., Font Awesome class `fas fa-book`)
+            </label>
+            <input
+              v-model="categoryData.icon"
+              type="text"
+              id="category-icon"
+              placeholder="fas fa-book"
+              class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="category-status" class="block text-sm font-medium text-gray-700">
+              Status
+            </label>
+            <select
+              v-model="categoryData.status"
+              id="category-status"
+              class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+              required
+            >
+              <option disabled value="">Please select one</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+          </div>
         <div class="pt-8 flex justify-end gap-4">
           <button
             type="button"
