@@ -1,6 +1,6 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue';
 
 const addAuthorModal = ref(null);
@@ -9,11 +9,16 @@ const selectedCountry = ref('');
 const sortBy = ref('name');
 const sortOrder = ref('asc');
 const AuthorsStore = useAuthorStore()
-const authors = AuthorsStore.authors
+
+onMounted( async () => {
+ await  AuthorsStore.fetchAuthors();
+});
+
+const authors = computed(() => AuthorsStore.authors);
 
 // Computed properties for filtering and sorting
 const filteredAuthors = computed(() => {
-  let filtered = authors.filter(author => {
+  let filtered = authors.value.filter(author => {
     const matchesSearch = author.name.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesCountry = selectedCountry.value === '' || author.Country === selectedCountry.value;
     return matchesSearch && matchesCountry;
@@ -50,7 +55,7 @@ const totalOrders = computed(() => {
 
 // Computed property for unique countries
 const countries = computed(() => {
-  const uniqueCountries = [...new Set(authors.map(author => author.Country))];
+  const uniqueCountries = [...new Set(authors.value.map(author => author.Country))];
   return uniqueCountries.sort();
 });
 
@@ -75,14 +80,23 @@ const getSortIcon = (field) => {
   if (sortBy.value !== field) return '↕️';
   return sortOrder.value === 'asc' ? '↑' : '↓';
 };
+
+const deleteAuthor = (authorId) => {
+  if (window.confirm('Are you sure you want to delete this author?')) {
+    AuthorsStore.deleteAuthor(authorId);
+  }
+};
+
+const openEditModal = (author) => {
+  addAuthorModal.value.openModal(author);
+};
 </script>
 
 <template>
   <div class="w-full sm:px-8 lg:px-16 mt-8">
     <AddAuthorModal ref="addAuthorModal" />
-    <!-- Header Section -->
+
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
-      <!-- Search and Filters -->
       <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-2/3">
         <input
           v-model="searchQuery"
@@ -107,7 +121,6 @@ const getSortIcon = (field) => {
         </button>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex gap-3 w-full lg:w-auto">
         <button @click="addAuthorModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
           Add Author
@@ -118,7 +131,6 @@ const getSortIcon = (field) => {
       </div>
     </div>
 
-    <!-- Sort Options -->
     <div class="flex flex-wrap gap-2 mb-4">
       <span class="text-sm font-medium text-gray-600 mr-2">Sort by:</span>
       <button
@@ -137,7 +149,6 @@ const getSortIcon = (field) => {
       </button>
     </div>
 
-    <!-- Analytics Row -->
     <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
       <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
         <p class="text-lg font-bold text-gray-600">Total Authors:</p>
@@ -155,9 +166,8 @@ const getSortIcon = (field) => {
       </div>
     </div>
 
-    <!-- Table Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-6 mb-8">
-      <!-- Mobile Card View -->
+
       <div class="lg:hidden">
         <div v-for="author in filteredAuthors" :key="author.id" class="border-b border-gray-200 p-4">
           <div class="flex justify-between items-start mb-2">
@@ -167,50 +177,38 @@ const getSortIcon = (field) => {
           <div class="space-y-1 text-sm text-gray-600">
             <p><span class="font-medium">Country:</span> {{ author.Country }}</p>
             <p><span class="font-medium">Orders:</span> {{ author.Orders_count }}</p>
-            <p><span class="font-medium">Spent:</span> ${{ author.SpendMuch }}</p>
+            <p><span class="font-medium">Rewards:</span> ${{ author.SpendMuch?.toLocaleString() ?? '0' }}</p>
             <p><span class="font-medium">Books:</span> {{ author.nmbBook }}</p>
-            <p><span class="font-medium">Email:</span> {{ author.email }}</p>
           </div>
-          <div class="mt-3">
-            <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-              View Details
+          <div class="mt-3 flex items-center gap-4">
+            <RouterLink :to="`/dashboard/authors/${author.id}`" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              View
+            </RouterLink>
+            <button @click="openEditModal(author)" class="text-green-600 hover:text-green-800 text-sm font-medium">
+              Edit
+            </button>
+            <button @click="deleteAuthor(author.id)" class="text-red-600 hover:text-red-800 text-sm font-medium">
+              Delete
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Desktop Table View -->
       <div class="hidden lg:block overflow-x-auto">
         <table class="min-w-full">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                @click="handleSort('name')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
+              <th @click="handleSort('name')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                 Name {{ getSortIcon('name') }}
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th
-                @click="handleSort('Orders_count')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
+              <th @click="handleSort('Orders_count')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                 Orders {{ getSortIcon('Orders_count') }}
               </th>
-              <th
-                @click="handleSort('SpendMuch')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
+              <th @click="handleSort('SpendMuch')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                 Rewards {{ getSortIcon('SpendMuch') }}
               </th>
-              <th
-                @click="handleSort('nmbBook')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
+              <th @click="handleSort('nmbBook')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
                 Books {{ getSortIcon('nmbBook') }}
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
@@ -222,26 +220,27 @@ const getSortIcon = (field) => {
               <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ author.name }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">#{{ author.id }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ author.Orders_count }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ author.SpendMuch.toLocaleString() }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ author.SpendMuch?.toLocaleString() ?? '0' }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ author.nmbBook }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ author.Country }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                  </svg>
-                   <RouterLink :to="`/dashboard/authors/${author.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center gap-4">
+                  <RouterLink :to="`/dashboard/authors/${author.id}`" class="text-blue-600 hover:text-blue-800">
                     View
                   </RouterLink>
-                </button>
+                  <button @click="openEditModal(author)" class="text-green-600 hover:text-green-800">
+                    Edit
+                  </button>
+                  <button @click="deleteAuthor(author.id)" class="text-red-600 hover:text-red-800">
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Empty State -->
       <div v-if="filteredAuthors.length === 0" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
