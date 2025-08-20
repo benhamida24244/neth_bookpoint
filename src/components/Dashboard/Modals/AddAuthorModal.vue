@@ -49,20 +49,22 @@ const handleFileUpload = async (event) => {
   if (!file) return;
 
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('image', file);
 
   try {
     let response;
-    if (isEditMode.value) {
-      // رفع الصورة لمؤلف موجود
+    if (isEditMode.value && authorToEdit.value && authorToEdit.value.id) {
       response = await apiService.uploadAuthorLogo(authorToEdit.value.id, formData);
     } else {
-      // رفع صورة جديدة لمؤلف جديد (يمكنك تعديل API حسب الحاجة)
-      response = await apiService.uploadAuthorLogo(null, formData);
+      // For new author, use 0 or 'new' as placeholder, backend should handle it
+      response = await apiService.uploadAuthorLogo(0, formData);
     }
-
-    // افترض أن API يعيد { url: "link_to_image" }
-    authorForm.value.img = response.url;
+    // Axios response: { data: { url: '...' } }
+    if (response && response.data && response.data.url) {
+      authorForm.value.img = response.data.url;
+    } else if (response && response.url) {
+      authorForm.value.img = response.url;
+    }
   } catch (error) {
     console.error("Upload failed:", error);
   }
@@ -111,9 +113,8 @@ defineExpose({
           <div>
             <label for="image" class="block mb-1 font-medium text-sm">Upload Image</label>
             <input id="image" type="file" accept="image/*" @change="handleFileUpload" class="w-full border rounded-lg px-3 py-2">
-
             <div v-if="authorForm.img" class="mt-2">
-              <img :src="authorForm.img" alt="preview" class="w-24 h-24 object-cover rounded-lg border">
+              <img :src="authorForm.img" alt="Preview" class="h-24 rounded shadow border" />
             </div>
           </div>
         </div>

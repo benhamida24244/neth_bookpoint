@@ -1,8 +1,8 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors';
-import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { onMounted, ref ,computed} from 'vue';
 import { useRoute } from 'vue-router';
-import {apiService} from '@/services/api.js'
 
 const authorStore = useAuthorStore();
 const route = useRoute();
@@ -11,6 +11,20 @@ const editForm = ref({ name: '', description: '', img: '' });
 const loading = ref(true);
 const error = ref(null);
 const currentAuthor = ref(null);
+
+// 2. Get the API base URL from the .env file
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+// 3. Create a computed property for the full image URL
+const authorImageUrl = computed(() => {
+  // Check if the author and image path exist
+  if (currentAuthor.value && currentAuthor.value.img) {
+    // Combine the base URL with the relative path from the API
+    return `${apiBaseUrl}${currentAuthor.value.img}`;
+  }
+  // Return null or a placeholder image if no image is available
+  return null;
+});
 
 async function fetchAuthorById() {
   loading.value = true;
@@ -84,23 +98,6 @@ async function saveAuthor() {
     loading.value = false;
   }
 }
-const handleFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  // في هذا الجزء ترفع الملف للباك اند
-  // مثال باستخدام FormData
-  const formData = new FormData();
-  formData.append('file', file);
-try {
-      let response = await apiService.uploadAuthorLogo(currentAuthor.value.id, formData);
-
-
-    // افترض أن API يعيد { url: "link_to_image" }
-  } catch (error) {
-    console.error("Upload failed:", error);
-  }
-};
 </script>
 
 <template>
@@ -116,7 +113,7 @@ try {
   <div v-else-if="currentAuthor" class="min-h-screen bg-gray-100 font-sans text-gray-800 p-4 sm:p-6 lg:p-8 relative">
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden md:flex">
       <div class="md:flex-shrink-0">
-  <img class="h-full w-full object-cover md:w-64" :src="currentAuthor.img" :alt="`Portrait of ${currentAuthor.name}`" v-if="currentAuthor.img">
+    <img class="h-full w-full object-cover md:w-64" :src="authorImageUrl" :alt="`Portrait of ${currentAuthor.name}`" v-if="authorImageUrl">
       </div>
       <div class="p-8 flex-grow relative">
         <button
@@ -162,13 +159,8 @@ try {
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
 
         <label class="block mb-2 font-medium">Upload Image</label>
-      <label for="image" class="block mb-1 font-medium text-sm">Upload Image</label>
-            <input id="image" type="file" accept="image/*" @change="handleFileUpload" class="w-full border rounded-lg px-3 py-2">
+        <input v-model="editForm.img" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
-            <!-- عرض معاينة الصورة -->
-            <div v-if="editForm.img" class="mt-2">
-              <img :src="editForm.img" alt="preview" class="w-24 h-24 object-cover rounded-lg border">
-            </div>
         <div class="flex justify-end gap-2 mt-4">
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
           <button @click="saveAuthor" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]">Save</button>
