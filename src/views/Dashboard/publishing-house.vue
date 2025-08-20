@@ -1,6 +1,6 @@
 <script setup>
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted} from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useI18n } from 'vue-i18n';
 import AddPublisherModal from '@/components/Dashboard/Modals/AddPublisherModal.vue';
@@ -12,11 +12,14 @@ const selectedCountry = ref('');
 const sortBy = ref('name');
 const sortOrder = ref('asc');
 const publishingHousesStore = usePublishingHouseStore()
-const publishingHouses = publishingHousesStore.publishingHouses
+onMounted( async () => {
+ await  publishingHousesStore.fetchPublisher();
+});
+const publishingHouses = computed(() =>publishingHousesStore.publishingHouses);
 
 // Computed properties for filtering and sorting
 const filteredPublishingHouses = computed(() => {
-  let filtered = publishingHouses.filter(house => {
+  let filtered = publishingHouses.value.filter(house => {
     const matchesSearch = house.name.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesCountry = selectedCountry.value === '' || house.country === selectedCountry.value;
     return matchesSearch && matchesCountry;
@@ -58,7 +61,7 @@ const totalBooks = computed(() => {
 
 // Computed property for unique countries
 const countries = computed(() => {
-  const uniqueCountries = [...new Set(publishingHouses.map(house => house.country))];
+  const uniqueCountries = [...new Set(publishingHouses.value.map(house => house.country))];
   return uniqueCountries.sort();
 });
 
@@ -211,10 +214,9 @@ const formatNumber = (number) => {
             <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">#{{ house.id }}</span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-            <div><span class="font-medium">Country:</span> {{ house.country }}</div>
-            <div><span class="font-medium">Orders:</span> {{ formatNumber(house.ordersCount) }}</div>
+            <div><span class="font-medium">Orders:</span> {{ formatNumber(house.orders) }}</div>
             <div><span class="font-medium">Spent:</span> {{ formatCurrency(house.spendMuch) }}</div>
-            <div><span class="font-medium">Books:</span> {{ formatNumber(house.nmbBook) }}</div>
+            <div><span class="font-medium">Books:</span> {{ formatNumber(house.nmBook) }}</div>
           </div>
           <div class="text-sm text-gray-500 mb-3">
             <div><span class="font-medium">Email:</span> {{ house.email }}</div>

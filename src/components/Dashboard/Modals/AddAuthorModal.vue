@@ -5,6 +5,7 @@ import apiService from '@/services/api';
 
 const authorStore = useAuthorStore();
 const showModal = ref(false);
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const authorForm = ref({
   name: '',
@@ -12,6 +13,7 @@ const authorForm = ref({
   description: '',
   img: ''
 });
+
 
 const authorToEdit = ref(null);
 
@@ -28,6 +30,16 @@ const openModal = (author = null) => {
   showModal.value = true;
 };
 
+// 3. Create a computed property for the full image URL
+const authorImageUrl = computed(() => {
+  // Check if the author and image path exist
+  if (authorToEdit.value && authorToEdit.value.img) {
+    // Combine the base URL with the relative path from the API
+    return `${apiBaseUrl}${authorToEdit.value.img}`;
+  }
+  // Return null or a placeholder image if no image is available
+  return null;
+});
 const closeModal = () => {
   showModal.value = false;
   authorToEdit.value = null;
@@ -114,7 +126,7 @@ defineExpose({
             <label for="image" class="block mb-1 font-medium text-sm">Upload Image</label>
             <input id="image" type="file" accept="image/*" @change="handleFileUpload" class="w-full border rounded-lg px-3 py-2">
             <div v-if="authorForm.img" class="mt-2">
-              <img :src="authorForm.img" alt="Preview" class="h-24 rounded shadow border" />
+              <img :src="authorImageUrl" alt="Preview" class="h-24 rounded shadow border" />
             </div>
           </div>
         </div>
