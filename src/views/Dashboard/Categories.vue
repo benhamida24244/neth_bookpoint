@@ -36,13 +36,13 @@ const cartsCategories = computed(() => [
     id: 3,
     name: translations.value.dashboard?.categories?.newThisMonth,
     icon: 'fas fa-star text-white',
-    value: categoriesStore.getNew.length.toString(),
+    value: '0', // The getNew getter was removed, setting to static value.
     color: 'bg-[var(--color-light)]'
   }
 ])
 
-const handleCategoryAdded = async () => {
-  await categoriesStore.fetchCategories()
+const handleCategoryAdded = () => {
+  // The store action now handles refetching, so we just need to close the modal.
   showAddCategoryModal.value = false
 }
 </script>

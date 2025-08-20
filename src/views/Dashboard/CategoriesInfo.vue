@@ -1,108 +1,118 @@
 <script setup>
-import { ref, computed } from 'vue'
-import BookList from '@/components/Book/Shop/BookList.vue'
-import { useRoute } from 'vue-router'
-import BookCategoryList from '@/components/Book/BookCategoryList.vue'
+import { computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
+import BookCategoryList from '@/components/Book/BookCategoryList.vue'
 
 const route = useRoute()
-const currentId = parseInt(route.params.id)
+const router = useRouter()
 const categoriesStore = useCategoriesStore()
+const { category, isLoading, error } = storeToRefs(categoriesStore)
 
-// Use storeToRefs to maintain reactivity for state properties
-const { isOpenEdit, formattedStatistics } = storeToRefs(categoriesStore)
+const currentId = Number(route.params.id)
 
-// Get current category from store getter
-const currentCategory = computed(() => {
-  return categoriesStore.getCurrentCategory(currentId)
+onMounted(async () => {
+  try {
+    await categoriesStore.fetchCategory(currentId)
+  } catch (err) {
+    console.error('Failed to load category:', err)
+  }
 })
 
-// Methods that call store actions with currentId
-const handleEdit = () => {
-  categoriesStore.handleEdit()
+const goToEditPage = () => {
+  router.push(`/dashboard/categories/edit/${currentId}`)
 }
 
-const editName = () => {
-  categoriesStore.editName(currentId)
+const handleDeleteCategory = async () => {
+  if (confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+    try {
+      await categoriesStore.deleteCategory(currentId)
+      alert('Category deleted successfully.')
+      router.push('/dashboard/categories')
+    } catch (err) {
+      console.error('Delete failed:', err)
+      alert('Failed to delete category. Please try again.')
+    }
+  }
 }
 
-const editImage = () => {
-  categoriesStore.editImage(currentId)
-}
+const currentCategory = computed(
+  () => category.value || { name: 'Loading...', description: '...', icon: 'pi-tag' }
+)
 
-const editDescription = () => {
-  categoriesStore.editDescription(currentId)
-}
-
-const unpublish = () => {
-  categoriesStore.unpublish(currentId)
-}
+// إحصائيات افتراضية (إلى أن تبنيها من API أو store)
+const formattedStatistics = computed(() => [
+  {
+    id: 1,
+    name: 'Total Books',
+    displayValue: currentCategory.value.books_count ?? 0,
+    icon: 'fas fa-book',
+    color: 'bg-blue-500',
+    ariaLabel: 'Total number of books in category'
+  },
+  {
+    id: 2,
+    name: 'Orders',
+    displayValue: currentCategory.value.orders_count ?? 0,
+    icon: 'fas fa-shopping-cart',
+    color: 'bg-green-500',
+    ariaLabel: 'Total number of orders for this category'
+  },
+  {
+    id: 3,
+    name: 'Profit',
+    displayValue: currentCategory.value.total_profit
+      ? `$${currentCategory.value.total_profit}`
+      : '$0',
+    icon: 'fas fa-dollar-sign',
+    color: 'bg-yellow-500',
+    ariaLabel: 'Total profit from category'
+  }
+])
 </script>
+
 
 <template>
   <div class="w-full min-h-screen bg-gray-50 py-8 px-4 sm:py-16">
-    <div class="max-w-7xl mx-auto">
+    <div v-if="isLoading" class="text-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto"></div>
+      <p class="mt-4 text-gray-600">Loading Category...</p>
+    </div>
+    <div v-else-if="error" class="text-center py-20">
+      <p class="text-red-500 font-semibold">Error:</p>
+      <p class="text-gray-600">{{ error }}</p>
+      <button @click="categoriesStore.fetchCategory(currentId)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+        Retry
+      </button>
+    </div>
+    <div v-else-if="currentCategory" class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <!-- Icon section -->
         <div class="flex justify-center lg:justify-start">
           <div class="relative">
-            <div
-              class="h-64 w-64 sm:h-80 sm:w-80 rounded-full shadow-2xl shadow-[var(--color-primary)]/30 bg-[var(--color-hover)] flex items-center justify-center text-white text-9xl"
-            >
-              <i class="pi" :class="currentCategory.icon"></i>
+            <div class="h-64 w-64 sm:h-80 sm:w-80 rounded-full shadow-2xl shadow-[var(--color-primary)]/30 bg-[var(--color-hover)] flex items-center justify-center text-white text-9xl">
+              <i class="pi" :class="currentCategory.icon || 'pi-tag'"></i>
             </div>
-            <div
-              class="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-primary)]/20 to-transparent pointer-events-none"
-            ></div>
+            <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-primary)]/20 to-transparent pointer-events-none"></div>
           </div>
         </div>
 
-        <div class="lg:col-span-2 flex flex-col justify-center space-y-6">
-         <div class="flex flex-col gap-4 absolute right-2 top-2">
-  <!-- زر التعديل الرئيسي -->
-  <button
-    class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[var(--color-primary)] transition-colors duration-300 font-BonaRegular"
-    @click="handleEdit"
-  >
-    Edit
-  </button>
+        <!-- Details and Actions -->
+        <div class="lg:col-span-2 flex flex-col justify-center space-y-6 relative">
+          <!-- Action Buttons -->
+          <div class="absolute top-0 right-0 flex flex-col sm:flex-row gap-3">
+            <button @click="goToEditPage" class="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200 shadow-sm flex items-center gap-2">
+              <i class="fas fa-pencil-alt"></i> Edit
+            </button>
+            <button @click="handleDeleteCategory" class="px-5 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors duration-200 shadow-sm flex items-center gap-2">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
 
-  <!-- تظهر خيارات التعديل عند isOpenEdit -->
-  <div v-if="isOpenEdit" class="flex flex-col gap-2">
-    <button
-      class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 font-BonaRegular"
-      @click="editName"
-    >
-      Edit Name
-    </button>
-
-    <button
-      class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 font-BonaRegular"
-      @click="editImage"
-    >
-      Edit Image
-    </button>
-
-    <button
-      class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 font-BonaRegular"
-      @click="editDescription"
-    >
-      Edit Description
-    </button>
-
-    <button
-      class="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-300 font-BonaRegular"
-      @click="unpublish"
-    >
-      Unpublish
-    </button>
-  </div>
-</div>
-
+          <!-- Category Info -->
           <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-full max-w-xs"></div>
-          <h1
-            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary)] leading-tight font-BonaRegular"
-          >
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary)] leading-tight font-BonaRegular pt-12 sm:pt-0">
             {{ currentCategory.name }}
           </h1>
           <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-20"></div>
@@ -110,13 +120,9 @@ const unpublish = () => {
             {{ currentCategory.description }}
           </p>
 
+          <!-- Total profit | Number of Orders and Number of Books -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-            <div
-              v-for="stat in formattedStatistics"
-              :key="stat.id"
-              class="flex items-center gap-4 border border-[var(--color-primary)]/30 rounded-xl p-4 bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:border-[var(--color-primary)]/50"
-              :aria-label="stat.ariaLabel"
-            >
+            <div v-for="stat in formattedStatistics" :key="stat.id" class="flex items-center gap-4 border border-[var(--color-primary)]/30 rounded-xl p-4 bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:border-[var(--color-primary)]/50" :aria-label="stat.ariaLabel">
               <div :class="[stat.color, 'p-3 rounded-full shadow-md']" class="flex-shrink-0">
                 <i :class="[stat.icon, 'text-white text-xl']" aria-hidden="true"></i>
               </div>
@@ -129,16 +135,13 @@ const unpublish = () => {
         </div>
       </div>
 
+      <!-- Books in Category Section -->
       <section class="max-w-7xl mx-auto px-4 py-12 lg:py-16">
         <header class="text-center mb-12">
-          <h2
-            class="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-primary)] mb-4 font-BonaRegular"
-          >
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-primary)] mb-4 font-BonaRegular">
             Books in {{ currentCategory.name }}
           </h2>
-          <div
-            class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"
-          ></div>
+          <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"></div>
         </header>
 
         <Suspense>

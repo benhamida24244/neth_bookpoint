@@ -1,36 +1,39 @@
 <script setup>
-import { ref } from 'vue'
-import {adminAddCategory} from '@/services/api.js'
-const props = defineProps({
-  show: Boolean,
-})
+import { ref } from 'vue';
+import { useCategoriesStore } from '@/stores/Categories';
 
-const emit = defineEmits(['close', 'save'])
+defineProps({
+  show: Boolean,
+});
+
+const emit = defineEmits(['close', 'save']);
+const categoriesStore = useCategoriesStore();
 
 const newCategory = ref({
   name: '',
   description: '',
-})
+});
 
 function closeModal() {
-  emit('close')
+  emit('close');
 }
 
 const saveCategory = async () => {
   if (!newCategory.value.name) {
-    alert('Please enter a category name.')
-    return
+    alert('Please enter a category name.');
+    return;
   }
   try {
-    await adminAddCategory(newCategory.value)
-    newCategory.value = { name: '', description: '' }
-    emit('save')
-    closeModal()
+    // Use the store action to add the category
+    await categoriesStore.addCategory(newCategory.value);
+    newCategory.value = { name: '', description: '' }; // Reset form
+    emit('save'); // Emit save to notify parent (e.g., to close modal)
+    closeModal();
   } catch (error) {
-    console.error('Error saving category:', error)
-    alert('Failed to save category. Please try again.')
+    console.error('Error saving category:', error);
+    alert('Failed to save category. Please try again.');
   }
-}
+};
 </script>
 
 <template>
