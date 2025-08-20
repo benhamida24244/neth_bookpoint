@@ -142,6 +142,9 @@ export const adminUpdateSettings = (settingsData) => api.post("/admin/settings",
 export const uploadBookCover = (bookId, formData) => api.post(`/admin/upload/book/${bookId}`, formData, {
   headers: { "Content-Type": "multipart/form-data" },
 });
+export const uploadAuthorLogo = (authorId, formData) => api.post(`/admin/upload/author/${authorId}`, formData, {
+  headers: { "Content-Type": "multipart/form-data" },
+});
 
 export const uploadPublisherLogo = (publisherId, formData) => api.post(`/admin/upload/publisher/${publisherId}`, formData, {
   headers: { "Content-Type": "multipart/form-data" },
@@ -192,6 +195,7 @@ const apiService = {
   adminDeleteAuthor,
   adminUpdateSettings,
   uploadBookCover,
+  uploadAuthorLogo,
   uploadPublisherLogo,
   uploadBackgroundImage,
 };

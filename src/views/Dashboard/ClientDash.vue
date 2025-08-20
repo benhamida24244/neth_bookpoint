@@ -60,9 +60,7 @@ const toggleDropdown = (dropdown) => {
         class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg w-full sm:w-1/2 lg:w-1/3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
       />
       <div class="flex gap-3 w-full sm:w-auto">
-        <button class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 sm:flex-none">
-          Add Client
-        </button>
+        
         <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 sm:flex-none">
           Export
         </button>

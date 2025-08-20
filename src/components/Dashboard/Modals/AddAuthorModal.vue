@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useAuthorStore } from '@/stores/Authors';
+import apiService from '@/services/api';
 
 const authorStore = useAuthorStore();
 const showModal = ref(false);
 
-// Use a single ref for the form data
 const authorForm = ref({
   name: '',
   Country: '',
@@ -13,20 +13,15 @@ const authorForm = ref({
   img: ''
 });
 
-// To keep track of the author being edited
 const authorToEdit = ref(null);
 
-// Computed property to determine the mode
 const isEditMode = computed(() => !!authorToEdit.value);
 
-// openModal can now accept an author object for editing
 const openModal = (author = null) => {
   if (author) {
-    // Edit mode
     authorToEdit.value = author;
-    authorForm.value = { ...author }; // Copy author data to the form
+    authorForm.value = { ...author };
   } else {
-    // Add mode
     authorToEdit.value = null;
     resetForm();
   }
@@ -48,6 +43,31 @@ const resetForm = () => {
   };
 };
 
+// رفع الصورة وتخزين رابطها
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    let response;
+    if (isEditMode.value) {
+      // رفع الصورة لمؤلف موجود
+      response = await apiService.uploadAuthorLogo(authorToEdit.value.id, formData);
+    } else {
+      // رفع صورة جديدة لمؤلف جديد (يمكنك تعديل API حسب الحاجة)
+      response = await apiService.uploadAuthorLogo(null, formData);
+    }
+
+    // افترض أن API يعيد { url: "link_to_image" }
+    authorForm.value.img = response.url;
+  } catch (error) {
+    console.error("Upload failed:", error);
+  }
+};
+
 const handleSubmit = async () => {
   try {
     if (isEditMode.value) {
@@ -57,9 +77,7 @@ const handleSubmit = async () => {
     }
     closeModal();
   } catch (error) {
-    // Optional: show an error message to the user
     console.error("Failed to submit form:", error);
-    // You might want to display a notification to the user here
   }
 };
 
@@ -91,8 +109,12 @@ defineExpose({
           </div>
 
           <div>
-            <label for="image_url" class="block mb-1 font-medium text-sm">Image URL</label>
-            <input id="image_url" v-model="authorForm.img" type="text" class="w-full border rounded-lg px-3 py-2">
+            <label for="image" class="block mb-1 font-medium text-sm">Upload Image</label>
+            <input id="image" type="file" accept="image/*" @change="handleFileUpload" class="w-full border rounded-lg px-3 py-2">
+
+            <div v-if="authorForm.img" class="mt-2">
+              <img :src="authorForm.img" alt="preview" class="w-24 h-24 object-cover rounded-lg border">
+            </div>
           </div>
         </div>
 
@@ -100,7 +122,7 @@ defineExpose({
           <button type="button" @click="closeModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
             Cancel
           </button>
-          <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)]">
+          <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-hover)]">
             {{ isEditMode ? 'Save Changes' : 'Add Author' }}
           </button>
         </div>

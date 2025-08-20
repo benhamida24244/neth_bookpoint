@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import apiService from "@/services/api.js";
-
 export const useAuthorStore = defineStore("authors", {
   state: () => ({
     authors: [],
@@ -9,18 +8,20 @@ export const useAuthorStore = defineStore("authors", {
   }),
   actions: {
     async fetchAuthors() {
-      this.loading = true;
-      this.error = null;
+      this.isLoading = true;
       try {
         const response = await apiService.getAuthors();
-        this.authors = response.data.data; // Adjust based on your API response structure
+        this.authors = response.data.data; // <-- هنا نصل مباشرة للـ Array
+        console.log(this.authors);
+        this.isLoading = false;
+        return this.authors;
       } catch (error) {
-        this.error = "Failed to fetch authors.";
-        console.error(error);
-      } finally {
-        this.loading = false;
+        console.error('Failed to fetch authors:', error);
+        this.isLoading = false;
+        return [];
       }
     },
+
     async addAuthor(authorData) {
       this.loading = true;
       this.error = null;
