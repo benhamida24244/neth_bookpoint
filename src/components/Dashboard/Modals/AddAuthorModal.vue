@@ -61,7 +61,7 @@ const handleFileUpload = async (event) => {
   if (!file) return;
 
   const formData = new FormData();
-  formData.append('image', file);
+  formData.append('cover', file);
 
   try {
     let response;
