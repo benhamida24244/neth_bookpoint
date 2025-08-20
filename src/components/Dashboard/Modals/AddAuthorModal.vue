@@ -21,10 +21,13 @@ const openModal = (author = null) => {
   if (author) {
     authorToEdit.value = author;
     authorForm.value = { ...author };
+    imageUrl.value = author.img; // Set initial image preview
   } else {
     authorToEdit.value = null;
     resetForm();
+    imageUrl.value = ''; // Clear image preview
   }
+  imageFile.value = null; // Reset file input
   showModal.value = true;
 };
 
@@ -43,38 +46,39 @@ const resetForm = () => {
   };
 };
 
-// رفع الصورة وتخزين رابطها
-const handleFileUpload = async (event) => {
+const imageFile = ref(null);
+const imageUrl = ref('');
+
+const handleFileUpload = (event) => {
   const file = event.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    let response;
-    if (isEditMode.value) {
-      // رفع الصورة لمؤلف موجود
-      response = await apiService.uploadAuthorLogo(authorToEdit.value.id, formData);
-    } else {
-      // رفع صورة جديدة لمؤلف جديد (يمكنك تعديل API حسب الحاجة)
-      response = await apiService.uploadAuthorLogo(null, formData);
-    }
-
-    // افترض أن API يعيد { url: "link_to_image" }
-    authorForm.value.img = response.url;
-  } catch (error) {
-    console.error("Upload failed:", error);
+  if (file) {
+    imageFile.value = file;
+    imageUrl.value = URL.createObjectURL(file); // Create a local URL for preview
   }
 };
 
 const handleSubmit = async () => {
   try {
+    // 1. Add or update author textual data
+    let authorData = { ...authorForm.value };
+    delete authorData.img; // Remove img property before sending
+
+    let response;
     if (isEditMode.value) {
-      await authorStore.updateAuthor(authorToEdit.value.id, authorForm.value);
+      response = await authorStore.updateAuthor(authorToEdit.value.id, authorData);
     } else {
-      await authorStore.addAuthor(authorForm.value);
+      response = await authorStore.addAuthor(authorData);
     }
+
+    // 2. If there's a new image, upload it
+    if (imageFile.value) {
+      const formData = new FormData();
+      formData.append('img', imageFile.value);
+
+      const authorId = isEditMode.value ? authorToEdit.value.id : response.data.id;
+      await authorStore.uploadAuthorImage(authorId, formData);
+    }
+
     closeModal();
   } catch (error) {
     console.error("Failed to submit form:", error);
@@ -112,8 +116,8 @@ defineExpose({
             <label for="image" class="block mb-1 font-medium text-sm">Upload Image</label>
             <input id="image" type="file" accept="image/*" @change="handleFileUpload" class="w-full border rounded-lg px-3 py-2">
 
-            <div v-if="authorForm.img" class="mt-2">
-              <img :src="authorForm.img" alt="preview" class="w-24 h-24 object-cover rounded-lg border">
+            <div v-if="imageUrl || authorForm.img" class="mt-2">
+              <img :src="imageUrl || authorForm.img" alt="preview" class="w-24 h-24 object-cover rounded-lg border">
             </div>
           </div>
         </div>

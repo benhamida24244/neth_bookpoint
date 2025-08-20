@@ -1,7 +1,9 @@
 <script setup>
 import { useClientsStore } from '@/stores/Clients';
 import { ref, computed } from 'vue';
+import AddClientModal from '@/components/Dashboard/Modals/AddClientModal.vue';
 
+const addClientModal = ref(null);
 const searchQuery = ref('');
 const selectedStatus = ref('');
 const selectedSource = ref('');
@@ -9,12 +11,22 @@ const selectedSaleDate = ref('');
 const showStatusDropdown = ref(false);
 const showSourceDropdown = ref(false);
 const showSaleDateDropdown = ref(false);
+import { onMounted } from 'vue';
+
 const ClientStore = useClientsStore()
-const Clients = ClientStore.clients
+
+onMounted(async () => {
+  await ClientStore.fetchClients();
+});
+
+const Clients = computed(() => ClientStore.clients);
 
 // Computed property for filtered clients
 const filteredClients = computed(() => {
-  return Clients.filter(client => {
+  if (!Clients.value) {
+    return [];
+  }
+  return Clients.value.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                          client.phone.includes(searchQuery.value) ||
@@ -47,10 +59,21 @@ const toggleDropdown = (dropdown) => {
     showSourceDropdown.value = false;
   }
 };
+
+const openEditModal = (client) => {
+  addClientModal.value.openModal(client);
+};
+
+const deleteClient = (clientId) => {
+  if (window.confirm('Are you sure you want to delete this client?')) {
+    ClientStore.deleteClient(clientId);
+  }
+};
 </script>
 
 <template>
   <div class="w-full px-4 sm:px-8 lg:px-16 mt-8">
+    <AddClientModal ref="addClientModal" />
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
       <input
@@ -60,7 +83,9 @@ const toggleDropdown = (dropdown) => {
         class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg w-full sm:w-1/2 lg:w-1/3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
       />
       <div class="flex gap-3 w-full sm:w-auto">
-        
+        <button @click="addClientModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 sm:flex-none">
+          Add Client
+        </button>
         <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 sm:flex-none">
           Export
         </button>
@@ -257,13 +282,15 @@ const toggleDropdown = (dropdown) => {
               <p><span class="font-medium">Orders:</span> {{ client.Orders_count }}</p>
               <p><span class="font-medium">Spent:</span> ${{ client.SpendMuch }}</p>
             </div>
-            <div class="mt-3">
-              <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-                View Details
+            <div class="mt-3 flex items-center gap-4">
+              <RouterLink :to="`/dashboard/clients/${client.id}`" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                View
+              </RouterLink>
+              <button @click="openEditModal(client)" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                Edit
+              </button>
+              <button @click="deleteClient(client.id)" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                Delete
               </button>
             </div>
           </div>
@@ -295,16 +322,18 @@ const toggleDropdown = (dropdown) => {
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Orders_count }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ client.SpendMuch }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Country }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                     <RouterLink :to="`/dashboard/clients/${client.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-                    View
-                  </RouterLink>
-                  </button>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center gap-4">
+                    <RouterLink :to="`/dashboard/clients/${client.id}`" class="text-blue-600 hover:text-blue-800">
+                      View
+                    </RouterLink>
+                    <button @click="openEditModal(client)" class="text-green-600 hover:text-green-800">
+                      Edit
+                    </button>
+                    <button @click="deleteClient(client.id)" class="text-red-600 hover:text-red-800">
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>

@@ -81,9 +81,14 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price + settingsStore.currency }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
-                    <i class="far fa-eye"></i> View
-                  </RouterLink>
+                  <div class="flex items-center justify-center gap-4">
+                    <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-blue-600 hover:text-blue-800">
+                      <i class="far fa-eye"></i>
+                    </RouterLink>
+                    <button @click="deleteOrder(order.id)" class="text-red-600 hover:text-red-800">
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -146,11 +151,15 @@
 <script setup>
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 
     const ordersStore = useOrdersStore()
+
+    onMounted(async () => {
+      await ordersStore.fetchOrders();
+    });
 
     const activeFilter = ref('all')
     const searchQuery = ref('')
@@ -226,6 +235,12 @@ const settingsStore = useSettingsStore()
         'Returned': 'bg-red-50 text-red-700'
       }
       return statusClasses[status] || 'bg-gray-50 text-gray-700'
+    }
+
+    const deleteOrder = (orderId) => {
+      if (window.confirm('Are you sure you want to delete this order?')) {
+        ordersStore.deleteOrder(orderId);
+      }
     }
 
 

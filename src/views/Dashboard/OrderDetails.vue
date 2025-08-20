@@ -1,9 +1,10 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useOrdersStore } from '@/stores/Orders'
 import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon, UserIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/vue/24/outline'
 
-// Types and Interfaces (in a real project, these would be in separate files)
+// Types and Interfaces
 const ORDER_STATUS = {
   PENDING: 'Pending',
   COMPLETED: 'Completed',
@@ -40,107 +41,22 @@ const STATUS_CONFIG = {
   }
 }
 
-// Props and Emits
-const props = defineProps({
-  orderId: {
-    type: [String, Number],
-    required: false
-  }
-})
-
-const emit = defineEmits(['orderUpdated', 'statusChanged'])
-
 // Composables
 const route = useRoute()
 const router = useRouter()
+const ordersStore = useOrdersStore()
 
-// State Management
-const isLoading = ref(true)
-const isUpdating = ref(false)
-const error = ref(null)
+// State
 const showSuccessMessage = ref(false)
-
-// Mock data - في التطبيق الحقيقي سيتم جلبها من API
-const orders = ref([
-  {
-    id: 1,
-    customer: {
-      name: 'Ali Ahmed',
-      email: 'ali@example.com',
-      phone: '+966 50 123 4567',
-      address: {
-        street: '123 King Fahd Road',
-        city: 'Riyadh',
-        country: 'Saudi Arabia',
-        postalCode: '11564'
-      }
-    },
-    book: {
-      title: '1984',
-      author: 'George Orwell',
-      isbn: '978-0-452-28423-4',
-      coverImage: 'https://via.placeholder.com/150x200'
-    },
-    status: ORDER_STATUS.COMPLETED,
-    pricing: {
-      basePrice: 29.99,
-      shipping: 5.00,
-      tax: 2.10,
-      discount: 0
-    },
-    dates: {
-      ordered: '2025-07-12T10:30:00Z',
-      shipped: '2025-07-13T14:20:00Z',
-      delivered: '2025-07-15T16:45:00Z'
-    },
-    quantity: 1,
-    tracking: {
-      number: 'TRK123456789',
-      carrier: 'DHL Express'
-    }
-  },
-  {
-    id: 2,
-    customer: {
-      name: 'Sara Belkacem',
-      email: 'sara@example.com',
-      phone: '+966 55 987 6543',
-      address: {
-        street: '456 Prince Mohammed Bin Abdulaziz Road',
-        city: 'Jeddah',
-        country: 'Saudi Arabia',
-        postalCode: '21589'
-      }
-    },
-    book: {
-      title: 'Kafka on the Shore',
-      author: 'Haruki Murakami',
-      isbn: '978-1-4000-7927-6',
-      coverImage: 'https://via.placeholder.com/150x200'
-    },
-    status: ORDER_STATUS.PENDING,
-    pricing: {
-      basePrice: 35.00,
-      shipping: 5.00,
-      tax: 2.80,
-      discount: 5.00
-    },
-    dates: {
-      ordered: '2025-07-14T09:15:00Z'
-    },
-    quantity: 1,
-    tracking: null
-  }
-])
 
 // Computed Properties
 const orderId = computed(() => {
-  return props.orderId || parseInt(route.params.id)
+  return parseInt(route.params.id)
 })
 
-const selectedOrder = computed(() => {
-  return orders.value.find(order => order.id === orderId.value)
-})
+const selectedOrder = computed(() => ordersStore.selectedOrder)
+const isLoading = computed(() => ordersStore.loading)
+const error = computed(() => ordersStore.error)
 
 const orderTotal = computed(() => {
   if (!selectedOrder.value) return 0
@@ -162,7 +78,7 @@ const statusOptions = computed(() => {
   return Object.values(ORDER_STATUS).map(status => ({
     value: status,
     label: STATUS_CONFIG[status].label,
-    disabled: false // يمكن تخصيص هذا بناءً على منطق العمل
+    disabled: false
   }))
 })
 
@@ -179,44 +95,16 @@ const formattedOrderDate = computed(() => {
 
 // Methods
 const updateOrderStatus = async (newStatus) => {
-  if (!selectedOrder.value || isUpdating.value) return
+  if (!selectedOrder.value) return
 
   try {
-    isUpdating.value = true
-    error.value = null
-
-    // في التطبيق الحقيقي، سيتم استدعاء API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    const oldStatus = selectedOrder.value.status
-    selectedOrder.value.status = newStatus
-
-    // إضافة تاريخ الحالة الجديدة
-    if (newStatus === ORDER_STATUS.SHIPPED && !selectedOrder.value.dates.shipped) {
-      selectedOrder.value.dates.shipped = new Date().toISOString()
-    }
-    if (newStatus === ORDER_STATUS.COMPLETED && !selectedOrder.value.dates.delivered) {
-      selectedOrder.value.dates.delivered = new Date().toISOString()
-    }
-
+    await ordersStore.updateOrder(orderId.value, { status: newStatus })
     showSuccessMessage.value = true
     setTimeout(() => {
       showSuccessMessage.value = false
     }, 3000)
-
-    emit('statusChanged', {
-      orderId: selectedOrder.value.id,
-      oldStatus,
-      newStatus
-    })
-
-    emit('orderUpdated', selectedOrder.value)
-
   } catch (err) {
-    error.value = 'There was an error updating the order status. Please try again.'
     console.error('Error updating order status:', err)
-  } finally {
-    isUpdating.value = false
   }
 }
 
@@ -229,36 +117,17 @@ const printOrder = () => {
 }
 
 const downloadInvoice = () => {
-  // منطق تحميل الفاتورة
   console.log('Downloading invoice for order:', orderId.value)
 }
 
 // Lifecycle
-onMounted(async () => {
-  try {
-    isLoading.value = true
-    error.value = null
-
-    // في التطبيق الحقيقي، سيتم جلب البيانات من API
-    await new Promise(resolve => setTimeout(resolve, 500))
-
-    if (!selectedOrder.value) {
-      error.value = 'لم يتم العثور على الطلب المطلوب'
-    }
-
-  } catch (err) {
-    error.value = 'حدث خطأ في تحميل بيانات الطلب'
-    console.error('Error loading order:', err)
-  } finally {
-    isLoading.value = false
-  }
+onMounted(() => {
+  ordersStore.fetchOrder(orderId.value)
 })
 
-// Watchers
 watch(() => route.params.id, (newId) => {
   if (newId) {
-    // إعادة تحميل البيانات عند تغيير معرف الطلب
-    onMounted()
+    ordersStore.fetchOrder(parseInt(newId))
   }
 })
 </script>
@@ -395,7 +264,7 @@ watch(() => route.params.id, (newId) => {
                   <select
                     :value="selectedOrder.status"
                     @change="updateOrderStatus($event.target.value)"
-                    :disabled="isUpdating"
+                    :disabled="isLoading"
                     class="flex-1 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option
@@ -407,7 +276,7 @@ watch(() => route.params.id, (newId) => {
                       {{ option.label }}
                     </option>
                   </select>
-                  <div v-if="isUpdating" class="flex items-center">
+                  <div v-if="isLoading" class="flex items-center">
                     <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                   </div>
                 </div>

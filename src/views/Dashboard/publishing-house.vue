@@ -11,12 +11,22 @@ const searchQuery = ref('');
 const selectedCountry = ref('');
 const sortBy = ref('name');
 const sortOrder = ref('asc');
+import { onMounted } from 'vue';
+
 const publishingHousesStore = usePublishingHouseStore()
-const publishingHouses = publishingHousesStore.publishingHouses
+
+onMounted(async () => {
+  await publishingHousesStore.fetchPublishers();
+});
+
+const publishingHouses = computed(() => publishingHousesStore.publishers);
 
 // Computed properties for filtering and sorting
 const filteredPublishingHouses = computed(() => {
-  let filtered = publishingHouses.filter(house => {
+  if (!publishingHouses.value) {
+    return [];
+  }
+  let filtered = publishingHouses.value.filter(house => {
     const matchesSearch = house.name.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesCountry = selectedCountry.value === '' || house.country === selectedCountry.value;
     return matchesSearch && matchesCountry;
@@ -58,9 +68,22 @@ const totalBooks = computed(() => {
 
 // Computed property for unique countries
 const countries = computed(() => {
-  const uniqueCountries = [...new Set(publishingHouses.map(house => house.country))];
+  if (!publishingHouses.value) {
+    return [];
+  }
+  const uniqueCountries = [...new Set(publishingHouses.value.map(house => house.country))];
   return uniqueCountries.sort();
 });
+
+const openEditModal = (publisher) => {
+  addPublisherModal.value.openModal(publisher);
+};
+
+const deletePublisher = (publisherId) => {
+  if (window.confirm('Are you sure you want to delete this publisher?')) {
+    publishingHousesStore.deletePublisher(publisherId);
+  }
+};
 
 // Sort field options with proper labels
 const sortFields = [
@@ -220,25 +243,16 @@ const formatNumber = (number) => {
             <div><span class="font-medium">Email:</span> {{ house.email }}</div>
             <div><span class="font-medium">Phone:</span> {{ house.phone }}</div>
           </div>
-          <div class="flex gap-2">
-            <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-              View Details
+          <div class="mt-3 flex items-center gap-4">
+            <RouterLink :to="`/dashboard/publishing-house/${house.id}`" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              View
+            </RouterLink>
+            <button @click="openEditModal(house)" class="text-green-600 hover:text-green-800 text-sm font-medium">
+              Edit
             </button>
-            <a
-              :href="house.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-700 flex items-center gap-1 text-sm font-medium transition-colors"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
-              Visit Website
-            </a>
+            <button @click="deletePublisher(house.id)" class="text-red-600 hover:text-red-800 text-sm font-medium">
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -294,9 +308,15 @@ const formatNumber = (number) => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <RouterLink :to="`/dashboard/publishing-house/${house.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
+                  <RouterLink :to="`/dashboard/publishing-house/${house.id}`" class="text-blue-600 hover:text-blue-800">
                     View
                   </RouterLink>
+                  <button @click="openEditModal(house)" class="text-green-600 hover:text-green-800">
+                    Edit
+                  </button>
+                  <button @click="deletePublisher(house.id)" class="text-red-600 hover:text-red-800">
+                    Delete
+                  </button>
                 </div>
               </td>
             </tr>

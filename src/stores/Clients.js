@@ -1,65 +1,73 @@
 import { defineStore } from "pinia";
+import apiService from "@/services/api.js";
 
 export const useClientsStore = defineStore("clients", {
   state: () => ({
-    staticClients: [
-  {
-    id: 1,
-    name: 'Benhamida Mohammed',
-    email: 'mohammed@example.com',
-    phone: '0823234234',
-    Registration_date: '12-12-2000',
-    Orders_count: 12,
-    SpendMuch: 1234,
-    Country: 'Algeria'
-  },
-  {
-    id: 2,
-    name: 'Ahmed Hassan',
-    email: 'ahmed@example.com',
-    phone: '0823234235',
-    Registration_date: '15-03-2001',
-    Orders_count: 8,
-    SpendMuch: 890,
-    Country: 'Morocco'
-  },
-  {
-    id: 3,
-    name: 'Fatima Al-Zahra',
-    email: 'fatima@example.com',
-    phone: '0823234236',
-    Registration_date: '22-07-2002',
-    Orders_count: 15,
-    SpendMuch: 2100,
-    Country: 'Tunisia'
-  },
-  {
-    id: 4,
-    name: 'Omar Ibrahim',
-    email: 'omar@example.com',
-    phone: '0823234237',
-    Registration_date: '08-11-2003',
-    Orders_count: 6,
-    SpendMuch: 450,
-    Country: 'Egypt'
-  },
-  {
-    id: 5,
-    name: 'Aisha Rahman',
-    email: 'aisha@example.com',
-    phone: '0823234238',
-    Registration_date: '03-09-2004',
-    Orders_count: 20,
-    SpendMuch: 3200,
-    Country: 'Algeria'
-  },
-],
-    clients: []
+    clients: [],
+    loading: false,
+    error: null,
   }),
-
   actions: {
-    fetchClients() {
-      // Fetch clients from an API or other source
+    async fetchClients() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.adminGetClients();
+        this.clients = response.data.data;
+      } catch (error) {
+        this.error = "Failed to fetch clients.";
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async addClient(clientData) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.adminAddClient(clientData);
+        await this.fetchClients();
+        return response.data;
+      } catch (error) {
+        this.error = "Failed to add client.";
+        console.error(error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async updateClient(clientId, clientData) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.adminUpdateClient(
+          clientId,
+          clientData
+        );
+        await this.fetchClients();
+        return response.data;
+      } catch (error) {
+        this.error = "Failed to update client.";
+        console.error(error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async deleteClient(clientId) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.adminDeleteClient(clientId);
+        this.clients = this.clients.filter(
+          (client) => client.id !== clientId
+        );
+      } catch (error) {
+        this.error = "Failed to delete client.";
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });

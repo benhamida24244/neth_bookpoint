@@ -113,6 +113,7 @@ export const getAdminDashboard = () => api.get("/admin/dashboard");
 export const getAdminOrders = () => api.get("/admin/orders");
 export const getAdminOrder = (orderId) => api.get(`/admin/orders/${orderId}`);
 export const updateAdminOrder = (orderId, updateData) => api.put(`/admin/orders/${orderId}`, updateData);
+export const adminDeleteOrder = (orderId) => api.delete(`/admin/orders/${orderId}`);
 
 // --- إدارة الكتب (Admin Books CRUD) ---
 export const adminAddBook = (bookData) => api.post("/admin/books", bookData);
@@ -133,6 +134,13 @@ export const adminDeletePublisher = (publisherId) => api.delete(`/admin/publishe
 export const adminAddAuthor = (authorData) => api.post("/admin/authors", authorData);
 export const adminUpdateAuthor = (authorId, authorData) => api.put(`/admin/authors/${authorId}`, authorData);
 export const adminDeleteAuthor = (authorId) => api.delete(`/admin/authors/${authorId}`);
+
+// --- إدارة العملاء (Admin Clients CRUD) ---
+export const adminGetClients = () => api.get("/admin/clients");
+export const adminGetClient = (clientId) => api.get(`/admin/clients/${clientId}`);
+export const adminAddClient = (clientData) => api.post("/admin/clients", clientData);
+export const adminUpdateClient = (clientId, clientData) => api.put(`/admin/clients/${clientId}`, clientData);
+export const adminDeleteClient = (clientId) => api.delete(`/admin/clients/${clientId}`);
 
 // --- إدارة الإعدادات (Admin Settings) ---
 export const adminUpdateSettings = (settingsData) => api.post("/admin/settings", settingsData);
@@ -181,6 +189,7 @@ const apiService = {
   getAdminOrders,
   getAdminOrder,
   updateAdminOrder,
+  adminDeleteOrder,
   adminAddBook,
   adminUpdateBook,
   adminDeleteBook,
@@ -193,6 +202,11 @@ const apiService = {
   adminAddAuthor,
   adminUpdateAuthor,
   adminDeleteAuthor,
+  adminGetClients,
+  adminGetClient,
+  adminAddClient,
+  adminUpdateClient,
+  adminDeleteClient,
   adminUpdateSettings,
   uploadBookCover,
   uploadAuthorLogo,

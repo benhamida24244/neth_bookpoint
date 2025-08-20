@@ -26,12 +26,13 @@ export const useAuthorStore = defineStore("authors", {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.adminAddAuthor(authorData);
-        await this.fetchAuthors(); // Refresh the list after adding
+        const response = await apiService.adminAddAuthor(authorData);
+        await this.fetchAuthors(); // Refresh the list
+        return response.data; // Return the new author's data
       } catch (error) {
         this.error = "Failed to add author.";
         console.error(error);
-        throw error; // Re-throw to be caught in the component
+        throw error;
       } finally {
         this.loading = false;
       }
@@ -40,12 +41,27 @@ export const useAuthorStore = defineStore("authors", {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.adminUpdateAuthor(authorId, authorData);
-        await this.fetchAuthors(); // Refresh the list after updating
+        const response = await apiService.adminUpdateAuthor(authorId, authorData);
+        await this.fetchAuthors(); // Refresh the list
+        return response.data; // Return the updated author's data
       } catch (error) {
         this.error = "Failed to update author.";
         console.error(error);
-        throw error; // Re-throw to be caught in the component
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async uploadAuthorImage(authorId, formData) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.uploadAuthorLogo(authorId, formData);
+        await this.fetchAuthors(); // Refresh the list
+      } catch (error) {
+        this.error = "Failed to upload author image.";
+        console.error(error);
+        throw error;
       } finally {
         this.loading = false;
       }
