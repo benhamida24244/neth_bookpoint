@@ -1,15 +1,11 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useCategoriesStore } from '@/stores/Categories'
 
 const categoriesStore = useCategoriesStore()
 
-onMounted(async () => {
-  await categoriesStore.fetchCategories()
-})
-
-// Make categories reactive by using computed
+// Categories are now fetched by the parent view, so we just need to access them.
 const categories = computed(() => categoriesStore.categories)
 
 const getStatusClass = (status) => {
