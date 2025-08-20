@@ -1,34 +1,38 @@
 <script setup>
-import { useBooksStore } from '@/stores/Books'
-import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
-import { RouterLink } from 'vue-router'
-import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
-import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
+import { useBooksStore } from '@/stores/Books';
+import { useSettingsStore } from '@/stores/settings';
+import { ref, computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
+import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue';
+import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue';
 
-// الفلاتر
-const activeFilter = ref('All Books')
-const searchQuery = ref('')
-const showAddBookModal = ref(false)
-const showEditBookModal = ref(false)
-const selectedBook = ref(null)
+// Store
+const bookStore = useBooksStore();
+const settingStore = useSettingsStore();
+
+// Refs
+const activeFilter = ref('All Books');
+const searchQuery = ref('');
+const showAddBookModal = ref(false);
+const showEditBookModal = ref(false);
+const selectedBook = ref(null);
 
 const filters = ref([
   { label: 'All Books', value: 'All Books' },
   { label: 'Published', value: 'published' },
   { label: 'Pending', value: 'pending' },
   { label: 'Draft', value: 'draft' },
-])
+]);
 
-const settingStore = useSettingsStore()
+// Fetch books when component is mounted
+onMounted(() => {
+  bookStore.getAllBooks();
+});
 
-// استدعاء الـ Store
-const bookStore = useBooksStore()
+// Data from Store
+const books = computed(() => bookStore.books || []);
 
-// بيانات الكتب
-const books = computed(() => bookStore.books || [])
-
-// الإحصائيات
+// Stats
 const stats = computed(() => [
   {
     label: 'Total Books',
@@ -38,89 +42,102 @@ const stats = computed(() => [
   },
   {
     label: 'Total Authors',
-    value: (bookStore.getTotalAuthors || []).length.toString(),
+    value: [...new Set(books.value.map(b => b.author?.name).filter(Boolean))].length.toString(),
     icon: 'fas fa-user-pen text-green-500',
     iconBg: 'bg-green-50',
   },
   {
     label: 'Total Publishers',
-    value: (bookStore.getTotalPublishedBooks || []).length.toString(),
+    value: [...new Set(books.value.map(b => b.publisher?.name).filter(Boolean))].length.toString(),
     icon: 'fas fa-building text-[var(--color-light)]',
     iconBg: 'bg-yellow-50',
   },
   {
     label: 'Total Categories',
-    value: (bookStore.getTotalCategories || []).length.toString(),
+    value: [...new Set(books.value.map(b => b.category?.name).filter(Boolean))].length.toString(),
     icon: 'fas fa-layer-group text-emerald-500',
     iconBg: 'bg-emerald-50',
   },
-])
+]);
 
-// تصفية البيانات
+// Filtering and Searching
 const filteredBooks = computed(() => {
-  let filtered = books.value
+  let filtered = books.value;
 
   if (activeFilter.value !== 'All Books') {
-    filtered = filtered.filter((book) => book.status === activeFilter.value)
+    filtered = filtered.filter((book) => book.status === activeFilter.value);
   }
 
   if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase()
+    const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(
       (book) =>
-        (book.title || '').toLowerCase().includes(query) ||
-        (book.author || '').toLowerCase().includes(query) ||
-        (book.publishingHouse || '').toLowerCase().includes(query),
-    )
+        book.title?.toLowerCase().includes(query) ||
+        book.author?.name?.toLowerCase().includes(query) ||
+        book.publisher?.name?.toLowerCase().includes(query) ||
+        book.category?.name?.toLowerCase().includes(query)
+    );
   }
 
-  return filtered
-})
+  return filtered;
+});
 
-// تصنيف الحالة
+// UI Helpers
 const getStatusClass = (status) => {
   const statusClasses = {
     published: 'bg-green-50 text-green-700',
     pending: 'bg-yellow-50 text-[var(--color-primary)]',
     draft: 'bg-red-50 text-red-700',
-  }
-  return statusClasses[status] || 'bg-gray-50 text-gray-700'
-}
+  };
+  return statusClasses[status] || 'bg-gray-50 text-gray-700';
+};
 
-const handleSaveBook = (newBook) => {
-  const dataNow = new Date().toISOString().split('T')[0]
-  bookStore.addBook(newBook, dataNow)
-  showAddBookModal.value = false
-  alert('Book added successfully!')
-}
-
+// Modal handlers
 const openEditModal = (book) => {
-  selectedBook.value = book
-  showEditBookModal.value = true
+  selectedBook.value = book;
+  showEditBookModal.value = true;
+};
+
+const handleBookUpdated = () => {
+    showEditBookModal.value = false;
+    // No alert needed here, modal handles it.
+    // The store automatically refreshes the list.
+};
+
+const handleBookAdded = () => {
+    showAddBookModal.value = false;
+    // No alert needed here, modal handles it.
 }
 
-const handleUpdateBook = (updatedBook) => {
-  bookStore.updateBook(updatedBook)
-  showEditBookModal.value = false
-  alert('Book updated successfully!')
+// CRUD Actions
+async function handleDeleteBook(bookId) {
+  if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
+    try {
+      await bookStore.deleteBook(bookId);
+      alert('Book deleted successfully.');
+    } catch (error) {
+      alert('Failed to delete book.');
+      console.error(error);
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 font-BonaRegular">
     <AddBookModal
       :show="showAddBookModal"
-      @close="showAddBookModal = false"
-      @save="handleSaveBook"
+      @close="handleBookAdded"
     />
     <EditBookModal
       :show="showEditBookModal"
       :book="selectedBook"
       @close="showEditBookModal = false"
-      @save="handleUpdateBook"
+      @save="handleBookUpdated"
     />
+
     <div class="w-full px-4 md:px-6 py-8">
-      <div class="max-w-7xl mx-auto mb-8 font-BonaRegular">
+      <div class="max-w-7xl mx-auto mb-8">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Books Dashboard</h1>
         <p class="text-gray-600 mt-1">Track and manage all your books efficiently</p>
       </div>
@@ -172,7 +189,7 @@ const handleUpdateBook = (updatedBook) => {
           </div>
           <button
             @click="showAddBookModal = true"
-            class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
+            class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200 whitespace-nowrap"
           >
             Add New Book
           </button>
@@ -185,119 +202,63 @@ const handleUpdateBook = (updatedBook) => {
           <table class="min-w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Id
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Cover
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Title
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Category
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Author
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Publisher
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Price
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Date
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Action
-                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cover</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Publisher</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="book in filteredBooks"
-                :key="book.id"
-                class="hover:bg-gray-50 transition-colors duration-200"
-              >
+            <tbody class="divide-y divide-gray-200" v-if="!bookStore.loading">
+              <tr v-for="book in filteredBooks" :key="book.id" class="hover:bg-gray-50 transition-colors duration-200">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.id }}</td>
-
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <img :src="book.cover" alt="cover" class="w-10 h-14 rounded shadow" />
+                  <img :src="book.cover_url || 'https://via.placeholder.com/40x56'" alt="cover" class="w-10 h-14 rounded shadow object-cover" />
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ book.category }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.author }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publishingHouse }}
-                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-medium">{{ book.title }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.category?.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.author?.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.publisher?.name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="getStatusClass(book.status)"
-                    class="px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ book.status }}
-                  </span>
+                  <span :class="getStatusClass(book.status)" class="px-3 py-1 rounded-full text-xs font-medium">{{ book.status }}</span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price + settingStore.currency}}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publisherDate }}
-                </td>
-                <td class="mt-3 px-6 py-4 whitespace-nowrap text-center text-sm flex gap-3">
-                  <RouterLink
-                    :to="`/dashboard/books/${book.id}`"
-                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
-                  >
-                    <i class="far fa-eye"></i> View
-                  </RouterLink>
-                  <button
-                    @click="openEditModal(book)"
-                    class="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Edit
-                  </button>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price ? (book.price + settingStore.currency) : 'N/A' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.stock }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center gap-4">
+                    <RouterLink :to="`/dashboard/books/${book.id}`" class="text-gray-500 hover:text-gray-700">
+                      <i class="far fa-eye"></i>
+                    </RouterLink>
+                    <button @click="openEditModal(book)" class="text-indigo-600 hover:text-indigo-900">
+                      <i class="far fa-pen-to-square"></i>
+                    </button>
+                    <button @click="handleDeleteBook(book.id)" class="text-red-600 hover:text-red-900">
+                      <i class="far fa-trash-can"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- Loading State -->
+        <div v-if="bookStore.loading" class="p-12 text-center">
+            <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+            <p class="mt-4 text-gray-600">Loading Books...</p>
+        </div>
         <!-- Empty State -->
-        <div v-if="filteredBooks.length === 0" class="p-12 text-center">
-          <div
-            class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
-          >
+        <div v-else-if="filteredBooks.length === 0" class="p-12 text-center">
+          <div class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
-          <p class="text-gray-500">
-            Try adjusting your search or filter to find what you're looking for.
-          </p>
+          <p class="text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
         </div>
       </div>
     </div>
