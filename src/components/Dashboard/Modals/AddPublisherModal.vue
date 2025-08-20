@@ -4,14 +4,16 @@ import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 
 const publishingHouseStore = usePublishingHouseStore();
 const showModal = ref(false);
-
+const imageFile = ref(null);
 const newPublisher = ref({
   name: '',
   country: '',
   description: '',
-  img: ''
 });
 
+const handleFileChange = (event) => {
+  imageFile.value = event.target.files[0];
+};
 const openModal = () => {
   showModal.value = true;
 };
@@ -26,12 +28,12 @@ const resetForm = () => {
     name: '',
     country: '',
     description: '',
-    img: ''
   };
+  imageFile.value=null
 };
 
 const addPublisher = () => {
-  publishingHouseStore.addPublisher(newPublisher.value);
+  publishingHouseStore.addPublisher(newPublisher.value, imageFile.value);
   closeModal();
 };
 
@@ -54,8 +56,9 @@ defineExpose({
       <label class="block mb-2 font-medium">Description</label>
       <textarea v-model="newPublisher.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
 
-      <label class="block mb-2 font-medium">Image URL</label>
-      <input v-model="newPublisher.img" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
+      <label class="block mb-2 font-medium">Image</label>
+      <input type="file" @change="handleFileChange" accept="image/*" class="w-full border rounded-lg px-3 py-2 mb-4">
+
 
       <div class="flex justify-end gap-2 mt-4">
         <button @click="closeModal" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>

@@ -22,13 +22,24 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
         return [];
       }
     },
-    async addPublisher(publisher) {
-     this.loading = true;
+    async addPublisher(publisher, imageFile) {
+      this.loading = true;
       this.error = null;
       try {
+        // Step 1: Create the publisher with text data
         const response = await apiService.adminAddPublisher(publisher);
-        this.fetchPublisher(); // Refresh the list after adding
-        return response;
+        const newPublisher = response.data;
+
+        // Step 2: If there's an image, upload it
+        if (imageFile) {
+          const formData = new FormData();
+          formData.append('logo', imageFile); // 'logo' should match your backend's expected field name
+          await this.uploadPublisherImage(newPublisher.id, formData);
+        }
+
+        // Step 3: Refresh the list to show the new publisher
+        await this.fetchPublisher();
+        return newPublisher;
       } catch (error) {
         this.error = "Failed to add publisher.";
         console.error(error);
@@ -56,7 +67,7 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
       this.error = null;
       try {
         // Call the corresponding API service function
-        await apiService.uploadAuthorLogo(publisherId, formData);
+        await apiService.uploadPublisherLogo(publisherId, formData);
         // After a successful upload, refresh all author data to get the new image URL
         await this.fetchPublisher();
       } catch (error) {

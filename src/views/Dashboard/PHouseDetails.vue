@@ -9,7 +9,8 @@ const { publishingHouses } = storeToRefs(publishingHouseStore);
 const route = useRoute();
 
 const showEditModal = ref(false);
-const editForm = ref({ name: '', description: '', img: '', country: '' });
+const editForm = ref({ name: '', description: '', country: '' });
+const imageFile = ref(null);
 
 const currentPublishingHouse = computed(() => {
   const houseId = Number(route.params.id);
@@ -23,27 +24,57 @@ function openEditModal() {
       name: currentPublishingHouse.value.name,
       country: currentPublishingHouse.value.country,
       description: currentPublishingHouse.value.description,
-      img: currentPublishingHouse.value.img
     };
     showEditModal.value = true;
   }
 }
 
-function savePublishingHouse() {
+async function savePublishingHouse() {
   if (!currentPublishingHouse.value) return;
-  currentPublishingHouse.value.name = editForm.value.name;
-  currentPublishingHouse.value.country = editForm.value.country;
-  currentPublishingHouse.value.description = editForm.value.description;
-  currentPublishingHouse.value.img = editForm.value.img;
+
+  const publisherId = currentPublishingHouse.value.id;
+
+  // Create a payload with only the fields that are being edited
+  const updatedData = {
+    name: editForm.value.name,
+    country: editForm.value.country,
+    description: editForm.value.description,
+  };
+
+  await publishingHouseStore.updatePublisher(publisherId, updatedData);
+
   showEditModal.value = false;
+}
+
+const handleFileChange = (event) => {
+  imageFile.value = event.target.files[0];
+};
+
+async function uploadImage() {
+  if (!imageFile.value || !currentPublishingHouse.value) return;
+
+  const formData = new FormData();
+  formData.append('logo', imageFile.value);
+
+  await publishingHouseStore.uploadPublisherImage(currentPublishingHouse.value.id, formData);
+
+  // Optionally, clear the file input after upload
+  imageFile.value = null;
+  // You might need to reset the file input in the template as well
 }
 </script>
 
 <template>
   <div v-if="currentPublishingHouse" class="min-h-screen bg-gray-100 font-sans text-gray-800 p-4 sm:p-6 lg:p-8 relative">
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden md:flex">
-      <div class="md:flex-shrink-0">
+      <div class="md:flex-shrink-0 relative group">
         <img class="h-full w-full object-cover md:w-64" :src="currentPublishingHouse.img" :alt="`Logo of ${currentPublishingHouse.name}`">
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <label for="image-upload" class="cursor-pointer text-white text-lg bg-gray-800 bg-opacity-70 px-4 py-2 rounded-md">
+            Change Image
+          </label>
+          <input id="image-upload" type="file" @change="handleFileChange" accept="image/*" class="hidden">
+        </div>
       </div>
       <div class="p-8 flex-grow relative">
         <button
@@ -57,6 +88,14 @@ function savePublishingHouse() {
         <a :href="`mailto:${currentPublishingHouse.email}`" class="mt-2 text-gray-500 hover:text-[var(--color-primary)] transition-colors block">{{ currentPublishingHouse.email }}</a>
         <a :href="currentPublishingHouse.url" target="_blank" class="mt-1 text-blue-600 hover:underline block">{{ currentPublishingHouse.url }}</a>
         <p class="mt-4 text-gray-700">{{ currentPublishingHouse.description }}</p>
+
+        <!-- Display and upload new image -->
+        <div v-if="imageFile" class="mt-4">
+          <p class="text-sm font-medium text-gray-700">New image selected: {{ imageFile.name }}</p>
+          <button @click="uploadImage" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Upload Image
+          </button>
+        </div>
 
         <div class="mt-8">
           <h2 class="text-2xl font-bold text-gray-800 mb-4">Statistics</h2>
@@ -90,9 +129,6 @@ function savePublishingHouse() {
 
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
-
-        <label class="block mb-2 font-medium">Image URL</label>
-        <input v-model="editForm.img" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
         <div class="flex justify-end gap-2 mt-4">
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
