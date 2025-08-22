@@ -1,125 +1,132 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
-import apiService from '@/services/api'; // 1. تم استيراد apiService
 
 const publishingHouseStore = usePublishingHouseStore();
 const showModal = ref(false);
+const isEditMode = ref(false); // لتحديد ما إذا كنا في وضع التعديل أم الإضافة
 
 const isLoading = computed(() => publishingHouseStore.loading);
 const error = computed(() => publishingHouseStore.error);
 
-const newPublisher = ref({
+// تم تغيير الاسم ليكون أكثر عمومية
+const publisherData = ref({
+  id: null,
   name: '',
-  country: '',
   description: '',
-  img: '' // سيحتوي على رابط الصورة (URL) وليس الملف
+  img: null, // لتخزين الملف الجديد المرفوع
+  currentImageUrl: null, // لتخزين رابط الصورة الحالية في وضع التعديل
 });
 const validationError = ref('');
 
-// 2. دالة جديدة لرفع الصورة فور اختيارها
-const handlePublisherFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  // الخادم يتوقع الحقل باسم 'image' كما في مثال المؤلف الناجح
-  formData.append('image', file);
-
-  try {
-    // نفترض أن لديك دالة مشابهة لرفع صورة الناشر في apiService
-    // نستخدم '0' كـ id مؤقت للناشر الجديد كما في مثال المؤلف
-    const response = await apiService.uploadPublisherLogo(newPublisher.value.id, formData);
-
-    // حفظ رابط الصورة العائد من الخادم
-    if (response && response.data && response.data.url) {
-      newPublisher.value.img = response.data.url;
-    } else if (response && response.url) { // Fallback
-      newPublisher.value.img = response.url;
-    }
-  } catch (error) {
-    validationError.value = "Image upload failed. Please try again.";
-    console.error("Publisher image upload failed:", error);
+// تم تعديل الدالة لتقبل بيانات الناشر
+const openModal = (publisher = null) => {
+  if (publisher) {
+    // وضع التعديل
+    isEditMode.value = true;
+    publisherData.value = {
+      id: publisher.id,
+      name: publisher.name,
+      description: publisher.description,
+      img: null, // نبدأ بدون ملف جديد
+      currentImageUrl: publisher.img, // افترض أن 'img' هو رابط الصورة
+    };
+  } else {
+    // وضع الإضافة
+    isEditMode.value = false;
+    resetForm(); // نتأكد من أن النموذج فارغ
   }
-};
-
-const openModal = () => {
   showModal.value = true;
 };
 
 const closeModal = () => {
   showModal.value = false;
-  publisherToEdit.value = null;
-  resetForm();
+  // نؤخر إعادة التعيين قليلاً لتحسين التأثير البصري عند الإغلاق
+  setTimeout(resetForm, 300);
 };
 
 const resetForm = () => {
-  publisherForm.value = {
-    name: '',
-    country: '',
-    description: '',
-    img: ''
-  };
+  isEditMode.value = false;
+  publisherData.value = { id: null, name: '', description: '', img: null, currentImageUrl: null };
   validationError.value = '';
   publishingHouseStore.error = null;
   const fileInput = document.getElementById('publisherImage');
   if (fileInput) fileInput.value = '';
 };
 
-// 3. تم تبسيط دالة الإضافة
-const addPublisher = async () => {
-  if (!newPublisher.value.name.trim()) {
-    validationError.value = 'Publisher name is required.';
-    return;
-  }
-  validationError.value = '';
-
-  try {
-    // الآن نرسل الكائن مباشرة، فهو يحتوي على رابط الصورة وليس الملف
-    await publishingHouseStore.addPublisher(newPublisher.value);
-
-    if (!publishingHouseStore.error) {
-      closeModal();
-    }
-  } catch (err) {
-    console.error("Failed to add publisher from component:", err);
+const handlePublisherFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    publisherData.value.img = file;
+    // عرض معاينة للصورة المختارة حديثًا
+    publisherData.value.currentImageUrl = URL.createObjectURL(file);
   }
 };
 
-defineExpose({
-  openModal
-});
+// دالة موحدة للتعامل مع الإرسال
+const handleSubmit = async () => {
+  if (!publisherData.value.name.trim()) {
+    validationError.value = 'Publisher name is required.';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', publisherData.value.name);
+  formData.append('description', publisherData.value.description);
+
+  // إذا تم اختيار ملف صورة جديد، قم بإضافته
+  if (publisherData.value.img) {
+    formData.append('img', publisherData.value.img);
+  }
+
+  try {
+    if (isEditMode.value) {
+      // استدعاء دالة التحديث من الـ store
+      // ملاحظة: قد تحتاج لتمرير ID بشكل منفصل حسب تصميم الـ store
+      formData.append('_method', 'PUT'); // بعض الـ APIs تتطلب هذا لتفعيل التحديث
+      await publishingHouseStore.updatePublisher(publisherData.value.id, formData);
+    } else {
+      // استدعاء دالة الإضافة من الـ store
+      await publishingHouseStore.addPublisher(formData);
+    }
+    if (!publishingHouseStore.error) closeModal();
+  } catch (err) {
+    console.error("Failed to submit from component:", err);
+  }
+};
+
+// كشف الدالة openModal للمكون الأب
+defineExpose({ openModal });
 </script>
 
 <template>
   <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
     <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative transform transition-all" @click.stop>
-      <h2 class="text-xl font-bold mb-4">Add New Publisher</h2>
+      <h2 class="text-xl font-bold mb-4">{{ isEditMode ? 'Edit Publisher' : 'Add New Publisher' }}</h2>
 
-      <div v-if="validationError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <span class="block sm:inline">{{ validationError }}</span>
+      <div v-if="validationError || error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline">{{ validationError || error }}</span>
       </div>
 
-      <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <span class="block sm:inline">{{ error }}</span>
-      </div>
-
-      <form @submit.prevent="addPublisher">
+      <form @submit.prevent="handleSubmit">
         <div class="space-y-4">
           <div>
             <label for="publisherName" class="block mb-2 font-medium">Name <span class="text-red-500">*</span></label>
-            <input id="publisherName" v-model="newPublisher.name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" required>
+            <input id="publisherName" v-model="publisherData.name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" required>
           </div>
 
           <div>
             <label for="publisherDescription" class="block mb-2 font-medium">Description</label>
-            <textarea id="publisherDescription" v-model="newPublisher.description" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+            <textarea id="publisherDescription" v-model="publisherData.description" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
           </div>
 
           <div>
             <label for="publisherImage" class="block mb-2 font-medium">Image</label>
-            <input id="publisherImage"   @change="handlePublisherFileUpload" type="file" accept="image/*"
-            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
+            <div v-if="publisherData.currentImageUrl" class="mt-2 mb-4">
+              <img :src="publisherData.currentImageUrl" alt="Image Preview" class="h-24 w-24 object-cover rounded-md border">
+            </div>
+            <input id="publisherImage" @change="handlePublisherFileUpload" type="file" accept="image/*"
+                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
           </div>
         </div>
 
@@ -130,7 +137,8 @@ defineExpose({
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            {{ isLoading ? 'Adding...' : 'Add Publisher' }}
+            <span v-if="isLoading">{{ isEditMode ? 'Saving...' : 'Adding...' }}</span>
+            <span v-else>{{ isEditMode ? 'Save Changes' : 'Add Publisher' }}</span>
           </button>
         </div>
       </form>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import * as api from '@/services/api.js'
+import apiService, * as api from '@/services/api.js'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({
@@ -7,33 +7,7 @@ export const useCategoriesStore = defineStore('categories', {
     category: null, // Holds a single category for detail/edit views
     isLoading: false,
     error: null,
-    statistics: [
-      {
-        id: 1,
-        name: 'Total Orders',
-        icon: 'fas fa-layer-group',
-        value: 21,
-        color: 'bg-blue-500',
-        ariaLabel: '21 total orders'
-      },
-      {
-        id: 2,
-        name: 'Total Books',
-        icon: 'fas fa-book',
-        value: 234,
-        color: 'bg-green-500',
-        ariaLabel: '234 total books'
-      },
-      {
-        id: 3,
-        name: 'Total Profit',
-        icon: 'fas fa-dollar-sign',
-        value: 2343,
-        color: 'bg-[var(--color-light)]',
-        ariaLabel: '$2,343 total profit',
-        prefix: '$'
-      }
-    ]
+
   }),
 
   getters: {
@@ -59,7 +33,7 @@ export const useCategoriesStore = defineStore('categories', {
       this.isLoading = true
       this.error = null
       try {
-        const response = await api.getCategories()
+        const response = await apiService.publicResources.categories.all()
         this.categories = response.data.data // Assuming API returns { data: { data: [...] } }
       } catch (error) {
         this.error = 'Failed to fetch categories.'
@@ -74,7 +48,7 @@ export const useCategoriesStore = defineStore('categories', {
       this.isLoading = true
       this.error = null
       try {
-        const response = await api.getCategory(id)
+        const response = await apiService.publicResources.categories.get(id)
         this.category = response.data.data // Assuming API returns { data: { data: {...} } }
       } catch (error) {
         this.error = 'Failed to fetch category.'
@@ -89,7 +63,7 @@ export const useCategoriesStore = defineStore('categories', {
       this.isLoading = true
       this.error = null
       try {
-        await api.adminAddCategory(categoryData)
+        await apiService.admin.categories.add(categoryData)
         // After adding, refresh the list to get the new item
         await this.fetchCategories()
       } catch (error) {
@@ -106,7 +80,7 @@ export const useCategoriesStore = defineStore('categories', {
       this.isLoading = true
       this.error = null
       try {
-        await api.adminUpdateCategory(id, categoryData)
+        await apiService.admin.categories.update(id,categoryData)
         // After updating, refresh the single category view and the list
         await this.fetchCategory(id)
         await this.fetchCategories()
@@ -124,7 +98,7 @@ export const useCategoriesStore = defineStore('categories', {
       this.isLoading = true
       this.error = null
       try {
-        await api.adminDeleteCategory(id)
+        await apiService.admin.categories.delete(id)
         // After deleting, remove it from the local list
         this.categories = this.categories.filter((cat) => cat.id !== id)
       } catch (error) {

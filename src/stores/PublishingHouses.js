@@ -8,10 +8,10 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
     error: null,
   }),
   actions: {
-     async fetchPublisher() {
+    async fetchPublisher() {
       this.loading = true; // Fixed from isLoading
       try {
-        const response = await apiService.getPublishers();
+        const response = await apiService.publicResources.publishers.all();
         this.publishingHouses = response.data.data;
         console.log(this.publishingHouses);
         this.loading = false;
@@ -22,11 +22,29 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
         return [];
       }
     },
-    async addPublisher(publisher) {
-     this.loading = true;
+
+    // --- الدالة الجديدة المضافة ---
+    async getPublisherById(publisherId) {
+      this.loading = true;
       this.error = null;
       try {
-        const response = await apiService.adminAddPublisher(publisher);
+        const response = await apiService.publicResources.publishers.get(publisherId);
+        return response.data.data; // إرجاع بيانات الناشر المحدد مباشرة
+      } catch (error) {
+        this.error = "Failed to fetch publisher by ID.";
+        console.error(error);
+        throw error; // إرسال الخطأ للمعالجة في المكون
+      } finally {
+        this.loading = false;
+      }
+    },
+    // ----------------------------
+
+    async addPublisher(publisher) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.admin.publishers.add(publisher)
         this.fetchPublisher(); // Refresh the list after adding
         return response;
       } catch (error) {
@@ -37,11 +55,11 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
         this.loading = false;
       }
     },
-      async updatePublisher(publisherId, publisherData) {
+    async updatePublisher(publisherId, publisherData) {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.adminUpdatePublisher(publisherId, publisherData);
+        await apiService.admin.publishers.update(publisherId, publisherData);
         await this.fetchPublisher(); // Refresh the list after updating
       } catch (error) {
         this.error = "Failed to update Publisher.";
@@ -51,28 +69,12 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
         this.loading = false;
       }
     },
-     async uploadPublisherImage(publisherId, formData) {
-      this.loading = true;
-      this.error = null;
-      try {
-        // Call the corresponding API service function
-        await apiService.uploadAuthorLogo(publisherId, formData);
-        // After a successful upload, refresh all author data to get the new image URL
-        await this.fetchPublisher();
-      } catch (error) {
-        this.error = "Failed to upload Publisher image.";
-        console.error(error);
-        throw error; // Re-throw so the component knows about the failure
-      } finally {
-        this.loading = false;
-      }
-    },
 
     async deletePublisher(publisherId) {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.adminDeletePublisher(publisherId);
+        await apiService.admin.publishers.delete(publisherId);
         this.publishingHouses = this.publishingHouses.filter((publisher) => publisher.id !== publisherId);
       } catch (error) {
         this.error = "Failed to delete Publisher.";
