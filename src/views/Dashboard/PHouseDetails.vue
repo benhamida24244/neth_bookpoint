@@ -165,12 +165,11 @@ async function savePublishingHouse() {
 
         <label class="block mb-2 font-medium">Name</label>
         <input v-model="editForm.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-        <label class="block mb-2 font-medium">Country</label>
-        <input v-model="editForm.country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
         <label class="block mb-2 font-medium">Image Path</label>
-        <input v-model="editForm.img" type="text" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <input type="file"
+          class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
 
         <div class="flex justify-end gap-3 mt-4">
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-semibold">Cancel</button>

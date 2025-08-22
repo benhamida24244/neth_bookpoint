@@ -7,7 +7,7 @@ import { useRoute } from 'vue-router';
 const authorStore = useAuthorStore();
 const route = useRoute();
 const showEditModal = ref(false);
-const editForm = ref({ name: '', description: '', img: '' });
+const editForm = ref({ name: '', Country: '', description: '', img: '' });
 const loading = ref(true);
 const error = ref(null);
 const currentAuthor = ref(null);
@@ -73,6 +73,7 @@ function openEditModal() {
   if (currentAuthor.value) {
     editForm.value = {
       name: currentAuthor.value.name,
+      Country: currentAuthor.value.Country,
       description: currentAuthor.value.description,
       img: currentAuthor.value.img
     };
@@ -80,16 +81,40 @@ function openEditModal() {
   }
 }
 
+
+// Handle file upload for author image
+function handleAuthorFileUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    editForm.value.img = file;
+  }
+}
+
+// Save author with FormData (for file upload)
 async function saveAuthor() {
   if (!currentAuthor.value) return;
   loading.value = true;
   error.value = null;
   try {
-    await authorStore.updateAuthor(currentAuthor.value.id, {
-      name: editForm.value.name,
-      description: editForm.value.description,
-      img: editForm.value.img
-    });
+    const formData = new FormData();
+    formData.append('name', editForm.value.name);
+    formData.append('description', editForm.value.description);
+    if (editForm.value.Country) formData.append('Country', editForm.value.Country);
+    if (editForm.value.img instanceof File) {
+      formData.append('img', editForm.value.img);
+    } else if (editForm.value.img) {
+      // If it's a string (existing image path), send as is
+      formData.append('img', editForm.value.img);
+    }
+
+    // Use the store or direct API call for FormData
+    if (authorStore.updateAuthor) {
+      await authorStore.updateAuthor(currentAuthor.value.id, formData);
+    } else {
+      // fallback to direct API call
+      const api = (await import('@/services/api.js'));
+      await api.updateAuthor(currentAuthor.value.id, formData);
+    }
     await fetchAuthorById();
     showEditModal.value = false;
   } catch (err) {
@@ -154,13 +179,16 @@ async function saveAuthor() {
 
         <label class="block mb-2 font-medium">Name</label>
         <input v-model="editForm.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
+        <label class="block mb-2 font-medium">Country</label>
+        <input v-model="editForm.Country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
 
-        <label class="block mb-2 font-medium">Upload Image</label>
-        <input v-model="editForm.img" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
+            <label for="AuthorImage" class="block mb-2 font-medium">Image</label>
 
+            <input id="AuthorImage" @change="handleAuthorFileUpload" type="file" accept="image/*"
+                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
         <div class="flex justify-end gap-2 mt-4">
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
           <button @click="saveAuthor" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]">Save</button>

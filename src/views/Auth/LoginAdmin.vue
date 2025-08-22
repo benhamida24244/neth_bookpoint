@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { login } from '@/services/api.js'
+import  apiService  from '@/services/api.js'
 
 const router = useRouter()
 const email = ref('')
@@ -13,7 +13,7 @@ const handleLogin = async () => {
 
   try {
     // استدعاء API
-    const response = await login({
+    const response = await  apiService.auth.login({
       email: email.value,
       password: password.value,
     })

@@ -13,6 +13,7 @@ const error = computed(() => AuthorStore.error);
 const AuthorData = ref({
   id: null,
   name: '',
+  Country: '',
   description: '',
   img: null, // لتخزين الملف الجديد المرفوع
   currentImageUrl: null, // لتخزين رابط الصورة الحالية في وضع التعديل
@@ -27,6 +28,7 @@ const openModal = (Author = null) => {
     AuthorData.value = {
       id: Author.id,
       name: Author.name,
+      Country: Author.Country,
       description: Author.description,
       img: null, // نبدأ بدون ملف جديد
       currentImageUrl: Author.img, // افترض أن 'img' هو رابط الصورة
@@ -47,7 +49,7 @@ const closeModal = () => {
 
 const resetForm = () => {
   isEditMode.value = false;
-  AuthorData.value = { id: null, name: '', description: '', img: null, currentImageUrl: null };
+  AuthorData.value = { id: null, name: '', Country: '', description: '', img: null, currentImageUrl: null };
   validationError.value = '';
   AuthorStore.error = null;
   const fileInput = document.getElementById('AuthorImage');
@@ -72,6 +74,7 @@ const handleSubmit = async () => {
 
   const formData = new FormData();
   formData.append('name', AuthorData.value.name);
+  formData.append('Country', AuthorData.value.Country);
   formData.append('description', AuthorData.value.description);
 
   // إذا تم اختيار ملف صورة جديد، قم بإضافته
@@ -94,6 +97,17 @@ const handleSubmit = async () => {
     console.error("Failed to submit from component:", err);
   }
 };
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+// --- NEW: Computed property to safely resolve the image URL ---
+
+// Improved: Always use currentImageUrl if available, else fallback to placeholder
+const imageUrl = computed(() => {
+  if (AuthorData.value.currentImageUrl) {
+    return AuthorData.value.currentImageUrl;
+  }
+  return 'https://via.placeholder.com/300x450.png?text=No+Image';
+});
+
 
 // كشف الدالة openModal للمكون الأب
 defineExpose({ openModal });
@@ -114,7 +128,10 @@ defineExpose({ openModal });
             <label for="AuthorName" class="block mb-2 font-medium">Name <span class="text-red-500">*</span></label>
             <input id="AuthorName" v-model="AuthorData.name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" required>
           </div>
-
+          <div>
+            <label for="AuthorCountry" class="block mb-2 font-medium">Country <span class="text-red-500">*</span></label>
+            <input id="AuthorCountry" v-model="AuthorData.Country" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" required>
+          </div>
           <div>
             <label for="AuthorDescription" class="block mb-2 font-medium">Description</label>
             <textarea id="AuthorDescription" v-model="AuthorData.description" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
@@ -122,9 +139,7 @@ defineExpose({ openModal });
 
           <div>
             <label for="AuthorImage" class="block mb-2 font-medium">Image</label>
-            <div v-if="AuthorData.currentImageUrl" class="mt-2 mb-4">
-              <img :src="AuthorData.currentImageUrl" alt="Image Preview" class="h-24 w-24 object-cover rounded-md border">
-            </div>
+           
             <input id="AuthorImage" @change="handleAuthorFileUpload" type="file" accept="image/*"
                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
           </div>
