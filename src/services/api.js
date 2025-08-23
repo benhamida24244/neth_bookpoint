@@ -46,6 +46,8 @@ const uploadFile = (url, formData) =>
 const auth = {
   register: (userData) => api.post("/register", userData),
   login: (credentials) => api.post("/login", credentials),
+  customerRegister: (userData) => api.post("/customer/register", userData),
+  customerLogin: (credentials) => api.post("/customer/login", credentials),
   logout: () => api.post("/logout"),
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
@@ -90,7 +92,7 @@ const cart = {
 // ================================================================
 const orders = {
   all: () => api.get("/orders"),
-  create: (data) => api.post("/orders", data),
+  create: () => api.post("/orders"),
 };
 
 // ================================================================
@@ -99,11 +101,6 @@ const orders = {
 const admin = {
   dashboard: () => api.get("/admin/dashboard"),
 
-  profile: {
-    all: () => api.get("/admin/profile"),
-    get: (id) => api.get(`/admin/profile/${id}`),
-    update: (id, data) => api.put(`/admin/profile/${id}`, data),
-  },
   orders: {
     all: () => api.get("/admin/orders"),
     get: (id) => api.get(`/admin/orders/${id}`),
@@ -111,8 +108,8 @@ const admin = {
   },
 
   books: {
-    add: (data) => uploadFile("/admin/books", data),
-    update: (id, data) => uploadFile(`/admin/books/${id}`, data),
+    add: (data) => api.post("/admin/books", data),
+    update: (id, data) => api.post(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
   },
 
@@ -123,19 +120,19 @@ const admin = {
   },
 
   publishers: {
-    add: (data) => uploadFile("/admin/publishers", data),
-    update: (id, data) => uploadFile(`/admin/publishers/${id}`, data),
+    add: (data) => api.post("/admin/publishers", data),
+    update: (id, data) => api.post(`/admin/publishers/${id}`, data),
     delete: (id) => api.delete(`/admin/publishers/${id}`),
   },
 
   authors: {
-    add: (data) => uploadFile("/admin/authors", data),
-    update: (id, data) => uploadFile(`/admin/authors/${id}`, data),
+    add: (data) => api.post("/admin/authors", data),
+    update: (id, data) => api.post(`/admin/authors/${id}`, data),
     delete: (id) => api.delete(`/admin/authors/${id}`),
   },
 
   settings: {
-    update: (data) => uploadFile("/admin/settings", data),
+    update: (data) => api.post("/admin/settings", data),
   },
 };
 

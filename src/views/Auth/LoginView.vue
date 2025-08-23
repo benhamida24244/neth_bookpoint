@@ -1,5 +1,19 @@
 <script setup>
-import coverAspect from "@/assets/Auth/LoginImg.png"
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/Auth';
+import coverAspect from "@/assets/Auth/LoginImg.png";
+
+const authStore = useAuthStore();
+const email = ref('');
+const password = ref('');
+
+const handleSubmit = async () => {
+  await authStore.login({ email: email.value, password: password.value });
+  if (!authStore.error) {
+    // Optionally close the modal on success
+    // emit('close');
+  }
+};
 </script>
 
 <template>
@@ -37,8 +51,9 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
         </div>
 
         <!-- النموذج -->
-        <form class="space-y-4">
+        <form class="space-y-4" @submit.prevent="handleSubmit">
           <input
+            v-model="email"
             name="email"
             type="email"
             required
@@ -47,12 +62,17 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           />
 
           <input
+            v-model="password"
             name="password"
             type="password"
             required
             placeholder="Password"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
+
+          <div v-if="authStore.error" class="text-red-500 text-sm">
+            {{ authStore.error }}
+          </div>
 
           <div class="text-right text-sm">
             <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">Forgot password?</a>
@@ -61,8 +81,9 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           <button
             type="submit"
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="authStore.loading"
           >
-            Login
+            {{ authStore.loading ? 'Logging in...' : 'Login' }}
           </button>
         </form>
 

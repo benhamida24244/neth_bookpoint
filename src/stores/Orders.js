@@ -1,26 +1,46 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import apiService from '@/services/api';
+import { useCartStore } from './Cart';
 
 export const useOrdersStore = defineStore('orders', {
   state: () => ({
-    orders: []
+    orders: [],
+    loading: false,
+    error: null,
   }),
+
   getters: {
-    latestOrder: (state) => {
-      return state.orders.length > 0 ? state.orders[state.orders.length - 1] : null
-    },
-    getRecentOrders: (state) => {
-      return state.orders.slice(-5)
-    }
+    getRecentOrders: (state) => state.orders.slice(-5),
   },
+
   actions: {
-    addOrder(orderData) {
-      const newOrder = {
-        id: this.orders.length + 1,
-        date: new Date().toISOString().slice(0, 10),
-        status: 'Completed',
-        ...orderData
+    async fetchOrders() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.orders.all();
+        this.orders = response.data.data;
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch orders.';
+      } finally {
+        this.loading = false;
       }
-      this.orders.push(newOrder)
-    }
-  }
-})
+    },
+
+    async createOrder() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await apiService.orders.create();
+        const cartStore = useCartStore();
+        cartStore.clearCart(); // Clear the cart after successful order creation
+        return response.data.data; // Return the newly created order
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to create order.';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});

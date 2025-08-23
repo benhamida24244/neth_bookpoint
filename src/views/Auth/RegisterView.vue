@@ -1,5 +1,30 @@
 <script setup>
-import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة إذا أردت
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/Auth';
+import coverAspect from '@/assets/Auth/RegisterImg.png';
+
+const authStore = useAuthStore();
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const password_confirmation = ref('');
+
+const handleSubmit = async () => {
+  if (password.value !== password_confirmation.value) {
+    authStore.error = "Passwords do not match.";
+    return;
+  }
+  await authStore.register({
+    name: name.value,
+    email: email.value,
+    password: password.value,
+    password_confirmation: password_confirmation.value
+  });
+  if (!authStore.error) {
+    // Optionally close the modal on success
+    // emit('close');
+  }
+};
 </script>
 
 <template>
@@ -45,8 +70,9 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
         </div>
 
         <!-- نموذج التسجيل -->
-        <form class="space-y-4">
+        <form class="space-y-4" @submit.prevent="handleSubmit">
           <input
+            v-model="name"
             name="name"
             type="text"
             required
@@ -55,6 +81,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
           />
 
           <input
+            v-model="email"
             name="email"
             type="email"
             required
@@ -63,6 +90,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
           />
 
           <input
+            v-model="password"
             name="password"
             type="password"
             required
@@ -71,6 +99,7 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
           />
 
           <input
+            v-model="password_confirmation"
             name="confirm_password"
             type="password"
             required
@@ -78,11 +107,16 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
+          <div v-if="authStore.error" class="text-red-500 text-sm">
+            {{ authStore.error }}
+          </div>
+
           <button
             type="submit"
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="authStore.loading"
           >
-            Create Account
+            {{ authStore.loading ? 'Creating Account...' : 'Create Account' }}
           </button>
         </form>
 

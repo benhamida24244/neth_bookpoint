@@ -1,43 +1,39 @@
 <script setup>
-import { computed, ref } from 'vue'
-import TallBanner from '@/components/Banner/TallBanner.vue'
-import Cover from '@/assets/Img/Cover.png'
-import { useRouter } from 'vue-router'
-import { useCartStore } from '@/stores/Cart'
-import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue';
+import TallBanner from '@/components/Banner/TallBanner.vue';
+import Cover from '@/assets/Img/Cover.png';
+import { useRouter } from 'vue-router';
+import { useCartStore } from '@/stores/Cart';
+import { storeToRefs } from 'pinia';
 
-const isLoading = ref(false)
-const checkout = ref(false)
-const router = useRouter()
+const router = useRouter();
+const cartStore = useCartStore();
+const { cartItems, cartTotal, loading, error } = storeToRefs(cartStore);
 
 const banner = {
   id: 1,
   img: Cover,
   url: '/',
-}
+};
 
-const CartStore = useCartStore()
-const { cart } = storeToRefs(CartStore)
+onMounted(() => {
+  cartStore.fetchCart();
+});
 
-// Total price computation
-const totalPrice = computed(() =>
-  cart.value.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0).toFixed(2)
-)
-
-// Checkout button handler
 const handleCheckout = () => {
-  if (isLoading.value) return
+  router.push('/checkout');
+};
 
-  isLoading.value = true
-  setTimeout(() => {
-    checkout.value = true
-    isLoading.value = false
-    router.push('/checkout')
-  }, 1500)
-}
+const handleUpdateQuantity = (itemId, event) => {
+  const quantity = parseInt(event.target.value, 10);
+  if (!isNaN(quantity) && quantity > 0) {
+    cartStore.updateQuantity(itemId, quantity);
+  }
+};
 
-// Optional: If you don’t already have this in the store, you can add it
-
+const handleRemoveItem = (itemId) => {
+  cartStore.removeFromCart(itemId);
+};
 </script>
 
 <template>
@@ -54,72 +50,54 @@ const handleCheckout = () => {
           Your Cart Details
         </h1>
 
+        <div v-if="loading" class="text-center">Loading cart...</div>
+        <div v-if="error" class="text-center text-red-500">{{ error }}</div>
+
         <!-- Cart Items -->
-        <div v-if="cart.length > 0">
+        <div v-if="cartItems.length > 0">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
-              v-for="item in cart"
+              v-for="item in cartItems"
               :key="item.id"
               class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
             >
-              <img :src="item.cover" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
+              <img :src="item.book.cover_image_url" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
               <div class="text-center mt-4">
-                <h2 class="text-lg font-semibold">{{ item.title }}</h2>
-                <p class="text-sm text-gray-500">by {{ item.author }}</p>
+                <h2 class="text-lg font-semibold">{{ item.book.title }}</h2>
+                <p class="text-sm text-gray-500">by {{ item.book.author.name }}</p>
                 <p class="text-green-600 font-medium mt-2">
                   $ {{ (item.price || 0).toFixed(2) }}
                 </p>
-                <div class="flex gap-3">
-                  <label class="block mt-4 text-sm text-gray-700">Quantity:</label>
-                <input
-                  type="number"
-                  min="1"
-                  :value="item.quantity"
-                  @input="CartStore.updateQuantity(item.id, +$event.target.value)"
-                  class="w-16 p-2 border rounded mt-1 text-center"
-                />
+                <div class="flex items-center gap-3 mt-4">
+                  <label class="text-sm text-gray-700">Quantity:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    :value="item.quantity"
+                    @input="handleUpdateQuantity(item.id, $event)"
+                    class="w-16 p-2 border rounded text-center"
+                  />
                 </div>
-
+                <button @click="handleRemoveItem(item.id)" class="mt-2 text-red-500 hover:underline">Remove</button>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Empty Cart -->
-        <p v-else class="text-gray-500 text-center mt-8">Your cart is currently empty.</p>
+        <p v-else-if="!loading" class="text-gray-500 text-center mt-8">Your cart is currently empty.</p>
 
         <!-- Total + Button -->
-        <div class="w-full mt-10">
+        <div class="w-full mt-10" v-if="cartItems.length > 0">
           <p class="text-center text-2xl font-BonaRegular">
-            Total Price: <span class="font-bold text-[var(--color-hover)]">$ {{ totalPrice }}</span>
+            Total Price: <span class="font-bold text-[var(--color-hover)]">$ {{ cartTotal.toFixed(2) }}</span>
           </p>
           <button
-            class="mt-4 w-full py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-hover)] transition-colors duration-300 flex items-center justify-center gap-2"
+            class="mt-4 w-full py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-hover)] transition-colors duration-300"
             @click="handleCheckout"
-            :disabled="isLoading"
+            :disabled="loading"
           >
-            <svg
-              v-if="isLoading"
-              class="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
-            </svg>
-            <span>{{ isLoading ? 'Processing...' : 'Proceed to Checkout' }}</span>
+            {{ loading ? 'Processing...' : 'Proceed to Checkout' }}
           </button>
         </div>
       </div>

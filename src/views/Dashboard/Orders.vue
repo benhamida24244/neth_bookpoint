@@ -50,14 +50,16 @@
       </div>
 
       <!-- Orders Table -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+       <div v-if="loading" class="text-center p-12">Loading...</div>
+       <div v-else-if="error" class="text-center p-12 text-red-500">{{ error }}</div>
+      <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
@@ -70,18 +72,18 @@
                 :key="order.id"
                 class="hover:bg-gray-50 transition-colors duration-200"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.customer }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.book }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ order.id }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.customer.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.items.length }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span :class="getStatusClass(order.status)" class="px-3 py-1 rounded-full text-xs font-medium">
                     {{ order.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price + settingsStore.currency }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ parseFloat(order.total_price).toFixed(2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(order.created_at).toLocaleDateString() }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
+                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center justify-center gap-1 text-sm font-medium">
                     <i class="far fa-eye"></i> View
                   </RouterLink>
                 </td>
@@ -101,42 +103,7 @@
 
         <!-- Pagination -->
         <div v-if="filteredOrders.length > 0" class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-          <div class="flex-1 flex justify-between sm:hidden">
-            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-              Previous
-            </button>
-            <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-              Next
-            </button>
-          </div>
-          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p class="text-sm text-gray-700">
-                Showing <span class="font-medium">1</span> to <span class="font-medium">{{ filteredOrders.length }}</span> of <span class="font-medium">{{ filteredOrders.length }}</span> results
-              </p>
-            </div>
-            <div>
-              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                <button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                  <span class="sr-only">Previous</span>
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="z-10 bg-yellow-50 border-[var(--color-light)] text-[var(--color-primary)] relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                  1
-                </button>
-                <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                  2
-                </button>
-                <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                  3
-                </button>
-                <button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                  <span class="sr-only">Next</span>
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </nav>
-            </div>
-          </div>
+          <!-- Pagination controls here -->
         </div>
       </div>
     </div>
@@ -144,91 +111,66 @@
 </template>
 
 <script setup>
-import { useOrdersStore } from '@/stores/Orders'
-import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
+import { useAdminOrdersStore } from '@/stores/Admin/Orders';
+import { ref, computed, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 
-const settingsStore = useSettingsStore()
+const ordersStore = useAdminOrdersStore();
+const { orders, loading, error } = storeToRefs(ordersStore);
 
-    const ordersStore = useOrdersStore()
+const activeFilter = ref('all');
+const searchQuery = ref('');
 
-    const activeFilter = ref('all')
-    const searchQuery = ref('')
+onMounted(() => {
+  ordersStore.fetchOrders();
+});
 
-    const stats = computed(() => {
-      const allOrders = ordersStore.orders;
-      return [
-        {
-          label: 'Total Orders',
-          value: allOrders.length,
-          icon: 'fas fa-list-ol text-blue-500',
-          iconBg: 'bg-blue-50'
-        },
-        {
-          label: 'Avg Delivery Time',
-          value: '3 days', // This cannot be calculated from current data
-          icon: 'far fa-clock text-green-500',
-          iconBg: 'bg-green-50'
-        },
-        {
-          label: 'Pending Orders',
-          value: allOrders.filter(o => o.status === 'Pending').length,
-          icon: 'fas fa-truck text-[var(--color-light)]',
-          iconBg: 'bg-yellow-50'
-        },
-        {
-          label: 'Returned Orders',
-          value: allOrders.filter(o => o.status === 'Returned').length,
-          icon: 'fas fa-undo text-red-500',
-          iconBg: 'bg-red-50'
-        },
-        {
-          label: 'Completed Orders',
-          value: allOrders.filter(o => o.status === 'Completed').length,
-          icon: 'fas fa-check-circle text-emerald-500',
-          iconBg: 'bg-emerald-50'
-        }
-      ]
-    })
+const stats = computed(() => {
+  const allOrders = orders.value;
+  return [
+    { label: 'Total Orders', value: allOrders.length, icon: 'fas fa-list-ol text-blue-500', iconBg: 'bg-blue-50' },
+    { label: 'Pending Orders', value: allOrders.filter(o => o.status === 'pending').length, icon: 'fas fa-truck text-yellow-500', iconBg: 'bg-yellow-50' },
+    { label: 'Completed Orders', value: allOrders.filter(o => o.status === 'completed').length, icon: 'fas fa-check-circle text-emerald-500', iconBg: 'bg-emerald-50' },
+    { label: 'Shipped Orders', value: allOrders.filter(o => o.status === 'shipped').length, icon: 'fas fa-shipping-fast text-indigo-500', iconBg: 'bg-indigo-50' },
+    { label: 'Paid Orders', value: allOrders.filter(o => o.status === 'paid').length, icon: 'fas fa-dollar-sign text-green-500', iconBg: 'bg-green-50' },
+  ];
+});
 
-    const filters = ref([
-      { label: 'All Orders', value: 'all' },
-      { label: 'Completed', value: 'Completed' },
-      { label: 'Pending', value: 'Pending' },
-      { label: 'Returned', value: 'Returned' }
-    ])
+const filters = ref([
+    { label: 'All Orders', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Paid', value: 'paid' },
+    { label: 'Shipped', value: 'shipped' },
+    { label: 'Completed', value: 'completed' },
+]);
 
-    const filteredOrders = computed(() => {
-      let filtered = ordersStore.orders
+const filteredOrders = computed(() => {
+  let filtered = orders.value;
 
-      // Filter by status
-      if (activeFilter.value !== 'all') {
-        filtered = filtered.filter(order => order.status === activeFilter.value)
-      }
+  if (activeFilter.value !== 'all') {
+    filtered = filtered.filter(order => order.status === activeFilter.value);
+  }
 
-      // Filter by search query
-      if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(order =>
-          order.customer.toLowerCase().includes(query) ||
-          order.book.toLowerCase().includes(query) ||
-          order.id.toString().includes(query)
-        )
-      }
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(order =>
+      order.customer.name.toLowerCase().includes(query) ||
+      order.id.toString().includes(query)
+    );
+  }
 
-      return filtered
-    })
+  return filtered;
+});
 
-    const getStatusClass = (status) => {
-      const statusClasses = {
-        'Completed': 'bg-green-50 text-green-700',
-        'Pending': 'bg-yellow-50 text-[var(--color-primary)]',
-        'Returned': 'bg-red-50 text-red-700'
-      }
-      return statusClasses[status] || 'bg-gray-50 text-gray-700'
-    }
-
-
+const getStatusClass = (status) => {
+    const statusClasses = {
+        'completed': 'bg-green-50 text-green-700',
+        'pending': 'bg-yellow-50 text-yellow-700',
+        'shipped': 'bg-indigo-50 text-indigo-700',
+        'paid': 'bg-blue-50 text-blue-700',
+    };
+    return statusClasses[status] || 'bg-gray-50 text-gray-700';
+};
 </script>
 
 <style scoped>
