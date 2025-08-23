@@ -138,6 +138,7 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
+        <LanguageSwitcher />
         <RouterLink
           to="/cart"
           class="relative text-white hover:text-[var(--color-hover)] self-center"
