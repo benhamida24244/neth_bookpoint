@@ -9,7 +9,6 @@ import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
 import { useLanguageStore } from '@/stores/language'
 import { useUserStore } from '@/stores/Users'
-import LanguageSwitcher from './LanguageSwitcher.vue'
 
 // Ref for mobile menu state
 const isMenuOpen = ref(false)
@@ -139,7 +138,6 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
-        <LanguageSwitcher />
         <RouterLink
           to="/cart"
           class="relative text-white hover:text-[var(--color-hover)] self-center"
