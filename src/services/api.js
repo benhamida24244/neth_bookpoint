@@ -33,12 +33,22 @@ api.interceptors.response.use(
 );
 
 // ================================================================
-// 🛠️ دالة مساعدة لرفع الملفات (FormData)
+// 🛠️ دوال مساعدة لرفع الملفات (FormData)
 // ================================================================
-const uploadFile = (url, formData) =>
+// تستخدم لإنشاء سجل جديد مع ملف (POST)
+const createFile = (url, formData) =>
   api.post(url, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+
+// تستخدم لتحديث سجل موجود مع ملف (PUT)
+// Laravel يتطلب إرسال طلب POST مع حقل _method="PUT"
+const updateFile = (url, formData) => {
+  formData.append("_method", "PUT");
+  return api.post(url, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 
 // ================================================================
 // 🔑 Authentication & User
@@ -111,8 +121,8 @@ const admin = {
   },
 
   books: {
-    add: (data) => uploadFile("/admin/books", data),
-    update: (id, data) => uploadFile(`/admin/books/${id}`, data),
+    add: (data) => createFile("/admin/books", data),
+    update: (id, data) => updateFile(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
   },
 
@@ -123,19 +133,19 @@ const admin = {
   },
 
   publishers: {
-    add: (data) => uploadFile("/admin/publishers", data),
-    update: (id, data) => uploadFile(`/admin/publishers/${id}`, data),
+    add: (data) => createFile("/admin/publishers", data),
+    update: (id, data) => updateFile(`/admin/publishers/${id}`, data),
     delete: (id) => api.delete(`/admin/publishers/${id}`),
   },
 
   authors: {
-    add: (data) => uploadFile("/admin/authors", data),
-    update: (id, data) => uploadFile(`/admin/authors/${id}`, data),
+    add: (data) => createFile("/admin/authors", data),
+    update: (id, data) => updateFile(`/admin/authors/${id}`, data),
     delete: (id) => api.delete(`/admin/authors/${id}`),
   },
 
   settings: {
-    update: (data) => uploadFile("/admin/settings", data),
+    update: (data) => createFile("/admin/settings", data),
   },
 };
 

@@ -80,8 +80,15 @@ const smallBannerTwo = [
 const authors = authorsStore.authors
 const PublishingHouses = PublishingHousesStore.publishingHouses
 
+import { useBooksStore } from '@/stores/Books'
+
+const booksStore = useBooksStore()
+
 onMounted(()=> {
   window.scrollTo(0,0)
+  booksStore.fetchBooks()
+  PublishingHousesStore.fetchPublisher()
+  authorsStore.fetchAuthors()
 })
 </script>
 
