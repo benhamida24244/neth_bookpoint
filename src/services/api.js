@@ -106,7 +106,10 @@ const admin = {
     get: (id) => api.get(`/admin/orders/${id}`),
     update: (id, data) => api.put(`/admin/orders/${id}`, data),
   },
-
+  profile: {
+    all: () => api.get("/admin/customers"),
+    get: (id) => api.get(`/admin/customers/${id}`),
+  },
   books: {
     add: (data) => api.post("/admin/books", data),
     update: (id, data) => api.post(`/admin/books/${id}`, data),
