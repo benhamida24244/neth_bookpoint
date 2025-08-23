@@ -1,47 +1,32 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import  apiService  from '@/services/api.js'
+import { useUserStore } from '@/stores/Users'
 
 const router = useRouter()
+const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
 const handleLogin = async () => {
   errorMessage.value = ''
-
   try {
-    // استدعاء API
-    const response = await  apiService.auth.login({
+    const success = await userStore.adminLogin({
       email: email.value,
       password: password.value,
     })
-    // إذا api.login بيرجع axios response → response.data
-    const data = response.data
-    // ممكن يكون token باسم ثاني
-    const token = data.token || data.access_token
 
-    // إذا الـ user موجود أو الدور مباشر
-    const user = data.user || { role: data.role }
-    if (!user || user.role !== 'admin') {
-      errorMessage.value = 'You are not authorized to access the dashboard.'
-      return
+    if (success) {
+      router.push('/dashboard')
     }
-
-    // خزن التوكن والدور
-    localStorage.setItem('token', token)
-    localStorage.setItem('role', user.role)
-
-    // روح للـ Dashboard
-    router.push('/dashboard')
   } catch (error) {
-    // تحقق إذا فيه رد من السيرفر
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Invalid email or password.'
     } else {
-      errorMessage.value = 'Something went wrong. Please try again later.'
+      errorMessage.value = error.message || 'Something went wrong. Please try again later.'
     }
+    console.error('Admin login failed:', error)
   }
 }
 </script>

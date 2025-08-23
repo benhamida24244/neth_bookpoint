@@ -13,10 +13,13 @@ import LanguageSwitcher from './LanguageSwitcher.vue'
 
 // Ref for mobile menu state
 const isMenuOpen = ref(false)
+const isProfileMenuOpen = ref(false)
 const route = useRoute()
 // Refs for login and register modal state
 const showLogin = ref(false)
 const showRegister = ref(false)
+
+const userStore = useUserStore()
 
 // Functions to control login and register modals
 const openLogin = () => {
@@ -35,6 +38,16 @@ const CloseModal = () => {
 // Function to toggle the mobile menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
+}
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleLogout = () => {
+  userStore.logout()
+  isProfileMenuOpen.value = false
+  router.push('/')
 }
 
 // Function to close the mobile menu
@@ -56,11 +69,11 @@ const isActive = (link) => {
 // Pinia stores
 const settingsStore = useSettingsStore()
 const languageStore = useLanguageStore()
-const userStore = useUserStore()
+
 
 // Reactive state from stores
 const { translations } = storeToRefs(languageStore)
-const { isLoggedIn } = storeToRefs(userStore)
+const { isLoggedIn, currentUser } = storeToRefs(userStore)
 
 const headerBackground = computed(() => {
   const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
@@ -110,13 +123,13 @@ const { cartCount } = storeToRefs(cartStore)
 
       <div
         id="collapseMenu"
-        class="lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50"
+        class="lg:!block max-lg:fixed max-lg:top-0 max-lg:right-0 max-lg:w-full max-lg:h-full max-lg:bg-black max-lg:bg-opacity-50"
         :class="{ 'max-lg:hidden': !isMenuOpen }"
         @click="closeMenu"
       >
         <ul
-          v-motion-slide-visible-left
-          class="font-BonaRegular lg:flex gap-x-4 max-lg:space-y-3 max-lg:fixed max-lg:bg-black max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50"
+          v-motion-slide-visible-right
+          class="font-BonaRegular lg:flex gap-x-4 max-lg:space-y-3 max-lg:fixed max-lg:bg-black max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:right-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50"
           @click.stop
         >
           <li class="mb-6 hidden max-lg:block">
@@ -138,7 +151,7 @@ const { cartCount } = storeToRefs(cartStore)
         </ul>
       </div>
 
-      <div class="flex max-lg:ml-auto space-x-4">
+      <div class="flex items-center max-lg:ml-auto space-x-4">
         <LanguageSwitcher />
         <RouterLink
           to="/cart"
@@ -151,25 +164,31 @@ const { cartCount } = storeToRefs(cartStore)
             >{{ cartCount }}</span
           >
         </RouterLink>
-        <div v-if="isLoggedIn" class="flex items-center">
-          <RouterLink to="/profile">
+
+        <div v-if="isLoggedIn && currentUser" class="relative">
+          <button @click="isProfileMenuOpen = !isProfileMenuOpen" class="flex items-center">
             <img
-              src="https://randomuser.me/api/portraits/men/75.jpg"
+              :src="currentUser.avatar || 'https://randomuser.me/api/portraits/men/75.jpg'"
               alt="User Avatar"
-              class="w-10 h-10 rounded-full"
+              class="w-10 h-10 rounded-full object-cover"
             />
-          </RouterLink>
+          </button>
+          <div v-if="isProfileMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+            <RouterLink to="/profile" @click="isProfileMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</RouterLink>
+            <button @click="handleLogout" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+          </div>
         </div>
+
         <template v-else>
           <button
-            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
+            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all max-sm:hidden"
             @click="openLogin"
           >
             {{ translations.header?.login || 'Login' }}
           </button>
           <button
             @click="openRegister"
-            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
+            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all max-sm:hidden"
           >
             {{ translations.header?.signup || 'Sign up' }}
           </button>

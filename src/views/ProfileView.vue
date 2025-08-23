@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/Users'
 import { useCartStore } from '@/stores/Cart'
 import { useOrdersStore } from '@/stores/Orders'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // Pinia stores
@@ -25,6 +25,38 @@ const userOrders = computed(() =>
 const totalPrice = computed(() =>
   cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
 )
+
+// Edit mode state
+const isEditMode = ref(false)
+const editableUser = ref(null)
+const successMessage = ref('')
+
+watch(currentUser, (newUser) => {
+  if (newUser) {
+    editableUser.value = { ...newUser }
+  }
+}, { immediate: true })
+
+const toggleEditMode = () => {
+  if (!isEditMode.value) {
+    // Reset form data when entering edit mode
+    editableUser.value = { ...currentUser.value }
+  }
+  isEditMode.value = !isEditMode.value
+}
+
+const handleUpdateProfile = async () => {
+  try {
+    await userStore.updateUserProfile(editableUser.value)
+    successMessage.value = 'Profile updated successfully!'
+    isEditMode.value = false
+    setTimeout(() => {
+      successMessage.value = ''
+    }, 3000)
+  } catch (error) {
+    console.error('Failed to update profile:', error)
+  }
+}
 </script>
 
 <template>
@@ -38,26 +70,57 @@ const totalPrice = computed(() =>
         <p class="text-gray-600 text-lg">{{ t('profile.subtitle') }}</p>
       </div>
 
+       <!-- Success Message -->
+      <div v-if="successMessage" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-md shadow-md">
+        <p>{{ successMessage }}</p>
+      </div>
+
+
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <!-- User Profile Card -->
         <div class="xl:col-span-1">
           <div class="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-8 border border-white/50 hover:shadow-2xl transition-all duration-300">
-            <div class="flex items-center gap-6 mb-6">
-              <div class="relative">
-                <img
-                  :src="currentUser.avatar || 'https://randomuser.me/api/portraits/men/75.jpg'"
-                  alt="User Avatar"
-                  class="w-20 h-20 rounded-full shadow-lg border-4 border-white object-cover"
-                />
-                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
-              </div>
-              <div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ t('profile.myProfile') }}</h2>
-                <p class="text-green-600 text-sm font-medium">{{ t('profile.activeAccount') }}</p>
-              </div>
+            <div class="flex items-center justify-between gap-6 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <img
+                        :src="currentUser.avatar || 'https://randomuser.me/api/portraits/men/75.jpg'"
+                        alt="User Avatar"
+                        class="w-20 h-20 rounded-full shadow-lg border-4 border-white object-cover"
+                        />
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ t('profile.myProfile') }}</h2>
+                        <p class="text-green-600 text-sm font-medium">{{ t('profile.activeAccount') }}</p>
+                    </div>
+                </div>
+                 <button @click="toggleEditMode" class="text-gray-500 hover:text-[var(--color-primary)] transition-colors">
+                    <svg v-if="!isEditMode" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path></svg>
+                    <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
-            <div class="space-y-4">
+            <form v-if="isEditMode" @submit.prevent="handleUpdateProfile" class="space-y-4">
+               <div>
+                  <label for="name" class="text-sm font-medium text-gray-500">Name</label>
+                  <input type="text" id="name" v-model="editableUser.name" class="w-full px-4 py-2 mt-1 rounded-md border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none">
+                </div>
+                <div>
+                  <label for="email" class="text-sm font-medium text-gray-500">Email</label>
+                  <input type="email" id="email" v-model="editableUser.email" class="w-full px-4 py-2 mt-1 rounded-md border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none">
+                </div>
+                <div>
+                  <label for="address" class="text-sm font-medium text-gray-500">Address</label>
+                  <input type="text" id="address" v-model="editableUser.address" class="w-full px-4 py-2 mt-1 rounded-md border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" @click="toggleEditMode" class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-gray-700 bg-gray-200 hover:bg-gray-300 transition-all">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all">Save Changes</button>
+                </div>
+            </form>
+
+            <div v-else class="space-y-4">
               <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50/80 hover:bg-blue-50/80 transition-colors">
                 <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

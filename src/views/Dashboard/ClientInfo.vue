@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useLanguageStore } from '@/stores/language'
+import apiService from '@/services/api'
 
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
@@ -44,108 +45,10 @@ const isLoading = ref(true)
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
-const showEditModal = ref(false)
+const selectedClient = ref(null)
 
-// Client Data (Enhanced with missing properties)
-const clients = ref([
-  {
-    id: 1,
-    name: 'Benhamida Mohammed',
-    email: 'mohammed@example.com',
-    phone: '0823234234',
-    Registration_date: '12-12-2000',
-    Orders_count: 12,
-    SpendMuch: 1234,
-    Country: 'Algeria',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Benhamida+Mohammed&background=3b82f6&color=fff',
-    address: '123 Main Street, Algiers',
-    lastOrderDate: '2024-01-15',
-    totalOrders: 12,
-    averageOrderValue: 102.83,
-    memberSince: '2020-12-12',
-    notes: 'VIP customer with frequent large orders'
-  },
-  {
-    id: 2,
-    name: 'Ahmed Hassan',
-    email: 'ahmed@example.com',
-    phone: '0823234235',
-    Registration_date: '15-03-2001',
-    Orders_count: 8,
-    SpendMuch: 890,
-    Country: 'Morocco',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Ahmed+Hassan&background=10b981&color=fff',
-    address: '456 Ocean Road, Casablanca',
-    lastOrderDate: '2024-01-10',
-    totalOrders: 8,
-    averageOrderValue: 111.25,
-    memberSince: '2021-03-15',
-    notes: 'Regular customer, prefers express shipping'
-  },
-  {
-    id: 3,
-    name: 'Fatima Al-Zahra',
-    email: 'fatima@example.com',
-    phone: '0823234236',
-    Registration_date: '22-07-2002',
-    Orders_count: 15,
-    SpendMuch: 2100,
-    Country: 'Tunisia',
-    status: 'pending',
-    avatar: 'https://ui-avatars.com/api/?name=Fatima+Al-Zahra&background=f59e0b&color=fff',
-    address: '789 Desert Avenue, Tunis',
-    lastOrderDate: '2024-01-20',
-    totalOrders: 15,
-    averageOrderValue: 140,
-    memberSince: '2022-07-22',
-    notes: 'New customer, pending verification'
-  },
-  {
-    id: 4,
-    name: 'Omar Ibrahim',
-    email: 'omar@example.com',
-    phone: '0823234237',
-    Registration_date: '08-11-2003',
-    Orders_count: 6,
-    SpendMuch: 450,
-    Country: 'Egypt',
-    status: 'inactive',
-    avatar: 'https://ui-avatars.com/api/?name=Omar+Ibrahim&background=ef4444&color=fff',
-    address: '321 Nile Street, Cairo',
-    lastOrderDate: '2023-12-01',
-    totalOrders: 6,
-    averageOrderValue: 75,
-    memberSince: '2023-11-08',
-    notes: 'Account inactive due to payment issues'
-  },
-  {
-    id: 5,
-    name: 'Aisha Rahman',
-    email: 'aisha@example.com',
-    phone: '0823234238',
-    Registration_date: '03-09-2004',
-    Orders_count: 20,
-    SpendMuch: 3200,
-    Country: 'Algeria',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Aisha+Rahman&background=8b5cf6&color=fff',
-    address: '654 Mountain View, Oran',
-    lastOrderDate: '2024-01-25',
-    totalOrders: 20,
-    averageOrderValue: 160,
-    memberSince: '2024-09-03',
-    notes: 'Premium customer with excellent payment history'
-  }
-])
 
 // Computed Properties
-const selectedClient = computed(() => {
-  const clientId = props.clientId || parseInt(route.params.id)
-  return clients.value.find((client) => client.id === clientId)
-})
-
 const statusConfig = computed(() => {
   if (!selectedClient.value) return null
   return (
@@ -241,18 +144,13 @@ Notes: ${client.notes}
 const updateClientStatus = async (newStatus) => {
   try {
     isUpdating.value = true
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    const clientIndex = clients.value.findIndex((c) => c.id === selectedClient.value.id)
-    if (clientIndex !== -1) {
-      clients.value[clientIndex].status = newStatus
-      showSuccessMessage.value = true
-      setTimeout(() => {
-        showSuccessMessage.value = false
-      }, 3000)
-      emit('statusChanged', { clientId: selectedClient.value.id, status: newStatus })
-    }
+    await apiService.admin.profile.update(selectedClient.value.id, { status: newStatus })
+    selectedClient.value.status = newStatus
+    showSuccessMessage.value = true
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 3000)
+    emit('statusChanged', { clientId: selectedClient.value.id, status: newStatus })
   } catch (err) {
     error.value = 'Failed to update client status'
   } finally {
@@ -273,29 +171,28 @@ const callClient = () => {
   window.open(`tel:${selectedClient.value.phone}`)
 }
 
-// Lifecycle
-onMounted(async () => {
+const fetchClientData = async () => {
   try {
     isLoading.value = true
     error.value = null
-    // Simulate loading time
-    await new Promise((resolve) => setTimeout(resolve, 800))
-
-    if (!selectedClient.value) {
-      error.value = 'Client not found'
-    }
+    const clientId = props.clientId || parseInt(route.params.id)
+    const response = await apiService.admin.profile.get(clientId)
+    selectedClient.value = response.data
   } catch (err) {
     error.value = 'Error loading client data'
     console.error('Error loading client:', err)
   } finally {
     isLoading.value = false
   }
-})
+}
+
+// Lifecycle
+onMounted(fetchClientData)
 
 watch(
   () => route.params.id,
   (newId) => {
-    if (newId) onMounted()
+    if (newId) fetchClientData()
   }
 )
 </script>
@@ -351,7 +248,7 @@ watch(
         </div>
         <p class="text-red-700">{{ error }}</p>
         <button
-          @click="onMounted"
+          @click="fetchClientData"
           class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
         >
           {{ translations.dashboard?.clientInfo?.tryAgain }}

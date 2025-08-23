@@ -1,5 +1,30 @@
 <script setup>
-import coverAspect from "@/assets/Auth/LoginImg.png"
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/Users'
+import coverAspect from '@/assets/Auth/LoginImg.png'
+
+const emit = defineEmits(['close', 'openRegister'])
+
+const userStore = useUserStore()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+
+const handleLogin = async () => {
+  errorMessage.value = ''
+  try {
+    const success = await userStore.login({
+      email: email.value,
+      password: password.value,
+    })
+    if (success) {
+      emit('close')
+    }
+  } catch (error) {
+    errorMessage.value = 'Invalid email or password. Please try again.'
+    console.error('Login failed:', error)
+  }
+}
 </script>
 
 <template>
@@ -36,9 +61,16 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           </p>
         </div>
 
+        <!-- رسالة خطأ -->
+        <div v-if="errorMessage" class="mb-4 p-3 text-sm text-red-600 bg-red-100 rounded-lg text-center">
+          {{ errorMessage }}
+        </div>
+
+
         <!-- النموذج -->
-        <form class="space-y-4">
+        <form class="space-y-4" @submit.prevent="handleLogin">
           <input
+            v-model="email"
             name="email"
             type="email"
             required
@@ -47,6 +79,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           />
 
           <input
+            v-model="password"
             name="password"
             type="password"
             required
