@@ -10,6 +10,7 @@ export const useBooksStore = defineStore("books", {
   getters: {
     allBooks: (state) => state.books,
     singleBook: (state) => state.book,
+    RecentBooks: (state) => state.books.slice(-5),
     // Keep other getters if they are still relevant
   },
   actions: {

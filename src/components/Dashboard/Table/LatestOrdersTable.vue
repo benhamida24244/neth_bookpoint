@@ -1,10 +1,18 @@
 <script setup>
 import { useOrdersStore } from '@/stores/Orders';
 import { useSettingsStore } from '@/stores/settings';
+import { onMounted, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const settingsStore = useSettingsStore()
 const ordersStore = useOrdersStore()
-const orders = ordersStore.getRecentOrders
+const { orders } = storeToRefs(ordersStore)
+
+onMounted(() => {
+  ordersStore.fetchOrders()
+})
+
+const recentOrders = computed(() => orders.value.slice(-5))
 
 const statusColor = {
   Pending: 'text-[var(--color-primary)] bg-yellow-100',
@@ -31,7 +39,7 @@ const statusColor = {
 
       <tbody>
         <tr
-          v-for="order in orders"
+          v-for="order in recentOrders"
           :key="order.id"
           class="border-b hover:bg-gray-50 transition"
         >
@@ -53,7 +61,7 @@ const statusColor = {
       </tbody>
     </table>
             <!-- Empty State -->
-        <div v-if="orders.length === 0" class="p-12 text-center">
+        <div v-if="recentOrders.length === 0" class="p-12 text-center">
           <div
             class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
           >

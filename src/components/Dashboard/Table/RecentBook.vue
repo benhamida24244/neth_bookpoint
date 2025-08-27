@@ -1,9 +1,14 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books';
-
+import { onMounted, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const bookStore = useBooksStore()
-const RecentBooks = bookStore.RecentBooks
+const { RecentBooks } = storeToRefs(bookStore)
+
+onMounted(() => {
+  bookStore.fetchBooks()
+})
 </script>
 
 <template>

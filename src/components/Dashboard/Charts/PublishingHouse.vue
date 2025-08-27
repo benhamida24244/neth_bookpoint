@@ -7,19 +7,25 @@ import {
   Legend,
   ArcElement
 } from 'chart.js'
-import { useCategoriesStore } from '@/stores/Categories'
+import { usePublishingHouseStore } from '@/stores/PublishingHouses'
+import { onMounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
-const CategoriesStore = useCategoriesStore()
-const Categories = CategoriesStore.categories
+const PublishingHouseStore = usePublishingHouseStore()
+const { publishingHouses } = storeToRefs(PublishingHouseStore)
+
+onMounted(() => {
+  PublishingHouseStore.fetchPublisher()
+})
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
-const chartData = {
-  labels: Categories.map((category) => category.name),
+const chartData = computed(() => ({
+  labels: publishingHouses.value.map((publisher) => publisher.name),
   datasets: [
     {
       label: 'Publishing Houses',
-      data: Categories.map((category) => category.bookCount),
+      data: publishingHouses.value.map((publisher) => publisher.bookCount),
       backgroundColor: [
         '#facc15', // Yellow
         '#60a5fa', // Blue
@@ -31,7 +37,7 @@ const chartData = {
       borderWidth: 2
     }
   ]
-}
+}))
 
 const chartOptions = {
   responsive: true,
