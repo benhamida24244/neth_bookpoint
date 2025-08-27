@@ -15,7 +15,7 @@ const BOOK_STATUS = {
 
 const STATUS_CONFIG = {
   [BOOK_STATUS.PUBLISHED]: { color: 'text-green-700 bg-green-100', icon: CheckCircleIcon, label: 'Published' },
-  [BOOK_STATUS.PENDING]: { color: 'text-[var(--color-primary)] bg-yellow-100', icon: ClockIcon, label: 'Pending' },
+  [BOOK_STATUS.PENDING]: { color: 'text-yellow-500 bg-yellow-100', icon: ClockIcon, label: 'Pending' },
   [BOOK_STATUS.DRAFT]: { color: 'text-red-700 bg-red-100', icon: XCircleIcon, label: 'Draft' },
   [BOOK_STATUS.PROCESSING]: { color: 'text-blue-700 bg-blue-100', icon: TruckIcon, label: 'Processing' },
   [BOOK_STATUS.SHIPPED]: { color: 'text-purple-700 bg-purple-100', icon: TruckIcon, label: 'Shipped' }
@@ -23,7 +23,7 @@ const STATUS_CONFIG = {
 
 // --- Props and Emits ---
 const props = defineProps({
-  bookId: {
+  bookIdProp: {
     type: [String, Number],
     required: false
   }
@@ -33,18 +33,13 @@ const emit = defineEmits(['bookUpdated', 'statusChanged', 'bookDeleted'])
 // --- Composables ---
 const route = useRoute()
 const router = useRouter()
+const booksStore = useBooksStore()
 
 // --- State ---
-const isLoading = ref(true)
 const isUpdating = ref(false)
 const isSaving = ref(false)
-const error = ref(null)
 const showSuccessMessage = ref(false)
 const successMessage = ref('')
-
-// --- Store ---
-const booksStore = useBooksStore()
-const books = computed(() => booksStore.books)
 
 // --- Popups State ---
 const isPop = ref(false)
@@ -56,32 +51,19 @@ const editForm = ref({})
 const offerForm = ref({})
 
 // --- Computed Properties ---
-
-// **FIXED**: Simplified and more robust ID handling.
-const bookId = computed(() => {
-  const id = props.bookId || route.params.id;
-  return id ? Number(id) : null;
-})
-
-const selectedBook = computed(() => {
-  const id = bookId.value
-  if (!id || !Array.isArray(books.value)) return null
-  return books.value.find(book => Number(book.id) === id) || null
-})
+const bookId = computed(() => Number(props.bookIdProp || route.params.id))
+const selectedBook = computed(() => booksStore.book)
+const isLoading = computed(() => booksStore.isLoading)
+const error = computed(() => booksStore.error)
 
 const statusConfig = computed(() => {
   const book = selectedBook.value
-  return book ? STATUS_CONFIG[book.status] || null : null
+  return book && book.status ? STATUS_CONFIG[book.status] || null : null
 })
 
-const statusOptions = computed(() => Object.values(BOOK_STATUS).map(status => ({
-  value: status,
-  label: STATUS_CONFIG[status]?.label || status,
-  disabled: false
-})))
-
 const stockStatusText = computed(() => {
-  const stock = Number(selectedBook.value?.stock || 0)
+  if (!selectedBook.value) return ''
+  const stock = Number(selectedBook.value.stock || 0)
   if (stock > 100) return 'In Stock'
   if (stock > 20) return 'Limited Stock'
   if (stock > 0) return `Only ${stock} copies remaining!`
@@ -89,107 +71,54 @@ const stockStatusText = computed(() => {
 })
 
 const stockStatusColor = computed(() => {
-  const stock = Number(selectedBook.value?.stock || 0)
+  if (!selectedBook.value) return ''
+  const stock = Number(selectedBook.value.stock || 0)
   if (stock > 100) return 'text-green-600'
-  if (stock > 20) return 'text-[var(--color-primary)]'
+  if (stock > 20) return 'text-yellow-600'
   if (stock > 0) return 'text-red-600'
-  return 'text-red-800'
+  return 'text-gray-500'
 })
 
 // --- Helper Functions ---
-
 const showSuccess = (message) => {
   successMessage.value = message
   showSuccessMessage.value = true
   setTimeout(() => (showSuccessMessage.value = false), 3000)
 }
 
-// **FIXED**: Robust price parsing from string (e.g., "$19.99").
 const parsePrice = (price) => {
   if (typeof price === 'number') return price
   if (typeof price !== 'string') return 0
   const num = parseFloat(price.replace(/[^0-9.-]+/g, ""))
-  return Number.isFinite(num) ? num : 0
+  return isFinite(num) ? num : 0
 }
 
-const renderStars = (rating) => {
-  const r = Number.isFinite(Number(rating)) ? Number(rating) : 0
-  const fullStars = Math.floor(r)
-  const hasHalfStar = (r - fullStars) >= 0.5
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
-  return { full: fullStars, half: hasHalfStar, empty: emptyStars }
-}
-
-// --- Core Logic Functions ---
-
-// **FIXED**: Centralized and corrected discount calculation logic.
-const updateDiscountedPrice = () => {
-  const book = selectedBook.value
-  if (!book) return
-
-  const originalPrice = parsePrice(book.price)
-  const activeOffers = book.offers?.filter(offer => offer.active) || []
-
-  if (activeOffers.length === 0 || originalPrice === 0) {
-    delete book.discountedPrice
-    return
-  }
-
-  // Find the largest discount amount from all active offers
-  const bestDiscount = activeOffers.reduce((maxDiscount, offer) => {
-    const offerValue = Number(offer.value) || 0
-    const currentDiscount = offer.type === 'percentage'
-      ? (originalPrice * offerValue) / 100
-      : offerValue
-    return Math.max(maxDiscount, currentDiscount)
-  }, 0)
-
-  if (bestDiscount > 0) {
-    const finalPrice = Math.max(0, originalPrice - bestDiscount)
-    book.discountedPrice = `$${finalPrice.toFixed(2)}`
-  } else {
-    delete book.discountedPrice
-  }
-}
-
+// --- Core Logic ---
 const loadBook = async () => {
-  isLoading.value = true
-  error.value = null
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
-    if (!selectedBook.value) {
-      error.value = 'Book not found'
-    } else {
-      updateDiscountedPrice() // Initial calculation
+  if (bookId.value) {
+    await booksStore.fetchBook(bookId.value)
+    // Mock offers data if not present
+    if (selectedBook.value && !selectedBook.value.offers) {
+      selectedBook.value.offers = []
     }
-  } catch (err) {
-    error.value = 'Error loading book data'
-    console.error('Error loading book:', err)
-  } finally {
-    isLoading.value = false
   }
 }
 
 // --- Action Handlers ---
-
 const updateBookStatus = async (newStatus) => {
-  const book = selectedBook.value
-  if (!book || isUpdating.value) return
-
+  if (!selectedBook.value || isUpdating.value) return
   isUpdating.value = true
-  error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
-    const oldStatus = book.status
-    book.status = newStatus
-    book.dates = { ...book.dates, updated: new Date().toISOString() }
-
-    showSuccess('Book status updated successfully!')
-    emit('statusChanged', { bookId: book.id, oldStatus, newStatus })
-    emit('bookUpdated', book)
+    const success = await booksStore.updateBook(selectedBook.value.id, { status: newStatus })
+    if (success) {
+      showSuccess('Book status updated successfully!')
+      emit('statusChanged', { bookId: selectedBook.value.id, newStatus })
+    } else {
+      throw new Error('Failed to update status')
+    }
   } catch (err) {
-    error.value = 'Error updating status. Please try again.'
     console.error('Error updating book status:', err)
+    alert('Error updating status. Please try again.')
   } finally {
     isUpdating.value = false
   }
@@ -197,18 +126,18 @@ const updateBookStatus = async (newStatus) => {
 
 // --- Edit Book ---
 const openEditPopup = () => {
+  if (!selectedBook.value) return
   const book = selectedBook.value
-  if (!book) return
   editForm.value = {
     title: book.title || '',
     description: book.description || '',
-    author: book.author || '',
+    author_id: book.author_id || '',
     pages: book.pages || '',
     stock: book.stock || '',
     price: book.price || '',
-    category: book.category || '',
+    category_id: book.category_id || '',
     language: book.language || '',
-    publishingHouse: book.publishingHouse || '',
+    publisher_id: book.publisher_id || '',
     publisherDate: book.publisherDate || ''
   }
   isPop.value = true
@@ -217,25 +146,26 @@ const openEditPopup = () => {
 const closeEditPopup = () => { isPop.value = false }
 
 const saveBookChanges = async () => {
-  const book = selectedBook.value
-  if (!book || isSaving.value) return
-
+  if (!selectedBook.value || isSaving.value) return
   isSaving.value = true
-  error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500)) // simulate API
-    Object.assign(book, editForm.value)
-    book.dates = { ...book.dates, updated: new Date().toISOString() }
-
-    // **FIXED**: Recalculate discount if base price changed.
-    updateDiscountedPrice()
-
-    closeEditPopup()
-    showSuccess('Book details updated successfully!')
-    emit('bookUpdated', book)
+    const formData = new FormData()
+    for (const key in editForm.value) {
+      if (editForm.value[key] !== null) {
+        formData.append(key, editForm.value[key])
+      }
+    }
+    const success = await booksStore.updateBook(selectedBook.value.id, formData)
+    if (success) {
+      closeEditPopup()
+      showSuccess('Book details updated successfully!')
+      emit('bookUpdated', booksStore.book)
+    } else {
+      throw new Error('Update failed')
+    }
   } catch (err) {
-    error.value = 'Error updating book details. Please try again.'
     console.error('Error updating book:', err)
+    alert('Error updating book details. Please try again.')
   } finally {
     isSaving.value = false
   }
@@ -246,29 +176,27 @@ const openDeleteConfirm = () => { isDeleteConfirmOpen.value = true }
 const closeDeleteConfirm = () => { isDeleteConfirmOpen.value = false }
 
 const deleteBook = async () => {
-  const book = selectedBook.value
-  if (!book || isUpdating.value) return
-
+  if (!selectedBook.value || isUpdating.value) return
   isUpdating.value = true
-  error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
-    booksStore.deleteBook(book.id) // Assuming a store action
-
-    closeDeleteConfirm()
-    showSuccess('Book deleted successfully!')
-    emit('bookDeleted', book.id)
-
-    setTimeout(() => router.push('/books'), 1000)
+    const success = await booksStore.deleteBook(selectedBook.value.id)
+    if (success) {
+      closeDeleteConfirm()
+      showSuccess('Book deleted successfully!')
+      emit('bookDeleted', selectedBook.value.id)
+      router.push('/dashboard/books')
+    } else {
+      throw new Error('Failed to delete book')
+    }
   } catch (err) {
-    error.value = 'Error deleting book. Please try again.'
     console.error('Error deleting book:', err)
+    alert('Error deleting book. Please try again.')
   } finally {
     isUpdating.value = false
   }
 }
 
-// --- Offer/Discount ---
+// --- Offer/Discount (Mocked) ---
 const openOfferPopup = () => {
   offerForm.value = {
     discountType: 'percentage',
@@ -283,94 +211,26 @@ const openOfferPopup = () => {
 const closeOfferPopup = () => { isOfferPopupOpen.value = false }
 
 const addOffer = async () => {
-  const book = selectedBook.value
-  if (!book || isSaving.value) return
-
-  isSaving.value = true
-  error.value = null
-  try {
-    if (!offerForm.value.discountValue || offerForm.value.discountValue <= 0) {
-      throw new Error('Please enter a valid discount value')
-    }
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
-
-    const newOffer = { id: Date.now(), ...offerForm.value, active: true, createdAt: new Date().toISOString() }
-    book.offers = [...(book.offers || []), newOffer]
-    book.dates = { ...book.dates, updated: new Date().toISOString() }
-
-    // **FIXED**: Use centralized function to apply the best discount.
-    updateDiscountedPrice()
-
-    closeOfferPopup()
-    showSuccess('Offer added successfully!')
-    emit('bookUpdated', book)
-  } catch (err) {
-    error.value = err.message || 'Error adding offer. Please try again.'
-    console.error('Error adding offer:', err)
-  } finally {
-    isSaving.value = false
-  }
-}
-
-// --- Offer Management ---
-const toggleOfferStatus = async (offerToUpdate) => {
-  const book = selectedBook.value
-  if (!book || isUpdating.value) return
-
-  isUpdating.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
-    offerToUpdate.active = !offerToUpdate.active
-    book.dates = { ...book.dates, updated: new Date().toISOString() }
-    updateDiscountedPrice()
-    showSuccess(`Offer ${offerToUpdate.active ? 'activated' : 'deactivated'}!`)
-    emit('bookUpdated', book)
-  } catch (err) {
-    error.value = 'Error updating offer status.'
-  } finally {
-    isUpdating.value = false
-  }
-}
-
-const removeOffer = async (offerId) => {
-  const book = selectedBook.value
-  if (!book || isUpdating.value) return
-
-  isUpdating.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
-    book.offers = book.offers.filter(offer => offer.id !== offerId)
-    book.dates = { ...book.dates, updated: new Date().toISOString() }
-    updateDiscountedPrice()
-    showSuccess('Offer removed successfully!')
-    emit('bookUpdated', book)
-  } catch (err) {
-    error.value = 'Error removing offer.'
-  } finally {
-    isUpdating.value = false
-  }
-}
-
-const togglePublishStatus = async () => {
-  const book = selectedBook.value
-  if (!book) return
-  const newStatus = book.status === BOOK_STATUS.PUBLISHED ? BOOK_STATUS.DRAFT : BOOK_STATUS.PUBLISHED
-  await updateBookStatus(newStatus)
+  alert("This feature is for demonstration only and is not connected to a backend.")
+  // Mock logic remains here for UI demonstration
+  if (!selectedBook.value) return
+  const newOffer = { id: Date.now(), ...offerForm.value, active: true }
+  selectedBook.value.offers.push(newOffer)
+  closeOfferPopup()
+  showSuccess('Mock offer added!')
 }
 
 // --- Misc Actions ---
 const goBack = () => router.go(-1)
 const printBook = () => window.print()
-const downloadInvoice = () => console.log('Downloading invoice for book:', bookId.value)
 const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
 // --- Lifecycle & Watchers ---
-onMounted(() => {
-  loadBook()
-})
-
+onMounted(loadBook)
 watch(bookId, (newId, oldId) => {
-  if (newId !== oldId) loadBook()
+  if (newId !== oldId) {
+    loadBook()
+  }
 })
 </script>
 

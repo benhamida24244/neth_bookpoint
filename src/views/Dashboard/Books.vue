@@ -87,11 +87,14 @@ const getStatusClass = (status) => {
   return statusClasses[status] || 'bg-gray-50 text-gray-700'
 }
 
-const handleSaveBook = (newBook) => {
-  const dataNow = new Date().toISOString().split('T')[0]
-  bookStore.addBook(newBook, dataNow)
+const handleSaveBook = async (formData) => {
+  const success = await bookStore.addBook(formData)
   showAddBookModal.value = false
-  alert('Book added successfully!')
+  if (success) {
+    alert('Book added successfully!')
+  } else {
+    alert('Failed to add book.')
+  }
 }
 
 const openEditModal = (book) => {
