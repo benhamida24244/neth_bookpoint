@@ -21,12 +21,9 @@ const STATUS_CONFIG = {
   [BOOK_STATUS.SHIPPED]: { color: 'text-purple-700 bg-purple-100', icon: TruckIcon, label: 'Shipped' }
 }
 
-// --- Props and Emits ---
+// --- Props & Emits ---
 const props = defineProps({
-  bookIdProp: {
-    type: [String, Number],
-    required: false
-  }
+  bookIdProp: { type: [String, Number], required: false }
 })
 const emit = defineEmits(['bookUpdated', 'statusChanged', 'bookDeleted'])
 
@@ -50,11 +47,19 @@ const isOfferPopupOpen = ref(false)
 const editForm = ref({})
 const offerForm = ref({})
 
-// --- Computed Properties ---
+// --- Computed ---
 const bookId = computed(() => Number(props.bookIdProp || route.params.id))
-const selectedBook = computed(() => booksStore.book)
+const selectedBook = computed(() => booksStore.books.find((book) => book.id === bookId.value))
 const isLoading = computed(() => booksStore.isLoading)
 const error = computed(() => booksStore.error)
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+const bookCoverUrl = computed(() => {
+  if (!selectedBook.value || !selectedBook.value.cover) return ''
+  return selectedBook.value.cover.startsWith('/storage')
+    ? `${apiBaseUrl}${selectedBook.value.cover}`
+    : selectedBook.value.cover
+})
 
 const statusConfig = computed(() => {
   const book = selectedBook.value
@@ -97,7 +102,6 @@ const parsePrice = (price) => {
 const loadBook = async () => {
   if (bookId.value) {
     await booksStore.fetchBook(bookId.value)
-    // Mock offers data if not present
     if (selectedBook.value && !selectedBook.value.offers) {
       selectedBook.value.offers = []
     }
@@ -131,14 +135,11 @@ const openEditPopup = () => {
   editForm.value = {
     title: book.title || '',
     description: book.description || '',
-    author_id: book.author_id || '',
+    author: book.author || '',
     pages: book.pages || '',
     stock: book.stock || '',
     price: book.price || '',
-    category_id: book.category_id || '',
-    language: book.language || '',
-    publisher_id: book.publisher_id || '',
-    publisherDate: book.publisherDate || ''
+    category: book.category || ''
   }
   isPop.value = true
 }
@@ -160,9 +161,7 @@ const saveBookChanges = async () => {
       closeEditPopup()
       showSuccess('Book details updated successfully!')
       emit('bookUpdated', booksStore.book)
-    } else {
-      throw new Error('Update failed')
-    }
+    } else throw new Error('Update failed')
   } catch (err) {
     console.error('Error updating book:', err)
     alert('Error updating book details. Please try again.')
@@ -185,9 +184,7 @@ const deleteBook = async () => {
       showSuccess('Book deleted successfully!')
       emit('bookDeleted', selectedBook.value.id)
       router.push('/dashboard/books')
-    } else {
-      throw new Error('Failed to delete book')
-    }
+    } else throw new Error('Failed to delete book')
   } catch (err) {
     console.error('Error deleting book:', err)
     alert('Error deleting book. Please try again.')
@@ -196,7 +193,7 @@ const deleteBook = async () => {
   }
 }
 
-// --- Offer/Discount (Mocked) ---
+// --- Offer / Discount ---
 const openOfferPopup = () => {
   offerForm.value = {
     discountType: 'percentage',
@@ -211,8 +208,6 @@ const openOfferPopup = () => {
 const closeOfferPopup = () => { isOfferPopupOpen.value = false }
 
 const addOffer = async () => {
-  alert("This feature is for demonstration only and is not connected to a backend.")
-  // Mock logic remains here for UI demonstration
   if (!selectedBook.value) return
   const newOffer = { id: Date.now(), ...offerForm.value, active: true }
   selectedBook.value.offers.push(newOffer)
@@ -220,19 +215,35 @@ const addOffer = async () => {
   showSuccess('Mock offer added!')
 }
 
-// --- Misc Actions ---
+const togglePublishStatus = async () => {
+  if (!selectedBook.value || isUpdating.value) return
+  const newStatus = selectedBook.value.status === BOOK_STATUS.PUBLISHED ? BOOK_STATUS.DRAFT : BOOK_STATUS.PUBLISHED
+  await updateBookStatus(newStatus)
+}
+
+const toggleOfferStatus = (offer) => {
+  offer.active = !offer.active
+  showSuccess(`Offer ${offer.active ? 'activated' : 'deactivated'} successfully!`)
+}
+
+const removeOffer = (offerId) => {
+  if (!selectedBook.value) return
+  selectedBook.value.offers = selectedBook.value.offers.filter(o => o.id !== offerId)
+  showSuccess('Offer removed successfully!')
+}
+
+// --- Misc ---
 const goBack = () => router.go(-1)
 const printBook = () => window.print()
 const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-// --- Lifecycle & Watchers ---
+// --- Lifecycle ---
 onMounted(loadBook)
 watch(bookId, (newId, oldId) => {
-  if (newId !== oldId) {
-    loadBook()
-  }
+  if (newId !== oldId) loadBook()
 })
 </script>
+
 
 <template>
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
@@ -269,7 +280,7 @@ watch(bookId, (newId, oldId) => {
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
-              <input v-model="editForm.author" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
+              <input v-model="editForm.author.name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Pages</label>
@@ -285,7 +296,7 @@ watch(bookId, (newId, oldId) => {
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <input v-model="editForm.category" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
+              <input v-model="editForm.category.name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
             </div>
           </div>
           <div>
@@ -373,13 +384,13 @@ watch(bookId, (newId, oldId) => {
       <main class="container mx-auto px-4 sm:px-8 lg:px-24 py-8">
         <div class="bg-white rounded-lg shadow-md p-6 md:p-8 lg:flex lg:space-x-8">
           <div class="flex-shrink-0 mb-6 lg:mb-0 lg:w-1/3 flex justify-center">
-            <img class="w-full max-w-xs rounded-lg shadow-lg object-cover" :src="selectedBook.cover" :alt="`${selectedBook.title} Cover`" loading="lazy" />
+            <img class="w-full max-w-xs rounded-lg shadow-lg object-cover" :src="bookCoverUrl" :alt="`${selectedBook.title} Cover`" loading="lazy" />
           </div>
           <div class="flex-grow">
             <h2 class="font-bold text-3xl text-gray-900 mb-2">{{ selectedBook.title }}</h2>
             <div class="w-24 h-1 bg-[var(--color-light)] mb-4 rounded-full"></div>
             <div class="space-y-2 mb-6 text-gray-700">
-                <p><strong>Author:</strong> {{ selectedBook.author }}</p>
+                <p><strong>Author:</strong> {{ selectedBook.author.name }}</p>
                 </div>
             <div class="flex items-center">
               <strong class="text-lg text-gray-700 mr-2">Status:</strong>

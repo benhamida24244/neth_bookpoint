@@ -5,7 +5,7 @@
     <!-- صورة الكتاب -->
     <div class="relative mb-3 overflow-hidden rounded-md">
       <img
-        :src="book.cover"
+        :src="getBookImageUrl(book)"
         :alt="book.title"
         class="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
       />
@@ -20,7 +20,7 @@
         {{ book.title }}
       </h3>
       <p class="font-BonaRegular text-sm text-gray-600">
-        {{ book.author }}
+        {{ getAuthorName(book.author_id) }}
       </p>
 
       <!-- التقييم -->
@@ -50,9 +50,9 @@
 
 <script setup>
 import { useSettingsStore } from '@/stores/settings';
+import { useAuthorStore } from '@/stores/Authors';
 
-
-defineProps({
+const props = defineProps({
   book: {
     type: Object,
     required: true
@@ -60,5 +60,22 @@ defineProps({
 })
 
 const settingsStore = useSettingsStore()
+const authorStore = useAuthorStore()
 
+const getAuthorName = (authorId) => {
+  const author = authorStore.authors.find((author) => author.id === authorId);
+  return author ? author.name : '';
+};
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+const getBookImageUrl = (book) => {
+  if (book && book.cover) {
+    const path = book.cover.startsWith('public/')
+      ? book.cover.replace('public/', '')
+      : book.cover;
+    return `${apiBaseUrl}/storage/${path}`;
+  }
+  return null;
+};
 </script>

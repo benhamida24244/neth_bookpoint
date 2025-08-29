@@ -1,22 +1,29 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useSettingsStore } from './stores/settings'
-import { onMounted } from 'vue'
 import { useLanguageStore } from '@/stores/language'
+import { onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
-if (settingsStore.primaryColor) {
-  settingsStore.setPrimaryColor(settingsStore.defaultColor)
-}
 const languageStore = useLanguageStore()
 
-// This ensures that when the app is loaded, the primary color from the
-// store (and localStorage) is applied as a CSS variable to the document.
 onMounted(async () => {
-  settingsStore.setPrimaryColor(settingsStore.primaryColor)
+  // اجلب الإعدادات من DB
+  await settingsStore.fetchSettings()
+
+  // طبّق اللون الأساسي
+  if (settingsStore.primaryColor) {
+    settingsStore.setPrimaryColor(settingsStore.primaryColor)
+  } else {
+    // fallback لو ما فيه لون
+    settingsStore.setPrimaryColor(settingsStore.defaultColor)
+  }
+
+  // ترجمات
   await languageStore.loadTranslations()
 })
 </script>
+
 <template>
   <RouterView />
 </template>

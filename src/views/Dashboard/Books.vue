@@ -1,7 +1,7 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books'
 import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
+import { ref, computed,onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
@@ -25,8 +25,22 @@ const settingStore = useSettingsStore()
 // استدعاء الـ Store
 const bookStore = useBooksStore()
 
+onMounted(async () => {
+  await bookStore.fetchBooks()
+})
+
+
 // بيانات الكتب
 const books = computed(() => bookStore.books || [])
+
+// 2. Get the API base URL from the .env file
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+const Deletebook = (book) => {
+  if (confirm(`Are you sure you want to delete "${book.title}"?`)) {
+    bookStore.deleteBook(book.id);
+  }
+}
 
 // الإحصائيات
 const stats = computed(() => [
@@ -79,12 +93,28 @@ const filteredBooks = computed(() => {
 
 // تصنيف الحالة
 const getStatusClass = (status) => {
-  const statusClasses = {
-    published: 'bg-green-50 text-green-700',
-    pending: 'bg-yellow-50 text-[var(--color-primary)]',
-    draft: 'bg-red-50 text-red-700',
+
+  if(status === 1) {
+        return 'bg-red-50 text-gray-700'
   }
-  return statusClasses[status] || 'bg-gray-50 text-gray-700'
+
+  else if(status === 2)
+  {
+    return 'bg-green-50 text-green-700'
+  }
+  else {
+  return 'bg-yellow-50 text-[var(--color-primary)]'
+
+  }
+}
+const getStatusItem = (status) => {
+  if (status === 1) {
+    return 'Draft'
+  } else if (status === 2) {
+    return 'Published'
+  } else {
+    return 'Pending'
+  }
 }
 
 const handleSaveBook = async (formData) => {
@@ -249,22 +279,22 @@ const handleUpdateBook = (updatedBook) => {
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.id }}</td>
 
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <img :src="book.cover" alt="cover" class="w-10 h-14 rounded shadow" />
+                  <img :src="`${apiBaseUrl}${book.cover}`" alt="cover" class="w-10 h-14 rounded shadow" />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ book.category }}
+                  {{ book.category.name }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.author }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.author.name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publishingHouse }}
+                  {{ book.publisher.name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     :class="getStatusClass(book.status)"
                     class="px-3 py-1 rounded-full text-xs font-medium"
                   >
-                    {{ book.status }}
+                    {{ getStatusItem(book.status) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price + settingStore.currency}}</td>
@@ -283,6 +313,12 @@ const handleUpdateBook = (updatedBook) => {
                     class="text-indigo-600 hover:text-indigo-900"
                   >
                     Edit
+                  </button>
+                  <button
+                    @click="Deletebook(book)"
+                    class="text-red-600 hover:text-red-900"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>

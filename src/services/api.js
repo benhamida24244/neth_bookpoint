@@ -121,6 +121,7 @@ const admin = {
   },
 
   books: {
+    all: (params) => api.get("/admin/books", { params }),
     add: (data) => createFile("/admin/books", data),
     update: (id, data) => updateFile(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
@@ -145,7 +146,8 @@ const admin = {
   },
 
   settings: {
-    update: (data) => createFile("/admin/settings", data),
+    index: () => api.get("/admin/settings"),
+    update: (data) => api.post("/admin/settings", data),
   },
 };
 

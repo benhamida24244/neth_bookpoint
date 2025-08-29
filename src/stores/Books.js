@@ -49,16 +49,20 @@ export const useBooksStore = defineStore("books", {
     /**
      * Action to add a new book (Admin).
      */
-    async addBook(bookData) {
+    async addBook(formData) {
       this.isLoading = true;
       try {
-        const response = await apiService.admin.books.add(bookData);
-        // Add the new book to the state to avoid a full re-fetch
-        this.books.push(response.data);
-        return true; // Indicate success
+        // Pass FormData directly to the api service
+        const response = await apiService.admin.books.add(formData);
+        // Assuming the API returns the newly created book data
+        this.books.push(response.data.data);
+        // Re-fetch books to get the latest list
+        await this.fetchBooks();
+        return true;
       } catch (error) {
         console.error("Failed to add book:", error);
-        return false; // Indicate failure
+        // Optionally, parse and return specific error messages
+        return false;
       } finally {
         this.isLoading = false;
       }
@@ -66,32 +70,42 @@ export const useBooksStore = defineStore("books", {
 
     /**
      * Action to update an existing book (Admin).
+     * Now handles FormData for file uploads.
      */
     async updateBook(bookId, bookData) {
       this.isLoading = true;
       try {
-        const response = await apiService.admin.books.update(bookId, bookData);
-        // Find the index of the book and update it
+        let response;
+        // Check if bookData is an instance of FormData
+        if (bookData instanceof FormData) {
+          response = await apiService.admin.books.update(bookId, bookData);
+        } else {
+          // If not FormData, it's a regular JSON object
+          // This branch might be deprecated if updates always use FormData
+          const jsonData = { ...bookData };
+          delete jsonData.cover; // Remove cover to avoid sending empty file
+          response = await apiService.admin.books.update(bookId, jsonData);
+        }
+
+        // Update state after successful API call
+        const updatedBook = response.data.data;
         const index = this.books.findIndex((b) => b.id === bookId);
         if (index !== -1) {
-          this.books[index] = response.data;
+          this.books[index] = updatedBook;
         }
-        // Also update the single book view if it's the one being edited
         if (this.book && this.book.id === bookId) {
-            this.book = response.data;
+          this.book = updatedBook;
         }
-        return true; // Indicate success
+        await this.fetchBooks();
+
+        return true;
       } catch (error) {
-        console.error("Failed to update book:", error);
-        return false; // Indicate failure
+        console.error(`Failed to update book ${bookId}:`, error);
+        return false;
       } finally {
         this.isLoading = false;
       }
     },
-
-    /**
-     * Action to delete a book (Admin).
-     */
     async deleteBook(bookId) {
       this.isLoading = true;
       try {

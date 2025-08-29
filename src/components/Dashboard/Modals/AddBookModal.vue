@@ -27,7 +27,8 @@ const newBook = ref({
   category_id: '',
   stock: null,
   pages: null,
-  cover: null
+  cover: '',
+  publisherDate: ''
 })
 
 const authors = computed(() => authorStore.authors)
@@ -58,22 +59,39 @@ function saveBook() {
     !newBook.value.title ||
     !newBook.value.author_id ||
     !newBook.value.publisher_id ||
-    !newBook.value.category_id
+    !newBook.value.category_id ||
+    newBook.value.price === null
   ) {
     alert('Please fill in all required fields.')
     return
   }
 
   const formData = new FormData()
-  Object.keys(newBook.value).forEach((key) => {
-    if (newBook.value[key] !== null) {
-      formData.append(key, newBook.value[key])
-    }
-  })
 
+  // Append each field individually
+  formData.append('title', newBook.value.title)
+  formData.append('description', newBook.value.description || '')
+  formData.append('price', newBook.value.price)
+  formData.append('author_id', newBook.value.author_id)
+  formData.append('publisher_id', newBook.value.publisher_id)
+  formData.append('category_id', newBook.value.category_id)
+  formData.append('stock', newBook.value.stock ?? 0)
+  formData.append('pages', newBook.value.pages ?? 0)
+
+  // Optional fields
+  formData.append('publisherDate', newBook.value.publisherDate || new Date().toISOString().split('T')[0])
+
+  // Append cover file if selected
+  if (newBook.value.cover instanceof File) {
+    formData.append('cover', newBook.value.cover)
+  }
+
+  // Emit FormData to parent or send directly
   emit('save', formData)
   closeModal()
 }
+
+
 
 const openAddAttributeModal = (type) => {
   attributeType.value = type
@@ -258,23 +276,6 @@ const handleSaveAttribute = async (name) => {
         </form>
       </div>
       <div class="p-6 bg-gray-50 flex justify-end gap-4 sticky bottom-0 z-10">
-        <button
-          @click="closeModal"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button
-          @click="saveBook"
-          class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-hover)]"
-        >
-          Save Book
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-      <div class="p-6 bg-gray-50 flex justify-end gap-4">
         <button
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
