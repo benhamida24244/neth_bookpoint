@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import apiService from '@/services/api.js'
+import { useLanguageStore } from '@/stores/language' // Import language store
 import walpapperGreen from '@/assets/HomeIcon/Header/walpappergreen.png'
 import heroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
 import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
@@ -14,7 +15,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const primaryColor = ref(defaultColor)
   const currency = ref('$')
-  const language = ref('en')
+  const languageStore = useLanguageStore() // Get language store instance
 
   // Apply color to DOM
   function applyColorToDOM(color) {
@@ -59,7 +60,9 @@ export const useSettingsStore = defineStore('settings', () => {
     if (data) {
       setPrimaryColorByName(data.color_name)
       currency.value = data.currency || '$'
-      language.value = data.language_signal || 'en'
+      if (data.language) {
+        await languageStore.setLanguage(data.language) // Set language using language store
+      }
     }
 
     applyColorToDOM(primaryColor.value)
@@ -75,7 +78,7 @@ export const useSettingsStore = defineStore('settings', () => {
       await apiService.admin.settings.update({
         color_name: getColorNameByHex(primaryColor.value.primary),
         currency: currency.value,
-        language_signal: language.value
+        language_signal: languageStore.language // Get language from language store
       })
     } catch (err) {
       console.error('Failed to update settings:', err)
@@ -94,11 +97,6 @@ export const useSettingsStore = defineStore('settings', () => {
 
   function setCurrency(newCurrency) {
     currency.value = newCurrency
-    updateSettings()
-  }
-
-  function setLanguage(newLanguage) {
-    language.value = newLanguage
     updateSettings()
   }
 
@@ -143,10 +141,8 @@ export const useSettingsStore = defineStore('settings', () => {
   return {
     primaryColor,
     currency,
-    language,
     setPrimaryColor,
     setCurrency,
-    setLanguage,
     fetchSettings,
     updateSettings
   }

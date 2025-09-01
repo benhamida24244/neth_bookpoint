@@ -13,7 +13,7 @@ import { ref } from 'vue'
 import { useLanguageStore } from '@/stores/language'
 
 const languageStore = useLanguageStore()
-const selectedLanguage = ref(languageStore.currentLanguage)
+const selectedLanguage = ref(languageStore.language)
 
 const availableLanguages = [
   { code: 'en', name: 'English' },

@@ -40,7 +40,8 @@
 
       <!-- Language -->
       <label class="block font-medium">Language</label>
-      <select v-model="settingsStore.language" class="w-full p-2 border rounded">
+      <select v-model="settingsStore.language"
+      @change="languageStore.setLanguage($event.target.value)" class="w-full p-2 border rounded">
         <option value="en">🇺🇸 English</option>
         <option value="fr">🇫🇷 French</option>
         <option value="ar">🇩🇿 Arabic</option>
@@ -59,6 +60,7 @@ import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
 import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
 import HeroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
 import HeroCoverRed from '@/assets/HomeIcon/Hero/HeroCoverRed.png'
+import { useLanguageStore } from '@/stores/language'
 const primaryColors = ref([
   { name: 'Yellow', hex: {
     primary: '#c67913',
@@ -83,4 +85,5 @@ const primaryColors = ref([
   }}
 ])
 const settingsStore = useSettingsStore()
+const languageStore = useLanguageStore()
 </script>

@@ -29,9 +29,10 @@ const booksStore = useBooksStore()
 
 // --- Refs ---
 const { translations } = storeToRefs(languageStore)
-const authors = authorsStore.authors
-const PublishingHouses = PublishingHousesStore.publishingHouses
-const categories = categoriesStore.categories
+const { authors } = storeToRefs(authorsStore)
+const { publishingHouses } = storeToRefs(PublishingHousesStore)
+const { categories } = storeToRefs(categoriesStore)
+const { books } = storeToRefs(booksStore)
 
 // --- Banners Data ---
 const banner = {
@@ -67,7 +68,7 @@ onMounted(async () => {
     // Fetch all data in parallel
     await Promise.all([
       booksStore.fetchBooks(),
-      PublishingHousesStore.fetchPublishers(),
+      PublishingHousesStore.fetchPublisher(),
       authorsStore.fetchAuthors(),
       categoriesStore.fetchCategories()
     ])
@@ -91,26 +92,26 @@ onMounted(async () => {
     <Hero />
     <div class="w-full">
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.bestsellers || 'BestSellers' }}</h1>
-      <BookList />
+      <BookList :books="books" />
       <LargeBanner :banner="banner" />
       <SmallBannerList :smallBanner="smallBanner" />
       <LargeBanner :banner="bannerTow" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.everyonesTalkingAbout || 'Everyone\'s Talking About' }}</h1>
-      <BookList />
+      <BookList :books="books" />
       <SmallBannerList :smallBanner="smallBannerTwo" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestPaperbacks || 'Our Best Paperbacks' }}</h1>
-      <BookList />
+      <BookList :books="books" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.shopByCategory || 'Shop by Category' }}</h1>
       <CatigoryList :categories="categories"/>
       <LargeBanner :banner="bannerThree" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestYABooks || 'Our Best YA Books' }}</h1>
-      <BookList />
+      <BookList :books="books" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.authors || 'Authors' }}</h1>
       <AuthorList :authors="authors"/>
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.signedAndSpecialEditions || 'Signed & Special Editions' }}</h1>
-      <BookList />
+      <BookList :books="books" />
       <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.publishingHouse || 'Publishing House' }}</h1>
-      <PublishingHousesList :PublishingHouses="PublishingHouses"/>
+      <PublishingHousesList :PublishingHouses="publishingHouses"/>
       <Footer/>
     </div>
   </div>
