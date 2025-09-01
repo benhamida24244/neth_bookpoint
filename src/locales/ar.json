@@ -187,9 +187,117 @@
       "newThisMonth": "جديد هذا الشهر"
     }
   },
+  "login": {
+    "welcome": "مرحباً بك في نيث بوك بوينت!",
+    "discover": "اكتشف طريقة سلسة لاستكشاف الكتب والاستمتاع بميزات حصرية.",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "loggingIn": "جارٍ تسجيل الدخول...",
+    "login": "تسجيل الدخول",
+    "or": "أو",
+    "googleContinue": "المتابعة باستخدام جوجل",
+    "noAccount": "ليس لديك حساب؟",
+    "signUp": "إنشاء حساب"
+  },
+  "register": {
+    "passwordMismatch": "كلمات المرور غير متطابقة.",
+    "title": "أنشئ حسابك",
+    "subtitle": "انضم إلى مجتمع نيث بوك بوينت واستمتع بتجربة كتب مخصصة.",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+    "creatingAccount": "جارٍ إنشاء الحساب...",
+    "createAccount": "إنشاء حساب",
+    "or": "أو",
+    "googleSignUp": "التسجيل باستخدام جوجل",
+    "alreadyAccount": "هل لديك حساب بالفعل؟",
+    "login": "تسجيل الدخول"
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "subtitle": "يسعدنا أن نسمع منك! املأ النموذج أدناه أو تواصل معنا عبر الواتساب.",
+    "namePlaceholder": "اسمك",
+    "emailPlaceholder": "بريدك الإلكتروني",
+    "messagePlaceholder": "رسالتك",
+    "sendMessage": "إرسال الرسالة",
+    "orMessage": "أو راسلنا مباشرة عبر",
+    "whatsapp": "واتساب"
+  },
+  "shop": {
+    "title": "اكتشف كل الكتب هنا",
+    "subtitle": "اكتشف أفضل الكتب للقراءة الآن بما في ذلك العناوين الرائجة وتوصيات بائعي الكتب والإصدارات الجديدة والمزيد.",
+    "loading": "جار تحميل الكتب...",
+    "noBooks": "لا توجد كتب متاحة في الوقت الحالي. يرجى التحقق مرة أخرى في وقت لاحق."
+  },
+  "sidebar": {
+    "title": "تصفية والفئات",
+    "popularSections": {
+      "title": "الأقسام الشائعة",
+      "customerFavorites": "مفضلات العملاء",
+      "bestsellers": "الأكثر مبيعًا",
+      "teensYABestsellers": "الأكثر مبيعًا للمراهقين والشباب",
+      "kidsBestsellers": "الأكثر مبيعًا للأطفال",
+      "nyTimesBestsellers": "الأكثر مبيعًا في نيويورك تايمز®",
+      "newReleases": "الإصدارات الجديدة",
+      "comingSoon": "قريبًا",
+      "specialValues": "قيم خاصة",
+      "paperbacksUpTo25Off": "كتب ورقية بخصم يصل إلى 25٪",
+      "bestsellers30Off": "الأكثر مبيعًا بخصم 30٪",
+      "bookAnnex": "ملحق الكتاب",
+      "bnCollectibleEditions": "إصدارات B&N القابلة للتحصيل",
+      "specialCollections": "مجموعات خاصة",
+      "bestBooksOf2025": "أفضل كتب 2025 (حتى الآن)",
+      "ourMonthlyPicks": "اختياراتنا الشهرية",
+      "bookClubSelections": "اختيارات نادي الكتاب",
+      "bnExclusives": "حصريات B&N",
+      "thePaperbackStore": "متجر الكتب الورقية",
+      "bookAwards": "جوائز الكتب",
+      "boxedSets": "مجموعات معلبة",
+      "signedSpecialEditions": "إصدارات موقعة وخاصة"
+    },
+    "subjects": "المواضيع",
+    "loadingCategories": "جار تحميل الفئات...",
+    "noCategories": "لا توجد فئات متاحة.",
+    "price": {
+      "title": "السعر",
+      "under5": "أقل من 5 دولارات",
+      "p5to10": "5 - 10 دولارات",
+      "p10to25": "10 - 25 دولارًا",
+      "p25to50": "25 - 50 دولارًا",
+      "over50": "أكثر من 50 دولارًا"
+    },
+    "age": {
+      "title": "العمر",
+      "a0to2": "0 - 2 سنوات",
+      "a3to5": "3 - 5 سنوات",
+      "a6to8": "6 - 8 سنوات",
+      "a9to12": "9 - 12 سنة",
+      "teens": "المراهقون"
+    },
+    "language": {
+      "title": "اللغة",
+      "english": "الإنجليزية",
+      "german": "الألمانية",
+      "french": "الفرنسية",
+      "spanish": "الإسبانية",
+      "russian": "الروسية",
+      "italian": "الإيطالية",
+      "portuguese": "البرتغالية",
+      "finnish": "الفنلندية",
+      "welsh": "الويلزية",
+      "panjabi": "البنجابية",
+      "arabic": "العربية",
+      "chinese": "الصينية",
+      "dutch": "الهولندية",
+      "polish": "البولندية",
+      "turkish": "التركية"
+    }
+  },
   "profile": {
-    "title": "لوحة التحكم الخاصة بي",
-    "subtitle": "إدارة ملفك الشخصي، عربة التسوق، والطلبات",
+    "title": "الملف الشخصي",
+    "subtitle": "إدارة ملفك الشخصي وسجل الطلبات",
     "myProfile": "ملفي الشخصي",
     "activeAccount": "حساب نشط",
     "name": "الاسم",
@@ -205,6 +313,14 @@
     "order": "طلب",
     "noOrders": "لا توجد طلبات حتى الآن",
     "noOrdersSuggestion": "سيظهر سجل طلباتك هنا",
-    "quantity": "الكمية"
+    "quantity": "الكمية",
+    "loadingProfile": "جار تحميل الملف الشخصي...",
+    "totalOrdersText": "إجمالي الطلبات: {count}",
+    "loadingOrders": "جار تحميل الطلبات...",
+    "orderId": "الطلب #{id}",
+    "quantityText": "الكمية: {quantity}",
+    "noOrdersFound": "لم يتم العثور على طلبات",
+    "noOrdersYet": "لم تقم بأي طلبات بعد.",
+    "loginToView": "الرجاء تسجيل الدخول لعرض ملفك الشخصي."
   }
 }

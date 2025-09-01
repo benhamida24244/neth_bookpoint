@@ -44,9 +44,9 @@ const handleSubmit = async () => {
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Welcome to Neth BookPoint!</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">{{ $t('login.welcome') }}</h2>
           <p class="text-sm text-gray-600 italic">
-            Discover a seamless way to explore books and enjoy exclusive features.
+            {{ $t('login.discover') }}
           </p>
         </div>
 
@@ -57,7 +57,7 @@ const handleSubmit = async () => {
             name="email"
             type="email"
             required
-            placeholder="Email Address"
+            :placeholder="$t('login.emailPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -66,7 +66,7 @@ const handleSubmit = async () => {
             name="password"
             type="password"
             required
-            placeholder="Password"
+            :placeholder="$t('login.passwordPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -75,7 +75,7 @@ const handleSubmit = async () => {
           </div>
 
           <div class="text-right text-sm">
-            <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">Forgot password?</a>
+            <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">{{ $t('login.forgotPassword') }}</a>
           </div>
 
           <button
@@ -83,14 +83,14 @@ const handleSubmit = async () => {
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
             :disabled="authStore.loading"
           >
-            {{ authStore.loading ? 'Logging in...' : 'Login' }}
+            {{ authStore.loading ? $t('login.loggingIn') : $t('login.login') }}
           </button>
         </form>
 
         <!-- فاصل -->
         <div class="flex items-center gap-2 my-6 text-sm text-gray-400">
           <div class="flex-grow h-px bg-gray-200"></div>
-          OR
+          {{ $t('login.or') }}
           <div class="flex-grow h-px bg-gray-200"></div>
         </div>
 
@@ -103,16 +103,16 @@ const handleSubmit = async () => {
             alt="Google"
             class="h-5 w-5"
           />
-          <span class="text-sm font-medium text-black">Continue with Google</span>
+          <span class="text-sm font-medium text-black">{{ $t('login.googleContinue') }}</span>
         </button>
 
         <!-- رابط التسجيل -->
         <p class="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?
+          {{ $t('login.noAccount') }}
           <span
           class="text-[var(--color-primary)] font-semibold hover:underline"
           @click="$emit('openRegister')"
-          >Sign up</span>
+          >{{ $t('login.signUp') }}</span>
         </p>
       </div>
     </div>

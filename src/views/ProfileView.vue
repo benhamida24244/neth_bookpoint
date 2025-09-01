@@ -3,15 +3,12 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/Auth';
 import { useOrdersStore } from '@/stores/Orders';
-import { useI18n } from 'vue-i18n';
 
 const authStore = useAuthStore();
 const { user: currentUser, loading: authLoading } = storeToRefs(authStore);
 
 const ordersStore = useOrdersStore();
 const { orders, loading: ordersLoading, error: ordersError } = storeToRefs(ordersStore);
-
-const { t } = useI18n();
 
 onMounted(() => {
   ordersStore.fetchOrders();
@@ -24,12 +21,12 @@ onMounted(() => {
       <!-- Header Section -->
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] bg-clip-text text-transparent mb-2">
-          Profile
+          {{ $t('profile.title') }}
         </h1>
-        <p class="text-gray-600 text-lg">Manage your profile and order history</p>
+        <p class="text-gray-600 text-lg">{{ $t('profile.subtitle') }}</p>
       </div>
 
-      <div v-if="authLoading">Loading profile...</div>
+      <div v-if="authLoading">{{ $t('profile.loadingProfile') }}</div>
       <div v-else-if="currentUser" class="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <!-- User Profile Card -->
         <div class="xl:col-span-1">
@@ -44,8 +41,8 @@ onMounted(() => {
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-1">My Profile</h2>
-                <p class="text-green-600 text-sm font-medium">Active Account</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ $t('profile.myProfile') }}</h2>
+                <p class="text-green-600 text-sm font-medium">{{ $t('profile.activeAccount') }}</p>
               </div>
             </div>
 
@@ -55,7 +52,7 @@ onMounted(() => {
                   <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500 font-medium">Name</p>
+                  <p class="text-sm text-gray-500 font-medium">{{ $t('profile.name') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.name }}</p>
                 </div>
               </div>
@@ -64,7 +61,7 @@ onMounted(() => {
                   <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500 font-medium">Email</p>
+                  <p class="text-sm text-gray-500 font-medium">{{ $t('profile.email') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.email }}</p>
                 </div>
               </div>
@@ -82,14 +79,14 @@ onMounted(() => {
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
                 <div>
-                  <h2 class="text-2xl font-bold">Order History</h2>
-                  <p class="text-emerald-100">Total Orders: {{ orders.length }}</p>
+                  <h2 class="text-2xl font-bold">{{ $t('profile.orderHistory') }}</h2>
+                  <p class="text-emerald-100">{{ $t('profile.totalOrdersText', { count: orders.length }) }}</p>
                 </div>
               </div>
             </div>
 
             <div class="p-6">
-              <div v-if="ordersLoading" class="text-center">Loading orders...</div>
+              <div v-if="ordersLoading" class="text-center">{{ $t('profile.loadingOrders') }}</div>
               <div v-else-if="ordersError" class="text-center text-red-500">{{ ordersError }}</div>
               <div v-else-if="orders.length > 0" class="space-y-6">
                 <div v-for="order in orders" :key="order.id"
@@ -101,7 +98,7 @@ onMounted(() => {
                           <span class="text-blue-600 font-bold text-sm">#{{ order.id }}</span>
                         </div>
                         <div>
-                          <p class="font-semibold text-gray-800">Order #{{ order.id }}</p>
+                          <p class="font-semibold text-gray-800">{{ $t('profile.orderId', { id: order.id }) }}</p>
                           <p class="text-sm text-gray-600">{{ new Date(order.created_at).toLocaleDateString() }}</p>
                         </div>
                       </div>
@@ -110,7 +107,7 @@ onMounted(() => {
                           {{ order.status }}
                         </span>
                         <div class="text-right">
-                          <p class="text-sm text-gray-500">Total</p>
+                          <p class="text-sm text-gray-500">{{ $t('profile.total') }}</p>
                           <p class="text-xl font-bold text-gray-800">${{ parseFloat(order.total_price).toFixed(2) }}</p>
                         </div>
                       </div>
@@ -127,7 +124,7 @@ onMounted(() => {
                         <div class="space-y-1">
                           <p class="font-semibold text-sm text-gray-800 line-clamp-2">{{ item.book.title }}</p>
                           <div class="flex justify-between text-xs text-gray-600">
-                            <span>Quantity: {{ item.quantity }}</span>
+                            <span>{{ $t('profile.quantityText', { quantity: item.quantity }) }}</span>
                             <span class="font-medium">${{ parseFloat(item.price).toFixed(2) }}</span>
                           </div>
                         </div>
@@ -140,15 +137,15 @@ onMounted(() => {
                 <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">No Orders Found</h3>
-                <p class="text-gray-500">You haven't placed any orders yet.</p>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">{{ $t('profile.noOrdersFound') }}</h3>
+                <p class="text-gray-500">{{ $t('profile.noOrdersYet') }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div v-else class="text-center">
-          Please log in to view your profile.
+          {{ $t('profile.loginToView') }}
       </div>
     </div>
   </div>

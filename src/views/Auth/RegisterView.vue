@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/Auth';
 import coverAspect from '@/assets/Auth/RegisterImg.png';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const name = ref('');
 const email = ref('');
@@ -11,7 +13,7 @@ const password_confirmation = ref('');
 
 const handleSubmit = async () => {
   if (password.value !== password_confirmation.value) {
-    authStore.error = "Passwords do not match.";
+    authStore.error = t('register.passwordMismatch');
     return;
   }
   await authStore.register({
@@ -63,9 +65,9 @@ const handleSubmit = async () => {
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Create Your Account</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">{{ $t('register.title') }}</h2>
           <p class="text-sm text-gray-600 italic">
-            Join the Neth BookPoint community and enjoy a personalized book experience.
+            {{ $t('register.subtitle') }}
           </p>
         </div>
 
@@ -76,7 +78,7 @@ const handleSubmit = async () => {
             name="name"
             type="text"
             required
-            placeholder="Full Name"
+            :placeholder="$t('register.fullNamePlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -85,7 +87,7 @@ const handleSubmit = async () => {
             name="email"
             type="email"
             required
-            placeholder="Email Address"
+            :placeholder="$t('register.emailPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -94,7 +96,7 @@ const handleSubmit = async () => {
             name="password"
             type="password"
             required
-            placeholder="Password"
+            :placeholder="$t('register.passwordPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -103,7 +105,7 @@ const handleSubmit = async () => {
             name="confirm_password"
             type="password"
             required
-            placeholder="Confirm Password"
+            :placeholder="$t('register.confirmPasswordPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
@@ -116,14 +118,14 @@ const handleSubmit = async () => {
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
             :disabled="authStore.loading"
           >
-            {{ authStore.loading ? 'Creating Account...' : 'Create Account' }}
+            {{ authStore.loading ? $t('register.creatingAccount') : $t('register.createAccount') }}
           </button>
         </form>
 
         <!-- فاصل -->
         <div class="flex items-center gap-2 my-6 text-sm text-gray-400">
           <div class="flex-grow h-px bg-gray-200"></div>
-          OR
+          {{ $t('register.or') }}
           <div class="flex-grow h-px bg-gray-200"></div>
         </div>
 
@@ -136,14 +138,14 @@ const handleSubmit = async () => {
             alt="Google"
             class="h-5 w-5"
           />
-          <span class="text-sm font-medium text-black">Sign up with Google</span>
+          <span class="text-sm font-medium text-black">{{ $t('register.googleSignUp') }}</span>
         </button>
 
         <!-- تحويل لتسجيل الدخول -->
         <p class="mt-6 text-center text-sm text-gray-600">
-          Already have an account?
+          {{ $t('register.alreadyAccount') }}
           <span @click="$emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
-            >Login</span
+            >{{ $t('register.login') }}</span
           >
         </p>
       </div>

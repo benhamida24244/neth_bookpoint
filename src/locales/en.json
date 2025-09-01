@@ -187,9 +187,117 @@
       "newThisMonth": "New This Month"
     }
   },
+  "login": {
+    "welcome": "Welcome to Neth BookPoint!",
+    "discover": "Discover a seamless way to explore books and enjoy exclusive features.",
+    "emailPlaceholder": "Email Address",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Forgot password?",
+    "loggingIn": "Logging in...",
+    "login": "Login",
+    "or": "OR",
+    "googleContinue": "Continue with Google",
+    "noAccount": "Don’t have an account?",
+    "signUp": "Sign up"
+  },
+  "register": {
+    "passwordMismatch": "Passwords do not match.",
+    "title": "Create Your Account",
+    "subtitle": "Join the Neth BookPoint community and enjoy a personalized book experience.",
+    "fullNamePlaceholder": "Full Name",
+    "emailPlaceholder": "Email Address",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "creatingAccount": "Creating Account...",
+    "createAccount": "Create Account",
+    "or": "OR",
+    "googleSignUp": "Sign up with Google",
+    "alreadyAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're happy to hear from you! Fill the form below or reach us via WhatsApp.",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email",
+    "messagePlaceholder": "Your Message",
+    "sendMessage": "Send Message",
+    "orMessage": "Or message us directly via",
+    "whatsapp": "WhatsApp"
+  },
+  "shop": {
+    "title": "Explore All Books Here",
+    "subtitle": "Discover the best books to read right now including trending titles, bookseller recommendations, new releases and more.",
+    "loading": "Loading books...",
+    "noBooks": "No books available at the moment. Please check back later."
+  },
+  "sidebar": {
+    "title": "Filter & Categories",
+    "popularSections": {
+      "title": "Popular Sections",
+      "customerFavorites": "Customer Favorites",
+      "bestsellers": "Bestsellers",
+      "teensYABestsellers": "Teens & YA Bestsellers",
+      "kidsBestsellers": "Kids Bestsellers",
+      "nyTimesBestsellers": "NY Times® Bestsellers",
+      "newReleases": "New Releases",
+      "comingSoon": "Coming Soon",
+      "specialValues": "Special Values",
+      "paperbacksUpTo25Off": "Paperbacks Up to 25% Off",
+      "bestsellers30Off": "Bestsellers 30% Off",
+      "bookAnnex": "Book Annex",
+      "bnCollectibleEditions": "B&N Collectible Editions",
+      "specialCollections": "Special Collections",
+      "bestBooksOf2025": "Best Books of 2025 (So Far)",
+      "ourMonthlyPicks": "Our Monthly Picks",
+      "bookClubSelections": "Book Club Selections",
+      "bnExclusives": "B&N Exclusives",
+      "thePaperbackStore": "The Paperback Store",
+      "bookAwards": "Book Awards",
+      "boxedSets": "Boxed Sets",
+      "signedSpecialEditions": "Signed & Special Editions"
+    },
+    "subjects": "Subjects",
+    "loadingCategories": "Loading categories...",
+    "noCategories": "No categories available.",
+    "price": {
+      "title": "Price",
+      "under5": "Under $5",
+      "p5to10": "$5 - $10",
+      "p10to25": "$10 - $25",
+      "p25to50": "$25 - $50",
+      "over50": "Over $50"
+    },
+    "age": {
+      "title": "Age",
+      "a0to2": "0 - 2 Years",
+      "a3to5": "3 - 5 Years",
+      "a6to8": "6 - 8 Years",
+      "a9to12": "9 - 12 Years",
+      "teens": "Teens"
+    },
+    "language": {
+      "title": "Language",
+      "english": "English",
+      "german": "German",
+      "french": "French",
+      "spanish": "Spanish",
+      "russian": "Russian",
+      "italian": "Italian",
+      "portuguese": "Portuguese",
+      "finnish": "Finnish",
+      "welsh": "Welsh",
+      "panjabi": "Panjabi",
+      "arabic": "Arabic",
+      "chinese": "Chinese",
+      "dutch": "Dutch",
+      "polish": "Polish",
+      "turkish": "Turkish"
+    }
+  },
   "profile": {
-    "title": "My Dashboard",
-    "subtitle": "Manage your profile, cart, and orders",
+    "title": "Profile",
+    "subtitle": "Manage your profile and order history",
     "myProfile": "My Profile",
     "activeAccount": "Active Account",
     "name": "Name",
@@ -205,6 +313,14 @@
     "order": "Order",
     "noOrders": "No orders yet",
     "noOrdersSuggestion": "Your order history will appear here",
-    "quantity": "Qty"
+    "quantity": "Qty",
+    "loadingProfile": "Loading profile...",
+    "totalOrdersText": "Total Orders: {count}",
+    "loadingOrders": "Loading orders...",
+    "orderId": "Order #{id}",
+    "quantityText": "Quantity: {quantity}",
+    "noOrdersFound": "No Orders Found",
+    "noOrdersYet": "You haven't placed any orders yet.",
+    "loginToView": "Please log in to view your profile."
   }
 }
