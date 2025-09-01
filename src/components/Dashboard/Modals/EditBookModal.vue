@@ -63,6 +63,19 @@ const handleSaveAttribute = (name) => {
     editedBook.value.publishingHouse = name
   }
 }
+
+
+const handleImageUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      editedBook.value.cover = file // Store the file object
+      editedBook.value.imagePreview = e.target.result // Store the data URL for preview
+    }
+    reader.readAsDataURL(file)
+  }
+}
 </script>
 
 <template>
@@ -166,6 +179,32 @@ const handleSaveAttribute = (name) => {
                 >
                   New
                 </button>
+              </div>
+            </div>
+            <div>
+              <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
+              <input
+                v-model.number="editedBook.stock"
+                type="number"
+                id="stock"
+                class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
+              <input
+                type="file"
+                id="image"
+                @change="handleImageUpload"
+                class="mt-2 p-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+              />
+              <div v-if="editedBook.imagePreview" class="mt-4">
+                <img
+                  :src="editedBook.imagePreview"
+                  alt="Image Preview"
+                  class="h-32 w-32 object-cover rounded-md"
+                />
               </div>
             </div>
           </div>

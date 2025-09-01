@@ -6,6 +6,7 @@ import { defineAsyncComponent, onMounted } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { useLanguageStore } from '@/stores/language'
+import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
 
 // LAZY LOADING EXAMPLE:
@@ -23,6 +24,7 @@ const PublishingHousesList = defineAsyncComponent(() => import('@/components/Pub
 const PublishingHousesStore = usePublishingHouseStore()
 const authorsStore = useAuthorStore()
 const languageStore = useLanguageStore()
+const categoriesStore = useCategoriesStore()
 const { translations } = storeToRefs(languageStore)
 
 
@@ -79,6 +81,7 @@ const smallBannerTwo = [
 
 const authors = authorsStore.authors
 const PublishingHouses = PublishingHousesStore.publishingHouses
+const categories = categoriesStore.categories
 
 import { useBooksStore } from '@/stores/Books'
 
@@ -87,8 +90,9 @@ const booksStore = useBooksStore()
 onMounted(()=> {
   window.scrollTo(0,0)
   booksStore.fetchBooks()
-  PublishingHousesStore.fetchPublisher()
+  PublishingHousesStore.fetchPublishers()
   authorsStore.fetchAuthors()
+  categoriesStore.fetchCategories()
 })
 </script>
 
@@ -106,7 +110,7 @@ onMounted(()=> {
     <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestPaperbacks || 'Our Best Paperbacks' }}</h1>
     <BookList />
     <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.shopByCategory || 'Shop by Category' }}</h1>
-    <CatigoryList />
+    <CatigoryList :categories="categories"/>
     <LargeBanner :banner="bannerThree" />
     <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestYABooks || 'Our Best YA Books' }}</h1>
     <BookList />

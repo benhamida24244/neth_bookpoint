@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import apiService, * as api from '@/services/api.js'
+import apiService from '@/services/api.js'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({

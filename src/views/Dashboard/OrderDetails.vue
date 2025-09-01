@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAdminOrdersStore } from '@/stores/Admin/Orders';
 import { storeToRefs } from 'pinia';
-import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon, UserIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/vue/24/outline';
+import { CheckCircleIcon, ClockIcon, TruckIcon, UserIcon, EnvelopeIcon } from '@heroicons/vue/24/outline';
 
 const ORDER_STATUS = {
   PENDING: 'pending',

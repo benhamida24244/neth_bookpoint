@@ -1,17 +1,11 @@
 <script setup>
-import { InfoIcon, CreditCard, Truck, Package } from 'lucide-vue-next';
+import { InfoIcon } from 'lucide-vue-next';
 import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/Cart';
 import { useOrdersStore } from '@/stores/Orders';
 import { useAuthStore } from '@/stores/Auth';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import { useLanguageStore } from '@/stores/language';
-
-const icons = { Truck, Package };
-
-const languageStore = useLanguageStore();
-const { translations } = storeToRefs(languageStore);
 
 const cartStore = useCartStore();
 const { cartItems, cartTotal, loading: cartLoading } = storeToRefs(cartStore);
@@ -25,7 +19,6 @@ const { user } = storeToRefs(authStore);
 const router = useRouter();
 
 const selectedShipping = ref('delivery');
-const selectedPayment = ref('paypal');
 
 const formData = ref({
   receiverName: user.value?.name || '',
@@ -60,7 +53,7 @@ const handleSubmit = async () => {
   try {
     const newOrder = await ordersStore.createOrder();
     router.push({ name: 'payment-success', params: { orderId: newOrder.id } });
-  } catch (error) {
+  } catch {
     // Error is handled in the store and displayed via the `orderError` ref
   }
 };

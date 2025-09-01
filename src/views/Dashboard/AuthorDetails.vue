@@ -1,6 +1,5 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors';
-import { storeToRefs } from 'pinia';
 import { onMounted, ref ,computed} from 'vue';
 import { useRoute } from 'vue-router';
 

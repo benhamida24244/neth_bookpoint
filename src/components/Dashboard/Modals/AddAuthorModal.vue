@@ -97,18 +97,6 @@ const handleSubmit = async () => {
     console.error("Failed to submit from component:", err);
   }
 };
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-// --- NEW: Computed property to safely resolve the image URL ---
-
-// Improved: Always use currentImageUrl if available, else fallback to placeholder
-const imageUrl = computed(() => {
-  if (AuthorData.value.currentImageUrl) {
-    return AuthorData.value.currentImageUrl;
-  }
-  return 'https://via.placeholder.com/300x450.png?text=No+Image';
-});
-
-
 // كشف الدالة openModal للمكون الأب
 defineExpose({ openModal });
 </script>

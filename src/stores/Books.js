@@ -75,28 +75,36 @@ export const useBooksStore = defineStore("books", {
     async updateBook(bookId, bookData) {
       this.isLoading = true;
       try {
-        let response;
-        // Check if bookData is an instance of FormData
+        const formData = new FormData();
+
         if (bookData instanceof FormData) {
-          response = await apiService.admin.books.update(bookId, bookData);
+          // If it's already FormData, append its entries
+          for (let [key, value] of bookData.entries()) {
+            formData.append(key, value);
+          }
         } else {
-          // If not FormData, it's a regular JSON object
-          // This branch might be deprecated if updates always use FormData
-          const jsonData = { ...bookData };
-          delete jsonData.cover; // Remove cover to avoid sending empty file
-          response = await apiService.admin.books.update(bookId, jsonData);
+          // If it's a plain object, append its properties
+          for (const key in bookData) {
+            if (bookData[key] !== null && bookData[key] !== undefined) {
+              formData.append(key, bookData[key]);
+            }
+          }
         }
+
+        // Add method spoofing for PUT request
+        formData.append('_method', 'PUT');
+
+        const response = await apiService.admin.books.update(bookId, formData);
 
         // Update state after successful API call
         const updatedBook = response.data.data;
         const index = this.books.findIndex((b) => b.id === bookId);
         if (index !== -1) {
-          this.books[index] = updatedBook;
+          this.books[index] = { ...this.books[index], ...updatedBook };
         }
         if (this.book && this.book.id === bookId) {
-          this.book = updatedBook;
+          this.book = { ...this.book, ...updatedBook };
         }
-        await this.fetchBooks();
 
         return true;
       } catch (error) {

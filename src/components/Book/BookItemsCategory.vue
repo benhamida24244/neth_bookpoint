@@ -1,6 +1,4 @@
 <script setup>
-import { useBooksStore } from '@/stores/Books';
-import { useCartStore } from '@/stores/Cart';
 
 defineProps({
   book: {
@@ -8,9 +6,6 @@ defineProps({
     required: true
   }
 });
-
-const booksStore = useBooksStore();
-const cartStore = useCartStore();
 
 </script>
 <template>

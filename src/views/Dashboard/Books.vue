@@ -95,12 +95,13 @@ const filteredBooks = computed(() => {
 const getStatusClass = (status) => {
 
   if(status === 1) {
-        return 'bg-red-50 text-gray-700'
+    return 'bg-green-50 text-green-700'
   }
 
   else if(status === 2)
   {
-    return 'bg-green-50 text-green-700'
+    return 'bg-red-50 text-gray-700'
+
   }
   else {
   return 'bg-yellow-50 text-[var(--color-primary)]'
@@ -109,9 +110,9 @@ const getStatusClass = (status) => {
 }
 const getStatusItem = (status) => {
   if (status === 1) {
-    return 'Draft'
-  } else if (status === 2) {
     return 'Published'
+  } else if (status === 2) {
+    return 'Draft'
   } else {
     return 'Pending'
   }
@@ -133,7 +134,7 @@ const openEditModal = (book) => {
 }
 
 const handleUpdateBook = (updatedBook) => {
-  bookStore.updateBook(updatedBook)
+  bookStore.updateBook(updatedBook.id , updatedBook)
   showEditBookModal.value = false
   alert('Book updated successfully!')
 }

@@ -6,11 +6,11 @@ import { useBooksStore } from '@/stores/Books'
 
 // --- Constants ---
 const BOOK_STATUS = {
-  PUBLISHED: 'published',
-  PENDING: 'pending',
-  DRAFT: 'draft',
-  PROCESSING: 'processing',
-  SHIPPED: 'shipped'
+  PUBLISHED: 1,
+  PENDING: 2,
+  DRAFT: 3,
+  PROCESSING: 4, // Assuming more statuses might exist
+  SHIPPED: 5
 }
 
 const STATUS_CONFIG = {
@@ -55,7 +55,7 @@ const error = computed(() => booksStore.error)
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 const bookCoverUrl = computed(() => {
-  if (!selectedBook.value || !selectedBook.value.cover) return ''
+  if (!selectedBook.value || !selectedBook.value.cover) return 'data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="%23a0aec0"%3e%3cpath d="M16 2 L16 30 M2 16 L30 16"/%3e%3c/svg%3e'
   return selectedBook.value.cover.startsWith('/storage')
     ? `${apiBaseUrl}${selectedBook.value.cover}`
     : selectedBook.value.cover
@@ -63,7 +63,10 @@ const bookCoverUrl = computed(() => {
 
 const statusConfig = computed(() => {
   const book = selectedBook.value
-  return book && book.status ? STATUS_CONFIG[book.status] || null : null
+  if (!book || book.status === null || book.status === undefined) return null
+  // The API might return a string, so we parse it to be safe
+  const statusKey = parseInt(book.status, 10)
+  return STATUS_CONFIG[statusKey] || null
 })
 
 const stockStatusText = computed(() => {
@@ -89,13 +92,6 @@ const showSuccess = (message) => {
   successMessage.value = message
   showSuccessMessage.value = true
   setTimeout(() => (showSuccessMessage.value = false), 3000)
-}
-
-const parsePrice = (price) => {
-  if (typeof price === 'number') return price
-  if (typeof price !== 'string') return 0
-  const num = parseFloat(price.replace(/[^0-9.-]+/g, ""))
-  return isFinite(num) ? num : 0
 }
 
 // --- Core Logic ---
@@ -135,11 +131,12 @@ const openEditPopup = () => {
   editForm.value = {
     title: book.title || '',
     description: book.description || '',
-    author: book.author || '',
+    author: book.author ? book.author.name : '',
     pages: book.pages || '',
     stock: book.stock || '',
     price: book.price || '',
-    category: book.category || ''
+    category: book.category ? book.category.name : '',
+    coverPreview: bookCoverUrl.value
   }
   isPop.value = true
 }
@@ -152,7 +149,11 @@ const saveBookChanges = async () => {
   try {
     const formData = new FormData()
     for (const key in editForm.value) {
-      if (editForm.value[key] !== null) {
+      if (key === 'coverFile') {
+        if (editForm.value.coverFile) {
+          formData.append('cover', editForm.value.coverFile)
+        }
+      } else if (editForm.value[key] !== null) {
         formData.append(key, editForm.value[key])
       }
     }
@@ -167,6 +168,18 @@ const saveBookChanges = async () => {
     alert('Error updating book details. Please try again.')
   } finally {
     isSaving.value = false
+  }
+}
+
+const handleCoverImageUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    editForm.value.coverFile = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      editForm.value.coverPreview = e.target.result
+    }
+    reader.readAsDataURL(file)
   }
 }
 
@@ -217,9 +230,13 @@ const addOffer = async () => {
 
 const togglePublishStatus = async () => {
   if (!selectedBook.value || isUpdating.value) return
-  const newStatus = selectedBook.value.status === BOOK_STATUS.PUBLISHED ? BOOK_STATUS.DRAFT : BOOK_STATUS.PUBLISHED
-  await updateBookStatus(newStatus)
-}
+  // Toggle between Published (1) and Draft (3)
+  const newStatus = parseInt(selectedBook.value.status, 10) === BOOK_STATUS.PUBLISHED 
+    ? BOOK_STATUS.DRAFT 
+    : BOOK_STATUS.PUBLISHED;
+  console.log('Toggling status to:', newStatus);
+  await updateBookStatus(newStatus);
+};
 
 const toggleOfferStatus = (offer) => {
   offer.active = !offer.active
@@ -280,7 +297,7 @@ watch(bookId, (newId, oldId) => {
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
-              <input v-model="editForm.author.name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
+              <input v-model="editForm.author" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Pages</label>
@@ -296,12 +313,19 @@ watch(bookId, (newId, oldId) => {
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <input v-model="editForm.category.name" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
+              <input v-model="editForm.category" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
             </div>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea v-model="editForm.description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Description"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+            <input type="file" @change="handleCoverImageUpload" class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+            <div v-if="editForm.coverPreview" class="mt-4">
+              <img :src="editForm.coverPreview" alt="Image Preview" class="h-32 w-32 object-cover rounded-md" />
+            </div>
           </div>
           <div class="flex justify-end space-x-3 pt-4">
             <button type="button" @click="closeEditPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
@@ -404,7 +428,7 @@ watch(bookId, (newId, oldId) => {
                 <button @click="openDeleteConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Delete</button>
                 <button @click="openOfferPopup" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Offer</button>
                 <button @click="togglePublishStatus" :disabled="isUpdating" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors">
-                  {{ isUpdating ? '...' : (selectedBook.status === 'published' ? 'Unpublish' : 'Publish') }}
+                  {{ isUpdating ? '...' : (parseInt(selectedBook.status, 10) === 1 ? 'Unpublish' : 'Publish') }}
                 </button>
             </div>
           </div>

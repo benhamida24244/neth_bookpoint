@@ -1,6 +1,6 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books';
-import { onMounted, computed } from 'vue';
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const bookStore = useBooksStore()

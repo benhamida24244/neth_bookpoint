@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import apiService from '@/services/api.js'
-import walpapper from '@/assets/HomeIcon/Header/walpapper.png'
-import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
 import walpapperGreen from '@/assets/HomeIcon/Header/walpappergreen.png'
 import heroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
 import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'

@@ -59,7 +59,7 @@ const auth = {
   logout: () => api.post("/logout"),
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
-  uploadAvatar: (formData) => uploadFile("/user/avatar", formData),
+  uploadAvatar: (formData) => createFile("/user/avatar", formData),
 };
 
 // ================================================================

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import CatigoryItem from './CatigoryItem.vue'
-import { useCategoriesStore } from '@/stores/Categories'
-const categoriesStore = useCategoriesStore()
-const categories = categoriesStore.categories
+
+defineProps({
+  categories: {
+    type: Array,
+    required: true
+  }
+})
 </script>
 
 <template>
