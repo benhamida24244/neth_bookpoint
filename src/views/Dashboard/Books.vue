@@ -15,9 +15,9 @@ const selectedBook = ref(null)
 
 const filters = ref([
   { label: 'All Books', value: 'All Books' },
-  { label: 'Published', value: 'published' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Draft', value: 'draft' },
+  { label: 'Published', value: 1 },
+  { label: 'Pending', value: 2 },
+  { label: 'Draft', value: 3 },
 ])
 
 const settingStore = useSettingsStore()
@@ -75,7 +75,8 @@ const filteredBooks = computed(() => {
   let filtered = books.value
 
   if (activeFilter.value !== 'All Books') {
-    filtered = filtered.filter((book) => book.status === activeFilter.value)
+    // Ensure book.status is a number for comparison
+    filtered = filtered.filter((book) => Number(book.status) === activeFilter.value)
   }
 
   if (searchQuery.value.trim()) {
@@ -83,8 +84,8 @@ const filteredBooks = computed(() => {
     filtered = filtered.filter(
       (book) =>
         (book.title || '').toLowerCase().includes(query) ||
-        (book.author || '').toLowerCase().includes(query) ||
-        (book.publishingHouse || '').toLowerCase().includes(query),
+        (book.author?.name || '').toLowerCase().includes(query) ||
+        (book.publisher?.name || '').toLowerCase().includes(query)
     )
   }
 
@@ -93,28 +94,28 @@ const filteredBooks = computed(() => {
 
 // تصنيف الحالة
 const getStatusClass = (status) => {
-
-  if(status === 1) {
-    return 'bg-green-50 text-green-700'
-  }
-
-  else if(status === 2)
-  {
-    return 'bg-red-50 text-gray-700'
-
-  }
-  else {
-  return 'bg-yellow-50 text-[var(--color-primary)]'
-
+  const numericStatus = Number(status)
+  if (numericStatus === 1) {
+    return 'bg-green-50 text-green-700' // Published
+  } else if (numericStatus === 2) {
+    return 'bg-yellow-50 text-yellow-700' // Pending
+  } else if (numericStatus === 3) {
+    return 'bg-red-50 text-red-700' // Draft
+  } else {
+    return 'bg-gray-50 text-gray-700' // Default
   }
 }
+
 const getStatusItem = (status) => {
-  if (status === 1) {
+  const numericStatus = Number(status)
+  if (numericStatus === 1) {
     return 'Published'
-  } else if (status === 2) {
+  } else if (numericStatus === 2) {
+    return 'Pending'
+  } else if (numericStatus === 3) {
     return 'Draft'
   } else {
-    return 'Pending'
+    return 'Unknown'
   }
 }
 
