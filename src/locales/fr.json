@@ -48,7 +48,8 @@
     "authors": "Auteurs",
     "login": "Se connecter",
     "signup": "S'inscrire",
-    "contact": "Contact"
+    "contact": "Contact",
+    "logout": "Se déconnecter"
   },
   "footer": {
     "about": "Visitez nos succursales et inscrivez-vous sur notre plateforme en ligne pour profiter d'un maximum d'avantages !",

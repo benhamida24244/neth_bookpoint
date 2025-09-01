@@ -8,7 +8,7 @@ import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
 import { useLanguageStore } from '@/stores/language'
-import { useUserStore } from '@/stores/Users'
+import { useAuthStore } from '@/stores/Auth'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
 // Ref for mobile menu state
@@ -56,11 +56,15 @@ const isActive = (link) => {
 // Pinia stores
 const settingsStore = useSettingsStore()
 const languageStore = useLanguageStore()
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 // Reactive state from stores
 const { translations } = storeToRefs(languageStore)
-const { isLoggedIn } = storeToRefs(userStore)
+const { isAuthenticated } = storeToRefs(authStore)
+
+const logout = () => {
+  authStore.logout()
+}
 
 const headerBackground = computed(() => {
   const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
@@ -150,7 +154,7 @@ const { cartCount } = storeToRefs(cartStore)
             >{{ cartCount }}</span
           >
         </RouterLink>
-        <div v-if="isLoggedIn" class="flex items-center">
+        <div v-if="isAuthenticated" class="flex items-center space-x-4">
           <RouterLink to="/profile">
             <img
               src="https://randomuser.me/api/portraits/men/75.jpg"
@@ -158,6 +162,12 @@ const { cartCount } = storeToRefs(cartStore)
               class="w-10 h-10 rounded-full"
             />
           </RouterLink>
+          <button
+            @click="logout"
+            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
+          >
+            {{ translations.header?.logout || 'Logout' }}
+          </button>
         </div>
         <template v-else>
           <button

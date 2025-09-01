@@ -48,7 +48,8 @@
     "authors": "Authors",
     "login": "Login",
     "signup": "Sign up",
-    "contact": "Contact"
+    "contact": "Contact",
+    "logout": "Logout"
   },
   "footer": {
     "about": "Visit our branches and register for our online platform to enjoy maximum benefits!",
