@@ -23,7 +23,7 @@ onMounted(() => {
           >
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">{{ translations.dashboard?.recentBooks?.emptyHeader }}</h3>
 
         </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">

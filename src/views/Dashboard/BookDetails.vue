@@ -270,7 +270,7 @@ watch(bookId, (newId, oldId) => {
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md text-center">
-        <strong class="font-bold">Error!</strong>
+        <strong class="font-bold">{{ translations.dashboard?.bookDetails?.error }}</strong>
         <span class="block sm:inline"> {{ error }}</span>
         <button @click="loadBook" class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
           Try Again
@@ -279,58 +279,58 @@ watch(bookId, (newId, oldId) => {
     </div>
 
     <div v-if="showSuccessMessage" class="fixed top-4 right-4 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-      <strong class="font-bold">Success!</strong>
+      <strong class="font-bold">{{ translations.dashboard?.bookDetails?.success }}</strong>
       <span class="block sm:inline"> {{ successMessage }}</span>
     </div>
 
     <div v-if="isPop" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Edit Book Details</h2>
+          <h2 class="text-2xl font-bold text-gray-900">{{ translations.dashboard?.bookDetails?.editTitle }}</h2>
           <button @click="closeEditPopup" class="text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <form @submit.prevent="saveBookChanges" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.title }}</label>
               <input v-model="editForm.title" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Title">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.author }}</label>
               <input v-model="editForm.author" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Pages</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.pages }}</label>
               <input v-model="editForm.pages" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Number of Pages">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.stock }}</label>
               <input v-model="editForm.stock" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stock Quantity">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.price }}</label>
               <input v-model="editForm.price" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="$0.00">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.category }}</label>
               <input v-model="editForm.category" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.description }}</label>
             <textarea v-model="editForm.description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Description"></textarea>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.cover }}</label>
             <input type="file" @change="handleCoverImageUpload" class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
             <div v-if="editForm.coverPreview" class="mt-4">
               <img :src="editForm.coverPreview" alt="Image Preview" class="h-32 w-32 object-cover rounded-md" />
             </div>
           </div>
           <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" @click="closeEditPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
+            <button type="button" @click="closeEditPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
             <button type="submit" :disabled="isSaving" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-md hover:bg-[var(--color-primary)] disabled:opacity-50">
-              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+              {{ isSaving ? 'Saving...' : '{{ translations.dashboard?.bookDetails?.save }}' }}
             </button>
           </div>
         </form>
@@ -339,10 +339,10 @@ watch(bookId, (newId, oldId) => {
 
     <div v-if="isDeleteConfirmOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.deleteConfirmTitle }}</h3>
         <p class="text-gray-700 mb-6">Are you sure you want to delete "{{ selectedBook?.title }}"? This action cannot be undone.</p>
         <div class="flex justify-end space-x-3">
-          <button @click="closeDeleteConfirm" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
+          <button @click="closeDeleteConfirm" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
           <button @click="deleteBook" :disabled="isUpdating" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
             {{ isUpdating ? 'Deleting...' : 'Delete' }}
           </button>
@@ -353,15 +353,15 @@ watch(bookId, (newId, oldId) => {
     <div v-if="isOfferPopupOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-md w-full">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Add Offer/Discount</h2>
+          <h2 class="text-2xl font-bold text-gray-900">{{ translations.dashboard?.bookDetails?.addOfferTitle }}</h2>
           <button @click="closeOfferPopup" class="text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <form @submit.prevent="addOffer" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.discountType }}</label>
             <select v-model="offerForm.discountType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="percentage">Percentage (%)</option>
-              <option value="fixed">Fixed Amount ($)</option>
+              <option value="percentage">{{ translations.dashboard?.bookDetails?.percentage }}</option>
+              <option value="fixed">{{ translations.dashboard?.bookDetails?.fixed }}</option>
             </select>
           </div>
           <div>
@@ -370,20 +370,20 @@ watch(bookId, (newId, oldId) => {
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.startDate }}</label>
               <input v-model="offerForm.startDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">End Date (Optional)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.endDate }}</label>
               <input v-model="offerForm.endDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.description }}</label>
             <textarea v-model="offerForm.description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
           </div>
           <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" @click="closeOfferPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
+            <button type="button" @click="closeOfferPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
             <button type="submit" :disabled="isSaving" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50">
               {{ isSaving ? 'Adding...' : 'Add Offer' }}
             </button>
@@ -400,8 +400,8 @@ watch(bookId, (newId, oldId) => {
               <p class="text-sm text-gray-500 mt-1">{{ getCurrentDate() }}</p>
             </div>
             <div class="flex space-x-3">
-              <button @click="printBook" class="px-5 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition-colors">Print</button>
-              <button @click="goBack" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Back</button>
+              <button @click="printBook" class="px-5 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition-colors"{{ translations.dashboard?.bookDetails?.print }}</button>
+              <button @click="goBack" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"{{ translations.dashboard?.bookDetails?.back }}</button>
             </div>
           </div>
       </header>
@@ -417,16 +417,16 @@ watch(bookId, (newId, oldId) => {
                 <p><strong>Author:</strong> {{ selectedBook.author.name }}</p>
                 </div>
             <div class="flex items-center">
-              <strong class="text-lg text-gray-700 mr-2">Status:</strong>
+              <strong class="text-lg text-gray-700 mr-2">{{ translations.dashboard?.bookDetails?.status }}</strong>
               <span v-if="statusConfig" :class="statusConfig.color" class="px-2 py-1 rounded-full text-sm font-medium flex items-center">
                 <component :is="statusConfig.icon" class="w-4 h-4 mr-1" />
                 {{ statusConfig.label }}
               </span>
             </div>
             <div class="flex flex-wrap gap-3 mt-6">
-                <button @click="openEditPopup" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Edit</button>
-                <button @click="openDeleteConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Delete</button>
-                <button @click="openOfferPopup" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Offer</button>
+                <button @click="openEditPopup" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"{{ translations.dashboard?.bookDetails?.edit }}</button>
+                <button @click="openDeleteConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"{{ translations.dashboard?.bookDetails?.delete }}</button>
+                <button @click="openOfferPopup" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"{{ translations.dashboard?.bookDetails?.addOffer }}</button>
                 <button @click="togglePublishStatus" :disabled="isUpdating" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors">
                   {{ isUpdating ? '...' : (parseInt(selectedBook.status, 10) === 1 ? 'Unpublish' : 'Publish') }}
                 </button>
@@ -435,21 +435,21 @@ watch(bookId, (newId, oldId) => {
         </div>
 
         <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mt-8">
-            <h3 class="font-bold text-2xl text-gray-900 mb-4">Availability & Pricing</h3>
+            <h3 class="font-bold text-2xl text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.availabilityPricing }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div class="flex items-center space-x-2 mb-2">
-                  <p class="text-lg text-gray-700"><strong>Price:</strong></p>
+                  <p class="text-lg text-gray-700"><strong>{{ translations.dashboard?.bookDetails?.priceLabel }}</strong></p>
                   <span v-if="selectedBook.discountedPrice" class="text-gray-500 line-through">{{ selectedBook.price }}</span>
                   <span :class="selectedBook.discountedPrice ? 'text-red-600 font-bold text-xl' : 'text-green-600 font-semibold text-xl'">
                     {{ selectedBook.discountedPrice || selectedBook.price }}
                   </span>
                 </div>
-                <p class="text-lg text-gray-700 mb-4"><strong>Stock Status:</strong> <span :class="stockStatusColor" class="font-semibold">{{ stockStatusText }}</span></p>
+                <p class="text-lg text-gray-700 mb-4"><strong>Stock {{ translations.dashboard?.bookDetails?.status }}</strong> <span :class="stockStatusColor" class="font-semibold">{{ stockStatusText }}</span></p>
               </div>
               <div>
                 <div class="flex items-center text-lg text-gray-700 mb-2">
-                    <strong>Rating:</strong>
+                    <strong>{{ translations.dashboard?.bookDetails?.ratingLabel }}</strong>
                     <span class="ml-2 flex text-yellow-400">
                       </span>
                     <span class="ml-2">({{ selectedBook.rating }} out of 5)</span>
@@ -459,7 +459,7 @@ watch(bookId, (newId, oldId) => {
         </section>
 
         <section v-if="selectedBook.offers && selectedBook.offers.length > 0" class="bg-white rounded-lg shadow-md p-6 md:p-8 mt-8">
-            <h3 class="font-bold text-2xl text-gray-900 mb-4">Manage Offers</h3>
+            <h3 class="font-bold text-2xl text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.manageOffers }}</h3>
             <div class="space-y-4">
               <div v-for="offer in selectedBook.offers" :key="offer.id" class="border border-gray-200 rounded-lg p-4" :class="offer.active ? 'bg-green-50 border-green-200' : 'bg-gray-50'">
                   <div class="flex justify-between items-start">

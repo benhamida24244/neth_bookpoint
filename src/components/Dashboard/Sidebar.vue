@@ -154,7 +154,7 @@ watch(
           />
           <div>
             <h2 class="font-semibold text-sm text-gray-800">{{ user.name }}</h2>
-            <p class="text-xs text-gray-500">Administrator</p>
+            <p class="text-xs text-gray-500">{{ translations.dashboard?.sidebar?.administrator }}</p>
           </div>
         </div>
       </div>

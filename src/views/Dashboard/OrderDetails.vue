@@ -77,13 +77,13 @@ watch(() => route.params.id, (newId) => {
     </div>
     <div v-else-if="error" class="text-center p-8">
       <p class="text-red-500">{{ error }}</p>
-      <button @click="goBack" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg">Go Back</button>
+      <button @click="goBack" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg">{{ translations.dashboard?.orderDetails?.goBack }}</button>
     </div>
     <div v-else-if="selectedOrder" class="max-w-4xl mx-auto px-4 md:px-6 py-8">
       <Transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0" enter-to-class="opacity-100" leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100" leave-to-class="opacity-0">
         <div v-if="showSuccessMessage" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
           <CheckCircleIcon class="h-5 w-5 text-green-600 mr-3" />
-          <span class="text-green-800 font-medium">Order status updated successfully</span>
+          <span class="text-green-800 font-medium">{{ translations.dashboard?.orderDetails?.updateSuccess }}</span>
         </div>
       </Transition>
 
@@ -100,7 +100,7 @@ watch(() => route.params.id, (newId) => {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Status</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.orderDetails?.statusTitle }}</h2>
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center">
                 <component :is="statusConfig.icon" class="h-6 w-6 mr-3" :class="statusConfig.color.split(' ')[0]" />
@@ -108,7 +108,7 @@ watch(() => route.params.id, (newId) => {
               </div>
             </div>
             <div class="mt-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Update Order Status</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Update {{ translations.dashboard?.orderDetails?.statusTitle }}</label>
               <select @change="updateOrderStatus($event.target.value)" :value="selectedOrder.status" :disabled="isUpdating" class="w-full border border-gray-300 rounded-lg p-2">
                 <option v-for="option in statusOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
               </select>
@@ -116,7 +116,7 @@ watch(() => route.params.id, (newId) => {
           </div>
 
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-             <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
+             <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.orderDetails?.itemsTitle }}</h2>
              <div v-for="item in selectedOrder.items" :key="item.id" class="flex items-center space-x-4 mb-4">
                 <img :src="item.book.cover_image_url" :alt="item.book.title" class="w-20 h-28 object-cover rounded-lg border">
                 <div class="flex-1">
@@ -131,14 +131,14 @@ watch(() => route.params.id, (newId) => {
 
         <div class="space-y-6">
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Customer Information</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.orderDetails?.customerInfoTitle }}</h2>
             <div class="space-y-3">
               <div class="flex items-center"><UserIcon class="h-5 w-5 text-gray-400 mr-3" /><span>{{ selectedOrder.customer.name }}</span></div>
               <div class="flex items-center"><EnvelopeIcon class="h-5 w-5 text-gray-400 mr-3" /><a :href="`mailto:${selectedOrder.customer.email}`" class="text-blue-600 hover:underline">{{ selectedOrder.customer.email }}</a></div>
             </div>
           </div>
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.orderDetails?.summaryTitle }}</h2>
             <div class="space-y-2">
                 <div class="flex justify-between"><span class="text-gray-600">Total</span><span class="font-medium">${{ parseFloat(selectedOrder.total_price).toFixed(2) }}</span></div>
             </div>
