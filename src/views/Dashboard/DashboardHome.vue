@@ -26,7 +26,7 @@ const settingStore = useSettingsStore()
 const info = computed(() => [
   {
     id: 1,
-    name: translations.value.dashboard?.books,
+    name: translations.value.dashboard?.booksd,
     icon: BookOpen,
     Num: stats.value.books
   },
@@ -38,7 +38,7 @@ const info = computed(() => [
   },
   {
     id: 3,
-    name: translations.value.dashboard?.clients,
+    name: translations.value.dashboard?.clientsd,
     icon: Users,
     Num: stats.value.clients
   },

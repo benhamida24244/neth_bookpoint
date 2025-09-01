@@ -1,10 +1,13 @@
 <script setup>
 import { useOrdersStore } from '@/stores/Orders';
 import { useSettingsStore } from '@/stores/settings';
+import { useLanguageStore } from '@/stores/language';
 import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const settingsStore = useSettingsStore()
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 const ordersStore = useOrdersStore()
 const { orders } = storeToRefs(ordersStore)
 

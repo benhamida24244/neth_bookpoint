@@ -128,9 +128,9 @@
   },
   "dashboard": {
     "overview": "Aperçu du tableau de bord",
-    "books": "Livres",
+    "booksd": "Livres",
     "ordersToday": "Commandes du jour",
-    "clients": "Clients",
+    "clientsd": "Clients",
     "salesToday": "Ventes du jour",
     "sidebar": {
       "dashboard": "Tableau de bord",

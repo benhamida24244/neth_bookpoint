@@ -1,10 +1,13 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books';
-import { onMounted } from 'vue';
+import { useLanguageStore } from '@/stores/language';
+import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const bookStore = useBooksStore()
 const { RecentBooks } = storeToRefs(bookStore)
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 const apiBaseurl = import.meta.env.VITE_API_BASE_URL
 onMounted(() => {
   bookStore.fetchBooks()

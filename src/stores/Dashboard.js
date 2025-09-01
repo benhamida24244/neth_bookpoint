@@ -40,7 +40,12 @@ export const useDashboardStore = defineStore('dashboard', {
       try {
         const response = await apiService.admin.dashboard();
         const data = response.data;
-        this.stats = data.stats;
+        if (data.stats) {
+          this.stats.books = data.stats.books ?? this.stats.books;
+          this.stats.ordersToday = data.stats.ordersToday ?? this.stats.ordersToday;
+          this.stats.clients = data.stats.clients ?? this.stats.clients;
+          this.stats.salesToday = data.stats.salesToday ?? this.stats.salesToday;
+        }
         this.dailySales = data.dailySales;
         this.dailyOrders = data.dailyOrders;
         this.categorySales = data.categorySales;

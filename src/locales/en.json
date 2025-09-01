@@ -128,9 +128,9 @@
   },
   "dashboard": {
     "overview": "Dashboard Overview",
-    "books": "Books",
+    "booksd": "Books",
     "ordersToday": "Orders Today",
-    "clients": "Clients",
+    "clientsd": "Clients",
     "salesToday": "Sales Today",
     "sidebar": {
       "dashboard": "Dashboard",

@@ -229,7 +229,10 @@ const formatNumber = (number) => {
           </div>
           <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
             <div><span class="font-medium">Orders:</span> {{ formatNumber(house.orders) }}</div>
-            <div><span class="font-medium">Status:</span> <span :class="(formatStatus(house.status) ==='Active')? 'bg-green-400 p-1 rounded-2xl':'bg-red-400 p-1 rounded-2xl'">{{ formatStatus(house.status) }}</span></div>
+                        <div><span class="font-medium">Status:</span> <span :class="{
+              'bg-green-400 p-1 rounded-2xl': formatStatus(house.status) === 'Active',
+              'bg-red-400 p-1 rounded-2xl': formatStatus(house.status) !== 'Active'
+            }">{{ formatStatus(house.status) }}</span></div>
             <div><span class="font-medium">Books:</span> {{ formatNumber(house.nmBook) }}</div>
           </div>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pt-3 border-t">
@@ -285,7 +288,15 @@ const formatNumber = (number) => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">#{{ house.id }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ formatNumber(house.orders) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500"><span :class="(formatStatus(house.status) ==='Active')? 'bg-green-400':'bg-red-400'" class="text-white text-sm p-1 px-2 rounded-2xl">{{ formatStatus(house.status) }}</span></td>
+                                          <td class="px-6 py-4 whitespace-nowrap text-gray-500"><span :class="{
+                'bg-green-400': formatStatus(house.status) === 'Active',
+                'bg-red-400': formatStatus(house.status) !== 'Active',
+                'text-white': true,
+                'text-sm': true,
+                'p-1': true,
+                'px-2': true,
+                'rounded-2xl': true
+              }">{{ formatStatus(house.status) }}</span></td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ formatNumber(house.nmBook) }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex items-center space-x-4">

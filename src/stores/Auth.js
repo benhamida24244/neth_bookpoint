@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true;
       this.error = null;
       try {
-        const response = await apiService.auth.customerLogin(credentials);
+        const response = await apiService.auth.login(credentials);
         const { user, token } = response.data;
         this.user = user;
         this.token = token;
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true;
       this.error = null;
       try {
-        const response = await apiService.auth.customerRegister(userData);
+        const response = await apiService.auth.register(userData);
         const { user, token } = response.data;
         this.user = user;
         this.token = token;

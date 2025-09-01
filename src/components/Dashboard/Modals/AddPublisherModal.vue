@@ -102,7 +102,7 @@ defineExpose({ openModal });
 <template>
   <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
     <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative transform transition-all" @click.stop>
-      <h2 class="text-xl font-bold mb-4">{{ isEditMode ? 'Edit Publisher' : '{{ translations.dashboard?.addPublisherModal?.title }}' }}</h2>
+      <h2 class="text-xl font-bold mb-4">{{ isEditMode ? 'Edit Publisher' : translations.dashboard?.addPublisherModal?.title }}</h2>
 
       <div v-if="validationError || error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
         <span class="block sm:inline">{{ validationError || error }}</span>
@@ -116,12 +116,12 @@ defineExpose({ openModal });
           </div>
 
           <div>
-            <label for="publisherDescription" class="block mb-2 font-medium"{{ translations.dashboard?.addPublisherModal?.labels?.description }}</label>
+            <label for="publisherDescription" class="block mb-2 font-medium">{{ translations.dashboard?.addPublisherModal?.labels?.description }}</label>
             <textarea id="publisherDescription" v-model="publisherData.description" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
           </div>
 
           <div>
-            <label for="publisherImage" class="block mb-2 font-medium"{{ translations.dashboard?.addPublisherModal?.labels?.image }}</label>
+            <label for="publisherImage" class="block mb-2 font-medium">{{ translations.dashboard?.addPublisherModal?.labels?.image }}</label>
             <div v-if="publisherData.currentImageUrl" class="mt-2 mb-4">
               <img :src="publisherData.currentImageUrl" alt="Image Preview" class="h-24 w-24 object-cover rounded-md border">
             </div>
@@ -131,7 +131,7 @@ defineExpose({ openModal });
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-          <button type="button" @click="closeModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300" :disabled="isLoading"{{ translations.dashboard?.addPublisherModal?.cancel }}</button>
+          <button type="button" @click="closeModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300" :disabled="isLoading">{{ translations.dashboard?.addPublisherModal?.cancel }}</button>
           <button type="submit" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-opacity-90 flex items-center" :disabled="isLoading">
             <svg v-if="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

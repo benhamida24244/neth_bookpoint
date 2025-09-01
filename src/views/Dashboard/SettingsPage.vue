@@ -97,5 +97,4 @@ const primaryColors = ref([
   }}
 ])
 const settingsStore = useSettingsStore()
-const languageStore = useLanguageStore()
 </script>
