@@ -127,6 +127,10 @@
     "searchPlaceholder": "Search for a book...",
     "searchButton": "Search"
   },
+  "orders": {
+    "title": "My Orders",
+    "subtitle": "Manage your orders and purchase history"
+  },
   "dashboard": {
     "overview": "Dashboard Overview",
     "booksd": "Books",

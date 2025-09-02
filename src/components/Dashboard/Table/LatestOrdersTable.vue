@@ -12,7 +12,7 @@ const ordersStore = useOrdersStore()
 const { orders } = storeToRefs(ordersStore)
 
 onMounted(() => {
-  ordersStore.fetchOrders()
+    ordersStore.fetchOrders()
 })
 
 const recentOrders = computed(() => orders.value.slice(-5))

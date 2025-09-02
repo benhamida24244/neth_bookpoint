@@ -127,6 +127,10 @@
     "searchPlaceholder": "ابحث عن كتاب...",
     "searchButton": "بحث"
   },
+  "orders": {
+    "title": "طلباتي",
+    "subtitle": "إدارة طلباتك وسجل مشترياتاتك"
+  },
   "dashboard": {
     "overview": "نظرة عامة على لوحة التحكم",
     "booksd": " عدد الكتب",

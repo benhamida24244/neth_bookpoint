@@ -20,7 +20,7 @@ const OrdersStore = useOrdersStore()
 const { orders } = storeToRefs(OrdersStore)
 
 onMounted(() => {
-  OrdersStore.fetchOrders()
+    OrdersStore.fetchOrders()
 })
 
 // بيانات الطلبات اليومية (افتراضية حاليًا)

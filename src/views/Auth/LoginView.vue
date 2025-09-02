@@ -8,7 +8,7 @@ const email = ref('');
 const password = ref('');
 
 const handleSubmit = async () => {
-  await authStore.login({ email: email.value, password: password.value });
+    await authStore.login({ email: email.value, password: password.value });
   if (!authStore.error) {
     // Optionally close the modal on success
     // emit('close');

@@ -11,7 +11,7 @@ const ordersStore = useOrdersStore();
 const { orders, loading: ordersLoading, error: ordersError } = storeToRefs(ordersStore);
 
 onMounted(() => {
-  ordersStore.fetchOrders();
+    ordersStore.fetchOrders();
 });
 </script>
 

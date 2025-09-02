@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ================================================================
-// 🌐 إعداد axios
+// 🌐 إعداد axios للمستخدمين العاديين
 // ================================================================
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL + "/api", // يجب أن يحتوي على /api
@@ -11,12 +11,35 @@ const api = axios.create({
   },
 });
 
-// 🔑 Interceptor لإضافة التوكن
+// 🔑 Interceptor لإضافة التوكن للمستخدمين العاديين
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// ================================================================
+// 🌐 إعداد axios للعملاء
+// ================================================================
+const customerApi = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL + "/api", // يجب أن يحتوي على /api
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
+
+// 🔑 Interceptor لإضافة التوكن للعملاء
+customerApi.interceptors.request.use(
+  (config) => {
+    const customerToken = localStorage.getItem("customer_token");
+    if (customerToken) {
+      config.headers.Authorization = `Bearer ${customerToken}`;
     }
     return config;
   },
@@ -62,6 +85,14 @@ const auth = {
   uploadAvatar: (formData) => createFile("/user/avatar", formData),
 };
 
+const customerAuth = {
+  register: (userData) => customerApi.post("/customer/register", userData),
+  login: (credentials) => customerApi.post("/customer/login", credentials),
+  logout: () => customerApi.post("/customer/logout"),
+  getProfile: () => customerApi.get("/customer/profile"),
+  updateProfile: (data) => customerApi.put("/customer/profile", data),
+};
+
 // ================================================================
 // 📚 Public Resources
 // ================================================================
@@ -89,18 +120,18 @@ const publicResources = {
 // 🛒 Cart
 // ================================================================
 const cart = {
-  show: () => api.get("/cart"),
-  add: (data) => api.post("/cart", data),
-  update: (id, data) => api.put(`/cart/${id}`, data),
-  remove: (id) => api.delete(`/cart/${id}`),
+  show: () => customerApi.get("/cart"),
+  add: (data) => customerApi.post("/cart", data),
+  update: (id, data) => customerApi.put(`/cart/${id}`, data),
+  remove: (id) => customerApi.delete(`/cart/${id}`),
 };
 
 // ================================================================
 // 📦 User Orders
 // ================================================================
 const orders = {
-  all: () => api.get("/orders"),
-  create: (data) => api.post("/orders", data),
+  all: () => customerApi.get("/orders"),
+  create: (data) => customerApi.post("/orders", data),
 };
 
 // ================================================================
@@ -156,6 +187,7 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customerAuth,
   publicResources,
   cart,
   orders,

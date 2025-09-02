@@ -16,7 +16,7 @@ const orderStore = useOrdersStore()
 const { orders } = storeToRefs(orderStore)
 
 onMounted(() => {
-  orderStore.fetchOrders()
+    orderStore.fetchOrders()
 })
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا

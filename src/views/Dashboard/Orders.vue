@@ -184,7 +184,7 @@ const activeFilter = ref('all')
 const searchQuery = ref('')
 
 onMounted(() => {
-  ordersStore.fetchOrders()
+    ordersStore.fetchOrders()
 })
 
 const stats = computed(() => {

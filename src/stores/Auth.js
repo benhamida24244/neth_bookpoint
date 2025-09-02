@@ -5,9 +5,9 @@ import router from '@/router';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
-    error: null,
-    loading: false,
+      token: localStorage.getItem('token') || null,
+      error: null,
+      loading: false,
   }),
 
   getters: {
@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = token;
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
-        router.push('/');
+          router.push('/');
       } catch (error) {
         this.error = error.response?.data?.message || 'An error occurred during login.';
         throw error;
@@ -45,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = token;
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
-        router.push('/');
+          router.push('/');
       } catch (error) {
         this.error = error.response?.data?.message || 'An error occurred during registration.';
         throw error;
