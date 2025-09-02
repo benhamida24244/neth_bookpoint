@@ -1,5 +1,29 @@
 <script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCustomerAuthStore } from '@/stores/customerAuth.js'
 import coverAspect from "@/assets/Auth/LoginImg.png"
+
+const router = useRouter()
+const authStore = useCustomerAuthStore()
+
+const email = ref('')
+const password = ref('')
+const error = ref(null)
+
+const handleLogin = async () => {
+  error.value = null // Reset error
+  const success = await authStore.login({
+    email: email.value,
+    password: password.value,
+  });
+
+  if (success) {
+    router.push('/profile');
+  } else {
+    error.value = 'Login failed. Please check your credentials.';
+  }
+};
 </script>
 
 <template>
@@ -36,9 +60,15 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           </p>
         </div>
 
+        <!-- رسالة الخطأ -->
+        <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4" role="alert">
+          <span class="block sm:inline">{{ error }}</span>
+        </div>
+
         <!-- النموذج -->
-        <form class="space-y-4">
+        <form @submit.prevent="handleLogin" class="space-y-4">
           <input
+            v-model="email"
             name="email"
             type="email"
             required
@@ -47,6 +77,7 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
           />
 
           <input
+            v-model="password"
             name="password"
             type="password"
             required

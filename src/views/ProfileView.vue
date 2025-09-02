@@ -1,30 +1,53 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/Users'
+import { useCustomerAuthStore } from '@/stores/customerAuth' // Corrected import
 import { useCartStore } from '@/stores/Cart'
 import { useOrdersStore } from '@/stores/Orders'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue' // Imported onMounted
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 // Pinia stores
-const userStore = useUserStore()
+const authStore = useCustomerAuthStore()
 const cartStore = useCartStore()
 const ordersStore = useOrdersStore()
 const { t } = useI18n()
+const router = useRouter()
 
 // Reactive state
-const { user: currentUser } = storeToRefs(userStore)
+const { currentUser } = storeToRefs(authStore)
 const { cart } = storeToRefs(cartStore)
-const { orders } = storeToRefs(ordersStore)
+const { orders: userOrders, loading: ordersLoading, error: ordersError } = storeToRefs(ordersStore) // Use orders directly
 
-const userOrders = computed(() =>
-  orders.value.filter(order => order.customer.email === currentUser.value.email)
-)
+// Fetch data on component mount
+onMounted(() => {
+  // authStore.fetchProfile(); // This should be called on auto-login, not every time profile is viewed
+  ordersStore.fetchOrders();
+})
+
+const handleLogout = async () => {
+  await authStore.logout();
+  router.push('/'); // Redirect to home page after logout
+};
 
 // حساب إجمالي السعر
 const totalPrice = computed(() =>
   cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
 )
+
+const formatOrderDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+const formatCurrency = (amount) => {
+    if (typeof amount !== 'number') {
+        amount = parseFloat(amount) || 0;
+    }
+    return amount.toFixed(2);
+}
+
 </script>
 
 <template>
@@ -38,7 +61,17 @@ const totalPrice = computed(() =>
         <p class="text-gray-600 text-lg">{{ t('profile.subtitle') }}</p>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <!-- Loading State -->
+      <div v-if="!currentUser && authStore.isLoading" class="text-center py-20">
+        <p>Loading profile...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="authStore.error" class="text-center py-20 text-red-500">
+        <p>Failed to load profile: {{ authStore.error }}</p>
+      </div>
+
+      <div v-else-if="currentUser" class="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <!-- User Profile Card -->
         <div class="xl:col-span-1">
           <div class="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-8 border border-white/50 hover:shadow-2xl transition-all duration-300">
@@ -91,10 +124,15 @@ const totalPrice = computed(() =>
                 </div>
                 <div>
                   <p class="text-sm text-gray-500 font-medium">{{ t('profile.address') }}</p>
-                  <p class="font-semibold text-gray-800">{{ currentUser.address }}</p>
+                  <p class="font-semibold text-gray-800">{{ currentUser.address || 'Not set' }}</p>
                 </div>
               </div>
             </div>
+
+            <button @click="handleLogout" class="w-full mt-6 bg-red-500 text-white py-2.5 rounded-lg font-semibold hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg">
+              {{ t('profile.logout') }}
+            </button>
+
           </div>
         </div>
 
@@ -173,7 +211,13 @@ const totalPrice = computed(() =>
             </div>
 
             <div class="p-6">
-              <div v-if="userOrders.length > 0" class="space-y-6">
+              <div v-if="ordersLoading" class="text-center py-12">
+                <p>Loading orders...</p>
+              </div>
+              <div v-else-if="ordersError" class="text-center py-12 text-red-500">
+                <p>{{ ordersError }}</p>
+              </div>
+              <div v-else-if="userOrders.length > 0" class="space-y-6">
                 <div v-for="order in userOrders" :key="order.id"
                      class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
 
@@ -185,7 +229,7 @@ const totalPrice = computed(() =>
                         </div>
                         <div>
                           <p class="font-semibold text-gray-800">{{ t('profile.order') }} #{{ order.id }}</p>
-                          <p class="text-sm text-gray-600">{{ order.date }}</p>
+                          <p class="text-sm text-gray-600">{{ formatOrderDate(order.created_at) }}</p>
                         </div>
                       </div>
                       <div class="flex items-center gap-4">
@@ -194,7 +238,7 @@ const totalPrice = computed(() =>
                         </span>
                         <div class="text-right">
                           <p class="text-sm text-gray-500">{{ t('profile.total') }}</p>
-                          <p class="text-xl font-bold text-gray-800">${{ order.totals.total.toFixed(2) }}</p>
+                          <p class="text-xl font-bold text-gray-800">${{ formatCurrency(order.total) }}</p>
                         </div>
                       </div>
                     </div>
@@ -205,11 +249,11 @@ const totalPrice = computed(() =>
                       <div v-for="item in order.items" :key="item.id"
                            class="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors">
                         <div class="aspect-square rounded-md overflow-hidden mb-3 bg-white">
-                          <img :src="item.cover" :alt="item.name"
+                          <img :src="item.book.cover_image_url" :alt="item.book.title"
                                class="w-full h-full object-cover" />
                         </div>
                         <div class="space-y-1">
-                          <p class="font-semibold text-sm text-gray-800 line-clamp-2">{{ item.name }}</p>
+                          <p class="font-semibold text-sm text-gray-800 line-clamp-2">{{ item.book.title }}</p>
                           <div class="flex justify-between text-xs text-gray-600">
                             <span>{{ t('profile.quantity') }}: {{ item.quantity }}</span>
                             <span class="font-medium">${{ item.price }}</span>
@@ -233,6 +277,9 @@ const totalPrice = computed(() =>
             </div>
           </div>
         </div>
+      </div>
+      <div v-else class="text-center py-20">
+        <p>Please log in to see your profile.</p>
       </div>
     </div>
   </div>

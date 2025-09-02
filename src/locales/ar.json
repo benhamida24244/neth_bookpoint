@@ -205,6 +205,7 @@
     "order": "طلب",
     "noOrders": "لا توجد طلبات حتى الآن",
     "noOrdersSuggestion": "سيظهر سجل طلباتك هنا",
-    "quantity": "الكمية"
+    "quantity": "الكمية",
+    "logout": "تسجيل الخروج"
   }
 }

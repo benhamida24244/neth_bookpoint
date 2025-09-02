@@ -14,10 +14,29 @@ const api = axios.create({
 // 🔑 Interceptor لإضافة التوكن
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const url = config.url;
+    const adminToken = localStorage.getItem('token');
+    const customerToken = localStorage.getItem('customer_token');
+    let tokenToSend = null;
+
+    // Admin routes
+    if (url.startsWith('/admin/')) {
+        tokenToSend = adminToken;
     }
+    // Customer routes
+    else if (url.startsWith('/customer/') || url.startsWith('/cart') || url.startsWith('/orders')) {
+        tokenToSend = customerToken;
+    }
+    // Other specific admin routes that are not prefixed
+    else if (url === '/logout' || url === '/profile' || url === '/user/avatar') {
+        tokenToSend = adminToken;
+    }
+    // For public routes, no token is attached.
+
+    if (tokenToSend) {
+        config.headers.Authorization = `Bearer ${tokenToSend}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -41,7 +60,7 @@ const uploadFile = (url, formData) =>
   });
 
 // ================================================================
-// 🔑 Authentication & User
+// 🔑 Admin Authentication & User
 // ================================================================
 const auth = {
   register: (userData) => api.post("/register", userData),
@@ -50,6 +69,17 @@ const auth = {
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
   uploadAvatar: (formData) => uploadFile("/user/avatar", formData),
+};
+
+// ================================================================
+// 👤 Customer Authentication & Profile
+// ================================================================
+const customer = {
+  register: (userData) => api.post('/customer/register', userData),
+  login: (credentials) => api.post('/customer/login', credentials),
+  logout: () => api.post('/customer/logout'),
+  getProfile: () => api.get('/customer/profile'),
+  updateProfile: (data) => api.put('/customer/profile', data),
 };
 
 // ================================================================
@@ -144,6 +174,7 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customer,
   publicResources,
   cart,
   orders,

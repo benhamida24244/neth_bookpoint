@@ -205,6 +205,7 @@
     "order": "Order",
     "noOrders": "No orders yet",
     "noOrdersSuggestion": "Your order history will appear here",
-    "quantity": "Qty"
+    "quantity": "Qty",
+    "logout": "Logout"
   }
 }

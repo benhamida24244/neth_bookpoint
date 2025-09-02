@@ -67,26 +67,47 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  const role = localStorage.getItem('role')
+  const adminToken = localStorage.getItem('token');
+  const customerToken = localStorage.getItem('customer_token');
+  const role = localStorage.getItem('role');
 
-  // ✅ إذا أدمن وحاول يفتح صفحة تسجيل الدخول → Dashboard مباشرة
-  if (to.path === '/loginAdmin' && token && role === 'admin') {
-    return next('/dashboard')
+  // --- Redirect logged-in users from login pages ---
+  if (to.path === '/loginAdmin' && adminToken && role === 'admin') {
+    return next('/dashboard');
+  }
+  if (to.path === '/login' && customerToken) {
+    return next('/profile');
   }
 
-  if (to.meta.requiresAuth && !token) {
+  // --- Handle protected routes ---
+  if (to.meta.requiresAuth) {
+    // Admin-specific routes
     if (to.meta.requiresAdmin) {
-      return next('/loginAdmin')
-    } else {
-      return next('/login')
+      if (adminToken && role === 'admin') {
+        return next(); // Allowed
+      } else {
+        return next('/loginAdmin'); // Not an admin, redirect to admin login
+      }
     }
-  } else if (to.meta.requiresAdmin && role !== 'admin') {
-    return next('/')
-  } else {
-    return next()
+    // Customer-specific routes
+    else {
+      if (customerToken) {
+        return next(); // Allowed
+      } else {
+        return next('/login'); // Not a customer, redirect to customer login
+      }
+    }
   }
-})
+
+  // --- Handle admin routes for non-admins ---
+  // This case is partly covered above, but as a fallback:
+  if (to.matched.some(record => record.meta.requiresAdmin) && role !== 'admin') {
+      return next('/');
+  }
+
+  // If no special conditions, proceed
+  return next();
+});
 
 
 export default router
