@@ -14,11 +14,11 @@ import {
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/Users'
+import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useLanguageStore } from '@/stores/language'
 import { storeToRefs } from 'pinia'
 
-const userStore = useUserStore()
+const userStore = useCustomerAuthStore()
 const { user } = storeToRefs(userStore)
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)

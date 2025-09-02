@@ -3,7 +3,7 @@ import { InfoIcon, CreditCard, Truck, Package } from 'lucide-vue-next';
 import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/Cart';
 import { useCheckoutStore } from '@/stores/Checkout';
-import { useUserStore } from '@/stores/Users';
+import { useCustomerAuthStore } from '@/stores/customerAuth';
 import { useOrdersStore } from '@/stores/Orders';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
@@ -28,7 +28,7 @@ const { cart: orderItems } = storeToRefs(cartStore);
 const checkoutStore = useCheckoutStore();
 const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
 
-const userStore = useUserStore();
+const userStore = useCustomerAuthStore();
 const { user } = storeToRefs(userStore);
 
 const ordersStore = useOrdersStore();

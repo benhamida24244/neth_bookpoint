@@ -8,7 +8,7 @@ import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
 import { useLanguageStore } from '@/stores/language'
-import { useUserStore } from '@/stores/Users'
+import { useCustomerAuthStore } from '@/stores/customerAuth'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
 // Ref for mobile menu state
@@ -56,7 +56,7 @@ const isActive = (link) => {
 // Pinia stores
 const settingsStore = useSettingsStore()
 const languageStore = useLanguageStore()
-const userStore = useUserStore()
+const userStore = useCustomerAuthStore()
 
 // Reactive state from stores
 const { translations } = storeToRefs(languageStore)
@@ -199,3 +199,4 @@ const { cartCount } = storeToRefs(cartStore)
   <LoginView v-if="showLogin" @openRegister="openRegister" @close="CloseModal" />
   <RegisterView v-if="showRegister" @openLogin="openLogin" @close="CloseModal" />
 </template>
+plate>

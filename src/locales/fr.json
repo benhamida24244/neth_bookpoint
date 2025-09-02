@@ -207,5 +207,13 @@
     "noOrdersSuggestion": "L'historique de vos commandes apparaîtra ici",
     "quantity": "Qté",
     "logout": "Se déconnecter"
+  },
+  "editProfile": {
+    "title": "Modifier le profil",
+    "name": "Nom",
+    "email": "Email",
+    "address": "Adresse",
+    "cancel": "Annuler",
+    "save": "Enregistrer les modifications"
   }
 }

@@ -3,9 +3,10 @@ import { storeToRefs } from 'pinia'
 import { useCustomerAuthStore } from '@/stores/customerAuth' // Corrected import
 import { useCartStore } from '@/stores/Cart'
 import { useOrdersStore } from '@/stores/Orders'
-import { computed, onMounted } from 'vue' // Imported onMounted
+import { computed, onMounted, ref } from 'vue' // Imported onMounted and ref
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import EditProfileModal from '@/components/EditProfileModal.vue';
 
 // Pinia stores
 const authStore = useCustomerAuthStore()
@@ -18,6 +19,8 @@ const router = useRouter()
 const { currentUser } = storeToRefs(authStore)
 const { cart } = storeToRefs(cartStore)
 const { orders: userOrders, loading: ordersLoading, error: ordersError } = storeToRefs(ordersStore) // Use orders directly
+
+const showEditModal = ref(false);
 
 // Fetch data on component mount
 onMounted(() => {
@@ -74,7 +77,7 @@ const formatCurrency = (amount) => {
       <div v-else-if="currentUser" class="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <!-- User Profile Card -->
         <div class="xl:col-span-1">
-          <div class="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-8 border border-white/50 hover:shadow-2xl transition-all duration-300">
+          <div class="relative bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-8 border border-white/50 hover:shadow-2xl transition-all duration-300">
             <div class="flex items-center gap-6 mb-6">
               <div class="relative">
                 <img
@@ -89,6 +92,9 @@ const formatCurrency = (amount) => {
                 <p class="text-green-600 text-sm font-medium">{{ t('profile.activeAccount') }}</p>
               </div>
             </div>
+            <button @click="showEditModal = true" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 5.232z"></path></svg>
+            </button>
 
             <div class="space-y-4">
               <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50/80 hover:bg-blue-50/80 transition-colors">
@@ -282,5 +288,6 @@ const formatCurrency = (amount) => {
         <p>Please log in to see your profile.</p>
       </div>
     </div>
+    <EditProfileModal v-if="showEditModal" @close="showEditModal = false" />
   </div>
 </template>

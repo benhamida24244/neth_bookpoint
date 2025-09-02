@@ -15,12 +15,12 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
     async login(credentials) {
       try {
         const response = await apiService.customer.login(credentials);
-        const { token, user } = response.data; // Assuming the API returns token and user data
+        const { customer_token, user } = response.data; // Assuming the API returns token and user data
 
-        this.token = token;
+        this.token = customer_token;
         this.user = user;
         this.isAuthenticated = true;
-        localStorage.setItem('customer_token', token);
+        localStorage.setItem('customer_token', customer_token);
         // Also set the role for the router guard if needed
         localStorage.setItem('role', 'customer');
 
@@ -67,6 +67,19 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
             // Token exists, try to fetch user profile to validate it
             await this.fetchProfile();
         }
+    },
+
+    async updateProfile(data) {
+      if (!this.token) return;
+
+      try {
+        const response = await apiService.customer.updateProfile(data);
+        this.user = response.data.data;
+        return true;
+      } catch (error) {
+        console.error('Failed to update customer profile:', error);
+        return false;
+      }
     }
   }
 })
