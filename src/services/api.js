@@ -68,7 +68,15 @@ const auth = {
   logout: () => api.post("/logout"),
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
-  uploadAvatar: (formData) => uploadFile("/user/avatar", formData),
+  uploadAvatar: (formData) => createFile("/user/avatar", formData),
+};
+
+const customerAuth = {
+  register: (userData) => customerApi.post("/customer/register", userData),
+  login: (credentials) => customerApi.post("/customer/login", credentials),
+  logout: () => customerApi.post("/customer/logout"),
+  getProfile: () => customerApi.get("/customer/profile"),
+  updateProfile: (data) => customerApi.put("/customer/profile", data),
 };
 
 // ================================================================
@@ -180,6 +188,7 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customerAuth,
   customer,
   publicResources,
   cart,
