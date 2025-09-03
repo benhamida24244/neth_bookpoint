@@ -113,17 +113,6 @@ const customerAuth = {
 };
 
 // ================================================================
-// 👤 Customer Authentication & Profile
-// ================================================================
-const customer = {
-  register: (userData) => api.post('/customer/register', userData),
-  login: (credentials) => api.post('/customer/login', credentials),
-  logout: () => api.post('/customer/logout'),
-  getProfile: () => api.get('/customer/profile'),
-  updateProfile: (data) => api.put('/customer/profile', data),
-};
-
-// ================================================================
 // 📚 Public Resources
 // ================================================================
 const publicResources = {
@@ -217,6 +206,7 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customerAuth,
   publicResources,
   cart,
   orders,
