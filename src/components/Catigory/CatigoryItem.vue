@@ -7,18 +7,11 @@ defineProps({
     required: true
   }
 })
-
 </script>
 
 <template>
-<a :href="category.url"
-   class="flex flex-col items-center justify-center gap-3 p-4 w-36 text-center group">
-
-  <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[var(--color-hover)] text-white group-hover:scale-110 transition-transform duration-300">
-    <span :class="['fas', category.icon ? category.icon : 'fa-book', 'text-3xl']"></span>
-  </div>
-
+ <a :href="category.url" class="flex flex-col items-center justify-center gap-3 p-2 w-36 flex-shrink-0 text-center group">
+  <span :class="['pi', category.icon, 'bg-[var(--color-hover)] text-5xl p-4 rounded-full text-white group-hover:scale-110 transition-transform duration-300']"></span>
   <p class="text-sm font-semibold uppercase tracking-wider">{{ category.name }}</p>
-</a>
-
+ </a>
 </template>

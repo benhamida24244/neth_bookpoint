@@ -3,14 +3,10 @@ import { ref, computed, watch } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import AddAttributeModal from './AddAttributeModal.vue'
-import { useLanguageStore } from '@/stores/language'
-
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
 
 const props = defineProps({
   show: Boolean,
-  book: Object
+  book: Object,
 })
 
 const emit = defineEmits(['close', 'save'])
@@ -67,18 +63,6 @@ const handleSaveAttribute = (name) => {
     editedBook.value.publishingHouse = name
   }
 }
-
-const handleImageUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      editedBook.value.cover = file // Store the file object
-      editedBook.value.imagePreview = e.target.result // Store the data URL for preview
-    }
-    reader.readAsDataURL(file)
-  }
-}
 </script>
 
 <template>
@@ -96,15 +80,13 @@ const handleImageUpload = (event) => {
     />
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
       <div class="p-6 border-b">
-        <h3 class="text-xl font-semibold">{{ translations.dashboard?.editBookModal?.title }}</h3>
+        <h3 class="text-xl font-semibold">Edit Book</h3>
       </div>
       <div v-if="editedBook" class="p-6">
         <form @submit.prevent="saveBook">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label for="title" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.title
-              }}</label>
+              <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
               <input
                 v-model="editedBook.title"
                 type="text"
@@ -114,21 +96,19 @@ const handleImageUpload = (event) => {
               />
             </div>
             <div>
-              <label for="price" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.price
-              }}</label>
+              <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
               <input
                 v-model.number="editedBook.price"
                 type="number"
                 id="price"
-                class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-2 p-2  block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
             <div class="md:col-span-2">
-              <label for="description" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.description
-              }}</label>
+              <label for="description" class="block text-sm font-medium text-gray-700"
+                >Description</label
+              >
               <textarea
                 v-model="editedBook.description"
                 id="description"
@@ -137,9 +117,7 @@ const handleImageUpload = (event) => {
               ></textarea>
             </div>
             <div>
-              <label for="author" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.author
-              }}</label>
+              <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
               <div class="flex items-center gap-2">
                 <select
                   v-model="editedBook.author"
@@ -162,9 +140,9 @@ const handleImageUpload = (event) => {
               </div>
             </div>
             <div>
-              <label for="publisher" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.publisher
-              }}</label>
+              <label for="publisher" class="block text-sm font-medium text-gray-700"
+                >Publisher</label
+              >
               <div class="flex items-center gap-2">
                 <select
                   v-model="editedBook.publishingHouse"
@@ -190,36 +168,6 @@ const handleImageUpload = (event) => {
                 </button>
               </div>
             </div>
-            <div>
-              <label for="stock" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.stock
-              }}</label>
-              <input
-                v-model.number="editedBook.stock"
-                type="number"
-                id="stock"
-                class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              />
-            </div>
-            <div>
-              <label for="image" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.editBookModal?.labels?.image
-              }}</label>
-              <input
-                type="file"
-                id="image"
-                @change="handleImageUpload"
-                class="mt-2 p-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-              />
-              <div v-if="editedBook.imagePreview" class="mt-4">
-                <img
-                  :src="editedBook.imagePreview"
-                  alt="Image Preview"
-                  class="h-32 w-32 object-cover rounded-md"
-                />
-              </div>
-            </div>
           </div>
         </form>
       </div>
@@ -228,13 +176,13 @@ const handleImageUpload = (event) => {
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         >
-          {{ translations.dashboard?.editBookModal?.cancel }}
+          Cancel
         </button>
         <button
           @click="saveBook"
           class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
         >
-          {{ translations.dashboard?.editBookModal?.save }}
+          Save Changes
         </button>
       </div>
     </div>

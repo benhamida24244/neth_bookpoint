@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ================================================================
-// 🌐 إعداد axios للمستخدمين العاديين
+// 🌐 إعداد axios
 // ================================================================
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL + "/api", // يجب أن يحتوي على /api
@@ -11,7 +11,7 @@ const api = axios.create({
   },
 });
 
-// 🔑 Interceptor لإضافة التوكن للمستخدمين العاديين
+// 🔑 Interceptor لإضافة التوكن
 api.interceptors.request.use(
   (config) => {
     const url = config.url;
@@ -42,29 +42,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ================================================================
-// 🌐 إعداد axios للعملاء
-// ================================================================
-const customerApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL + "/api", // يجب أن يحتوي على /api
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-});
-
-// 🔑 Interceptor لإضافة التوكن للعملاء
-customerApi.interceptors.request.use(
-  (config) => {
-    const customerToken = localStorage.getItem("customer_token");
-    if (customerToken) {
-      config.headers.Authorization = `Bearer ${customerToken}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
 // ⚠️ Interceptor للتعامل مع الأخطاء
 api.interceptors.response.use(
   (response) => response,
@@ -75,22 +52,12 @@ api.interceptors.response.use(
 );
 
 // ================================================================
-// 🛠️ دوال مساعدة لرفع الملفات (FormData)
+// 🛠️ دالة مساعدة لرفع الملفات (FormData)
 // ================================================================
-// تستخدم لإنشاء سجل جديد مع ملف (POST)
-const createFile = (url, formData) =>
+const uploadFile = (url, formData) =>
   api.post(url, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-
-// تستخدم لتحديث سجل موجود مع ملف (PUT)
-// Laravel يتطلب إرسال طلب POST مع حقل _method="PUT"
-const updateFile = (url, formData) => {
-  formData.append("_method", "PUT");
-  return api.post(url, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
 
 // ================================================================
 // 🔑 Admin Authentication & User
@@ -101,15 +68,7 @@ const auth = {
   logout: () => api.post("/logout"),
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
-  uploadAvatar: (formData) => createFile("/user/avatar", formData),
-};
-
-const customerAuth = {
-  register: (userData) => customerApi.post("/customer/register", userData),
-  login: (credentials) => customerApi.post("/customer/login", credentials),
-  logout: () => customerApi.post("/customer/logout"),
-  getProfile: () => customerApi.get("/customer/profile"),
-  updateProfile: (data) => customerApi.put("/customer/profile", data),
+  uploadAvatar: (formData) => uploadFile("/user/avatar", formData),
 };
 
 // ================================================================
@@ -150,18 +109,18 @@ const publicResources = {
 // 🛒 Cart
 // ================================================================
 const cart = {
-  show: () => customerApi.get("/cart"),
-  add: (data) => customerApi.post("/cart", data),
-  update: (id, data) => customerApi.put(`/cart/${id}`, data),
-  remove: (id) => customerApi.delete(`/cart/${id}`),
+  show: () => api.get("/cart"),
+  add: (data) => api.post("/cart", data),
+  update: (id, data) => api.put(`/cart/${id}`, data),
+  remove: (id) => api.delete(`/cart/${id}`),
 };
 
 // ================================================================
 // 📦 User Orders
 // ================================================================
 const orders = {
-  all: () => customerApi.get("/orders"),
-  create: (data) => customerApi.post("/orders", data),
+  all: () => api.get("/orders"),
+  create: (data) => api.post("/orders", data),
 };
 
 // ================================================================
@@ -182,9 +141,8 @@ const admin = {
   },
 
   books: {
-    all: (params) => api.get("/admin/books", { params }),
-    add: (data) => createFile("/admin/books", data),
-    update: (id, data) => updateFile(`/admin/books/${id}`, data),
+    add: (data) => uploadFile("/admin/books", data),
+    update: (id, data) => uploadFile(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
   },
 
@@ -194,21 +152,26 @@ const admin = {
     delete: (id) => api.delete(`/admin/categories/${id}`),
   },
 
-  publishers: {
-    add: (data) => uploadFile("/admin/publishers", data),
-    update: (id, data) => uploadFile(`/admin/publishers/${id}`, data),
-    delete: (id) => api.delete(`/admin/publishers/${id}`),
-  },
+ publishers: {
+  add: (data) => uploadFile("/admin/publishers", data),
+
+  update: (id, data) =>
+    api.post(`/admin/publishers/${id}`, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+      params: { _method: "PUT" }, // trick: Laravel هيفهم إنها PUT
+    }),
+
+  delete: (id) => api.delete(`/admin/publishers/${id}`),
+},
 
   authors: {
-    add: (data) => createFile("/admin/authors", data),
-    update: (id, data) => updateFile(`/admin/authors/${id}`, data),
+    add: (data) => uploadFile("/admin/authors", data),
+    update: (id, data) => uploadFile(`/admin/authors/${id}`, data),
     delete: (id) => api.delete(`/admin/authors/${id}`),
   },
 
   settings: {
-    index: () => api.get("/admin/settings"),
-    update: (data) => api.post("/admin/settings", data),
+    update: (data) => uploadFile("/admin/settings", data),
   },
 };
 
@@ -217,6 +180,7 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customer,
   publicResources,
   cart,
   orders,

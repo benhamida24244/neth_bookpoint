@@ -60,11 +60,7 @@ const userStore = useCustomerAuthStore()
 
 // Reactive state from stores
 const { translations } = storeToRefs(languageStore)
-const { isAuthenticated } = storeToRefs(authStore)
-
-const logout = () => {
-  authStore.logout()
-}
+const { isLoggedIn } = storeToRefs(userStore)
 
 const headerBackground = computed(() => {
   const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
@@ -143,6 +139,7 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
+        <LanguageSwitcher />
         <RouterLink
           to="/cart"
           class="relative text-white hover:text-[var(--color-hover)] self-center"
@@ -154,7 +151,7 @@ const { cartCount } = storeToRefs(cartStore)
             >{{ cartCount }}</span
           >
         </RouterLink>
-        <div v-if="isAuthenticated" class="flex items-center space-x-4">
+        <div v-if="isLoggedIn" class="flex items-center">
           <RouterLink to="/profile">
             <img
               src="https://randomuser.me/api/portraits/men/75.jpg"
@@ -162,12 +159,6 @@ const { cartCount } = storeToRefs(cartStore)
               class="w-10 h-10 rounded-full"
             />
           </RouterLink>
-          <button
-            @click="logout"
-            class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
-          >
-            {{ translations.header?.logout || 'Logout' }}
-          </button>
         </div>
         <template v-else>
           <button

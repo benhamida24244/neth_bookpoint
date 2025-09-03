@@ -1,23 +1,37 @@
+// src/stores/settings.js
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import apiService from '@/services/api.js'
-import { useLanguageStore } from '@/stores/language' // Import language store
-import walpapperGreen from '@/assets/HomeIcon/Header/walpappergreen.png'
-import heroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
-import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
-import heroCoverRed from '@/assets/HomeIcon/Hero/HeroCoverRed.png'
-
+import { ref, watch } from 'vue'
+import walpapper from '@/assets/HomeIcon/Header/walpapper.png'
+import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
 
 export const useSettingsStore = defineStore('settings', () => {
-  // Default values
-  const defaultColor = {}
+  // Default (headerWallpaper يمكن أن يبقى فارغاً حتى يمرر المكون مسار الصورة)
+  const defaultColor = {
+   primary: '#c67913',
+    light: '#F0B100',
+    hover: '#A65F00',
+    headerWallpaper: walpapper,
+    heroWallpaper: HeroCover // سيُستبدل بصيغة URL عند الضغط من SettingsPage
+  }
 
+  const getInitialColor = () => {
+    const stored = localStorage.getItem('primaryColor')
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        if (parsed && typeof parsed === 'object' && parsed.primary) return parsed
+      } catch (e) {
+        // فشل التحليل -> استخدم الافتراضي
+      }
+    }
+    return defaultColor
+  }
 
-  const primaryColor = ref(defaultColor)
-  const currency = ref('$')
-  const languageStore = useLanguageStore() // Get language store instance
+  const primaryColor = ref(getInitialColor())
+  const currency = ref(localStorage.getItem('currency') || '$')
+  const language = ref(localStorage.getItem('language') || 'en')
 
-  // Apply color to DOM
+  // دالة مساعدة تطبّق اللون والخلفية على DOM
   function applyColorToDOM(color) {
     if (typeof document === 'undefined') return
 
@@ -31,119 +45,53 @@ export const useSettingsStore = defineStore('settings', () => {
     const header = document.getElementById('header')
     if (header) {
       if (color.headerWallpaper) {
+        // نستخدم background shorthand مع important لتجاوز أي قاعدة CSS خارجية
+
         header.style.setProperty(
           'background',
           `url("${color.headerWallpaper}") center/cover no-repeat`,
           'important'
         )
       } else {
+        // لو لا يوجد wallpaper نزيل الخلفية
         header.style.removeProperty('background')
       }
     }
-
     const hero = document.querySelector('.hero')
     if (hero) {
       hero.style.setProperty('--background-image', `url("${color.heroWallpaper}")`)
     }
   }
 
-  // ========== Backend Integration ==========
+  // طبق الإعداد المحفوظ فور إنشاء الـ store
+  applyColorToDOM(primaryColor.value)
 
-  // جلب الإعدادات من API
-  async function fetchSettings() {
-  try {
-    const res = await apiService.publicResources.settings()
-    const data = res.data.data // الآن Object مش Array
-  console.log('Primary color after fetch:', data)
+  // احفظ أي تغيير في localStorage وطبق التغييرات على DOM
+  watch(primaryColor, (newColor) => {
+    localStorage.setItem('primaryColor', JSON.stringify(newColor))
+    applyColorToDOM(newColor)
+  }, { deep: true })
 
-
-    if (data) {
-      setPrimaryColorByName(data.color_name)
-      currency.value = data.currency || '$'
-      if (data.language) {
-        await languageStore.setLanguage(data.language) // Set language using language store
-      }
-    }
-
-    applyColorToDOM(primaryColor.value)
-  } catch (err) {
-    console.error('Failed to fetch settings:', err)
-  }
-}
-
-
-  // تحديث الإعدادات في API
-  async function updateSettings() {
-    try {
-      await apiService.admin.settings.update({
-        color_name: getColorNameByHex(primaryColor.value.primary),
-        currency: currency.value,
-        language_signal: languageStore.language // Get language from language store
-      })
-    } catch (err) {
-      console.error('Failed to update settings:', err)
-    }
-  }
-
-  // ========== Local mutations ==========
+  watch(currency, (val) => localStorage.setItem('currency', val))
+  watch(language, (val) => localStorage.setItem('language', val))
 
   function setPrimaryColor(newColor) {
     if (newColor && typeof newColor === 'object' && newColor.primary) {
+      // ندمج لضمان عدم فقدان خصائص أخرى (مثل headerWallpaper)
       primaryColor.value = { ...primaryColor.value, ...newColor }
-      applyColorToDOM(primaryColor.value)
-      updateSettings() // مزامنة مع الباك أند
+      // applyColorToDOM سيُنفّذ عبر الـ watcher أعلاه
     }
   }
 
-  function setCurrency(newCurrency) {
-    currency.value = newCurrency
-    updateSettings()
-  }
-
-  // ========== Helpers ==========
-
-  // أسماء الألوان مثل ما تستعملها في SettingsPage
-  const colorsMap = {
-  Yellow: defaultColor,
-  Green: {
-    primary: '#16A34A',
-    light: '#4ADE80',
-    hover: '#15803D',
-    headerWallpaper: walpapperGreen,
-    heroWallpaper: heroCoverGreen
-  },
-  Red: {
-    primary: '#DC2626',
-    light: '#FCA5A5',
-    hover: '#B91C1C',
-    headerWallpaper: walpapperRed,
-    heroWallpaper: heroCoverRed
-  }
-}
-
-
-  function setPrimaryColorByName(name) {
-    if (colorsMap[name]) {
-      primaryColor.value = colorsMap[name]
-      applyColorToDOM(primaryColor.value)
-    }
-  }
-
-  function getColorNameByHex(hex) {
-    const entry = Object.entries(colorsMap).find(
-      ([, color]) => color.primary === hex
-    )
-    return entry ? entry[0] : 'Yellow'
-  }
-
-  // ========== Return ==========
+  function setCurrency(newCurrency) { currency.value = newCurrency }
+  function setLanguage(newLanguage) { language.value = newLanguage }
 
   return {
     primaryColor,
     currency,
+    language,
     setPrimaryColor,
     setCurrency,
-    fetchSettings,
-    updateSettings
+    setLanguage
   }
 })

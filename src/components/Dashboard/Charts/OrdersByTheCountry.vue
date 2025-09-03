@@ -8,24 +8,18 @@ import {
   ArcElement
 } from 'chart.js'
 import { useOrdersStore } from '@/stores/Orders'
-import { onMounted, computed } from 'vue'
-import { storeToRefs } from 'pinia'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
 const orderStore = useOrdersStore()
-const { orders } = storeToRefs(orderStore)
-
-onMounted(() => {
-    orderStore.fetchOrders()
-})
+const orders = orderStore.orders
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
-const chartData = computed(() => ({
-  labels: orders.value.map((order) => order.country),
+const chartData = {
+  labels: orders.map((order) => order.country),
   datasets: [
     {
       label: 'Publishing Houses',
-      data: orders.value.map((order) => order.bookCount),
+      data: orders.map((order) => order.bookCount),
       backgroundColor: [
         '#facc15', // Yellow
         '#60a5fa', // Blue
@@ -37,7 +31,7 @@ const chartData = computed(() => ({
       borderWidth: 2
     }
   ]
-}))
+}
 
 const chartOptions = {
   responsive: true,

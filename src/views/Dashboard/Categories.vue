@@ -66,7 +66,7 @@ const handleCategoryAdded = () => {
         @click="showAddCategoryModal = true"
         class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
       >
-        {{ translations.dashboard?.categories?.addNew }}
+        Add New Category
       </button>
     </header>
 

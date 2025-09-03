@@ -1,23 +1,17 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
-import { useCategoriesStore } from '@/stores/Categories'
 import AddAttributeModal from './AddAttributeModal.vue'
-import { useLanguageStore } from '@/stores/language'
-
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
 
 const props = defineProps({
-  show: Boolean
+  show: Boolean,
 })
 
 const emit = defineEmits(['close', 'save'])
 
 const authorStore = useAuthorStore()
 const publishingHouseStore = usePublishingHouseStore()
-const categoriesStore = useCategoriesStore()
 
 const showAddAttributeModal = ref(false)
 const attributeType = ref('') // 'author' or 'publisher'
@@ -26,32 +20,13 @@ const newBook = ref({
   title: '',
   description: '',
   price: null,
-  author_id: '',
-  publisher_id: '',
-  category_id: '',
-  stock: null,
-  pages: null,
+  author: '',
+  publishingHouse: '',
   cover: '',
-  publisherDate: ''
 })
 
 const authors = computed(() => authorStore.authors)
 const publishers = computed(() => publishingHouseStore.publishingHouses)
-const categories = computed(() => categoriesStore.categories)
-
-onMounted(() => {
-  // Assuming fetch actions exist in these stores
-  authorStore.fetchAuthors()
-  publishingHouseStore.fetchPublisher()
-  categoriesStore.fetchCategories()
-})
-
-function onFileChange(event) {
-  const file = event.target.files[0]
-  if (file) {
-    newBook.value.cover = file
-  }
-}
 
 function closeModal() {
   emit('close')
@@ -59,42 +34,11 @@ function closeModal() {
 
 function saveBook() {
   // Basic validation
-  if (
-    !newBook.value.title ||
-    !newBook.value.author_id ||
-    !newBook.value.publisher_id ||
-    !newBook.value.category_id ||
-    newBook.value.price === null
-  ) {
+  if (!newBook.value.title || !newBook.value.author || !newBook.value.publishingHouse) {
     alert('Please fill in all required fields.')
     return
   }
-
-  const formData = new FormData()
-
-  // Append each field individually
-  formData.append('title', newBook.value.title)
-  formData.append('description', newBook.value.description || '')
-  formData.append('price', newBook.value.price)
-  formData.append('author_id', newBook.value.author_id)
-  formData.append('publisher_id', newBook.value.publisher_id)
-  formData.append('category_id', newBook.value.category_id)
-  formData.append('stock', newBook.value.stock ?? 0)
-  formData.append('pages', newBook.value.pages ?? 0)
-
-  // Optional fields
-  formData.append(
-    'publisherDate',
-    newBook.value.publisherDate || new Date().toISOString().split('T')[0]
-  )
-
-  // Append cover file if selected
-  if (newBook.value.cover instanceof File) {
-    formData.append('cover', newBook.value.cover)
-  }
-
-  // Emit FormData to parent or send directly
-  emit('save', formData)
+  emit('save', { ...newBook.value })
   closeModal()
 }
 
@@ -103,24 +47,13 @@ const openAddAttributeModal = (type) => {
   showAddAttributeModal.value = true
 }
 
-const handleSaveAttribute = async (name) => {
-  try {
-    if (attributeType.value === 'author') {
-      const newAuthor = await authorStore.addAuthor({ name })
-      // Assuming addAuthor returns the new author object with id
-      if (newAuthor && newAuthor.id) {
-        newBook.value.author_id = newAuthor.id
-      }
-    } else if (attributeType.value === 'publisher') {
-      const newPublisher = await publishingHouseStore.addPublisher({ name })
-      // Assuming addPublisher returns the new publisher object with id
-      if (newPublisher && newPublisher.id) {
-        newBook.value.publisher_id = newPublisher.id
-      }
-    }
-  } catch (error) {
-    console.error(`Failed to add ${attributeType.value}:`, error)
-    alert(`There was an error adding the ${attributeType.value}.`)
+const handleSaveAttribute = (name) => {
+  if (attributeType.value === 'author') {
+    authorStore.addAuthor({ name })
+    newBook.value.author = name
+  } else if (attributeType.value === 'publisher') {
+    publishingHouseStore.addPublisher({ name })
+    newBook.value.publishingHouse = name
   }
 }
 </script>
@@ -138,42 +71,37 @@ const handleSaveAttribute = async (name) => {
       @close="showAddAttributeModal = false"
       @save="handleSaveAttribute"
     />
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
-      <div class="p-6 border-b sticky top-0 bg-white z-10">
-        <h3 class="text-xl font-semibold">{{ translations.dashboard?.addBookModal?.title }}</h3>
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+      <div class="p-6 border-b">
+        <h3 class="text-xl font-semibold">Add New Book</h3>
       </div>
       <div class="p-6">
         <form @submit.prevent="saveBook">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label for="title" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.title
-              }}</label>
+              <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
               <input
                 v-model="newBook.title"
                 type="text"
                 id="title"
-                class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
             <div>
-              <label for="price" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.price
-              }}</label>
+              <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
               <input
                 v-model.number="newBook.price"
                 type="number"
-                step="0.01"
                 id="price"
-                class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
             <div class="md:col-span-2">
-              <label for="description" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.description
-              }}</label>
+              <label for="description" class="block text-sm font-medium text-gray-700"
+                >Description</label
+              >
               <textarea
                 v-model="newBook.description"
                 id="description"
@@ -181,51 +109,55 @@ const handleSaveAttribute = async (name) => {
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               ></textarea>
             </div>
+            <div class="md:col-span-2">
+              <label for="cover" class="block text-sm font-medium text-gray-700">Cover URL</label>
+              <input
+                v-model="newBook.cover"
+                id="cover"
+                type="text"
+                placeholder="https://example.com/image.jpg"
+                class="mt-1 p-2 block w-full border-[var(--color-primary)] rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
             <div>
-              <label for="author" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.author
-              }}</label>
+              <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
               <div class="flex items-center gap-2">
                 <select
-                  v-model="newBook.author_id"
+                  v-model="newBook.author"
                   id="author"
-                  class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
-                  <option disabled value="">
-                    {{ translations.dashboard?.addBookModal?.placeholders?.author }}
-                  </option>
-                  <option v-for="author in authors" :key="author.id" :value="author.id">
+                  <option disabled value="">Select an author</option>
+                  <option v-for="author in authors" :key="author.id" :value="author.name">
                     {{ author.name }}
                   </option>
                 </select>
                 <button
                   @click="openAddAttributeModal('author')"
                   type="button"
-                  class="mt-1 px-3 py-2 text-sm font-medium text-white bg-gray-600 border border-transparent rounded-md shadow-sm hover:bg-gray-700"
+                  class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
                   New
                 </button>
               </div>
             </div>
             <div>
-              <label for="publishingHouse" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.publisher
-              }}</label>
+              <label for="publishingHouse" class="block text-sm font-medium text-gray-700"
+                >Publisher</label
+              >
               <div class="flex items-center gap-2">
                 <select
-                  v-model="newBook.publisher_id"
+                  v-model="newBook.publishingHouse"
                   id="publishingHouse"
-                  class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
-                  <option disabled value="">
-                    {{ translations.dashboard?.addBookModal?.placeholders?.publisher }}
-                  </option>
+                  <option disabled value="">Select a publisher</option>
                   <option
                     v-for="publisher in publishers"
                     :key="publisher.id"
-                    :value="publisher.id"
+                    :value="publisher.name"
                   >
                     {{ publisher.name }}
                   </option>
@@ -233,81 +165,27 @@ const handleSaveAttribute = async (name) => {
                 <button
                   @click="openAddAttributeModal('publisher')"
                   type="button"
-                  class="mt-1 px-3 py-2 text-sm font-medium text-white bg-gray-600 border border-transparent rounded-md shadow-sm hover:bg-gray-700"
+                  class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
                   New
                 </button>
               </div>
             </div>
-            <div>
-              <label for="category" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.category
-              }}</label>
-              <select
-                v-model="newBook.category_id"
-                id="category"
-                class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              >
-                <option disabled value="">
-                  {{ translations.dashboard?.addBookModal?.placeholders?.category }}
-                </option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
-            </div>
-            <div>
-              <label for="stock" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.stock
-              }}</label>
-              <input
-                v-model.number="newBook.stock"
-                type="number"
-                id="stock"
-                class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              />
-            </div>
-            <div>
-              <label for="pages" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.pages
-              }}</label>
-              <input
-                v-model.number="newBook.pages"
-                type="number"
-                id="pages"
-                class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              />
-            </div>
-            <div class="md:col-span-2">
-              <label for="cover" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.cover
-              }}</label>
-              <input
-                @change="onFileChange"
-                type="file"
-                id="cover"
-                accept="image/*"
-                class="mt-1 p-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-              />
-            </div>
           </div>
         </form>
       </div>
-      <div class="p-6 bg-gray-50 flex justify-end gap-4 sticky bottom-0 z-10">
+      <div class="p-6 bg-gray-50 flex justify-end gap-4">
         <button
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         >
-          {{ translations.dashboard?.addBookModal?.cancel }}
+          Cancel
         </button>
         <button
           @click="saveBook"
           class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-hover)]"
         >
-          {{ translations.dashboard?.addBookModal?.save }}
+          Save Book
         </button>
       </div>
     </div>

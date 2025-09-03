@@ -1,18 +1,14 @@
 <script setup>
-import { useClientsStore } from '@/stores/Clients'
-import { ref, computed, onMounted } from 'vue'
-import { useLanguageStore } from '@/stores/language'
+import { useClientsStore } from '@/stores/Clients';
+import { ref, computed,onMounted } from 'vue';
 
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
-
-const searchQuery = ref('')
-const selectedStatus = ref('')
-const selectedSource = ref('')
-const selectedSaleDate = ref('')
-const showStatusDropdown = ref(false)
-const showSourceDropdown = ref(false)
-const showSaleDateDropdown = ref(false)
+const searchQuery = ref('');
+const selectedStatus = ref('');
+const selectedSource = ref('');
+const selectedSaleDate = ref('');
+const showStatusDropdown = ref(false);
+const showSourceDropdown = ref(false);
+const showSaleDateDropdown = ref(false);
 const ClientStore = useClientsStore()
 
 
@@ -86,12 +82,8 @@ const toggleDropdown = (dropdown) => {
     <!-- Filter and Analytics Section -->
     <div class="mt-8">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
-        <p class="text-xl font-bold text-gray-600 mb-2 lg:mb-0">
-          {{ translations.dashboard?.clients?.filter }}
-        </p>
-        <p class="text-xl font-bold text-gray-600">
-          {{ translations.dashboard?.clients?.analytics }}
-        </p>
+        <p class="text-xl font-bold text-gray-600 mb-2 lg:mb-0">Filter</p>
+        <p class="text-xl font-bold text-gray-600">Analytics</p>
       </div>
 
       <!-- Filter Inputs Row -->
@@ -145,19 +137,11 @@ const toggleDropdown = (dropdown) => {
               <path d="M8.5 1.5A1.5 1.5 0 0 0 7 3v.5H4.5a2 2 0 0 0-2 2V9a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V5.5a2 2 0 0 0-2-2H13V3a1.5 1.5 0 0 0-1.5-1.5h-3z"/>
             </svg>
           </div>
-          <select
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5"
-          >
-            <option value="">{{ translations.dashboard?.clients?.shippingMethod }}</option>
-            <option value="standard">
-              {{ translations.dashboard?.clients?.shippingOptions?.standard }}
-            </option>
-            <option value="express">
-              {{ translations.dashboard?.clients?.shippingOptions?.express }}
-            </option>
-            <option value="overnight">
-              {{ translations.dashboard?.clients?.shippingOptions?.overnight }}
-            </option>
+          <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5">
+            <option value="">Shipping Method</option>
+            <option value="standard">Standard</option>
+            <option value="express">Express</option>
+            <option value="overnight">Overnight</option>
           </select>
         </div>
       </div>
@@ -166,35 +150,18 @@ const toggleDropdown = (dropdown) => {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <!-- Status Dropdown -->
         <div class="relative">
-          <p class="text-sm font-bold text-gray-600 mb-2">
-            {{ translations.dashboard?.clients?.status }}
-          </p>
+          <p class="text-sm font-bold text-gray-600 mb-2">Status</p>
           <button
             @click="toggleDropdown('status')"
             class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedStatus || 'Select Status' }}
-            <svg
-              class="w-2.5 h-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
+            <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
             </svg>
           </button>
-          <div
-            v-if="showStatusDropdown"
-            class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1"
-          >
+          <div v-if="showStatusDropdown" class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1">
             <ul class="py-2 text-sm text-gray-700">
               <li v-for="option in statusOptions" :key="option">
                 <button
@@ -210,35 +177,18 @@ const toggleDropdown = (dropdown) => {
 
         <!-- Source Dropdown -->
         <div class="relative">
-          <p class="text-sm font-bold text-gray-600 mb-2">
-            {{ translations.dashboard?.clients?.source }}
-          </p>
+          <p class="text-sm font-bold text-gray-600 mb-2">Source</p>
           <button
             @click="toggleDropdown('source')"
             class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedSource || 'Select Source' }}
-            <svg
-              class="w-2.5 h-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
+            <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
             </svg>
           </button>
-          <div
-            v-if="showSourceDropdown"
-            class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1"
-          >
+          <div v-if="showSourceDropdown" class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1">
             <ul class="py-2 text-sm text-gray-700">
               <li v-for="option in sourceOptions" :key="option">
                 <button
@@ -254,35 +204,18 @@ const toggleDropdown = (dropdown) => {
 
         <!-- Sale Date Dropdown -->
         <div class="relative">
-          <p class="text-sm font-bold text-gray-600 mb-2">
-            {{ translations.dashboard?.clients?.saleDate }}
-          </p>
+          <p class="text-sm font-bold text-gray-600 mb-2">Sale Date</p>
           <button
             @click="toggleDropdown('saleDate')"
             class="text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-between w-full"
             type="button"
           >
             {{ selectedSaleDate || 'Select Period' }}
-            <svg
-              class="w-2.5 h-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
+            <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
             </svg>
           </button>
-          <div
-            v-if="showSaleDateDropdown"
-            class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1"
-          >
+          <div v-if="showSaleDateDropdown" class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full mt-1">
             <ul class="py-2 text-sm text-gray-700">
               <li v-for="option in saleDateOptions" :key="option">
                 <button
@@ -310,17 +243,11 @@ const toggleDropdown = (dropdown) => {
       <!-- Analytics Row -->
       <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
         <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
-          <p class="text-lg font-bold text-gray-600">
-            {{ translations.dashboard?.clients?.stats?.total }}
-          </p>
-          <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{
-            filteredClients.length
-          }}</span>
+          <p class="text-lg font-bold text-gray-600">Total Clients:</p>
+          <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{ filteredClients.length }}</span>
         </div>
         <div class="flex items-center bg-green-50 px-4 py-2 rounded-lg">
-          <p class="text-lg font-bold text-gray-600">
-            {{ translations.dashboard?.clients?.stats?.orders }}
-          </p>
+          <p class="text-lg font-bold text-gray-600">Total Orders:</p>
           <span class="ml-2 text-green-600 font-bold text-lg">{{ totalOrders }}</span>
         </div>
       </div>
@@ -359,51 +286,15 @@ const toggleDropdown = (dropdown) => {
           <table class="min-w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.name }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.id }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.email }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.phone }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.registrationDate }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.orders }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.totalSpent }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.country }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ translations.dashboard?.clients?.table?.action }}
-                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Spent</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">

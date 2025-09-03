@@ -6,37 +6,45 @@ import { useBooksStore } from '@/stores/Books'
 
 // --- Constants ---
 const BOOK_STATUS = {
-  PUBLISHED: 1,
-  PENDING: 2,
-  DRAFT: 3,
-  PROCESSING: 4, // Assuming more statuses might exist
-  SHIPPED: 5
+  PUBLISHED: 'published',
+  PENDING: 'pending',
+  DRAFT: 'draft',
+  PROCESSING: 'processing',
+  SHIPPED: 'shipped'
 }
 
 const STATUS_CONFIG = {
   [BOOK_STATUS.PUBLISHED]: { color: 'text-green-700 bg-green-100', icon: CheckCircleIcon, label: 'Published' },
-  [BOOK_STATUS.PENDING]: { color: 'text-yellow-500 bg-yellow-100', icon: ClockIcon, label: 'Pending' },
+  [BOOK_STATUS.PENDING]: { color: 'text-[var(--color-primary)] bg-yellow-100', icon: ClockIcon, label: 'Pending' },
   [BOOK_STATUS.DRAFT]: { color: 'text-red-700 bg-red-100', icon: XCircleIcon, label: 'Draft' },
   [BOOK_STATUS.PROCESSING]: { color: 'text-blue-700 bg-blue-100', icon: TruckIcon, label: 'Processing' },
   [BOOK_STATUS.SHIPPED]: { color: 'text-purple-700 bg-purple-100', icon: TruckIcon, label: 'Shipped' }
 }
 
-// --- Props & Emits ---
+// --- Props and Emits ---
 const props = defineProps({
-  bookIdProp: { type: [String, Number], required: false }
+  bookId: {
+    type: [String, Number],
+    required: false
+  }
 })
 const emit = defineEmits(['bookUpdated', 'statusChanged', 'bookDeleted'])
 
 // --- Composables ---
 const route = useRoute()
 const router = useRouter()
-const booksStore = useBooksStore()
 
 // --- State ---
+const isLoading = ref(true)
 const isUpdating = ref(false)
 const isSaving = ref(false)
+const error = ref(null)
 const showSuccessMessage = ref(false)
 const successMessage = ref('')
+
+// --- Store ---
+const booksStore = useBooksStore()
+const books = computed(() => booksStore.books)
 
 // --- Popups State ---
 const isPop = ref(false)
@@ -47,31 +55,33 @@ const isOfferPopupOpen = ref(false)
 const editForm = ref({})
 const offerForm = ref({})
 
-// --- Computed ---
-const bookId = computed(() => Number(props.bookIdProp || route.params.id))
-const selectedBook = computed(() => booksStore.books.find((book) => book.id === bookId.value))
-const isLoading = computed(() => booksStore.isLoading)
-const error = computed(() => booksStore.error)
+// --- Computed Properties ---
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
-const bookCoverUrl = computed(() => {
-  if (!selectedBook.value || !selectedBook.value.cover) return 'data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="%23a0aec0"%3e%3cpath d="M16 2 L16 30 M2 16 L30 16"/%3e%3c/svg%3e'
-  return selectedBook.value.cover.startsWith('/storage')
-    ? `${apiBaseUrl}${selectedBook.value.cover}`
-    : selectedBook.value.cover
+// **FIXED**: Simplified and more robust ID handling.
+const bookId = computed(() => {
+  const id = props.bookId || route.params.id;
+  return id ? Number(id) : null;
+})
+
+const selectedBook = computed(() => {
+  const id = bookId.value
+  if (!id || !Array.isArray(books.value)) return null
+  return books.value.find(book => Number(book.id) === id) || null
 })
 
 const statusConfig = computed(() => {
   const book = selectedBook.value
-  if (!book || book.status === null || book.status === undefined) return null
-  // The API might return a string, so we parse it to be safe
-  const statusKey = parseInt(book.status, 10)
-  return STATUS_CONFIG[statusKey] || null
+  return book ? STATUS_CONFIG[book.status] || null : null
 })
 
+const statusOptions = computed(() => Object.values(BOOK_STATUS).map(status => ({
+  value: status,
+  label: STATUS_CONFIG[status]?.label || status,
+  disabled: false
+})))
+
 const stockStatusText = computed(() => {
-  if (!selectedBook.value) return ''
-  const stock = Number(selectedBook.value.stock || 0)
+  const stock = Number(selectedBook.value?.stock || 0)
   if (stock > 100) return 'In Stock'
   if (stock > 20) return 'Limited Stock'
   if (stock > 0) return `Only ${stock} copies remaining!`
@@ -79,46 +89,107 @@ const stockStatusText = computed(() => {
 })
 
 const stockStatusColor = computed(() => {
-  if (!selectedBook.value) return ''
-  const stock = Number(selectedBook.value.stock || 0)
+  const stock = Number(selectedBook.value?.stock || 0)
   if (stock > 100) return 'text-green-600'
-  if (stock > 20) return 'text-yellow-600'
+  if (stock > 20) return 'text-[var(--color-primary)]'
   if (stock > 0) return 'text-red-600'
-  return 'text-gray-500'
+  return 'text-red-800'
 })
 
 // --- Helper Functions ---
+
 const showSuccess = (message) => {
   successMessage.value = message
   showSuccessMessage.value = true
   setTimeout(() => (showSuccessMessage.value = false), 3000)
 }
 
-// --- Core Logic ---
+// **FIXED**: Robust price parsing from string (e.g., "$19.99").
+const parsePrice = (price) => {
+  if (typeof price === 'number') return price
+  if (typeof price !== 'string') return 0
+  const num = parseFloat(price.replace(/[^0-9.-]+/g, ""))
+  return Number.isFinite(num) ? num : 0
+}
+
+const renderStars = (rating) => {
+  const r = Number.isFinite(Number(rating)) ? Number(rating) : 0
+  const fullStars = Math.floor(r)
+  const hasHalfStar = (r - fullStars) >= 0.5
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
+  return { full: fullStars, half: hasHalfStar, empty: emptyStars }
+}
+
+// --- Core Logic Functions ---
+
+// **FIXED**: Centralized and corrected discount calculation logic.
+const updateDiscountedPrice = () => {
+  const book = selectedBook.value
+  if (!book) return
+
+  const originalPrice = parsePrice(book.price)
+  const activeOffers = book.offers?.filter(offer => offer.active) || []
+
+  if (activeOffers.length === 0 || originalPrice === 0) {
+    delete book.discountedPrice
+    return
+  }
+
+  // Find the largest discount amount from all active offers
+  const bestDiscount = activeOffers.reduce((maxDiscount, offer) => {
+    const offerValue = Number(offer.value) || 0
+    const currentDiscount = offer.type === 'percentage'
+      ? (originalPrice * offerValue) / 100
+      : offerValue
+    return Math.max(maxDiscount, currentDiscount)
+  }, 0)
+
+  if (bestDiscount > 0) {
+    const finalPrice = Math.max(0, originalPrice - bestDiscount)
+    book.discountedPrice = `$${finalPrice.toFixed(2)}`
+  } else {
+    delete book.discountedPrice
+  }
+}
+
 const loadBook = async () => {
-  if (bookId.value) {
-    await booksStore.fetchBook(bookId.value)
-    if (selectedBook.value && !selectedBook.value.offers) {
-      selectedBook.value.offers = []
+  isLoading.value = true
+  error.value = null
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
+    if (!selectedBook.value) {
+      error.value = 'Book not found'
+    } else {
+      updateDiscountedPrice() // Initial calculation
     }
+  } catch (err) {
+    error.value = 'Error loading book data'
+    console.error('Error loading book:', err)
+  } finally {
+    isLoading.value = false
   }
 }
 
 // --- Action Handlers ---
+
 const updateBookStatus = async (newStatus) => {
-  if (!selectedBook.value || isUpdating.value) return
+  const book = selectedBook.value
+  if (!book || isUpdating.value) return
+
   isUpdating.value = true
+  error.value = null
   try {
-    const success = await booksStore.updateBook(selectedBook.value.id, { status: newStatus })
-    if (success) {
-      showSuccess('Book status updated successfully!')
-      emit('statusChanged', { bookId: selectedBook.value.id, newStatus })
-    } else {
-      throw new Error('Failed to update status')
-    }
+    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
+    const oldStatus = book.status
+    book.status = newStatus
+    book.dates = { ...book.dates, updated: new Date().toISOString() }
+
+    showSuccess('Book status updated successfully!')
+    emit('statusChanged', { bookId: book.id, oldStatus, newStatus })
+    emit('bookUpdated', book)
   } catch (err) {
+    error.value = 'Error updating status. Please try again.'
     console.error('Error updating book status:', err)
-    alert('Error updating status. Please try again.')
   } finally {
     isUpdating.value = false
   }
@@ -126,17 +197,19 @@ const updateBookStatus = async (newStatus) => {
 
 // --- Edit Book ---
 const openEditPopup = () => {
-  if (!selectedBook.value) return
   const book = selectedBook.value
+  if (!book) return
   editForm.value = {
     title: book.title || '',
     description: book.description || '',
-    author: book.author ? book.author.name : '',
+    author: book.author || '',
     pages: book.pages || '',
     stock: book.stock || '',
     price: book.price || '',
-    category: book.category ? book.category.name : '',
-    coverPreview: bookCoverUrl.value
+    category: book.category || '',
+    language: book.language || '',
+    publishingHouse: book.publishingHouse || '',
+    publisherDate: book.publisherDate || ''
   }
   isPop.value = true
 }
@@ -144,42 +217,27 @@ const openEditPopup = () => {
 const closeEditPopup = () => { isPop.value = false }
 
 const saveBookChanges = async () => {
-  if (!selectedBook.value || isSaving.value) return
+  const book = selectedBook.value
+  if (!book || isSaving.value) return
+
   isSaving.value = true
+  error.value = null
   try {
-    const formData = new FormData()
-    for (const key in editForm.value) {
-      if (key === 'coverFile') {
-        if (editForm.value.coverFile) {
-          formData.append('cover', editForm.value.coverFile)
-        }
-      } else if (editForm.value[key] !== null) {
-        formData.append(key, editForm.value[key])
-      }
-    }
-    const success = await booksStore.updateBook(selectedBook.value.id, formData)
-    if (success) {
-      closeEditPopup()
-      showSuccess('Book details updated successfully!')
-      emit('bookUpdated', booksStore.book)
-    } else throw new Error('Update failed')
+    await new Promise(resolve => setTimeout(resolve, 1500)) // simulate API
+    Object.assign(book, editForm.value)
+    book.dates = { ...book.dates, updated: new Date().toISOString() }
+
+    // **FIXED**: Recalculate discount if base price changed.
+    updateDiscountedPrice()
+
+    closeEditPopup()
+    showSuccess('Book details updated successfully!')
+    emit('bookUpdated', book)
   } catch (err) {
+    error.value = 'Error updating book details. Please try again.'
     console.error('Error updating book:', err)
-    alert('Error updating book details. Please try again.')
   } finally {
     isSaving.value = false
-  }
-}
-
-const handleCoverImageUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    editForm.value.coverFile = file
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      editForm.value.coverPreview = e.target.result
-    }
-    reader.readAsDataURL(file)
   }
 }
 
@@ -188,25 +246,29 @@ const openDeleteConfirm = () => { isDeleteConfirmOpen.value = true }
 const closeDeleteConfirm = () => { isDeleteConfirmOpen.value = false }
 
 const deleteBook = async () => {
-  if (!selectedBook.value || isUpdating.value) return
+  const book = selectedBook.value
+  if (!book || isUpdating.value) return
+
   isUpdating.value = true
+  error.value = null
   try {
-    const success = await booksStore.deleteBook(selectedBook.value.id)
-    if (success) {
-      closeDeleteConfirm()
-      showSuccess('Book deleted successfully!')
-      emit('bookDeleted', selectedBook.value.id)
-      router.push('/dashboard/books')
-    } else throw new Error('Failed to delete book')
+    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
+    booksStore.deleteBook(book.id) // Assuming a store action
+
+    closeDeleteConfirm()
+    showSuccess('Book deleted successfully!')
+    emit('bookDeleted', book.id)
+
+    setTimeout(() => router.push('/books'), 1000)
   } catch (err) {
+    error.value = 'Error deleting book. Please try again.'
     console.error('Error deleting book:', err)
-    alert('Error deleting book. Please try again.')
   } finally {
     isUpdating.value = false
   }
 }
 
-// --- Offer / Discount ---
+// --- Offer/Discount ---
 const openOfferPopup = () => {
   offerForm.value = {
     discountType: 'percentage',
@@ -221,46 +283,96 @@ const openOfferPopup = () => {
 const closeOfferPopup = () => { isOfferPopupOpen.value = false }
 
 const addOffer = async () => {
-  if (!selectedBook.value) return
-  const newOffer = { id: Date.now(), ...offerForm.value, active: true }
-  selectedBook.value.offers.push(newOffer)
-  closeOfferPopup()
-  showSuccess('Mock offer added!')
+  const book = selectedBook.value
+  if (!book || isSaving.value) return
+
+  isSaving.value = true
+  error.value = null
+  try {
+    if (!offerForm.value.discountValue || offerForm.value.discountValue <= 0) {
+      throw new Error('Please enter a valid discount value')
+    }
+    await new Promise(resolve => setTimeout(resolve, 1000)) // simulate API
+
+    const newOffer = { id: Date.now(), ...offerForm.value, active: true, createdAt: new Date().toISOString() }
+    book.offers = [...(book.offers || []), newOffer]
+    book.dates = { ...book.dates, updated: new Date().toISOString() }
+
+    // **FIXED**: Use centralized function to apply the best discount.
+    updateDiscountedPrice()
+
+    closeOfferPopup()
+    showSuccess('Offer added successfully!')
+    emit('bookUpdated', book)
+  } catch (err) {
+    error.value = err.message || 'Error adding offer. Please try again.'
+    console.error('Error adding offer:', err)
+  } finally {
+    isSaving.value = false
+  }
+}
+
+// --- Offer Management ---
+const toggleOfferStatus = async (offerToUpdate) => {
+  const book = selectedBook.value
+  if (!book || isUpdating.value) return
+
+  isUpdating.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
+    offerToUpdate.active = !offerToUpdate.active
+    book.dates = { ...book.dates, updated: new Date().toISOString() }
+    updateDiscountedPrice()
+    showSuccess(`Offer ${offerToUpdate.active ? 'activated' : 'deactivated'}!`)
+    emit('bookUpdated', book)
+  } catch (err) {
+    error.value = 'Error updating offer status.'
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+const removeOffer = async (offerId) => {
+  const book = selectedBook.value
+  if (!book || isUpdating.value) return
+
+  isUpdating.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500)) // simulate API
+    book.offers = book.offers.filter(offer => offer.id !== offerId)
+    book.dates = { ...book.dates, updated: new Date().toISOString() }
+    updateDiscountedPrice()
+    showSuccess('Offer removed successfully!')
+    emit('bookUpdated', book)
+  } catch (err) {
+    error.value = 'Error removing offer.'
+  } finally {
+    isUpdating.value = false
+  }
 }
 
 const togglePublishStatus = async () => {
-  if (!selectedBook.value || isUpdating.value) return
-  // Toggle between Published (1) and Draft (3)
-  const newStatus = parseInt(selectedBook.value.status, 10) === BOOK_STATUS.PUBLISHED 
-    ? BOOK_STATUS.DRAFT 
-    : BOOK_STATUS.PUBLISHED;
-  console.log('Toggling status to:', newStatus);
-  await updateBookStatus(newStatus);
-};
-
-const toggleOfferStatus = (offer) => {
-  offer.active = !offer.active
-  showSuccess(`Offer ${offer.active ? 'activated' : 'deactivated'} successfully!`)
+  const book = selectedBook.value
+  if (!book) return
+  const newStatus = book.status === BOOK_STATUS.PUBLISHED ? BOOK_STATUS.DRAFT : BOOK_STATUS.PUBLISHED
+  await updateBookStatus(newStatus)
 }
 
-const removeOffer = (offerId) => {
-  if (!selectedBook.value) return
-  selectedBook.value.offers = selectedBook.value.offers.filter(o => o.id !== offerId)
-  showSuccess('Offer removed successfully!')
-}
-
-// --- Misc ---
+// --- Misc Actions ---
 const goBack = () => router.go(-1)
 const printBook = () => window.print()
+const downloadInvoice = () => console.log('Downloading invoice for book:', bookId.value)
 const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-// --- Lifecycle ---
-onMounted(loadBook)
+// --- Lifecycle & Watchers ---
+onMounted(() => {
+  loadBook()
+})
+
 watch(bookId, (newId, oldId) => {
   if (newId !== oldId) loadBook()
 })
 </script>
-
 
 <template>
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
@@ -270,7 +382,7 @@ watch(bookId, (newId, oldId) => {
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md text-center">
-        <strong class="font-bold">{{ translations.dashboard?.bookDetails?.error }}</strong>
+        <strong class="font-bold">Error!</strong>
         <span class="block sm:inline"> {{ error }}</span>
         <button @click="loadBook" class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
           Try Again
@@ -279,58 +391,51 @@ watch(bookId, (newId, oldId) => {
     </div>
 
     <div v-if="showSuccessMessage" class="fixed top-4 right-4 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-      <strong class="font-bold">{{ translations.dashboard?.bookDetails?.success }}</strong>
+      <strong class="font-bold">Success!</strong>
       <span class="block sm:inline"> {{ successMessage }}</span>
     </div>
 
     <div v-if="isPop" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">{{ translations.dashboard?.bookDetails?.editTitle }}</h2>
+          <h2 class="text-2xl font-bold text-gray-900">Edit Book Details</h2>
           <button @click="closeEditPopup" class="text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <form @submit.prevent="saveBookChanges" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.title }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
               <input v-model="editForm.title" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Title">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.author }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
               <input v-model="editForm.author" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Author Name">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.pages }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Pages</label>
               <input v-model="editForm.pages" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Number of Pages">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.stock }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
               <input v-model="editForm.stock" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stock Quantity">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.price }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
               <input v-model="editForm.price" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="$0.00">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.category }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
               <input v-model="editForm.category" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Category">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.description }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea v-model="editForm.description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Book Description"></textarea>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"{{ translations.dashboard?.bookDetails?.labels?.cover }}</label>
-            <input type="file" @change="handleCoverImageUpload" class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-            <div v-if="editForm.coverPreview" class="mt-4">
-              <img :src="editForm.coverPreview" alt="Image Preview" class="h-32 w-32 object-cover rounded-md" />
-            </div>
-          </div>
           <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" @click="closeEditPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
+            <button type="button" @click="closeEditPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
             <button type="submit" :disabled="isSaving" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-md hover:bg-[var(--color-primary)] disabled:opacity-50">
-              {{ isSaving ? 'Saving...' : '{{ translations.dashboard?.bookDetails?.save }}' }}
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
             </button>
           </div>
         </form>
@@ -339,10 +444,10 @@ watch(bookId, (newId, oldId) => {
 
     <div v-if="isDeleteConfirmOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.deleteConfirmTitle }}</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
         <p class="text-gray-700 mb-6">Are you sure you want to delete "{{ selectedBook?.title }}"? This action cannot be undone.</p>
         <div class="flex justify-end space-x-3">
-          <button @click="closeDeleteConfirm" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
+          <button @click="closeDeleteConfirm" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
           <button @click="deleteBook" :disabled="isUpdating" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
             {{ isUpdating ? 'Deleting...' : 'Delete' }}
           </button>
@@ -353,15 +458,15 @@ watch(bookId, (newId, oldId) => {
     <div v-if="isOfferPopupOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-lg p-6 max-w-md w-full">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">{{ translations.dashboard?.bookDetails?.addOfferTitle }}</h2>
+          <h2 class="text-2xl font-bold text-gray-900">Add Offer/Discount</h2>
           <button @click="closeOfferPopup" class="text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <form @submit.prevent="addOffer" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.discountType }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
             <select v-model="offerForm.discountType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="percentage">{{ translations.dashboard?.bookDetails?.percentage }}</option>
-              <option value="fixed">{{ translations.dashboard?.bookDetails?.fixed }}</option>
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount ($)</option>
             </select>
           </div>
           <div>
@@ -370,20 +475,20 @@ watch(bookId, (newId, oldId) => {
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.startDate }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
               <input v-model="offerForm.startDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.endDate }}</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">End Date (Optional)</label>
               <input v-model="offerForm.endDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.dashboard?.bookDetails?.description }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
             <textarea v-model="offerForm.description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
           </div>
           <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" @click="closeOfferPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"{{ translations.dashboard?.bookDetails?.cancel }}/button>
+            <button type="button" @click="closeOfferPopup" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Cancel</button>
             <button type="submit" :disabled="isSaving" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50">
               {{ isSaving ? 'Adding...' : 'Add Offer' }}
             </button>
@@ -400,56 +505,56 @@ watch(bookId, (newId, oldId) => {
               <p class="text-sm text-gray-500 mt-1">{{ getCurrentDate() }}</p>
             </div>
             <div class="flex space-x-3">
-              <button @click="printBook" class="px-5 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition-colors"{{ translations.dashboard?.bookDetails?.print }}</button>
-              <button @click="goBack" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"{{ translations.dashboard?.bookDetails?.back }}</button>
+              <button @click="printBook" class="px-5 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition-colors">Print</button>
+              <button @click="goBack" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Back</button>
             </div>
           </div>
       </header>
       <main class="container mx-auto px-4 sm:px-8 lg:px-24 py-8">
         <div class="bg-white rounded-lg shadow-md p-6 md:p-8 lg:flex lg:space-x-8">
           <div class="flex-shrink-0 mb-6 lg:mb-0 lg:w-1/3 flex justify-center">
-            <img class="w-full max-w-xs rounded-lg shadow-lg object-cover" :src="bookCoverUrl" :alt="`${selectedBook.title} Cover`" loading="lazy" />
+            <img class="w-full max-w-xs rounded-lg shadow-lg object-cover" :src="selectedBook.cover" :alt="`${selectedBook.title} Cover`" loading="lazy" />
           </div>
           <div class="flex-grow">
             <h2 class="font-bold text-3xl text-gray-900 mb-2">{{ selectedBook.title }}</h2>
             <div class="w-24 h-1 bg-[var(--color-light)] mb-4 rounded-full"></div>
             <div class="space-y-2 mb-6 text-gray-700">
-                <p><strong>Author:</strong> {{ selectedBook.author.name }}</p>
+                <p><strong>Author:</strong> {{ selectedBook.author }}</p>
                 </div>
             <div class="flex items-center">
-              <strong class="text-lg text-gray-700 mr-2">{{ translations.dashboard?.bookDetails?.status }}</strong>
+              <strong class="text-lg text-gray-700 mr-2">Status:</strong>
               <span v-if="statusConfig" :class="statusConfig.color" class="px-2 py-1 rounded-full text-sm font-medium flex items-center">
                 <component :is="statusConfig.icon" class="w-4 h-4 mr-1" />
                 {{ statusConfig.label }}
               </span>
             </div>
             <div class="flex flex-wrap gap-3 mt-6">
-                <button @click="openEditPopup" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"{{ translations.dashboard?.bookDetails?.edit }}</button>
-                <button @click="openDeleteConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"{{ translations.dashboard?.bookDetails?.delete }}</button>
-                <button @click="openOfferPopup" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"{{ translations.dashboard?.bookDetails?.addOffer }}</button>
+                <button @click="openEditPopup" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Edit</button>
+                <button @click="openDeleteConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Delete</button>
+                <button @click="openOfferPopup" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Offer</button>
                 <button @click="togglePublishStatus" :disabled="isUpdating" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors">
-                  {{ isUpdating ? '...' : (parseInt(selectedBook.status, 10) === 1 ? 'Unpublish' : 'Publish') }}
+                  {{ isUpdating ? '...' : (selectedBook.status === 'published' ? 'Unpublish' : 'Publish') }}
                 </button>
             </div>
           </div>
         </div>
 
         <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mt-8">
-            <h3 class="font-bold text-2xl text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.availabilityPricing }}</h3>
+            <h3 class="font-bold text-2xl text-gray-900 mb-4">Availability & Pricing</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div class="flex items-center space-x-2 mb-2">
-                  <p class="text-lg text-gray-700"><strong>{{ translations.dashboard?.bookDetails?.priceLabel }}</strong></p>
+                  <p class="text-lg text-gray-700"><strong>Price:</strong></p>
                   <span v-if="selectedBook.discountedPrice" class="text-gray-500 line-through">{{ selectedBook.price }}</span>
                   <span :class="selectedBook.discountedPrice ? 'text-red-600 font-bold text-xl' : 'text-green-600 font-semibold text-xl'">
                     {{ selectedBook.discountedPrice || selectedBook.price }}
                   </span>
                 </div>
-                <p class="text-lg text-gray-700 mb-4"><strong>Stock {{ translations.dashboard?.bookDetails?.status }}</strong> <span :class="stockStatusColor" class="font-semibold">{{ stockStatusText }}</span></p>
+                <p class="text-lg text-gray-700 mb-4"><strong>Stock Status:</strong> <span :class="stockStatusColor" class="font-semibold">{{ stockStatusText }}</span></p>
               </div>
               <div>
                 <div class="flex items-center text-lg text-gray-700 mb-2">
-                    <strong>{{ translations.dashboard?.bookDetails?.ratingLabel }}</strong>
+                    <strong>Rating:</strong>
                     <span class="ml-2 flex text-yellow-400">
                       </span>
                     <span class="ml-2">({{ selectedBook.rating }} out of 5)</span>
@@ -459,7 +564,7 @@ watch(bookId, (newId, oldId) => {
         </section>
 
         <section v-if="selectedBook.offers && selectedBook.offers.length > 0" class="bg-white rounded-lg shadow-md p-6 md:p-8 mt-8">
-            <h3 class="font-bold text-2xl text-gray-900 mb-4">{{ translations.dashboard?.bookDetails?.manageOffers }}</h3>
+            <h3 class="font-bold text-2xl text-gray-900 mb-4">Manage Offers</h3>
             <div class="space-y-4">
               <div v-for="offer in selectedBook.offers" :key="offer.id" class="border border-gray-200 rounded-lg p-4" :class="offer.active ? 'bg-green-50 border-green-200' : 'bg-gray-50'">
                   <div class="flex justify-between items-start">

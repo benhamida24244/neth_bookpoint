@@ -1,24 +1,20 @@
 <script setup>
-import { useAuthorStore } from '@/stores/Authors'
-import { ref, computed, onMounted } from 'vue'
-import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue'
-import { useLanguageStore } from '@/stores/language'
+import { useAuthorStore } from '@/stores/Authors';
+import { ref, computed, onMounted } from 'vue';
+import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue';
 
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
-
-const addAuthorModal = ref(null)
-const searchQuery = ref('')
-const selectedCountry = ref('')
-const sortBy = ref('name')
-const sortOrder = ref('asc')
+const addAuthorModal = ref(null);
+const searchQuery = ref('');
+const selectedCountry = ref('');
+const sortBy = ref('name');
+const sortOrder = ref('asc');
 const AuthorsStore = useAuthorStore()
 
-onMounted(async () => {
-  await AuthorsStore.fetchAuthors()
-})
+onMounted( async () => {
+ await  AuthorsStore.fetchAuthors();
+});
 
-const authors = computed(() => AuthorsStore.authors)
+const authors = computed(() => AuthorsStore.authors);
 
 // Computed properties for filtering and sorting
 const filteredAuthors = computed(() => {
@@ -112,7 +108,7 @@ const openEditModal = (author) => {
           v-model="selectedCountry"
           class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         >
-          <option value="">{{ translations.dashboard?.authors?.filters?.allCountries }}</option>
+          <option value="">All Countries</option>
           <option v-for="country in countries" :key="country" :value="country">
             {{ country }}
           </option>
@@ -121,27 +117,22 @@ const openEditModal = (author) => {
           @click="clearFilters"
           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 whitespace-nowrap"
         >
-          {{ translations.dashboard?.authors?.clearFilters }}
+          Clear Filters
         </button>
       </div>
 
       <div class="flex gap-3 w-full lg:w-auto">
-        <button
-          @click="addAuthorModal.openModal()"
-          class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none"
-        >
-          {{ translations.dashboard?.authors?.addNew }}
+        <button @click="addAuthorModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
+          Add Author
         </button>
-        <button
-          class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none"
-        >
-          {{ translations.dashboard?.authors?.export }}
+        <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none">
+          Export
         </button>
       </div>
     </div>
 
     <div class="flex flex-wrap gap-2 mb-4">
-      <span class="text-sm font-medium text-gray-600 mr-2">{{ translations.dashboard?.authors?.sortBy }}</span>
+      <span class="text-sm font-medium text-gray-600 mr-2">Sort by:</span>
       <button
         v-for="field in ['name', 'Orders_count', 'SpendMuch', 'nmbBook']"
         :key="field"
@@ -160,15 +151,15 @@ const openEditModal = (author) => {
 
     <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
       <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
-        <p class="text-lg font-bold text-gray-600">{{ translations.dashboard?.authors?.stats?.total }}</p>
+        <p class="text-lg font-bold text-gray-600">Total Authors:</p>
         <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{ filteredAuthors.length }}</span>
       </div>
       <div class="flex items-center bg-green-50 px-4 py-2 rounded-lg">
-        <p class="text-lg font-bold text-gray-600">{{ translations.dashboard?.authors?.stats?.orders }}</p>
+        <p class="text-lg font-bold text-gray-600">Total Orders:</p>
         <span class="ml-2 text-green-600 font-bold text-lg">{{ totalOrders }}</span>
       </div>
       <div class="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
-        <p class="text-lg font-bold text-gray-600">{{ translations.dashboard?.authors?.stats?.books }}</p>
+        <p class="text-lg font-bold text-gray-600">Total Books:</p>
         <span class="ml-2 text-blue-600 font-bold text-lg">
           {{ filteredAuthors.reduce((sum, author) => sum + author.nmbBook, 0) }}
         </span>
@@ -207,46 +198,21 @@ const openEditModal = (author) => {
         <table class="min-w-full">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                @click="handleSort('name')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
-                {{ translations.dashboard?.authors?.table?.name }} {{ getSortIcon('name') }}
+              <th @click="handleSort('name')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                Name {{ getSortIcon('name') }}
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {{ translations.dashboard?.authors?.table?.id }}
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th @click="handleSort('Orders_count')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                Orders {{ getSortIcon('Orders_count') }}
               </th>
-              <th
-                @click="handleSort('Orders_count')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
-                {{ translations.dashboard?.authors?.table?.orders }}
-                {{ getSortIcon('Orders_count') }}
+              <th @click="handleSort('SpendMuch')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                Rewards {{ getSortIcon('SpendMuch') }}
               </th>
-              <th
-                @click="handleSort('SpendMuch')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
-                {{ translations.dashboard?.authors?.table?.rewards }} {{ getSortIcon('SpendMuch') }}
+              <th @click="handleSort('nmbBook')" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                Books {{ getSortIcon('nmbBook') }}
               </th>
-              <th
-                @click="handleSort('nmbBook')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              >
-                {{ translations.dashboard?.authors?.table?.books }} {{ getSortIcon('nmbBook') }}
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {{ translations.dashboard?.authors?.table?.country }}
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {{ translations.dashboard?.authors?.table?.action }}
-              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -279,8 +245,8 @@ const openEditModal = (author) => {
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ translations.dashboard?.authors?.emptyHeader }}</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ translations.dashboard?.authors?.emptySubtext }}</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No authors found</h3>
+        <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
         <button
           @click="clearFilters"
           class="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)]"

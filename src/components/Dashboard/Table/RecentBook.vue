@@ -1,17 +1,9 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books';
-import { useLanguageStore } from '@/stores/language';
-import { onMounted, computed } from 'vue';
-import { storeToRefs } from 'pinia';
+
 
 const bookStore = useBooksStore()
-const { RecentBooks } = storeToRefs(bookStore)
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
-const apiBaseurl = import.meta.env.VITE_API_BASE_URL
-onMounted(() => {
-  bookStore.fetchBooks()
-})
+const RecentBooks = bookStore.RecentBooks
 </script>
 
 <template>
@@ -26,8 +18,8 @@ onMounted(() => {
           >
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-1">{{ translations.dashboard?.recentBooks?.emptyHeader }}</h3>
-
+          <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
+          
         </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       <div
@@ -36,7 +28,7 @@ onMounted(() => {
         class="bg-gray-50 rounded-xl p-3 shadow-sm hover:shadow-lg transition cursor-pointer"
       >
         <img
-          :src="`${apiBaseurl}${book.cover}`"
+          :src="book.cover"
           alt="book cover"
           class="w-full h-48 object-cover rounded-lg mb-2"
         />

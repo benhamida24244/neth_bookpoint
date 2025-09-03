@@ -1,87 +1,45 @@
-import { defineStore } from 'pinia';
-import apiService from '@/services/api';
+import { defineStore } from 'pinia'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    cart: null,
-    loading: false,
-    error: null,
+    cart: [],
   }),
 
   getters: {
-    cartCount: (state) => {
-      if (!state.cart || !state.cart.items) return 0;
-      return state.cart.items.reduce((total, item) => total + item.quantity, 0);
-    },
-    cartItems: (state) => state.cart?.items || [],
-    cartTotal: (state) => {
-        if (!state.cart || !state.cart.items) return 0;
-        return state.cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
-    }
+    cartCount: (state) =>
+      state.cart.reduce((total, item) => total + item.quantity, 0),
   },
 
   actions: {
-    async fetchCart() {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.cart.show();
-        this.cart = response.data;
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to fetch cart.';
-        // If the cart is empty (404), we can set it to a default empty state
-        if (error.response && error.response.status === 404) {
-            this.cart = { items: [], total: 0 };
+    addToCart(book) {
+      const existingItem = this.cart.find(item => item.id === book.id)
+      if (existingItem) {
+        existingItem.quantity += 1
+      } else {
+        this.cart.push({ ...book, quantity: 1 })
+      }
+    },
+
+    removeFromCart(bookId) {
+      const index = this.cart.findIndex(item => item.id === bookId)
+      if (index !== -1) {
+        if (this.cart[index].quantity > 1) {
+          this.cart[index].quantity -= 1
+        } else {
+          this.cart.splice(index, 1)
         }
-      } finally {
-        this.loading = false;
       }
     },
 
-    async addToCart(bookId, quantity) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.cart.add({ book_id: bookId, quantity });
-        this.cart = response.data;
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to add item to cart.';
-        throw error;
-      } finally {
-        this.loading = false;
+    updateQuantity(bookId, quantity) {
+      const item = this.cart.find(item => item.id === bookId)
+      if (item) {
+        item.quantity = quantity
       }
-    },
-
-    async updateQuantity(cartItemId, quantity) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.cart.update(cartItemId, { quantity });
-        this.cart = response.data;
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to update item quantity.';
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    async removeFromCart(cartItemId) {
-        this.loading = true;
-        this.error = null;
-        try {
-            const response = await apiService.cart.remove(cartItemId);
-            this.cart = response.data;
-        } catch (error) {
-            this.error = error.response?.data?.message || 'Failed to remove item from cart.';
-            throw error;
-        } finally {
-            this.loading = false;
-        }
     },
 
     clearCart() {
-      this.cart = null;
+      this.cart = []
     }
   }
-});
+})

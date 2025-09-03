@@ -1,11 +1,9 @@
 import { defineStore } from 'pinia';
-import apiService from '@/services/api.js';
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
-    loading: false,
     stats: {
-      books:0,
+      books: 0,
       ordersToday: 0,
       clients: 0,
       salesToday: 0,
@@ -36,30 +34,43 @@ export const useDashboardStore = defineStore('dashboard', {
   }),
   actions: {
     async fetchDashboardData() {
-      this.loading = true;
-      try {
-        const response = await apiService.admin.dashboard();
-        const data = response.data;
-        if (data.stats) {
-          this.stats.books = data.stats.books ?? this.stats.books;
-          this.stats.ordersToday = data.stats.ordersToday ?? this.stats.ordersToday;
-          this.stats.clients = data.stats.clients ?? this.stats.clients;
-          this.stats.salesToday = data.stats.salesToday ?? this.stats.salesToday;
-        }
-        this.dailySales = data.dailySales;
-        this.dailyOrders = data.dailyOrders;
-        this.categorySales = data.categorySales;
-        this.publishingHouse = data.publishingHouse;
-        this.ordersByCountry = data.ordersByCountry;
-        this.latestOrders = data.latestOrders;
-        this.recentBooks = data.recentBooks;
-        this.recentNotifications = data.recentNotifications;
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        // Optionally, handle the error state in the store
-      } finally {
-        this.loading = false;
-      }
+      // TODO: Replace with actual API calls
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Example of how to fetch and update the state:
+      // try {
+      //   const response = await fetch('/api/dashboard-stats');
+      //   const data = await response.json();
+      //   this.stats = data;
+      // } catch (error) {
+      //   console.error('Error fetching dashboard stats:', error);
+      // }
+
+      // Fetch daily sales data
+      // this.dailySales = await fetch('/api/daily-sales').then(res => res.json());
+
+      // Fetch daily orders data
+      // this.dailyOrders = await fetch('/api/daily-orders').then(res => res.json());
+
+      // Fetch category sales data
+      // this.categorySales = await fetch('/api/category-sales').then(res => res.json());
+
+      // Fetch publishing house data
+      // this.publishingHouse = await fetch('/api/publishing-house').then(res => res.json());
+
+      // Fetch orders by country data
+      // this.ordersByCountry = await fetch('/api/orders-by-country').then(res => res.json());
+
+      // Fetch latest orders
+      // this.latestOrders = await fetch('/api/latest-orders').then(res => res.json());
+
+      // Fetch recent books
+      // this.recentBooks = await fetch('/api/recent-books').then(res => res.json());
+
+      // Fetch recent notifications
+      // this.recentNotifications = await fetch('/api/recent-notifications').then(res => res.json());
     },
   },
 });

@@ -1,15 +1,11 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useCategoriesStore } from '@/stores/Categories'
-import { useLanguageStore } from '@/stores/language'
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useCategoriesStore } from '@/stores/Categories';
 
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
-
-const route = useRoute()
-const router = useRouter()
-const categoriesStore = useCategoriesStore()
+const route = useRoute();
+const router = useRouter();
+const categoriesStore = useCategoriesStore();
 
 const categoryId = parseInt(route.params.id);
 // ✅ **Added icon and status properties**
@@ -56,14 +52,12 @@ const cancelEdit = () => {
 <template>
   <div class="p-8 bg-gray-50 min-h-screen">
     <header class="font-BonaRegular mb-8">
-      <h1 class="font-bold text-3xl text-gray-800">
-        {{ translations.dashboard?.editCategory?.title }}
-      </h1>
-      <p class="text-gray-500 text-base">{{ translations.dashboard?.editCategory?.subtitle }}</p>
+      <h1 class="font-bold text-3xl text-gray-800">Edit Category</h1>
+      <p class="text-gray-500 text-base">Update the details for the category.</p>
     </header>
 
     <div v-if="categoriesStore.isLoading" class="text-center">
-      <p>{{ translations.dashboard?.editCategory?.loading }}</p>
+      <p>Loading category data...</p>
     </div>
 
     <div v-else-if="categoriesStore.error" class="text-center text-red-500">
@@ -75,7 +69,7 @@ const cancelEdit = () => {
         <div class="space-y-6">
           <div>
             <label for="category-name" class="block text-sm font-medium text-gray-700">
-              {{ translations.dashboard?.editCategory?.labels?.name }}
+              Category Name
             </label>
             <input
               v-model="categoryData.name"
@@ -87,7 +81,7 @@ const cancelEdit = () => {
           </div>
           <div>
             <label for="category-description" class="block text-sm font-medium text-gray-700">
-              {{ translations.dashboard?.editCategory?.labels?.description }}
+              Description
             </label>
             <textarea
               v-model="categoryData.description"
@@ -99,7 +93,7 @@ const cancelEdit = () => {
 
           <div>
             <label for="category-icon" class="block text-sm font-medium text-gray-700">
-              {{ translations.dashboard?.editCategory?.labels?.icon }}
+              Icon (e.g., Font Awesome class `fas fa-book`)
             </label>
             <input
               v-model="categoryData.icon"
@@ -112,7 +106,7 @@ const cancelEdit = () => {
 
           <div>
             <label for="category-status" class="block text-sm font-medium text-gray-700">
-              {{ translations.dashboard?.editCategory?.labels?.status }}
+              Status
             </label>
             <select
               v-model="categoryData.status"
@@ -120,32 +114,26 @@ const cancelEdit = () => {
               class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
               required
             >
-              <option disabled value="">
-                {{ translations.dashboard?.editCategory?.selectDefault }}
-              </option>
-              <option value="1">{{ translations.dashboard?.editCategory?.statusActive }}</option>
-              <option value="0">{{ translations.dashboard?.editCategory?.statusInactive }}</option>
+              <option disabled value="">Please select one</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
             </select>
           </div>
-        </div>
+          </div>
         <div class="pt-8 flex justify-end gap-4">
           <button
             type="button"
             @click="cancelEdit"
             class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
-            {{ translations.dashboard?.editCategory?.cancel }}
+            Cancel
           </button>
           <button
             type="submit"
             class="px-6 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-lg shadow-sm hover:bg-[var(--color-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
             :disabled="categoriesStore.isLoading"
           >
-            {{
-              categoriesStore.isLoading
-                ? 'Saving...'
-                : translations.dashboard?.editCategory?.save
-            }}
+            {{ categoriesStore.isLoading ? 'Saving...' : 'Save Changes' }}
           </button>
         </div>
       </form>
