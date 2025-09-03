@@ -7,12 +7,15 @@ defineProps({
     required: true
   }
 })
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+
 </script>
 
 <template>
  <a :href="author.url" class="flex flex-col items-center justify-center gap-3 p-2 w-36 flex-shrink-0 text-center group">
   <img
-    :src="author.img"
+    :src="`${apiBaseUrl}${author.img}`"
     :alt="author.name"
     class="w-24 h-24 object-cover rounded-full group-hover:scale-110 transition-transform duration-300"
   />

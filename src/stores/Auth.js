@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import apiService from '@/services/api';
 import router from '@/router';
+import { useCartStore } from './Cart';
 
 export const useAuthStore = defineStore('auth', {
   state: () => {
@@ -110,6 +111,10 @@ export const useAuthStore = defineStore('auth', {
         this.role = role || 'customer';
 
         this.saveSession(this.user, this.token, this.role, true);
+        
+        // مزامنة السلة المحلية مع السلة في الخادم
+        const cartStore = useCartStore();
+        await cartStore.syncLocalCart();
 
         router.push('/');
       } catch (error) {

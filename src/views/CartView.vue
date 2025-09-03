@@ -20,9 +20,10 @@ const CartStore = useCartStore()
 const { cart } = storeToRefs(CartStore)
 
 // Total price computation
-const totalPrice = computed(() =>
-  cart.value.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0).toFixed(2)
-)
+const totalPrice = computed(() => {
+  const cartItems = CartStore.cartItems;
+  return cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0).toFixed(2);
+})
 
 // Checkout button handler
 const handleCheckout = () => {
@@ -55,10 +56,10 @@ const handleCheckout = () => {
         </h1>
 
         <!-- Cart Items -->
-        <div v-if="cart.length > 0">
+        <div v-if="CartStore.cartItems.length > 0">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
-              v-for="item in cart"
+              v-for="item in CartStore.cartItems"
               :key="item.id"
               class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
             >

@@ -1,10 +1,14 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books'
 import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
+import { useLanguageStore } from '@/stores/language'
+
+const languageStore = useLanguageStore()
+const translations = computed(() => languageStore.translations)
 
 // الفلاتر
 const activeFilter = ref('All Books')
@@ -13,11 +17,11 @@ const showAddBookModal = ref(false)
 const showEditBookModal = ref(false)
 const selectedBook = ref(null)
 
-const filters = ref([
-  { label: 'All Books', value: 'All Books' },
-  { label: 'Published', value: 'published' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Draft', value: 'draft' },
+const filters = computed(() => [
+  { label: translations.value.dashboard?.books?.filters?.all, value: 'All Books' },
+  { label: translations.value.dashboard?.books?.filters?.published, value: 1 },
+  { label: translations.value.dashboard?.books?.filters?.pending, value: 2 },
+  { label: translations.value.dashboard?.books?.filters?.draft, value: 3 }
 ])
 
 const settingStore = useSettingsStore()
@@ -25,35 +29,48 @@ const settingStore = useSettingsStore()
 // استدعاء الـ Store
 const bookStore = useBooksStore()
 
+onMounted(async () => {
+  await bookStore.fetchBooks()
+})
+
 // بيانات الكتب
 const books = computed(() => bookStore.books || [])
+
+// 2. Get the API base URL from the .env file
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+
+const Deletebook = (book) => {
+  if (confirm(`${translations.value.dashboard?.books?.deleteConfirm} "${book.title}"?`)) {
+    bookStore.deleteBook(book.id)
+  }
+}
 
 // الإحصائيات
 const stats = computed(() => [
   {
-    label: 'Total Books',
+    label: translations.value.dashboard?.books?.stats?.total,
     value: books.value.length.toString(),
     icon: 'fas fa-book text-blue-500',
-    iconBg: 'bg-blue-50',
+    iconBg: 'bg-blue-50'
   },
   {
-    label: 'Total Authors',
+    label: translations.value.dashboard?.books?.stats?.authors,
     value: (bookStore.getTotalAuthors || []).length.toString(),
     icon: 'fas fa-user-pen text-green-500',
-    iconBg: 'bg-green-50',
+    iconBg: 'bg-green-50'
   },
   {
-    label: 'Total Publishers',
+    label: translations.value.dashboard?.books?.stats?.publishers,
     value: (bookStore.getTotalPublishedBooks || []).length.toString(),
     icon: 'fas fa-building text-[var(--color-light)]',
-    iconBg: 'bg-yellow-50',
+    iconBg: 'bg-yellow-50'
   },
   {
-    label: 'Total Categories',
+    label: translations.value.dashboard?.books?.stats?.categories,
     value: (bookStore.getTotalCategories || []).length.toString(),
     icon: 'fas fa-layer-group text-emerald-500',
-    iconBg: 'bg-emerald-50',
-  },
+    iconBg: 'bg-emerald-50'
+  }
 ])
 
 // تصفية البيانات
@@ -61,7 +78,8 @@ const filteredBooks = computed(() => {
   let filtered = books.value
 
   if (activeFilter.value !== 'All Books') {
-    filtered = filtered.filter((book) => book.status === activeFilter.value)
+    // Ensure book.status is a number for comparison
+    filtered = filtered.filter((book) => Number(book.status) === activeFilter.value)
   }
 
   if (searchQuery.value.trim()) {
@@ -69,8 +87,8 @@ const filteredBooks = computed(() => {
     filtered = filtered.filter(
       (book) =>
         (book.title || '').toLowerCase().includes(query) ||
-        (book.author || '').toLowerCase().includes(query) ||
-        (book.publishingHouse || '').toLowerCase().includes(query),
+        (book.author?.name || '').toLowerCase().includes(query) ||
+        (book.publisher?.name || '').toLowerCase().includes(query)
     )
   }
 
@@ -79,19 +97,39 @@ const filteredBooks = computed(() => {
 
 // تصنيف الحالة
 const getStatusClass = (status) => {
-  const statusClasses = {
-    published: 'bg-green-50 text-green-700',
-    pending: 'bg-yellow-50 text-[var(--color-primary)]',
-    draft: 'bg-red-50 text-red-700',
+  const numericStatus = Number(status)
+  if (numericStatus === 1) {
+    return 'bg-green-50 text-green-700' // Published
+  } else if (numericStatus === 2) {
+    return 'bg-yellow-50 text-yellow-700' // Pending
+  } else if (numericStatus === 3) {
+    return 'bg-red-50 text-red-700' // Draft
+  } else {
+    return 'bg-gray-50 text-gray-700' // Default
   }
-  return statusClasses[status] || 'bg-gray-50 text-gray-700'
 }
 
-const handleSaveBook = (newBook) => {
-  const dataNow = new Date().toISOString().split('T')[0]
-  bookStore.addBook(newBook, dataNow)
+const getStatusItem = (status) => {
+  const numericStatus = Number(status)
+  if (numericStatus === 1) {
+    return translations.value.dashboard?.books?.status?.published
+  } else if (numericStatus === 2) {
+    return translations.value.dashboard?.books?.status?.pending
+  } else if (numericStatus === 3) {
+    return translations.value.dashboard?.books?.status?.draft
+  } else {
+    return translations.value.dashboard?.books?.status?.unknown
+  }
+}
+
+const handleSaveBook = async (formData) => {
+  const success = await bookStore.addBook(formData)
   showAddBookModal.value = false
-  alert('Book added successfully!')
+  if (success) {
+    alert(translations.value.dashboard?.books?.addSuccess)
+  } else {
+    alert(translations.value.dashboard?.books?.addFailed)
+  }
 }
 
 const openEditModal = (book) => {
@@ -100,9 +138,9 @@ const openEditModal = (book) => {
 }
 
 const handleUpdateBook = (updatedBook) => {
-  bookStore.updateBook(updatedBook)
+  bookStore.updateBook(updatedBook.id, updatedBook)
   showEditBookModal.value = false
-  alert('Book updated successfully!')
+  alert(translations.value.dashboard?.books?.updateSuccess)
 }
 </script>
 
@@ -121,8 +159,10 @@ const handleUpdateBook = (updatedBook) => {
     />
     <div class="w-full px-4 md:px-6 py-8">
       <div class="max-w-7xl mx-auto mb-8 font-BonaRegular">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Books Dashboard</h1>
-        <p class="text-gray-600 mt-1">Track and manage all your books efficiently</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+          {{ translations.dashboard?.books?.title }}
+        </h1>
+        <p class="text-gray-600 mt-1">{{ translations.dashboard?.books?.subtitle }}</p>
       </div>
 
       <!-- Stats Cards -->
@@ -143,7 +183,9 @@ const handleUpdateBook = (updatedBook) => {
       </div>
 
       <!-- Filters and Search -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
+      >
         <div class="flex flex-wrap gap-2">
           <button
             v-for="filter in filters"
@@ -153,7 +195,7 @@ const handleUpdateBook = (updatedBook) => {
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
               activeFilter === filter.value
                 ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                : 'hover:bg-gray-50',
+                : 'hover:bg-gray-50'
             ]"
           >
             {{ filter.label }}
@@ -165,7 +207,7 @@ const handleUpdateBook = (updatedBook) => {
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search books..."
+              :placeholder="translations.dashboard?.books?.searchPlaceholder"
               class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
             />
             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
@@ -174,7 +216,7 @@ const handleUpdateBook = (updatedBook) => {
             @click="showAddBookModal = true"
             class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
           >
-            Add New Book
+            {{ translations.dashboard?.books?.addNew }}
           </button>
         </div>
       </div>
@@ -188,52 +230,52 @@ const handleUpdateBook = (updatedBook) => {
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Id
+                  {{ translations.dashboard?.books?.table?.id }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Cover
+                  {{ translations.dashboard?.books?.table?.cover}}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Title
+                  {{ translations.dashboard?.books?.table?.title }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Category
+                  {{ translations.dashboard?.books?.table?.category }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Author
+                  {{ translations.dashboard?.books?.table?.author }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Publisher
+                  {{ translations.dashboard?.books?.table?.publisher }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Status
+                  {{ translations.dashboard?.books?.table?.status }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Price
+                  {{ translations.dashboard?.books?.table?.price }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Date
+                  {{ translations.dashboard?.books?.table?.date }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Action
+                  {{ translations.dashboard?.books?.table?.action }}
                 </th>
               </tr>
             </thead>
@@ -246,25 +288,33 @@ const handleUpdateBook = (updatedBook) => {
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.id }}</td>
 
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <img :src="book.cover" alt="cover" class="w-10 h-14 rounded shadow" />
+                  <img
+                    :src="`${apiBaseUrl}${book.cover}`"
+                    alt="cover"
+                    class="w-10 h-14 rounded shadow"
+                  />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ book.category }}
+                  {{ book.category.name }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.author }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publishingHouse }}
+                  {{ book.author.name }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  {{ book.publisher.name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     :class="getStatusClass(book.status)"
                     class="px-3 py-1 rounded-full text-xs font-medium"
                   >
-                    {{ book.status }}
+                    {{ getStatusItem(book.status) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ book.price + settingStore.currency}}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  {{ book.price + settingStore.currency }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {{ book.publisherDate }}
                 </td>
@@ -273,13 +323,16 @@ const handleUpdateBook = (updatedBook) => {
                     :to="`/dashboard/books/${book.id}`"
                     class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
                   >
-                    <i class="far fa-eye"></i> View
+                    <i class="far fa-eye"></i> {{ translations.dashboard?.books?.actions?.view }}
                   </RouterLink>
                   <button
                     @click="openEditModal(book)"
                     class="text-indigo-600 hover:text-indigo-900"
                   >
-                    Edit
+                    {{ translations.dashboard?.books?.actions?.edit }}
+                  </button>
+                  <button @click="Deletebook(book)" class="text-red-600 hover:text-red-900">
+                    {{ translations.dashboard?.books?.actions?.delete }}
                   </button>
                 </td>
               </tr>
@@ -294,9 +347,11 @@ const handleUpdateBook = (updatedBook) => {
           >
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            {{ translations.dashboard?.books?.emptyHeader }}
+          </h3>
           <p class="text-gray-500">
-            Try adjusting your search or filter to find what you're looking for.
+            {{ translations.dashboard?.books?.emptySubtext }}
           </p>
         </div>
       </div>

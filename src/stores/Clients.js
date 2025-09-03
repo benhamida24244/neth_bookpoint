@@ -9,13 +9,13 @@ export const useClientsStore = defineStore("clients", {
        async fetchClients() {
       this.loading = true; // Fixed from isLoading
       try {
-        const response = await apiService.admin.profile.all();
+        const response = await apiService.admin.customers.all();
         this.clients = response.data.data;
         console.log(this.clients);
         this.loading = false;
         return this.clients;
       } catch (error) {
-        console.error('Failed to fetch publishing Houses:', error);
+        console.error('Failed to fetch customers:', error);
         this.loading = false;
         return [];
       }

@@ -142,6 +142,13 @@ const admin = {
     get: (id) => api.get(`/admin/profile/${id}`),
     update: (id, data) => api.put(`/admin/profile/${id}`, data),
   },
+
+  customers: {
+    all: () => api.get("/admin/customers"),
+    get: (id) => api.get(`/admin/customers/${id}`),
+    update: (id, data) => api.put(`/admin/customers/${id}`, data),
+    delete: (id) => api.delete(`/admin/customers/${id}`),
+  },
   orders: {
     all: () => api.get("/admin/orders"),
     get: (id) => api.get(`/admin/orders/${id}`),

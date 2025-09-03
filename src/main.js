@@ -13,6 +13,7 @@ import App from './App.vue'
 import router from './router'
 import { MotionPlugin } from '@vueuse/motion'
 import i18n from './i18n'
+import { useCartStore } from './stores/Cart'
 
 const app = createApp(App)
 
@@ -20,4 +21,9 @@ app.use(createPinia())
 app.use(router)
 app.use(MotionPlugin)
 app.use(i18n)
+
+// تحميل السلة المحلية عند بدء التطبيق
+const cartStore = useCartStore()
+cartStore.initializeLocalCart()
+
 app.mount('#app')

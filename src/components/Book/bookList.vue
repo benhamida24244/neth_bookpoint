@@ -2,14 +2,19 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
 
+defineProps({
+  books: {
+    type: Array,
+    required: true
+  }
+});
 // استيراد الأنماط
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 import BookItem from './bookItem.vue'
-import {useBooksStore} from '@/stores/Books.js'
-const BestSellerBook = useBooksStore().books
+
 </script>
 
 <template>
@@ -41,7 +46,7 @@ const BestSellerBook = useBooksStore().books
         navigation
         class="mySwiper"
     >
-      <SwiperSlide v-for="book in BestSellerBook" :key="book.id">
+      <SwiperSlide v-for="book in books" :key="book.id">
         <BookItem :book="book" />
       </SwiperSlide>
     </Swiper>

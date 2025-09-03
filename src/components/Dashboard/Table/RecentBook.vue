@@ -4,6 +4,8 @@ import { useBooksStore } from '@/stores/Books';
 
 const bookStore = useBooksStore()
 const RecentBooks = bookStore.RecentBooks
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+
 </script>
 
 <template>
@@ -19,7 +21,7 @@ const RecentBooks = bookStore.RecentBooks
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-1">No books found</h3>
-          
+
         </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       <div
@@ -28,7 +30,7 @@ const RecentBooks = bookStore.RecentBooks
         class="bg-gray-50 rounded-xl p-3 shadow-sm hover:shadow-lg transition cursor-pointer"
       >
         <img
-          :src="book.cover"
+          :src="`${apiBaseUrl}${book.cover}`"
           alt="book cover"
           class="w-full h-48 object-cover rounded-lg mb-2"
         />
