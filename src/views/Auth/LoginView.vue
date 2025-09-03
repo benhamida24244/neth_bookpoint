@@ -1,4 +1,19 @@
 <script setup>
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/Auth';
+import coverAspect from "@/assets/Auth/LoginImg.png";
+
+const authStore = useAuthStore();
+const email = ref('');
+const password = ref('');
+
+const handleSubmit = async () => {
+    await authStore.login({ email: email.value, password: password.value });
+  if (!authStore.error) {
+    // Optionally close the modal on success
+    // emit('close');
+  }
+};
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCustomerAuthStore } from '@/stores/customerAuth.js'
@@ -54,9 +69,9 @@ const handleLogin = async () => {
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Welcome to Neth BookPoint!</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">{{ $t('login.welcome') }}</h2>
           <p class="text-sm text-gray-600 italic">
-            Discover a seamless way to explore books and enjoy exclusive features.
+            {{ $t('login.discover') }}
           </p>
         </div>
 
@@ -66,41 +81,49 @@ const handleLogin = async () => {
         </div>
 
         <!-- النموذج -->
+        <form class="space-y-4" @submit.prevent="handleSubmit">
         <form @submit.prevent="handleLogin" class="space-y-4">
           <input
+            v-model="email"
             v-model="email"
             name="email"
             type="email"
             required
-            placeholder="Email Address"
+            :placeholder="$t('login.emailPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
           <input
             v-model="password"
+            v-model="password"
             name="password"
             type="password"
             required
-            placeholder="Password"
+            :placeholder="$t('login.passwordPlaceholder')"
             class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
           />
 
+          <div v-if="authStore.error" class="text-red-500 text-sm">
+            {{ authStore.error }}
+          </div>
+
           <div class="text-right text-sm">
-            <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">Forgot password?</a>
+            <a href="/forgot-password" class="text-[var(--color-primary)] hover:underline">{{ $t('login.forgotPassword') }}</a>
           </div>
 
           <button
             type="submit"
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="authStore.loading"
           >
-            Login
+            {{ authStore.loading ? $t('login.loggingIn') : $t('login.login') }}
           </button>
         </form>
 
         <!-- فاصل -->
         <div class="flex items-center gap-2 my-6 text-sm text-gray-400">
           <div class="flex-grow h-px bg-gray-200"></div>
-          OR
+          {{ $t('login.or') }}
           <div class="flex-grow h-px bg-gray-200"></div>
         </div>
 
@@ -113,16 +136,16 @@ const handleLogin = async () => {
             alt="Google"
             class="h-5 w-5"
           />
-          <span class="text-sm font-medium text-black">Continue with Google</span>
+          <span class="text-sm font-medium text-black">{{ $t('login.googleContinue') }}</span>
         </button>
 
         <!-- رابط التسجيل -->
         <p class="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?
+          {{ $t('login.noAccount') }}
           <span
           class="text-[var(--color-primary)] font-semibold hover:underline"
           @click="$emit('openRegister')"
-          >Sign up</span>
+          >{{ $t('login.signUp') }}</span>
         </p>
       </div>
     </div>

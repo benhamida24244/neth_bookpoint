@@ -48,7 +48,8 @@
     "authors": "المؤلفون",
     "login": "تسجيل الدخول",
     "signup": "إنشاء حساب",
-    "contact": "اتصل بنا"
+    "contact": "اتصل بنا",
+    "logout": "تسجيل الخروج"
   },
   "footer": {
     "about": "قم بزيارة فروعنا والتسجيل في منصتنا عبر الإنترنت للاستمتاع بأقصى قدر من المزايا!",
@@ -126,11 +127,15 @@
     "searchPlaceholder": "ابحث عن كتاب...",
     "searchButton": "بحث"
   },
+  "orders": {
+    "title": "طلباتي",
+    "subtitle": "إدارة طلباتك وسجل مشترياتاتك"
+  },
   "dashboard": {
     "overview": "نظرة عامة على لوحة التحكم",
-    "books": "الكتب",
+    "booksd": " عدد الكتب",
     "ordersToday": "طلبات اليوم",
-    "clients": "العملاء",
+    "clientsd": "العملاء",
     "salesToday": "مبيعات اليوم",
     "sidebar": {
       "dashboard": "لوحة التحكم",
@@ -184,12 +189,500 @@
       "subtitle": "تتبع وإدارة جميع الفئات الخاصة بك بكفاءة.",
       "totalCategories": "إجمالي الفئات",
       "activeCategories": "الفئات النشطة",
-      "newThisMonth": "جديد هذا الشهر"
+      "newThisMonth": "جديد هذا الشهر",
+      "addNew": "إضافة فئة جديدة",
+      "table": {
+        "hash": "#",
+        "name": "الاسم",
+        "status": "الحالة",
+        "orders": "الطلبات",
+        "books": "عدد الكتب",
+        "createdAt": "تاريخ الإنشاء",
+        "action": "الإجراء",
+        "view": "عرض"
+      },
+      "statusActive": "نشط",
+      "statusInactive": "غير نشط",
+      "emptyHeader": "لم يتم العثور على فئات",
+      "emptySubtext": "حاول إضافة فئات جديدة لملء لوحة التحكم هذه."
+    },
+    "books": {
+      "title": "لوحة تحكم الكتب",
+      "subtitle": "تتبع وإدارة جميع كتبك بكفاءة",
+      "addNew": "إضافة كتاب جديد",
+      "filters": {
+        "all": "كل الكتب",
+        "published": "منشور",
+        "pending": "قيد الانتظar",
+        "draft": "مسودة"
+      },
+      "searchPlaceholder": "ابحث في الكتب...",
+      "table": {
+        "id": "المعرف",
+        "cover": "الغلاف",
+        "title": "العنوان",
+        "category": "الفئة",
+        "author": "المؤلف",
+        "publisher": "الناشر",
+        "status": "الحالة",
+        "price": "السعر",
+        "date": "التاريخ",
+        "action": "الإجراء"
+      },
+      "actions": {
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "emptyHeader": "لم يتم العثور على كتب",
+      "emptySubtext": "حاول تعديل البحث أو الفلتر للعثور على ما تبحث عنه.",
+      "deleteConfirm": "هل أنت متأكد أنك تريد الحذف",
+      "addSuccess": "تمت إضافة الكتاب بنجاح!",
+      "addFailed": "فشل في إضافة الكتاب.",
+      "updateSuccess": "تم تحديث الكتاب بنجاح!",
+      "stats": {
+        "total": "إجمالي الكتب",
+        "authors": "إجمالي المؤلفين",
+        "publishers": "إجمالي الناشرين",
+        "categories": "إجمالي الفئات"
+      },
+      "status": {
+        "published": "منشور",
+        "pending": "قيد الانتظار",
+        "draft": "مسودة",
+        "unknown": "غير معروف"
+      }
+    },
+    "addBookModal": {
+      "title": "إضافة كتاب جديد",
+      "labels": {
+        "title": "العنوان",
+        "price": "السعر",
+        "description": "الوصف",
+        "author": "المؤلف",
+        "publisher": "الناشر",
+        "category": "الفئة",
+        "stock": "المخزون",
+        "pages": "عدد الصفحات",
+        "cover": "صورة الغلاف"
+      },
+      "placeholders": {
+        "author": "اختر مؤلفًا",
+        "publisher": "اختر ناشرًا",
+        "category": "اختر فئة"
+      },
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    },
+    "editBookModal": {
+      "title": "تعديل الكتاب",
+      "labels": {
+        "title": "العنوان",
+        "price": "السعر",
+        "description": "الوصف",
+        "author": "المؤلف",
+        "publisher": "الناشر",
+        "stock": "المخزون",
+        "image": "الصورة"
+      },
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    },
+    "addCategoryModal": {
+      "title": "إضافة فئة جديدة",
+      "labels": {
+        "name": "اسم الفئة",
+        "description": "الوصف"
+      },
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    },
+    "authors": {
+      "title": "لوحة تحكم المؤلفين",
+      "subtitle": "تتبع وإدارة جميع المؤلفين",
+      "addNew": "إضافة مؤلف جديد",
+      "filters": {
+        "allCountries": "كل البلدان"
+      },
+      "sortBy": "فرز حسب:",
+      "stats": {
+        "total": "إجمالي المؤلفين:",
+        "orders": "إجمالي الطلبات:",
+        "books": "إجمالي الكتب:"
+      },
+      "table": {
+        "id": "المعرف",
+        "name": "الاسم",
+        "country": "البلد",
+        "orders": "الطلبات",
+        "books": "الكتب",
+        "action": "الإجراء"
+      },
+      "actions": {
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "emptyHeader": "لم يتم العثور على مؤلفين",
+      "emptySubtext": "حاول تعديل البحث أو معايير الفلترة."
+    },
+    "publishers": {
+      "title": "دور النشر",
+      "subtitle": "تتبع وإدارة جميع دور النشر",
+      "addNew": "إضافة ناشر جديد",
+      "sortBy": "فرز حسب:",
+      "stats": {
+        "total": "إجمالي الناشرين",
+        "orders": "إجمالي الطلبات",
+        "books": "إجمالي الكتب"
+      },
+      "table": {
+        "id": "المعرف",
+        "name": "الاسم",
+        "orders": "الطلبات",
+        "books": "الكتب",
+        "actions": "الإجراءات"
+      },
+      "actions": {
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "emptyHeader": "لم يتم العثور على ناشرين",
+      "emptySubtext": "حاول تعديل البحث أو معايير الفلترة.",
+      "deleteConfirm": "تأكيد الحذف"
+    },
+    "orders": {
+      "title": "إدارة الطلبات",
+      "subtitle": "تتبع وإدارة جميع طلبات كتبك بكفاءة",
+      "filters": {
+        "all": "كل الطلبات",
+        "pending": "قيد الانتظار",
+        "completed": "مكتمل",
+        "shipped": "تم الشحن",
+        "paid": "مدفوع"
+      },
+      "table": {
+        "id": "معرف الطلب",
+        "customer": "العميل",
+        "items": "العناصر",
+        "status": "الحالة",
+        "price": "السعر",
+        "date": "التاريخ",
+        "actions": "الإجراءات"
+      },
+      "actions": {
+        "view": "عرض"
+      },
+      "emptyHeader": "لم يتم العثور على طلبات",
+      "emptySubtext": "حاول تعديل البحث أو الفلتر للعثور على ما تبحث عنه.",
+      "stats": {
+        "pending": "الطلبات قيد الانتظار",
+        "completed": "الطلبات المكتملة",
+        "shipped": "الطلبات المشحونة",
+        "paid": "الطلبات المدفوعة"
+      }
+    },
+    "clients": {
+      "title": "لوحة تحكم العملاء",
+      "subtitle": "تتبع وإدارة جميع عملائك",
+      "filter": "فلتر",
+      "analytics": "تحليلات",
+      "shippingMethod": "طريقة الشحن",
+      "shippingOptions": {
+        "standard": "عادي",
+        "express": "سريع",
+        "overnight": "ليلي"
+      },
+      "status": "الحالة",
+      "source": "المصدر",
+      "saleDate": "تاريخ البيع",
+      "stats": {
+        "total": "إجمالي العملاء:",
+        "orders": "إجمالي الطلبات:"
+      },
+      "table": {
+        "name": "الاسم",
+        "id": "المعرف",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "registrationDate": "تاريخ التسجيل",
+        "orders": "الطلبات",
+        "totalSpent": "إجمالي الإنفاق",
+        "country": "البلد",
+        "action": "الإجراء"
+      },
+      "emptyHeader": "لم يتم العثور على عملاء",
+      "emptySubtext": "حاول تعديل البحث أو معايير الفلترة."
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "primaryColor": "اللون الأساسي",
+      "primaryColorSubtext": "اختر لونًا أساسيًا لموضوع التطبيق. سيتم تطبيق التغيير على الفور.",
+      "livePreview": "معاينة حية",
+      "localization": "الترجمة",
+      "currency": "العملة",
+      "language": "اللغة"
+    },
+    "editCategory": {
+      "title": "تعديل الفئة",
+      "subtitle": "تحديث تفاصيل الفئة.",
+      "loading": "جاري تحميل بيانات الفئة...",
+      "selectDefault": "الرجاء اختيار واحد",
+      "statusActive": "نشط",
+      "statusInactive": "غير نشط",
+      "labels": {
+        "name": "الاسم",
+        "description": "الوصف",
+        "icon": "الأيقونة",
+        "status": "الحالة"
+      },
+      "save": "حفظ التغييرات",
+      "cancel": "إلغاء"
+    },
+    "bookDetails": {
+      "error": "خطأ!",
+      "success": "نجاح!",
+      "editTitle": "تعديل تفاصيل الكتاب",
+      "labels": {
+        "title": "العنوان",
+        "author": "المؤلف",
+        "pages": "الصفحات",
+        "stock": "المخزون",
+        "price": "السعر",
+        "category": "الفئة",
+        "description": "الوصف",
+        "cover": "صورة الغلاف"
+      },
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات",
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirmText": "هل أنت متأكد أنك تريد حذف هذا الكتاب؟",
+      "addOfferTitle": "إضافة عرض/خصم",
+      "discountType": "نوع الخصم",
+      "percentage": "نسبة مئوية (%)",
+      "fixed": "مبلغ ثابت ($)",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء (اختياري)",
+      "description": "الوصف (اختياري)",
+      "print": "طباعة",
+      "back": "رجوع",
+      "status": "الحالة:",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "addOffer": "إضافة عرض",
+      "availabilityPricing": "التوفر والتسعير",
+      "priceLabel": "السعر:",
+      "ratingLabel": "التقييم:",
+      "manageOffers": "إدارة العروض"
+    },
+    "authorDetails": {
+      "loading": "جاري تحميل تفاصيل المؤلف...",
+      "error": "خطأ!",
+      "notFound": "لم يتم العثور على المؤلف.",
+      "statistics": "الإحصائيات",
+      "booksPublished": "الكتب المنشورة",
+      "totalOrders": "إجمالي الطلبات",
+      "totalSpent": "إجمالي الإنفاق",
+      "editTitle": "تعديل المؤلف",
+      "labels": {
+        "name": "الاسم",
+        "country": "البلد",
+        "description": "الوصف",
+        "image": "الصورة"
+      },
+      "cancel": "إلغاء",
+      "save": "حفظ"
+    },
+    "publisherDetails": {
+      "error": "حدث خطأ!",
+      "statistics": "الإحصائيات",
+      "booksPublished": "الكتب المنشورة",
+      "totalOrders": "إجمالي الطلبات",
+      "status": "الحالة",
+      "editTitle": "تعديل دار النشر",
+      "labels": {
+        "name": "الاسم",
+        "description": "الوصف",
+        "imagePath": "مسار الصورة"
+      },
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات"
+    },
+    "orderDetails": {
+      "goBack": "رجوع",
+      "updateSuccess": "تم تحديث حالة الطلب بنجاح",
+      "statusTitle": "حالة الطلب",
+      "updateStatus": "تحديث حالة الطلب",
+      "itemsTitle": "عناصر الطلب",
+      "customerInfoTitle": "معلومات العميل",
+      "summaryTitle": "ملخص الطلب"
+    },
+    "addAuthorModal": {
+      "title": "إضافة مؤلف جديد",
+      "labels": {
+        "name": "الاسم",
+        "country": "البلد",
+        "description": "الوصف",
+        "image": "الصورة"
+      },
+      "cancel": "إلغاء",
+      "add": "إضافة مؤلف"
+    },
+    "addPublisherModal": {
+      "title": "إضافة ناشر جديد",
+      "labels": {
+        "name": "الاسم",
+        "description": "الوصف",
+        "image": "الصورة"
+      },
+      "cancel": "إلغاء",
+      "add": "إضافة ناشر"
+    },
+    "sidebar": {
+        "dashboard": "لوحة التحكم",
+        "books": "الكتب",
+        "addBook": "إضافة كتاب",
+        "categories": "الفئات",
+        "authors": "المؤلفون",
+        "publishingHouses": "دور النشر",
+        "users": "المستخدمون",
+        "clients": "العملاء",
+        "orders": "الطلبات",
+        "messages": "الرسائل",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "administrator": "مسؤول"
+    },
+    "latestOrders": {
+        "title": "أحدث الطلبات",
+        "table": {
+            "orderId": "معرف الطلب",
+            "client": "العميل",
+            "email": "البريد الإلكتروني",
+            "status": "الحالة",
+            "total": "المجموع",
+            "payment": "الدفع",
+            "date": "التاريخ"
+        },
+        "emptyHeader": "لم يتم العثور على طلبات"
+    },
+    "recentBooks": {
+        "title": "الكتب المضافة حديثًا",
+        "emptyHeader": "لم يتم العثور على كتب"
+    }
+  },
+  "login": {
+    "welcome": "مرحباً بك في نيث بوك بوينت!",
+    "discover": "اكتشف طريقة سلسة لاستكشاف الكتب والاستمتاع بميزات حصرية.",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "loggingIn": "جارٍ تسجيل الدخول...",
+    "login": "تسجيل الدخول",
+    "or": "أو",
+    "googleContinue": "المتابعة باستخدام جوجل",
+    "noAccount": "ليس لديك حساب؟",
+    "signUp": "إنشاء حساب"
+  },
+  "register": {
+    "passwordMismatch": "كلمات المرور غير متطابقة.",
+    "title": "أنشئ حسابك",
+    "subtitle": "انضم إلى مجتمع نيث بوك بوينت واستمتع بتجربة كتب مخصصة.",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+    "creatingAccount": "جارٍ إنشاء الحساب...",
+    "createAccount": "إنشاء حساب",
+    "or": "أو",
+    "googleSignUp": "التسجيل باستخدام جوجل",
+    "alreadyAccount": "هل لديك حساب بالفعل؟",
+    "login": "تسجيل الدخول"
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "subtitle": "يسعدنا أن نسمع منك! املأ النموذج أدناه أو تواصل معنا عبر الواتساب.",
+    "namePlaceholder": "اسمك",
+    "emailPlaceholder": "بريدك الإلكتروني",
+    "messagePlaceholder": "رسالتك",
+    "sendMessage": "إرسال الرسالة",
+    "orMessage": "أو راسلنا مباشرة عبر",
+    "whatsapp": "واتساب"
+  },
+  "shop": {
+    "title": "اكتشف كل الكتب هنا",
+    "subtitle": "اكتشف أفضل الكتب للقراءة الآن بما في ذلك العناوين الرائجة وتوصيات بائعي الكتب والإصدارات الجديدة والمزيد.",
+    "loading": "جار تحميل الكتب...",
+    "noBooks": "لا توجد كتب متاحة في الوقت الحالي. يرجى التحقق مرة أخرى في وقت لاحق."
+  },
+  "sidebar": {
+    "title": "تصفية والفئات",
+    "popularSections": {
+      "title": "الأقسام الشائعة",
+      "customerFavorites": "مفضلات العملاء",
+      "bestsellers": "الأكثر مبيعًا",
+      "teensYABestsellers": "الأكثر مبيعًا للمراهقين والشباب",
+      "kidsBestsellers": "الأكثر مبيعًا للأطفال",
+      "nyTimesBestsellers": "الأكثر مبيعًا في نيويورك تايمز®",
+      "newReleases": "الإصدارات الجديدة",
+      "comingSoon": "قريبًا",
+      "specialValues": "قيم خاصة",
+      "paperbacksUpTo25Off": "كتب ورقية بخصم يصل إلى 25٪",
+      "bestsellers30Off": "الأكثر مبيعًا بخصم 30٪",
+      "bookAnnex": "ملحق الكتاب",
+      "bnCollectibleEditions": "إصدارات B&N القابلة للتحصيل",
+      "specialCollections": "مجموعات خاصة",
+      "bestBooksOf2025": "أفضل كتب 2025 (حتى الآن)",
+      "ourMonthlyPicks": "اختياراتنا الشهرية",
+      "bookClubSelections": "اختيارات نادي الكتاب",
+      "bnExclusives": "حصريات B&N",
+      "thePaperbackStore": "متجر الكتب الورقية",
+      "bookAwards": "جوائز الكتب",
+      "boxedSets": "مجموعات معلبة",
+      "signedSpecialEditions": "إصدارات موقعة وخاصة"
+    },
+    "subjects": "المواضيع",
+    "loadingCategories": "جار تحميل الفئات...",
+    "noCategories": "لا توجد فئات متاحة.",
+    "price": {
+      "title": "السعر",
+      "under5": "أقل من 5 دولارات",
+      "p5to10": "5 - 10 دولارات",
+      "p10to25": "10 - 25 دولارًا",
+      "p25to50": "25 - 50 دولارًا",
+      "over50": "أكثر من 50 دولارًا"
+    },
+    "age": {
+      "title": "العمر",
+      "a0to2": "0 - 2 سنوات",
+      "a3to5": "3 - 5 سنوات",
+      "a6to8": "6 - 8 سنوات",
+      "a9to12": "9 - 12 سنة",
+      "teens": "المراهقون"
+    },
+    "language": {
+      "title": "اللغة",
+      "english": "الإنجليزية",
+      "german": "الألمانية",
+      "french": "الفرنسية",
+      "spanish": "الإسبانية",
+      "russian": "الروسية",
+      "italian": "الإيطالية",
+      "portuguese": "البرتغالية",
+      "finnish": "الفنلندية",
+      "welsh": "الويلزية",
+      "panjabi": "البنجابية",
+      "arabic": "العربية",
+      "chinese": "الصينية",
+      "dutch": "الهولندية",
+      "polish": "البولندية",
+      "turkish": "التركية"
     }
   },
   "profile": {
-    "title": "لوحة التحكم الخاصة بي",
-    "subtitle": "إدارة ملفك الشخصي، عربة التسوق، والطلبات",
+    "title": "الملف الشخصي",
+    "subtitle": "إدارة ملفك الشخصي وسجل الطلبات",
     "myProfile": "ملفي الشخصي",
     "activeAccount": "حساب نشط",
     "name": "الاسم",

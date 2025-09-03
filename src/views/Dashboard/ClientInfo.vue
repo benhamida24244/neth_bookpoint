@@ -44,7 +44,6 @@ const isLoading = ref(true)
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
-const showEditModal = ref(false)
 
 // Client Data (Enhanced with missing properties)
 const clients = ref([
@@ -253,7 +252,7 @@ const updateClientStatus = async (newStatus) => {
       }, 3000)
       emit('statusChanged', { clientId: selectedClient.value.id, status: newStatus })
     }
-  } catch (err) {
+  } catch {
     error.value = 'Failed to update client status'
   } finally {
     isUpdating.value = false

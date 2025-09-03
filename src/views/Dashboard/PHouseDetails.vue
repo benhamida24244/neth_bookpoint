@@ -118,7 +118,7 @@ async function savePublishingHouse() {
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">
       <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-lg text-center shadow-md">
-        <strong class="font-bold text-xl">An Error Occurred!</strong>
+        <strong class="font-bold text-xl">{{ translations.dashboard?.publisherDetails?.error }}</strong>
         <p class="block mt-2">{{ error }}</p>
       </div>
     </div>
@@ -150,14 +150,14 @@ async function savePublishingHouse() {
           <p class="mt-2 text-gray-600 leading-relaxed">{{ currentPublishingHouse.description }}</p>
 
           <div class="mt-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Statistics</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ translations.dashboard?.publisherDetails?.statistics }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div class="p-4 bg-gray-50 rounded-lg border flex items-center gap-4">
                 <div class="bg-blue-100 p-3 rounded-full text-blue-600">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18" /></svg>
                 </div>
                 <div>
-                  <p class="text-base font-medium text-gray-600">Books Published</p>
+                  <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.publisherDetails?.booksPublished }}</p>
                   <p class="text-2xl font-bold text-gray-900">{{ currentPublishingHouse.nmBook }}</p>
                 </div>
               </div>
@@ -166,14 +166,14 @@ async function savePublishingHouse() {
                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                  </div>
                 <div>
-                  <p class="text-base font-medium text-gray-600">Total Orders</p>
+                  <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.publisherDetails?.totalOrders }}</p>
                   <p class="text-2xl font-bold text-gray-900">{{ currentPublishingHouse.orders.toLocaleString() }}</p>
                 </div>
               </div>
               <div class="p-4 bg-gray-50 rounded-lg border flex items-center gap-4">
 
                 <div>
-                  <p class="text-base font-medium text-gray-600">Status</p>
+                  <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.publisherDetails?.status }}</p>
                   <p :class="(currentPublishingHouse.status === 1)? '':''" class="text-2xl font-bold text-gray-900">{{ (currentPublishingHouse.status === 1)? 'Active':'Draft' }}</p>
                 </div>
               </div>
@@ -186,21 +186,21 @@ async function savePublishingHouse() {
     <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
       <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative animate-fade-in-up">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold">Edit Publishing House</h2>
+          <h2 class="text-2xl font-bold">{{ translations.dashboard?.publisherDetails?.editTitle }}</h2>
           <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
 
-        <label class="block mb-2 font-medium">Name</label>
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.publisherDetails?.labels?.name }}</label>
         <input v-model="editForm.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-        <label class="block mb-2 font-medium">Description</label>
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.publisherDetails?.labels?.description }}</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-        <label class="block mb-2 font-medium">Image Path</label>
-        <input type="file" @change="handleFileUpload"
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.publisherDetails?.labels?.imagePath }}</label>
+        <input type="file"
           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
 
         <div class="flex justify-end gap-3 mt-4">
-          <button @click="showEditModal = false" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-semibold">Cancel</button>
-          <button @click="savePublishingHouse" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-hover)] font-semibold">Save Changes</button>
+          <button @click="showEditModal = false" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-semibold"{{ translations.dashboard?.publisherDetails?.cancel }}/button>
+          <button @click="savePublishingHouse" class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-hover)] font-semibold">{{ translations.dashboard?.publisherDetails?.save }}</button>
         </div>
       </div>
     </div>

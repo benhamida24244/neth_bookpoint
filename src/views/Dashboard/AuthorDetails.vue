@@ -1,6 +1,5 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors';
-import { storeToRefs } from 'pinia';
 import { onMounted, ref ,computed} from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -127,11 +126,11 @@ async function saveAuthor() {
 
 <template>
   <div v-if="loading" class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="text-gray-600 text-lg">Loading author details...</div>
+    <div class="text-gray-600 text-lg">{{ translations.dashboard?.authorDetails?.loading }}</div>
   </div>
   <div v-else-if="error" class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg max-w-md text-center shadow-md">
-      <strong class="font-bold">Error!</strong>
+      <strong class="font-bold">{{ translations.dashboard?.authorDetails?.error }}</strong>
       <span class="block sm:inline ml-2">{{ error }}</span>
     </div>
   </div>
@@ -153,18 +152,18 @@ async function saveAuthor() {
   <p class="mt-4 text-gray-700">{{ currentAuthor.description }}</p>
 
         <div class="mt-8">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">Statistics</h2>
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ translations.dashboard?.authorDetails?.statistics }}</h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p class="text-base font-medium text-gray-600">Books Published</p>
+              <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.authorDetails?.booksPublished }}</p>
               <p class="mt-1 text-3xl font-bold text-gray-900">{{ currentAuthor.nmbBook ?? 0 }}</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p class="text-base font-medium text-gray-600">Total Orders</p>
+              <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.authorDetails?.totalOrders }}</p>
               <p class="mt-1 text-3xl font-bold text-gray-900">{{ (currentAuthor.Orders_count ?? 0).toLocaleString() }}</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p class="text-base font-medium text-gray-600">Total Spent</p>
+              <p class="text-base font-medium text-gray-600">{{ translations.dashboard?.authorDetails?.totalSpent }}</p>
               <p class="mt-1 text-3xl font-bold text-gray-900">${{ (currentAuthor.SpendMuch ?? 0).toLocaleString() }}</p>
             </div>
           </div>
@@ -175,23 +174,23 @@ async function saveAuthor() {
     <!-- Edit Modal -->
     <div v-if="showEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative">
-        <h2 class="text-xl font-bold mb-4">Edit Author</h2>
+        <h2 class="text-xl font-bold mb-4">{{ translations.dashboard?.authorDetails?.editTitle }}</h2>
 
-        <label class="block mb-2 font-medium">Name</label>
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.authorDetails?.labels?.name }}</label>
         <input v-model="editForm.name" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
-        <label class="block mb-2 font-medium">Country</label>
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.authorDetails?.labels?.country }}</label>
         <input v-model="editForm.Country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
-        <label class="block mb-2 font-medium">Description</label>
+        <label class="block mb-2 font-medium"{{ translations.dashboard?.authorDetails?.labels?.description }}</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
 
-            <label for="AuthorImage" class="block mb-2 font-medium">Image</label>
+            <label for="AuthorImage" class="block mb-2 font-medium"{{ translations.dashboard?.authorDetails?.labels?.image }}</label>
 
             <input id="AuthorImage" @change="handleAuthorFileUpload" type="file" accept="image/*"
                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
         <div class="flex justify-end gap-2 mt-4">
-          <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
-          <button @click="saveAuthor" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]">Save</button>
+          <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"{{ translations.dashboard?.authorDetails?.cancel }}/button>
+          <button @click="saveAuthor" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]"{{ translations.dashboard?.authorDetails?.save }}/button>
         </div>
       </div>
     </div>
@@ -199,8 +198,8 @@ async function saveAuthor() {
 
   <div v-else class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg max-w-md text-center shadow-md">
-      <strong class="font-bold">Error!</strong>
-      <span class="block sm:inline ml-2"> Author not found.</span>
+      <strong class="font-bold">{{ translations.dashboard?.authorDetails?.error }}</strong>
+      <span class="block sm:inline ml-2"> {{ translations.dashboard?.authorDetails?.notFound }}</span>
     </div>
   </div>
 </template>

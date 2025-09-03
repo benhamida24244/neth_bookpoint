@@ -5,7 +5,6 @@ import { useDashboardStore } from '@/stores/Dashboard'
 import { useLanguageStore } from '@/stores/language'
 import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue'
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue'
-import DailySalesChart from '@/components/Dashboard/Charts/DailySalesChart.vue'
 import OrdersByTheCountry from '@/components/Dashboard/Charts/OrdersByTheCountry.vue'
 import PublishingHouse from '@/components/Dashboard/Charts/PublishingHouse.vue'
 import StatCards from '@/components/Dashboard/StatCards.vue'
@@ -27,7 +26,7 @@ const settingStore = useSettingsStore()
 const info = computed(() => [
   {
     id: 1,
-    name: translations.value.dashboard?.books,
+    name: translations.value.dashboard?.booksd,
     icon: BookOpen,
     Num: stats.value.books
   },
@@ -39,7 +38,7 @@ const info = computed(() => [
   },
   {
     id: 3,
-    name: translations.value.dashboard?.clients,
+    name: translations.value.dashboard?.clientsd,
     icon: Users,
     Num: stats.value.clients
   },

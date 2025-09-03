@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import apiService from '@/services/api';
-import { useCartStore } from './Cart';
 
-export const useOrdersStore = defineStore('orders', {
+export const useCustomerOrdersStore = defineStore('customerOrders', {
   state: () => ({
     orders: [],
     loading: false,
@@ -27,14 +26,13 @@ export const useOrdersStore = defineStore('orders', {
       }
     },
 
-    async createOrder() {
+    async createOrder(data) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await apiService.orders.create();
-        const cartStore = useCartStore();
-        cartStore.clearCart(); // Clear the cart after successful order creation
-        return response.data.data; // Return the newly created order
+        const response = await apiService.orders.create(data);
+        this.orders.unshift(response.data.data);
+        return response.data.data;
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to create order.';
         throw error;

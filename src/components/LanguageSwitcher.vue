@@ -1,33 +1,40 @@
+<template>
+  <div class="language-switcher">
+    <select v-model="selectedLanguage" @change="switchLanguage">
+      <option v-for="lang in availableLanguages" :key="lang.code" :value="lang.code">
+        {{ lang.name }}
+      </option>
+    </select>
+  </div>
+</template>
+
 <script setup>
+import { ref } from 'vue'
 import { useLanguageStore } from '@/stores/language'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n' // أضف هذا السطر
 
 const languageStore = useLanguageStore()
-const showMenu = ref(false)
-const { locale } = useI18n() // أضف هذا السطر
+const selectedLanguage = ref(languageStore.language)
 
-const languages = [
+const availableLanguages = [
   { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Français' },
   { code: 'ar', name: 'العربية' },
+  { code: 'fr', name: 'Français' }
 ]
 
-const currentLanguage = computed(() => {
-  return languages.find((lang) => lang.code === languageStore.language)
-})
-
-const setLanguage = (lang) => {
-  languageStore.setLanguage(lang)
-  locale.value = lang // أضف هذا السطر لتغيير لغة i18n
-  showMenu.value = false
+const switchLanguage = () => {
+  languageStore.setLanguage(selectedLanguage.value)
 }
 </script>
 
 <template>
   <div class="relative">
     <div class="flex items-center">
-     
+      <button
+        @click="showMenu = !showMenu"
+        class="px-4 py-2 text-sm rounded-full font-medium font-BonaRegular cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
+      >
+        {{ currentLanguage.name }}
+      </button>
       <div
         v-if="showMenu"
         class="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
