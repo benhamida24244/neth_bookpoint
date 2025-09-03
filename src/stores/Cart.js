@@ -11,18 +11,21 @@ export const useCartStore = defineStore('cart', {
   }),
 
   getters: {
-    cartCount: (state) => {
-      const authStore = useAuthStore();
-      
-      // إذا كان المستخدم مسجلاً، استخدم السلة من الخادم
-      if (authStore.isAuthenticated) {
-        if (!state.cart || !state.cart.items) return 0;
-        return state.cart.items.reduce((total, item) => total + item.quantity, 0);
-      }
-      
-      // إذا لم يكن المستخدم مسجلاً، استخدم السلة المحلية
-      return state.localCart.reduce((total, item) => total + item.quantity, 0);
-    },
+   cartCount: (state) => {
+  const authStore = useAuthStore();
+
+  if (authStore.isAuthenticated) {
+    if (!state.cart || !state.cart.items) return 0;
+    const count = state.cart.items.reduce((total, item) => total + item.quantity, 0);
+    console.log("📊 cartCount (server):", count);
+    return count;
+  }
+
+  const count = state.localCart.reduce((total, item) => total + item.quantity, 0);
+  console.log("📊 cartCount (local):", count, state.localCart);
+  return count;
+}
+,
     cartItems: (state) => {
       const authStore = useAuthStore();
       
@@ -49,7 +52,6 @@ export const useCartStore = defineStore('cart', {
   },
 
   actions: {
-    // تحميل السلة المحلية عند بدء التطبيق
     initializeLocalCart() {
       const savedCart = localStorage.getItem('cart');
       if (savedCart) {
@@ -58,22 +60,18 @@ export const useCartStore = defineStore('cart', {
     },
     async fetchCart() {
       const authStore = useAuthStore();
-      
-      // إذا لم يكن المستخدم مسجلًا، لا تقم بجلب السلة من الخادم
       if (!authStore.isAuthenticated) {
         return;
       }
-      
       this.loading = true;
       this.error = null;
       try {
         const response = await apiService.cart.show();
-        this.cart = response.data;
+        this.cart = response.data.data;
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch cart.';
-        // If the cart is empty (404), we can set it to a default empty state
         if (error.response && error.response.status === 404) {
-            this.cart = { items: [], total: 0 };
+          this.cart = { items: [], total: 0 };
         }
       } finally {
         this.loading = false;
@@ -81,75 +79,71 @@ export const useCartStore = defineStore('cart', {
     },
 
     async addToCart(bookId, quantity) {
-      this.loading = true;
-      this.error = null;
       const authStore = useAuthStore();
-      
-      try {
-        // إذا كان المستخدم مسجلاً، أضف للسلة في الخادم
-        if (authStore.isAuthenticated) {
-          const response = await apiService.cart.add({ book_id: bookId, quantity });
-          this.cart = response.data;
+      if (!authStore.isAuthenticated) {
+        // Logic for guest user remains the same
+        this.loading = true;
+        const existingItem = this.localCart.find(item => item.id === bookId);
+        if (existingItem) {
+          existingItem.quantity += quantity;
         } else {
-          // إذا لم يكن المستخدم مسجلاً، أضف للسلة المحلية
-          const existingItemIndex = this.localCart.findIndex(item => item.id === bookId);
-          
-          if (existingItemIndex !== -1) {
-            // إذا كان الكتاب موجودًا بالفعل، قم بزيادة الكمية
-            this.localCart[existingItemIndex].quantity += quantity;
-          } else {
-            // إذا كان الكتاب جديدًا، أضفه للسلة
-            // سنحتاج إلى الحصول على تفاصيل الكتاب لإضافته للسلة المحلية
-            try {
-              const bookResponse = await apiService.publicResources.books.get(bookId);
-              const book = bookResponse.data;
-              
-              this.localCart.push({
-                id: book.id,
-                title: book.title,
-                price: book.price,
-                cover: book.cover,
-                author: book.author.name,
-                quantity: quantity
-              });
-            } catch (error) {
-              console.error("Failed to fetch book details for local cart:", error);
-              throw new Error("Failed to add item to cart. Could not fetch book details.");
-            }
+          try {
+            const bookResponse = await apiService.publicResources.books.get(bookId);
+            const book = bookResponse.data;
+            this.localCart.push({
+              id: book.id,
+              title: book.title,
+              price: book.price,
+              cover: book.cover,
+              author: book.author.name,
+              quantity: quantity
+            });
+          } catch (error) {
+            this.error = 'Failed to fetch book details.';
+            console.error(error);
+            this.loading = false;
+            return;
           }
-          
-          // تحديث السلة المحلية في localStorage
-          localStorage.setItem('cart', JSON.stringify(this.localCart));
         }
-      } catch (error) {
-        // إذا كان الخطأ 401 (غير مصرح به) والمستخدم غير مسجل، فلا تظهر رسالة خطأ
-        // لأن هذا سلوك متوقع للمستخدمين غير المسجلين
-        if (error.response && error.response.status === 401 && !authStore.isAuthenticated) {
-          console.log("User not authenticated, adding to local cart instead");
-          // لا تظهر رسالة خطأ للمستخدمين غير المسجلين
-        } else {
-          this.error = error.response?.data?.message || 'Failed to add item to cart.';
-          throw error;
-        }
-      } finally {
+        localStorage.setItem('cart', JSON.stringify(this.localCart));
         this.loading = false;
+        return;
+      }
+
+      // Optimistic update for authenticated user
+      if (!this.cart) this.cart = { items: [], total: 0 };
+      const originalCart = JSON.parse(JSON.stringify(this.cart));
+
+      const itemIndex = this.cart.items.findIndex(item => item.book_id === bookId);
+      if (itemIndex > -1) {
+        this.cart.items[itemIndex].quantity += quantity;
+      } else {
+        this.cart.items.push({ book_id: bookId, quantity: quantity, price: 0, book: { title: 'Adding...' } });
+      }
+
+      try {
+        await apiService.cart.add({ book_id: bookId, quantity });
+        await this.fetchCart(); // Refetch the cart for consistency
+      } catch (error) {
+        console.error("❌ addToCart failed", error);
+        this.error = error.response?.data?.message || 'Failed to add item to cart.';
+        this.cart = originalCart; // Revert on failure
+        throw error;
       }
     },
 
     async updateQuantity(cartItemId, quantity) {
+      // ... (keeping original for now, can be improved later if needed)
       this.loading = true;
       this.error = null;
       const authStore = useAuthStore();
       
       try {
-        // إذا كان المستخدم مسجلاً، حدث الكمية في السلة في الخادم
         if (authStore.isAuthenticated) {
-          const response = await apiService.cart.update(cartItemId, { quantity });
-          this.cart = response.data;
+          await apiService.cart.update(cartItemId, { quantity });
+          await this.fetchCart();
         } else {
-          // إذا لم يكن المستخدم مسجلاً، حدث الكمية في السلة المحلية
           const itemIndex = this.localCart.findIndex(item => item.id === cartItemId);
-          
           if (itemIndex !== -1) {
             this.localCart[itemIndex].quantity = quantity;
             localStorage.setItem('cart', JSON.stringify(this.localCart));
@@ -166,26 +160,31 @@ export const useCartStore = defineStore('cart', {
     },
 
     async removeFromCart(cartItemId) {
-        this.loading = true;
-        this.error = null;
-        const authStore = useAuthStore();
-        
-        try {
-            // إذا كان المستخدم مسجلاً، احذف من السلة في الخادم
-            if (authStore.isAuthenticated) {
-                const response = await apiService.cart.remove(cartItemId);
-                this.cart = response.data;
-            } else {
-                // إذا لم يكن المستخدم مسجلاً، احذف من السلة المحلية
-                this.localCart = this.localCart.filter(item => item.id !== cartItemId);
-                localStorage.setItem('cart', JSON.stringify(this.localCart));
-            }
-        } catch (error) {
-            this.error = error.response?.data?.message || 'Failed to remove item from cart.';
-            throw error;
-        } finally {
-            this.loading = false;
-        }
+      const authStore = useAuthStore();
+      if (!authStore.isAuthenticated) {
+        this.localCart = this.localCart.filter(item => item.id !== cartItemId);
+        localStorage.setItem('cart', JSON.stringify(this.localCart));
+        return;
+      }
+
+      if (!this.cart || !this.cart.items) return;
+
+      const originalCart = JSON.parse(JSON.stringify(this.cart));
+      const itemIndex = this.cart.items.findIndex(item => item.id === cartItemId);
+
+      if (itemIndex === -1) return; // Item not found
+
+      this.cart.items.splice(itemIndex, 1); // Optimistic removal
+
+      try {
+        await apiService.cart.remove(cartItemId);
+        await this.fetchCart(); // Refetch for consistency
+      } catch (error) {
+        console.error("❌ removeFromCart failed", error);
+        this.error = error.response?.data?.message || 'Failed to remove item from cart.';
+        this.cart = originalCart; // Revert on failure
+        throw error;
+      }
     },
 
     clearCart() {
@@ -194,27 +193,19 @@ export const useCartStore = defineStore('cart', {
       localStorage.removeItem('cart');
     },
     
-    // دالة لمزامنة السلة المحلية مع السلة في الخادم عند تسجيل المستخدم
     async syncLocalCart() {
       if (this.localCart.length === 0) return;
-      
       const authStore = useAuthStore();
       if (!authStore.isAuthenticated) return;
       
       this.loading = true;
       this.error = null;
-      
       try {
-        // إضافة كل عناصر السلة المحلية إلى السلة في الخادم
         for (const item of this.localCart) {
           await apiService.cart.add({ book_id: item.id, quantity: item.quantity });
         }
-        
-        // مسح السلة المحلية بعد المزامنة
         this.localCart = [];
         localStorage.removeItem('cart');
-        
-        // إعادة تحميل السلة من الخادم
         await this.fetchCart();
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to sync local cart.';

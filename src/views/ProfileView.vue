@@ -35,7 +35,7 @@ const handleLogout = async () => {
 
 // حساب إجمالي السعر
 const totalPrice = computed(() =>
-  cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
+  cart.value ? cart.value.reduce((total, item) => total + item.price * item.quantity, 0) : 0
 )
 
 const formatOrderDate = (dateString) => {
@@ -51,6 +51,7 @@ const formatCurrency = (amount) => {
     return amount.toFixed(2);
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
 
 <template>
@@ -156,10 +157,10 @@ const formatCurrency = (amount) => {
                   </div>
                   <div>
                     <h2 class="text-2xl font-bold">{{ t('profile.shoppingCart') }}</h2>
-                    <p class="text-blue-100">{{ t('profile.itemsInCart', { count: cart.length }) }}</p>
+                    <p class="text-blue-100">{{ t('profile.itemsInCart', { count: cart ? cart.length : 0 }) }}</p>
                   </div>
                 </div>
-                <div v-if="cart.length > 0" class="text-right">
+                <div v-if="cart && cart.length > 0" class="text-right">
                   <p class="text-blue-100 text-sm">{{ t('profile.total') }}</p>
                   <p class="text-2xl font-bold">${{ totalPrice.toFixed(2) }}</p>
                 </div>
@@ -167,7 +168,7 @@ const formatCurrency = (amount) => {
             </div>
 
             <div class="p-6">
-              <div v-if="cart.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div v-if="cart && cart.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="item in cart" :key="item.id"
                      class="group bg-white rounded-xl p-4 shadow-lg border border-gray-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
                   <div class="aspect-square rounded-lg overflow-hidden mb-4 bg-gray-100">
@@ -244,7 +245,7 @@ const formatCurrency = (amount) => {
                         </span>
                         <div class="text-right">
                           <p class="text-sm text-gray-500">{{ t('profile.total') }}</p>
-                          <p class="text-xl font-bold text-gray-800">${{ formatCurrency(order.total) }}</p>
+                          <p class="text-xl font-bold text-gray-800">${{ formatCurrency(order.items ? order.items.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0) : 0) }}</p>
                         </div>
                       </div>
                     </div>
@@ -253,9 +254,9 @@ const formatCurrency = (amount) => {
                   <div class="p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div v-for="item in order.items" :key="item.id"
-                           class="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors">
+                           class="flex flex-col bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors justify-between">
                         <div class="aspect-square rounded-md overflow-hidden mb-3 bg-white">
-                          <img :src="item.book.cover_image_url" :alt="item.book.title"
+                          <img :src="`${apiBaseUrl}${item.book.cover}`" :alt="item.book.title"
                                class="w-full h-full object-cover" />
                         </div>
                         <div class="space-y-1">

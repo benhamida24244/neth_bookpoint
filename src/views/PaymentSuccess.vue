@@ -9,9 +9,11 @@ const { latestOrder } = storeToRefs(ordersStore)
 
 const order = computed(() => latestOrder.value)
 
-const subtotal = computed(() =>
-  order.value.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-)
+const subtotal = computed(() => {
+  if (!order.value || !order.value.items) return 0;
+  return order.value.items.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0)
+})
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
 
 <template>
@@ -29,11 +31,11 @@ const subtotal = computed(() =>
       <div class="bg-gray-100 rounded-xl p-6 mb-6">
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Order Summary</h2>
         <div class="space-y-3">
-          <div v-for="item in order.items" :key="item.id" class="flex items-center justify-between">
+          <div v-for="item in order.items" :key="item.id" class="flex items-center justify-between" v-if="order.items">
             <div class="flex items-center">
-              <img :src="item.image" :alt="item.name" class="w-16 h-16 rounded-lg mr-4 object-cover" />
+              <img :src="`${apiBaseUrl}${item.book.cover}`" :alt="item.name" class="w-16 h-16 rounded-lg mr-4 object-cover" />
               <div>
-                <p class="font-medium text-gray-800">{{ item.name }}</p>
+                <p class="font-medium text-gray-800">{{ item.book.title }}</p>
                 <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
               </div>
             </div>
@@ -49,28 +51,28 @@ const subtotal = computed(() =>
         </div>
         <div class="flex justify-between">
           <span>Shipping</span>
-          <span>${{ order.totals.shipping.toFixed(2) }}</span>
+          <span>${{ order.totals && order.totals.shipping ? order.totals.shipping.toFixed(2) : "0.00" }}</span>
         </div>
         <div class="flex justify-between text-sm">
           <span>VAT (15%)</span>
-          <span>${{ order.totals.vat.toFixed(2) }}</span>
+          <span>${{ order.totals && order.totals.vat ? order.totals.vat.toFixed(2) : "0.00" }}</span>
         </div>
         <div class="flex justify-between text-lg font-bold text-gray-900 border-t pt-2 mt-2">
           <span>Total</span>
-          <span class="text-green-600">${{ order.totals.total.toFixed(2) }}</span>
+          <span class="text-green-600">${{ order.totals?.total ? order.totals.total.toFixed(2) : (subtotal ? subtotal.toFixed(2) : "0.00") }}</span>
         </div>
       </div>
 
       <div class="mt-8 text-center">
         <RouterLink
           to="/shop"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
+          class="bg-[var(--color-primary)] hover:bg-[var(--color-hover)] text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
         >
           Continue Shopping
         </RouterLink>
         <RouterLink
           to="/profile"
-          class="ml-4 text-blue-500 hover:underline"
+          class="ml-4 text-[var(--color-primary)] hover:underline"
         >
           View Order History
         </RouterLink>
@@ -81,7 +83,7 @@ const subtotal = computed(() =>
       <p class="text-gray-500 mt-2">Please complete a purchase to see your order summary.</p>
       <RouterLink
           to="/shop"
-          class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
+          class="mt-4 inline-block bg-[var(--color-primary)] hover:bg-[var(--color-hover)] text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
         >
           Go to Shop
         </RouterLink>

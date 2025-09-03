@@ -25,6 +25,48 @@ const { translations } = storeToRefs(languageStore)
 const cartStore = useCartStore();
 const { cart: orderItems } = storeToRefs(cartStore);
 
+// Normalize cart data to ensure it's always an array
+const normalizedOrderItems = computed(() => {
+  console.log("OrderItems value:", orderItems.value);
+
+  // إذا كان المستخدم مسجلاً استخدم السلة من الخادم
+  if (user.value) {
+    // التحقق من وجود بيانات السلة بشكل مباشر
+    if (Array.isArray(orderItems.value)) return orderItems.value;
+
+    // التحقق من وجود items مباشرة في orderItems
+    if (orderItems.value && Array.isArray(orderItems.value.items)) {
+      console.log("Using orderItems.items");
+      return orderItems.value.items;
+    }
+
+    // التحقق من وجود data في orderItems
+    if (orderItems.value && orderItems.value.data) {
+      console.log("Using orderItems.data");
+
+      // إذا كانت data هي مصفوفة مباشرة
+      if (Array.isArray(orderItems.value.data)) {
+        return orderItems.value.data;
+      }
+
+      // إذا كانت data تحتوي على items
+      if (orderItems.value.data && Array.isArray(orderItems.value.data.items)) {
+        console.log("Using orderItems.data.items");
+        return orderItems.value.data.items;
+      }
+    }
+  }
+
+  // إذا لم يكن المستخدم مسجلاً استخدم السلة المحلية
+  if (cartStore.localCart && cartStore.localCart.length > 0) {
+    console.log("Using local cart");
+    return cartStore.localCart;
+  }
+
+  console.log("Returning empty array");
+  return [];
+});
+
 const checkoutStore = useCheckoutStore();
 const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
 
@@ -41,8 +83,12 @@ const visaCardDetails = ref({
   cvv: ''
 });
 
-onMounted(() => {
+onMounted(async () => {
   checkoutStore.fetchCheckoutData();
+
+  // تأكد من تحميل بيانات السلة عند تحميل صفحة الدفع
+  await cartStore.fetchCart();
+  console.log("Cart data loaded:", cartStore.cart);
 });
 
 // Form data structure
@@ -68,27 +114,36 @@ const formFields = computed(() =>
 );
 
 // Computed values
-const subtotal = computed(() =>
-  orderItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-);
+const subtotal = computed(() => {
+  console.log("normalizedOrderItems:", normalizedOrderItems.value);
+  const itemsTotal = normalizedOrderItems.value.reduce((sum, item) => {
+    const price = Number(item.price || 0);
+    const quantity = Number(item.quantity || 0);
+    const itemTotal = price * quantity;
+    console.log(`Item: ${item.name}, Price: ${price}, Quantity: ${quantity}, Total: ${itemTotal}`);
+    return sum + itemTotal;
+  }, 0);
+  console.log("Subtotal total:", itemsTotal);
+  return itemsTotal;
+});
 
 const shippingCost = computed(() => {
   const option = shippingOptions.value.find(opt => opt.id === selectedShipping.value);
-  return option ? option.price : 0;
+  return option ? Number(option.price || 0) : 0;
 });
 
 const vatAmount = computed(() => {
-  const total = subtotal.value + shippingCost.value;
+  const total = Number(subtotal.value || 0) + Number(shippingCost.value || 0);
   return total * 0.15; // 15% VAT
 });
 
 const grandTotal = computed(() =>
-  subtotal.value + shippingCost.value + vatAmount.value
+  Number(subtotal.value || 0) + Number(shippingCost.value || 0) + Number(vatAmount.value || 0)
 );
 
 const freeShippingThreshold = 299.00;
 const amountNeededForFreeShipping = computed(() =>
-  Math.max(0, freeShippingThreshold - subtotal.value)
+  Math.max(0, freeShippingThreshold - Number(subtotal.value || 0))
 );
 
 const handleSubmit = () => {
@@ -97,7 +152,7 @@ const handleSubmit = () => {
   isLoading.value = true;
 
   const orderData = {
-    items: orderItems.value,
+    items: normalizedOrderItems.value,
     shipping: selectedShipping.value,
     payment: selectedPayment.value,
     customer: formData.value,
@@ -117,7 +172,7 @@ const handleSubmit = () => {
 
   // Simulate API call
   setTimeout(() => {
-    ordersStore.addOrder(orderData);
+    ordersStore.createOrder(orderData);
     cartStore.clearCart();
     isLoading.value = false;
     router.push('/payment-success');
@@ -139,15 +194,15 @@ const handleSubmit = () => {
             <!-- Order Items -->
             <div class="space-y-4 mb-6">
               <div
-                v-for="item in orderItems"
-                :key="item.name"
+                v-for="(item, index) in normalizedOrderItems"
+                :key="item.name || index"
                 class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
-                  <p class="font-medium text-gray-800 text-sm">{{ item.name }}</p>
-                  <p class="text-gray-600 text-xs">Quantity: {{ item.quantity }}</p>
+                  <p class="font-medium text-gray-800 text-sm">{{ item.title || item.book.title || "Product " + (index + 1) }}</p>
+                  <p class="text-gray-600 text-xs">Quantity: {{ item.quantity || 0 }}</p>
                 </div>
-                <span class="font-bold text-[var(--color-primary)]">${{ item.price.toFixed(2) }}</span>
+                <span class="font-bold text-[var(--color-primary)]">${{ Number(item.price || 0).toFixed(2) }}</span>
               </div>
             </div>
 
@@ -155,26 +210,26 @@ const handleSubmit = () => {
             <div class="border-t pt-4 space-y-2">
               <div class="flex justify-between text-gray-600">
                 <span>{{ translations.subtotal }}</span>
-                <span>${{ subtotal.toFixed(2) }}</span>
+                <span>${{ Number(subtotal || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
                 <span>{{ translations.shipping }}</span>
-                <span>${{ shippingCost.toFixed(2) }}</span>
+                <span>${{ Number(shippingCost || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 text-sm">
                 <span>{{ translations.vat }} (15%)</span>
-                <span>${{ vatAmount.toFixed(2) }}</span>
+                <span>${{ Number(vatAmount || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
                 <span>{{ translations.total }}</span>
-                <span class="text-[var(--color-primary)]">${{ grandTotal.toFixed(2) }}</span>
+                <span class="text-[var(--color-primary)]">${{ Number(grandTotal || 0).toFixed(2) }}</span>
               </div>
             </div>
 
             <!-- Free Shipping Notice -->
             <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ amountNeededForFreeShipping.toFixed(2) }} {{ translations.freeShippingNotice }}
+                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }} {{ translations.freeShippingNotice }}
               </p>
             </div>
           </div>

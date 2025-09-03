@@ -17,12 +17,57 @@ const banner = {
 }
 
 const CartStore = useCartStore()
-const { cart } = storeToRefs(CartStore)
+const { cart, cartItems } = storeToRefs(CartStore)
+
+// تحقق من وجود بيانات السلة
+const cartData = computed(() => {
+  console.log('Cart data computed:', cartItems.value);
+  console.log('Cart data raw:', cart.value);
+
+  // إذا كانت cartItems فارغة ولكن cart.data تحتوي على items، استخدمها
+  if (cartItems.value.length === 0 && cart.value && cart.value.data && cart.value.data.items) {
+    console.log('Using cart.data.items');
+    return cart.value.data.items;
+  }
+
+  return cartItems.value;
+})
+
+// جلب بيانات السلة عند تحميل المكون
+import { onMounted, watch } from 'vue'
+
+// جلب بيانات السلة عند تحميل المكون
+onMounted(async () => {
+  console.log('Fetching cart data...');
+  try {
+    await CartStore.fetchCart();
+    console.log('Cart data fetched:', cartItems.value);
+    console.log('Cart raw data:', cart.value);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+  }
+})
+
+// مراقبة أي تغييرات في بيانات السلة
+watch(() => cartItems.value, (newVal) => {
+  console.log('Cart items updated:', newVal);
+}, { deep: true })
+
+// مراقبة أي تغييرات في بيانات السلة الخام
+watch(() => cart.value, (newVal) => {
+  console.log('Cart raw data updated:', newVal);
+}, { deep: true })
 
 // Total price computation
 const totalPrice = computed(() => {
-  const cartItems = CartStore.cartItems;
-  return cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0).toFixed(2);
+  // استخدام البيانات مباشرة من cart.value.data إذا كانت متوفرة
+  if (cart.value && cart.value.data && cart.value.data.items) {
+    return cart.value.data.items.reduce((sum, item) => sum + parseFloat(item.price || 0) * (item.quantity || 1), 0).toFixed(2);
+  }
+
+  // العودة إلى الاعتماد على cartItems كخيار بديل
+  if (!cartItems.value || cartItems.value.length === 0) return 0;
+  return cartItems.value.reduce((sum, item) => sum + parseFloat(item.price || 0) * (item.quantity || 1), 0).toFixed(2);
 })
 
 // Checkout button handler
@@ -37,6 +82,7 @@ const handleCheckout = () => {
   }, 1500)
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 // Optional: If you don’t already have this in the store, you can add it
 
 </script>
@@ -56,31 +102,38 @@ const handleCheckout = () => {
         </h1>
 
         <!-- Cart Items -->
-        <div v-if="CartStore.cartItems.length > 0">
+        <div v-if="cartData && cartData.length > 0">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
-              v-for="item in CartStore.cartItems"
+              v-for="item in cartData"
               :key="item.id"
-              class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
+              class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 relative"
             >
-              <img :src="item.cover" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
+            <div
+            class="absolute flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 top-2 right-2 z-20 transition-colors duration-200 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105"
+            @click="CartStore.removeFromCart(item.id)"
+            >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              <img :src="item.book ? `${apiBaseUrl}${item.book.cover}` : '/storage/books/default-placeholder.jpg'" alt="Book Cover" class="w-24 h-32 object-cover rounded" />
               <div class="text-center mt-4">
-                <h2 class="text-lg font-semibold">{{ item.title }}</h2>
-                <p class="text-sm text-gray-500">by {{ item.author }}</p>
+                <h2 class="text-lg font-semibold">{{ item.book ? item.book.title : 'Unknown Book' }}</h2>
+                <p class="text-sm text-gray-500">{{ item.book ? item.book.description.substring(0, 50) + '...' : 'Description not available' }}</p>
                 <p class="text-green-600 font-medium mt-2">
-                  $ {{ (item.price || 0).toFixed(2) }}
+                  $ {{ parseFloat(item.price || 0).toFixed(2) }}
                 </p>
                 <div class="flex gap-3">
                   <label class="block mt-4 text-sm text-gray-700">Quantity:</label>
                 <input
                   type="number"
                   min="1"
-                  :value="item.quantity"
+                  :value="item.quantity || 1"
                   @input="CartStore.updateQuantity(item.id, +$event.target.value)"
                   class="w-16 p-2 border rounded mt-1 text-center"
                 />
                 </div>
-
               </div>
             </div>
           </div>

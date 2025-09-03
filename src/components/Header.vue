@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import Logo from '../assets/HomeIcon/Header/Logo.png'
 import { useRoute } from 'vue-router'
@@ -65,6 +65,11 @@ const { isLoggedIn } = storeToRefs(userStore)
 const headerBackground = computed(() => {
   const wallpaper = settingsStore.primaryColor.headerWallpaper || ''
   return wallpaper ? `url("${wallpaper}") center/cover no-repeat` : ''
+})
+
+// تحميل السلة عند بدء التطبيق
+onMounted(() => {
+  cartStore.fetchCart()
 })
 
 const MenuContent = computed(() => [
@@ -141,16 +146,18 @@ const { cartCount } = storeToRefs(cartStore)
       <div class="flex max-lg:ml-auto space-x-4">
         <LanguageSwitcher />
         <RouterLink
-          to="/cart"
-          class="relative text-white hover:text-[var(--color-hover)] self-center"
-        >
-          <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
-          <span
-            v-if="cartCount > 0"
-            class="absolute -top-1 -right-2 text-xs font-medium bg-[var(--color-primary)] rounded-full px-1.5 py-0.5"
-            >{{ cartCount }}</span
-          >
-        </RouterLink>
+  to="/cart"
+  class="relative text-white hover:text-[var(--color-hover)] self-center"
+>
+  <i class="pi pi-shopping-cart" style="font-size: 1.5rem"></i>
+  <span
+    
+    class="absolute -top-1 -right-2 text-xs font-medium bg-[var(--color-primary)] rounded-full px-1.5 py-0.5 transition-all duration-200"
+  >
+    {{ cartCount }}
+  </span>
+</RouterLink>
+
         <div v-if="isLoggedIn" class="flex items-center">
           <RouterLink to="/profile">
             <img
