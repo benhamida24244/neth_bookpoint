@@ -72,11 +72,11 @@ const auth = {
 };
 
 const customerAuth = {
-  register: (userData) => customerApi.post("/customer/register", userData),
-  login: (credentials) => customerApi.post("/customer/login", credentials),
-  logout: () => customerApi.post("/customer/logout"),
-  getProfile: () => customerApi.get("/customer/profile"),
-  updateProfile: (data) => customerApi.put("/customer/profile", data),
+  register: (userData) => api.post("/customer/register", userData),
+  login: (credentials) => api.post("/customer/login", credentials),
+  logout: () => api.post("/customer/logout"),
+  getProfile: () => api.get("/customer/profile"),
+  updateProfile: (data) => api.put("/customer/profile", data),
 };
 
 // ================================================================

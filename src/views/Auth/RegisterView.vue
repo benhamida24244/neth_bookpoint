@@ -1,5 +1,120 @@
 <script setup>
 import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة إذا أردت
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCustomerAuthStore } from '@/stores/customerAuth.js';
+
+const router = useRouter();
+const CustomerAuth = useCustomerAuthStore();
+
+const formData = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: ''
+});
+
+const errors = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: ''
+});
+
+const isLoading = ref(false);
+
+const validateForm = () => {
+  let isValid = true;
+
+  // Reset errors
+  Object.keys(errors).forEach(key => {
+    errors[key] = '';
+  });
+
+  // Name validation
+  if (!formData.name.trim()) {
+    errors.name = 'Name is required';
+    isValid = false;
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.email) {
+    errors.email = 'Email is required';
+    isValid = false;
+  } else if (!emailRegex.test(formData.email)) {
+    errors.email = 'Please enter a valid email';
+    isValid = false;
+  }
+
+  // Password validation
+  if (!formData.password) {
+    errors.password = 'Password is required';
+    isValid = false;
+  } else if (formData.password.length < 6) {
+    errors.password = 'Password must be at least 6 characters';
+    isValid = false;
+  }
+
+  // Confirm password validation
+  if (!formData.password_confirmation) {
+    errors.password_confirmation = 'Please confirm your password';
+    isValid = false;
+  } else if (formData.password !== formData.password_confirmation) {
+    errors.password_confirmation = 'Passwords do not match';
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+const handleRegister = async () => {
+  if (!validateForm()) return;
+
+  isLoading.value = true;
+
+  // Reset all errors
+  Object.keys(errors).forEach(key => {
+    errors[key] = '';
+  });
+
+  try {
+    await CustomerAuth.register({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      password_confirmation: formData.password_confirmation
+    });
+
+    // Registration successful, redirect to home or login
+    router.push('/');
+  } catch (error) {
+    // Handle registration error
+    console.error('Registration failed:', error);
+
+    // Display server validation errors if available
+    if (error.response && error.response.data && error.response.data.errors) {
+      const serverErrors = error.response.data.errors;
+
+      // Map server errors to our form errors
+      Object.keys(serverErrors).forEach(key => {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = serverErrors[key][0]; // Take the first error message
+        }
+      });
+
+      // If there's a general error message, show it
+      if (error.response.data.message) {
+        alert(error.response.data.message);
+      }
+    } else {
+      // Generic error message
+      alert('Registration failed. Please try again.');
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -45,44 +160,64 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
         </div>
 
         <!-- نموذج التسجيل -->
-        <form class="space-y-4">
-          <input
-            name="name"
-            type="text"
-            required
-            placeholder="Full Name"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+        <form @submit.prevent="handleRegister" class="space-y-4">
+          <div>
+            <input
+              v-model="formData.name"
+              name="name"
+              type="text"
+              required
+              placeholder="Full Name"
+              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            />
+            <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
+          </div>
 
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="Email Address"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.email"
+              name="email"
+              type="email"
+              required
+              placeholder="Email Address"
+              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+          </div>
 
-          <input
-            name="password"
-            type="password"
-            required
-            placeholder="Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.password"
+              name="password"
+              type="password"
+              required
+              autocomplete="new-password"
+              placeholder="Password"
+              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            />
+            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+          </div>
 
-          <input
-            name="confirm_password"
-            type="password"
-            required
-            placeholder="Confirm Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.password_confirmation"
+              name="password_confirmation"
+              type="password"
+              required
+              autocomplete="new-password"
+              placeholder="Confirm Password"
+              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            />
+            <p v-if="errors.password_confirmation" class="text-red-500 text-sm mt-1">{{ errors.password_confirmation }}</p>
+          </div>
 
           <button
             type="submit"
-            class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="isLoading"
+            class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Create Account
+            <span v-if="isLoading">Creating Account...</span>
+            <span v-else>Create Account</span>
           </button>
         </form>
 
