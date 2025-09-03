@@ -27,12 +27,7 @@ const setLanguage = (lang) => {
 <template>
   <div class="relative">
     <div class="flex items-center">
-      <button
-        @click="showMenu = !showMenu"
-        class="px-4 py-2 text-sm rounded-full font-medium font-BonaRegular cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
-      >
-        {{ currentLanguage.name }}
-      </button>
+     
       <div
         v-if="showMenu"
         class="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"

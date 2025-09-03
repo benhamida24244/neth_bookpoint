@@ -155,7 +155,7 @@ watch(
             class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-primary)]"
           />
           <div>
-            <h2 class="font-semibold text-sm text-gray-800">{{ user.name }}</h2>
+            <h2 class="font-semibold text-sm text-gray-800">{{ user?.name || "Guest" }}</h2>
             <p class="text-xs text-gray-500">Administrator</p>
           </div>
         </div>

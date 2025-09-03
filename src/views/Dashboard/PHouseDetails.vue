@@ -68,12 +68,39 @@ function openEditModal() {
   }
 }
 
+function handleFileUpload(event) {
+const file = event.target.files[0];
+  if (file) {
+    editForm.value.img = file;
+  }
+}
+
 async function savePublishingHouse() {
   if (!editForm.value || !editForm.value.id) return;
 
   try {
-    await publishingHouseStore.updatePublisher(editForm.value.id, editForm.value);
-    currentPublishingHouse.value = { ...editForm.value };
+    // Create FormData for the API call
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append("name", editForm.value.name);
+    formData.append("description", editForm.value.description);
+    formData.append("country", editForm.value.country);
+
+    // Add image if a new one was selected
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput && fileInput.files.length > 0) {
+      formData.append("img", fileInput.files[0]);
+    } else {
+      // If no new image, keep the existing one
+      formData.append("img", editForm.value.img || "");
+    }
+
+    // Call the API with FormData
+    await publishingHouseStore.updatePublisher(editForm.value.id, formData);
+
+    // Refresh the data
+    await fetchPublisherById();
     showEditModal.value = false;
   } catch (err) {
     console.error("Failed to save publishing house:", err);
@@ -168,7 +195,7 @@ async function savePublishingHouse() {
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
         <label class="block mb-2 font-medium">Image Path</label>
-        <input type="file"
+        <input type="file" @change="handleFileUpload"
           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
 
         <div class="flex justify-end gap-3 mt-4">

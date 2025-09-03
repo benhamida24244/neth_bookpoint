@@ -152,11 +152,17 @@ const admin = {
     delete: (id) => api.delete(`/admin/categories/${id}`),
   },
 
-  publishers: {
-    add: (data) => uploadFile("/admin/publishers", data),
-    update: (id, data) => uploadFile(`/admin/publishers/${id}`, data),
-    delete: (id) => api.delete(`/admin/publishers/${id}`),
-  },
+ publishers: {
+  add: (data) => uploadFile("/admin/publishers", data),
+
+  update: (id, data) =>
+    api.post(`/admin/publishers/${id}`, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+      params: { _method: "PUT" }, // trick: Laravel هيفهم إنها PUT
+    }),
+
+  delete: (id) => api.delete(`/admin/publishers/${id}`),
+},
 
   authors: {
     add: (data) => uploadFile("/admin/authors", data),

@@ -146,6 +146,8 @@ export const useBooksStore = defineStore('books', {
     isLoading: false,
     // Array to hold the books data, initially empty
     books: [],
+    // Error message for API calls
+    error: null,
   }),
   getters: {
     /**
@@ -186,15 +188,69 @@ export const useBooksStore = defineStore('books', {
   },
   actions: {
     /**
-     * Action to fetch books from a simulated API.
+     * Action to fetch books from the API.
      */
     async fetchBooks() {
       this.isLoading = true;
-      // Simulate an API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // In a real application, you would fetch data from an API here.
-      this.books = staticBooks;
-      this.isLoading = false;
+      this.error = null;
+
+      try {
+        const response = await axios.get(API_URL, {
+          headers: {
+            'Authorization': `Bearer ${TOKEN}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        // تحويل بيانات API لتناسب هيكل الكتب في التطبيق
+        this.books = response.data.data || response.data || [];
+
+        // التأكد من أن كل كتاب يحتوي على الحقول المطلوبة
+        this.books = this.books.map(book => ({
+          ...book,
+          // تحويل الحقول إذا لزم الأمر
+          author: book.author_name || book.author || 'مؤلف غير معروف',
+          publishingHouse: book.publisher_name || book.publishingHouse || 'ناشر غير معروف',
+          category: book.category_name || book.category || 'فئة غير معروفة',
+          status: book.status || 'draft',
+          cover: book.cover_image ? `http://127.0.0.1:8000/storage/${book.cover_image}` : '/placeholder-book.jpg',
+          publisherDate: book.published_at || book.publisherDate || new Date().toISOString().split('T')[0]
+        }));
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        this.error = error.response?.data?.message || error.message || 'فشل تحميل الكتب';
+        // في حالة الخطأ، نحاول تحميل بعض البيانات الافتراضية
+        this.loadFallbackBooks();
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Load fallback books when API fails
+     */
+    loadFallbackBooks() {
+      // بيانات مؤقتة للكتب في حالة فشل الاتصال بالAPI
+      const fallbackBooks = [
+        {
+          id: 1,
+          title: 'عنوان كتاب تجريبي',
+          author: 'مؤلف تجريبي',
+          cover: '/placeholder-book.jpg',
+          description: 'وصف تجريبي للكتاب',
+          stock: 10,
+          publishingHouse: 'ناشر تجريبي',
+          publisherDate: new Date().toISOString().split('T')[0],
+          pages: 200,
+          category: 'فئة تجريبية',
+          language: 'العربية',
+          status: 'draft',
+          price: 25.99,
+          rating: 4.0
+        }
+      ];
+
+      this.books = fallbackBooks;
     },
 
     addBook(book, publisherDate) {

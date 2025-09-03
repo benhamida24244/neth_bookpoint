@@ -59,7 +59,23 @@ export const usePublishingHouseStore = defineStore("publishingHouse", {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.admin.publishers.update(publisherId, publisherData);
+        // Check if publisherData is FormData or regular object
+        if (publisherData instanceof FormData) {
+          // Handle FormData (for file uploads)
+          await apiService.admin.publishers.update(publisherId, publisherData);
+        } else {
+          // Handle regular JSON data
+          // Convert to FormData since the API expects it
+          const formData = new FormData();
+          
+          // Add all properties from publisherData to formData
+          Object.keys(publisherData).forEach(key => {
+            formData.append(key, publisherData[key]);
+          });
+          
+          await apiService.admin.publishers.update(publisherId, formData);
+        }
+        
         await this.fetchPublisher(); // Refresh the list after updating
       } catch (error) {
         this.error = "Failed to update Publisher.";
