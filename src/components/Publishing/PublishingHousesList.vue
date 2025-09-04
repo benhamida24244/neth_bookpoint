@@ -11,7 +11,9 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex gap-4 p-4 overflow-x-auto justify-center">
-    <PublishingHousesItem v-for="PublishingHouse in PublishingHouses" :key="PublishingHouse.id || PublishingHouse.name" :PublishingHouse="PublishingHouse" />
+  <div class="gap-4 p-4 overflow-x-auto">
+    <div class="inline-flex gap-4">
+      <PublishingHousesItem v-for="PublishingHouse in PublishingHouses" :key="PublishingHouse.id || PublishingHouse.name" :PublishingHouse="PublishingHouse" />
+    </div>
     </div>
 </template>

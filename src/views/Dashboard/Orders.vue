@@ -146,14 +146,18 @@
 <script setup>
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 
-    const ordersStore = useOrdersStore()
+const ordersStore = useOrdersStore()
+const activeFilter = ref('all')
+const searchQuery = ref('')
 
-    const activeFilter = ref('all')
-    const searchQuery = ref('')
+// جلب بيانات الطلبات عند تحميل المكون
+onMounted(() => {
+  ordersStore.fetchOrders()
+})
 
     const stats = computed(() => {
       const allOrders = ordersStore.orders;
