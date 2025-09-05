@@ -1,37 +1,43 @@
 <script setup>
+import { computed, onMounted } from 'vue'
+import { Chart as PieChart, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-} from 'chart.js'
-import { useCategoriesStore } from '@/stores/Categories'
+import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement)
-const CategoriesStore = useCategoriesStore()
-const Categories = CategoriesStore.categories
+// تسجيل جميع المكونات اللازمة
+PieChart.register(ArcElement, Tooltip, Legend, Title)
+const publishingHouseStore = usePublishingHouseStore()
+
+onMounted(() => {
+  publishingHouseStore.fetchPublisher()
+})
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
-const chartData = {
-  labels: Categories.map((category) => category.name),
-  datasets: [
-    {
-      label: 'Publishing Houses',
-      data: Categories.map((category) => category.bookCount),
-      backgroundColor: [
-        '#facc15', // Yellow
-        '#60a5fa', // Blue
-        '#f472b6', // Pink
-        '#34d399', // Green
-        '#a78bfa'  // Violet
-      ],
-      borderColor: '#fff',
-      borderWidth: 2
-    }
-  ]
-}
+// عرض فقط الفئات الأكثر أهمية (الأعلى عددًا من الكتب)
+const chartData = computed(() => {
+  const topPublishers = [...publishingHouseStore.publishingHouses]
+    .sort((a, b) => b.book_count - a.book_count)
+    .slice(0, 5) // عرض فقط أفضل 5 دور نشر
+
+  return {
+    labels: topPublishers.map((publisher) => publisher.name),
+    datasets: [
+      {
+        label: 'عدد الكتب حسب دار النشر',
+        data: topPublishers.map((publisher) => publisher.book_count),
+        backgroundColor: [
+          '#facc15', // Yellow
+          '#60a5fa', // Blue
+          '#f472b6', // Pink
+          '#34d399', // Green
+          '#a78bfa'  // Violet
+        ],
+        borderColor: '#fff',
+        borderWidth: 2
+      }
+    ]
+  }
+})
 
 const chartOptions = {
   responsive: true,

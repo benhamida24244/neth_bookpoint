@@ -1,36 +1,43 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { Chart as PieChart, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-} from 'chart.js'
 import { useCategoriesStore } from '@/stores/Categories'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement)
+// تسجيل جميع المكونات اللازمة
+PieChart.register(ArcElement, Tooltip, Legend, Title)
 const CategoriesStore = useCategoriesStore()
+
+onMounted(() => {
+  CategoriesStore.fetchCategories()
+})
+
 // بيانات الفئات (مثال فقط — عدلها لاحقًا من API إن أردت)
-const chartData = computed(() => ({
-  labels: CategoriesStore.categories.map((category) => category.name),
-  datasets: [
-    {
-      label: 'Book Categories',
-      data: CategoriesStore.categories.map((category) => category.bookCount),
-      backgroundColor: [
-        '#facc15', // Yellow
-        '#60a5fa', // Blue
-        '#f87171', // Red
-        '#34d399', // Green
-        '#c084fc' // Purple
-      ],
-      borderColor: '#fff',
-      borderWidth: 2
-    }
-  ]
-}))
+const chartData = computed(() => {
+  // عرض فقط أفضل 5 فئات من حيث عدد الكتب
+  const topCategories = [...CategoriesStore.categories]
+    .sort((a, b) => b.bookCount - a.bookCount)
+    .slice(0, 5) // عرض فقط أفضل 5 فئات
+    
+  return {
+    labels: topCategories.map((category) => category.name),
+    datasets: [
+      {
+        label: 'فئات الكتب',
+        data: topCategories.map((category) => category.bookCount),
+        backgroundColor: [
+          '#facc15', // Yellow
+          '#60a5fa', // Blue
+          '#f87171', // Red
+          '#34d399', // Green
+          '#c084fc' // Purple
+        ],
+        borderColor: '#fff',
+        borderWidth: 2
+      }
+    ]
+  }
+})
 
 const chartOptions = {
   responsive: true,

@@ -8,14 +8,19 @@ import {
   ArcElement
 } from 'chart.js'
 import { useOrdersStore } from '@/stores/Orders'
+import { useClientsStore } from '@/stores/Clients'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
 const orderStore = useOrdersStore()
+const clientStore = useClientsStore()
 const orders = orderStore.orders
+const getCountryId = (id) => {
+  const client = clientStore.getClientById(id)
+  return client ? client.country : 'Unknown'
+}
 
-// بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
 const chartData = {
-  labels: orders.map((order) => order.country),
+  labels: orders.map((order) => getCountryId(order.customer_id)),
   datasets: [
     {
       label: 'Publishing Houses',

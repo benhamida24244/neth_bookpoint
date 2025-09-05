@@ -1,29 +1,34 @@
-import './assets/main.css'
-import 'primeicons/primeicons.css'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-import '@fortawesome/fontawesome-free/css/all.min.css'
+import './assets/main.css';
+import 'primeicons/primeicons.css';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import App from './App.vue';
+import router from './router';
+import { MotionPlugin } from '@vueuse/motion';
+import i18n from './i18n';
+import { useCartStore } from './stores/Cart';
+import { useLanguageStore } from './stores/language';
 
-import App from './App.vue'
-import router from './router'
-import { MotionPlugin } from '@vueuse/motion'
-import i18n from './i18n'
-import { useCartStore } from './stores/Cart'
+const app = createApp(App);
 
-const app = createApp(App)
+app.use(createPinia());
+app.use(router);
+app.use(MotionPlugin);
+app.use(i18n);
 
-app.use(createPinia())
-app.use(router)
-app.use(MotionPlugin)
-app.use(i18n)
+// Initialize language store
+const languageStore = useLanguageStore();
+languageStore.initializeLanguage();
 
 // تحميل السلة المحلية عند بدء التطبيق
-const cartStore = useCartStore()
-cartStore.initializeLocalCart()
+const cartStore = useCartStore();
+cartStore.initializeLocalCart();
 
-app.mount('#app')
+app.mount('#app');
+

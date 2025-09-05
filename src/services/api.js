@@ -80,6 +80,26 @@ const customerAuth = {
 };
 
 // ================================================================
+// 📦 Customer Orders
+// ================================================================
+const customerOrders = {
+  all: () => api.get("/orders"),
+  create: (data) => api.post("/orders", data),
+  get: (id) => api.get(`/orders/${id}`),
+};
+
+// ================================================================
+// 📦 Admin Orders
+// ================================================================
+const adminOrders = {
+  all: () => api.get("/admin/orders"),
+  get: (id) => api.get(`/admin/orders/${id}`),
+  update: (id, data) => api.put(`/admin/orders/${id}`, data),
+  delete: (id) => api.delete(`/admin/orders/${id}`),
+};
+
+
+// ================================================================
 // 👤 Customer Authentication & Profile
 // ================================================================
 const customer = {
@@ -126,10 +146,10 @@ const cart = {
 // ================================================================
 // 📦 User Orders
 // ================================================================
-const orders = {
-  all: () => api.get("/orders"),
-  create: (data) => api.post("/orders", data),
-};
+// const orders = {
+//   all: () => api.get("/orders"),
+//   create: (data) => api.post("/orders", data),
+// };
 
 // ================================================================
 // ⚙️ Admin Panel
@@ -199,8 +219,10 @@ const apiService = {
   customer,
   publicResources,
   cart,
-  orders,
+  customerOrders,
+  adminOrders,
   admin,
 };
+
 
 export default apiService;

@@ -1,9 +1,12 @@
 <script setup>
+import { useClientsStore } from '@/stores/Clients';
 import { useOrdersStore } from '@/stores/Orders';
 import { useSettingsStore } from '@/stores/settings';
 
 const settingsStore = useSettingsStore()
 const ordersStore = useOrdersStore()
+const customerStore = useClientsStore()
+
 const orders = ordersStore.getRecentOrders
 
 const statusColor = {
@@ -11,6 +14,43 @@ const statusColor = {
   Shipped: 'text-green-600 bg-green-100',
   Cancelled: 'text-red-600 bg-red-100'
 }
+
+   const TheCustomer = (id) => {
+      try {
+        // التأكد من تحميل بيانات العملاء أولاً
+        if (!customerStore.loaded) {
+          customerStore.fetchClients().then(() => {
+            // بعد تحميل البيانات، تحديث الجدول
+            forceUpdate()
+          })
+          return `Loading...`
+        }
+        const customer = customerStore.getClientById(id)
+        return customer ? customer.name : `Customer #${id}`
+      } catch (error) {
+        console.error('Error fetching customer:', error)
+        return `Customer #${id}`
+      }
+    }
+
+    // لفرض إعادة تحديث المكون
+    const forceUpdate = () => {
+      searchQuery.value = searchQuery.value
+    }
+
+     // تنسيق التاريخ
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+
 </script>
 
 <template>
@@ -36,8 +76,8 @@ const statusColor = {
           class="border-b hover:bg-gray-50 transition"
         >
           <td class="py-2 px-3 font-medium">{{ order.id }}</td>
-          <td class="py-2 px-3">{{ order.client }}</td>
-          <td class="py-2 px-3 text-sm text-gray-600">{{ order.email }}</td>
+          <td class="py-2 px-3">{{ TheCustomer(order.customer_id) }}</td>
+          <td class="py-2 px-3 text-sm text-gray-600">{{ order.customer_email }}</td>
           <td class="py-2 px-3">
             <span
               class="text-sm px-3 py-1 rounded-full font-semibold"
@@ -46,9 +86,9 @@ const statusColor = {
               {{ order.status }}
             </span>
           </td>
-          <td class="py-2 px-3 font-semibold">{{ order.total + settingsStore.currency }}</td>
+          <td class="py-2 px-3 font-semibold">{{ parseFloat(order.total_price).toFixed(2) }}</td>
           <td class="py-2 px-3">{{ order.payment }}</td>
-          <td class="py-2 px-3">{{ order.date }}</td>
+          <td class="py-2 px-3">{{ formatDate(order.created_at) }}</td>
         </tr>
       </tbody>
     </table>

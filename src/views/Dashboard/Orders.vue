@@ -71,15 +71,19 @@
                 class="hover:bg-gray-50 transition-colors duration-200"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.customer }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.book }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ TheCustomer(order.customer_id) }}</td>
+                <td class="px-6 py-4 text-sm">
+                  <div v-for="item in order.items" :key="item.id" class="mb-1">
+                    {{ item.quantity }} x {{ item.book.title }}
+                  </div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span :class="getStatusClass(order.status)" class="px-3 py-1 rounded-full text-xs font-medium">
                     {{ order.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.price + settingsStore.currency }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.date }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ parseFloat(order.total_price).toFixed(2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(order.created_at) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                   <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     <i class="far fa-eye"></i> View
@@ -144,6 +148,9 @@
 </template>
 
 <script setup>
+import { useClientsStore } from '@/stores/Clients'
+import { useCounterStore } from '@/stores/counter'
+import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
 import { ref, computed, onMounted } from 'vue'
@@ -197,9 +204,10 @@ onMounted(() => {
 
     const filters = ref([
       { label: 'All Orders', value: 'all' },
-      { label: 'Completed', value: 'Completed' },
-      { label: 'Pending', value: 'Pending' },
-      { label: 'Returned', value: 'Returned' }
+      { label: 'Pending', value: 'pending' },
+      { label: 'Shipped', value: 'shipped' },
+      { label: 'Delivered', value: 'delivered' },
+      { label: 'Cancelled', value: 'cancelled' }
     ])
 
     const filteredOrders = computed(() => {
@@ -214,8 +222,8 @@ onMounted(() => {
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         filtered = filtered.filter(order =>
-          order.customer.toLowerCase().includes(query) ||
-          order.book.toLowerCase().includes(query) ||
+          order.customer_id.toString().includes(query) ||
+          order.items.some(item => item.book.title.toLowerCase().includes(query)) ||
           order.id.toString().includes(query)
         )
       }
@@ -225,11 +233,48 @@ onMounted(() => {
 
     const getStatusClass = (status) => {
       const statusClasses = {
-        'Completed': 'bg-green-50 text-green-700',
-        'Pending': 'bg-yellow-50 text-[var(--color-primary)]',
-        'Returned': 'bg-red-50 text-red-700'
+        'completed': 'bg-green-50 text-green-700',
+        'pending': 'bg-yellow-50 text-[var(--color-primary)]',
+        'processing': 'bg-blue-50 text-blue-700',
+        'shipped': 'bg-purple-50 text-purple-700',
+        'delivered': 'bg-green-50 text-green-700',
+        'cancelled': 'bg-red-50 text-red-700'
       }
       return statusClasses[status] || 'bg-gray-50 text-gray-700'
+    }
+    const customerStore = useClientsStore()
+    const TheCustomer = (id) => {
+      try {
+        // التأكد من تحميل بيانات العملاء أولاً
+        if (!customerStore.loaded) {
+          customerStore.fetchClients().then(() => {
+            // بعد تحميل البيانات، تحديث الجدول
+            forceUpdate()
+          })
+          return `Loading...`
+        }
+        const customer = customerStore.getClientById(id)
+        return customer ? customer.name : `Customer #${id}`
+      } catch (error) {
+        console.error('Error fetching customer:', error)
+        return `Customer #${id}`
+      }
+    }
+
+    // لفرض إعادة تحديث المكون
+    const forceUpdate = () => {
+      searchQuery.value = searchQuery.value
+    }
+    // تنسيق التاريخ
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     }
 
 

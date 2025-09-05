@@ -1,17 +1,20 @@
-import { createI18n } from 'vue-i18n'
-import en from './locales/en.json'
-import ar from './locales/ar.json'
-import fr from './locales/fr.json'
+import { createI18n } from 'vue-i18n';
+import en from './locales/en.json';
+import fr from './locales/fr.json';
+import ar from './locales/ar.json';
+
+// Get initial language from localStorage or default to 'en'
+const initialLocale = localStorage.getItem('language') || 'en';
 
 const i18n = createI18n({
   legacy: false,
-  locale: 'en',
-  fallbackLocale: 'en',
+  locale: initialLocale, // set locale
+  fallbackLocale: 'en', // set fallback locale
   messages: {
     en,
+    fr,
     ar,
-    fr
-  }
-})
+  },
+});
 
-export default i18n
+export default i18n;

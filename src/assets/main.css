@@ -15,6 +15,12 @@
   --font-BonaRegular: BonaRegular , "sans-serif";
 }
 
+@layer base {
+  body {
+    font-family: var(--font-BonaRegular);
+  }
+}
+
 #header {
   background-position: center;
   background-repeat: no-repeat;
