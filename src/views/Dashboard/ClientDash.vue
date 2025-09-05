@@ -37,7 +37,7 @@ const filteredClients = computed(() => {
 
 // Computed analytics
 const totalOrders = computed(() => {
-  return filteredClients.value.reduce((sum, client) => sum + client.Orders_count, 0);
+  return filteredClients.value.reduce((sum, client) => sum + client.total_orders, 0);
 });
 
 const statusOptions = ['Active', 'Inactive', 'Pending'];
@@ -59,6 +59,15 @@ const toggleDropdown = (dropdown) => {
     showSourceDropdown.value = false;
   }
 };
+
+const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    }
 </script>
 
 <template>
@@ -87,7 +96,7 @@ const toggleDropdown = (dropdown) => {
       </div>
 
       <!-- Filter Inputs Row -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         <!-- Registration Date -->
         <div class="relative">
           <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
@@ -129,22 +138,7 @@ const toggleDropdown = (dropdown) => {
             placeholder="Min Total Spend"
           />
         </div>
-
-        <!-- Shipping Method -->
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M8.5 1.5A1.5 1.5 0 0 0 7 3v.5H4.5a2 2 0 0 0-2 2V9a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V5.5a2 2 0 0 0-2-2H13V3a1.5 1.5 0 0 0-1.5-1.5h-3z"/>
-            </svg>
-          </div>
-          <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[var(--color-light)] focus:border-[var(--color-light)] block w-full pl-10 p-2.5">
-            <option value="">Shipping Method</option>
-            <option value="standard">Standard</option>
-            <option value="express">Express</option>
-            <option value="overnight">Overnight</option>
-          </select>
         </div>
-      </div>
 
       <!-- Dropdown Filters Row -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
@@ -264,10 +258,10 @@ const toggleDropdown = (dropdown) => {
             <div class="space-y-1 text-sm text-gray-600">
               <p><span class="font-medium">Email:</span> {{ client.email }}</p>
               <p><span class="font-medium">Phone:</span> {{ client.phone }}</p>
-              <p><span class="font-medium">Country:</span> {{ client.Country }}</p>
+              <p><span class="font-medium">Country:</span> {{ client.country }}</p>
               <p><span class="font-medium">Registration:</span> {{ client.Registration_date }}</p>
-              <p><span class="font-medium">Orders:</span> {{ client.Orders_count }}</p>
-              <p><span class="font-medium">Spent:</span> ${{ client.SpendMuch }}</p>
+              <p><span class="font-medium">Orders:</span> {{ client.total_orders }}</p>
+              <p><span class="font-medium">Spent:</span> ${{ client.total_spent }}</p>
             </div>
             <div class="mt-3">
               <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
@@ -303,10 +297,10 @@ const toggleDropdown = (dropdown) => {
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">#{{ client.id }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.email }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.phone }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Registration_date }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Orders_count }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ client.SpendMuch }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.Country }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ formatDate(client.registration_date) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.total_orders }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-500">${{ client.total_spent }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ client.country }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <button class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

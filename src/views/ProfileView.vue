@@ -17,8 +17,14 @@ const router = useRouter()
 
 // Reactive state
 const { currentUser } = storeToRefs(authStore)
-const { cart } = storeToRefs(cartStore)
+const { cart, loading: cartLoading, error: cartError } = storeToRefs(cartStore)
 const { orders: userOrders, loading: ordersLoading, error: ordersError } = storeToRefs(ordersStore) // Use orders directly
+
+// تأكد من وجود محتويات في السلة
+const cartItems = computed(() => {
+  if (!cart.value || !cart.value.items) return []
+  return cart.value.items
+})
 
 const showEditModal = ref(false);
 
@@ -26,6 +32,7 @@ const showEditModal = ref(false);
 onMounted(() => {
   // authStore.fetchProfile(); // This should be called on auto-login, not every time profile is viewed
   ordersStore.fetchOrders();
+  cartStore.fetchCart();
 })
 
 const handleLogout = async () => {
@@ -35,7 +42,7 @@ const handleLogout = async () => {
 
 // حساب إجمالي السعر
 const totalPrice = computed(() =>
-  cart.value ? cart.value.reduce((total, item) => total + item.price * item.quantity, 0) : 0
+  cartItems.value ? cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0) : 0
 )
 
 const formatOrderDate = (dateString) => {
@@ -157,7 +164,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                   </div>
                   <div>
                     <h2 class="text-2xl font-bold">{{ t('profile.shoppingCart') }}</h2>
-                    <p class="text-blue-100">{{ t('profile.itemsInCart', { count: cart ? cart.length : 0 }) }}</p>
+                    <p class="text-blue-100">{{ t('profile.itemsInCart', { count: cartItems.length }) }}</p>
                   </div>
                 </div>
                 <div v-if="cart && cart.length > 0" class="text-right">
@@ -168,25 +175,39 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
             </div>
 
             <div class="p-6">
-              <div v-if="cart && cart.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="item in cart" :key="item.id"
+              <div v-if="cartLoading" class="text-center py-12">
+                <p>{{ t('profile.loadingD') }}</p>
+              </div>
+              <div v-else-if="cartError" class="text-center py-12 text-red-500">
+                <p>{{ cartError }}</p>
+              </div>
+              <div v-else-if="cartItems.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="item in cartItems" :key="item.id || item.book_id"
                      class="group bg-white rounded-xl p-4 shadow-lg border border-gray-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
                   <div class="aspect-square rounded-lg overflow-hidden mb-4 bg-gray-100">
-                    <img :src="item.cover" :alt="item.name"
+                    <img :src="`${apiBaseUrl}${item.book.cover}`" :alt="item.name || item.book?.title"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </div>
                   <div class="space-y-2">
-                    <h3 class="font-semibold text-gray-800 line-clamp-2">{{ item.name }}</h3>
+                    <h3 class="font-semibold text-gray-800 line-clamp-2">{{ item.name || item.book?.title }}</h3>
                     <div class="flex justify-between items-center text-sm text-gray-600">
                       <span>{{ t('profile.quantity') }}: {{ item.quantity }}</span>
                       <span class="font-medium">${{ item.price }}</span>
                     </div>
                     <div class="text-right">
-                      <span class="text-lg font-bold text-blue-600">
+                      <span class="text-lg font-bold text-[var(--color-primary)]">
                         ${{ (item.price * item.quantity).toFixed(2) }}
                       </span>
                     </div>
                   </div>
+                </div>
+                <div class="flex justify-end mt-6 col-span-full">
+                  <button @click="router.push('/cart')" class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] text-white py-3 px-8 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center gap-2">
+                    <span>{{ t('profile.goTocart') }}</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
               <div v-else class="text-center py-12">

@@ -684,6 +684,8 @@
     "name": "Nom",
     "email": "Email",
     "address": "Adresse",
+    "goTocart": "Aller à la carte",
+    "loadingD": "Chargement...",
     "shoppingCart": "Panier d'achat",
     "itemsInCart": "{count} articles dans votre panier",
     "total": "Total",

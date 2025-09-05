@@ -23,19 +23,6 @@ export const useClientsStore = defineStore("clients", {
       }
     },
 
-    // --- الدالة الجديدة المضافة ---
-    getClientById(ClientId) {
-      // البحث في القائمة المحلية أولاً
-      const client = this.clients.find(client => client.id === ClientId);
-      if (client) {
-        return client;
-      }
-      
-      // إذا لم يتم العثور على العميل في القائمة المحلية
-      console.warn(`Client with ID ${ClientId} not found in local data`);
-      return null;
-    },
-    
     async fetchClientById(ClientId) {
       this.loading = true;
       this.error = null;
@@ -51,7 +38,24 @@ export const useClientsStore = defineStore("clients", {
         this.loading = false;
       }
     },
-    // ----------------------------
+
+    async updateClientStatus(clientId, status) {
+      this.loading = true;
+      this.error = null;
+      try {
+        await apiService.admin.customers.update(clientId, { status });
+        const index = this.clients.findIndex(c => c.id === clientId);
+        if (index !== -1) {
+          this.clients[index].status = status;
+        }
+      } catch (error) {
+        this.error = "Failed to update client status.";
+        console.error(error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
     async deleteClient(ClientId) {
       this.loading = true;

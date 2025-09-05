@@ -2,8 +2,49 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useLanguageStore } from '@/stores/language'
+import { useClientsStore } from '@/stores/Clients'
+
+const CreateAvatar = (name) => {
+  if (!name) return ''
+  const getInitials = (name) => {
+    let initials = name.match(/\b\w/g) || []
+    return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase()
+  }
+
+  const stringToColor = (str) => {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    let color = '#'
+    for (let i = 0; i < 3; i++) {
+      let value = (hash >> (i * 8)) & 0xff
+      color += ('00' + value.toString(16)).substr(-2)
+    }
+    return color
+  }
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  canvas.width = 200
+  canvas.height = 200
+
+  // Background
+  context.fillStyle = stringToColor(name)
+  context.fillRect(0, 0, canvas.width, canvas.height)
+
+  // Text
+  context.font = 'bold 100px Arial'
+  context.fillStyle = '#fff'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillText(getInitials(name), canvas.width / 2, canvas.height / 2)
+
+  return canvas.toDataURL('image/png')
+}
 
 const languageStore = useLanguageStore()
+const clientStore = useClientsStore()
 const translations = computed(() => languageStore.translations)
 
 // Client Status Configuration
@@ -25,16 +66,6 @@ const STATUS_CONFIG = computed(() => ({
   }
 }))
 
-// Props and Emits
-const props = defineProps({
-  clientId: {
-    type: [String, Number],
-    required: false
-  }
-})
-
-const emit = defineEmits(['clientUpdated', 'statusChanged'])
-
 // Router
 const route = useRoute()
 const router = useRouter()
@@ -44,107 +75,30 @@ const isLoading = ref(true)
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
-const showEditModal = ref(false)
 
-// Client Data (Enhanced with missing properties)
-const clients = ref([
-  {
-    id: 1,
-    name: 'Benhamida Mohammed',
-    email: 'mohammed@example.com',
-    phone: '0823234234',
-    Registration_date: '12-12-2000',
-    Orders_count: 12,
-    SpendMuch: 1234,
-    Country: 'Algeria',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Benhamida+Mohammed&background=3b82f6&color=fff',
-    address: '123 Main Street, Algiers',
-    lastOrderDate: '2024-01-15',
-    totalOrders: 12,
-    averageOrderValue: 102.83,
-    memberSince: '2020-12-12',
-    notes: 'VIP customer with frequent large orders'
-  },
-  {
-    id: 2,
-    name: 'Ahmed Hassan',
-    email: 'ahmed@example.com',
-    phone: '0823234235',
-    Registration_date: '15-03-2001',
-    Orders_count: 8,
-    SpendMuch: 890,
-    Country: 'Morocco',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Ahmed+Hassan&background=10b981&color=fff',
-    address: '456 Ocean Road, Casablanca',
-    lastOrderDate: '2024-01-10',
-    totalOrders: 8,
-    averageOrderValue: 111.25,
-    memberSince: '2021-03-15',
-    notes: 'Regular customer, prefers express shipping'
-  },
-  {
-    id: 3,
-    name: 'Fatima Al-Zahra',
-    email: 'fatima@example.com',
-    phone: '0823234236',
-    Registration_date: '22-07-2002',
-    Orders_count: 15,
-    SpendMuch: 2100,
-    Country: 'Tunisia',
-    status: 'pending',
-    avatar: 'https://ui-avatars.com/api/?name=Fatima+Al-Zahra&background=f59e0b&color=fff',
-    address: '789 Desert Avenue, Tunis',
-    lastOrderDate: '2024-01-20',
-    totalOrders: 15,
-    averageOrderValue: 140,
-    memberSince: '2022-07-22',
-    notes: 'New customer, pending verification'
-  },
-  {
-    id: 4,
-    name: 'Omar Ibrahim',
-    email: 'omar@example.com',
-    phone: '0823234237',
-    Registration_date: '08-11-2003',
-    Orders_count: 6,
-    SpendMuch: 450,
-    Country: 'Egypt',
-    status: 'inactive',
-    avatar: 'https://ui-avatars.com/api/?name=Omar+Ibrahim&background=ef4444&color=fff',
-    address: '321 Nile Street, Cairo',
-    lastOrderDate: '2023-12-01',
-    totalOrders: 6,
-    averageOrderValue: 75,
-    memberSince: '2023-11-08',
-    notes: 'Account inactive due to payment issues'
-  },
-  {
-    id: 5,
-    name: 'Aisha Rahman',
-    email: 'aisha@example.com',
-    phone: '0823234238',
-    Registration_date: '03-09-2004',
-    Orders_count: 20,
-    SpendMuch: 3200,
-    Country: 'Algeria',
-    status: 'active',
-    avatar: 'https://ui-avatars.com/api/?name=Aisha+Rahman&background=8b5cf6&color=fff',
-    address: '654 Mountain View, Oran',
-    lastOrderDate: '2024-01-25',
-    totalOrders: 20,
-    averageOrderValue: 160,
-    memberSince: '2024-09-03',
-    notes: 'Premium customer with excellent payment history'
+const selectedClient = ref(null)
+
+// Fetch client data when component mounts or route changes
+const loadClient = async () => {
+  isLoading.value = true
+  error.value = null
+  const clientId = route.params.id
+
+  if (!clientId) {
+    error.value = "Client ID is missing"
+    isLoading.value = false
+    return
   }
-])
 
-// Computed Properties
-const selectedClient = computed(() => {
-  const clientId = props.clientId || parseInt(route.params.id)
-  return clients.value.find((client) => client.id === clientId)
-})
+  try {
+    selectedClient.value = await clientStore.fetchClientById(clientId)
+  } catch (err) {
+    console.error("Error loading client:", err)
+    error.value = "Failed to load client data"
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const statusConfig = computed(() => {
   if (!selectedClient.value) return null
@@ -154,8 +108,8 @@ const statusConfig = computed(() => {
 })
 
 const formattedRegistrationDate = computed(() => {
-  if (!selectedClient.value?.Registration_date) return ''
-  return new Date(selectedClient.value.Registration_date).toLocaleDateString('en-US', {
+  if (!selectedClient.value?.registration_date) return ''
+  return new Date(selectedClient.value.registration_date).toLocaleDateString(languageStore.language, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -163,8 +117,8 @@ const formattedRegistrationDate = computed(() => {
 })
 
 const formattedLastOrderDate = computed(() => {
-  if (!selectedClient.value?.lastOrderDate) return ''
-  return new Date(selectedClient.value.lastOrderDate).toLocaleDateString('en-US', {
+  if (!selectedClient.value?.last_orders) return ''
+  return new Date(selectedClient.value.last_orders[0].created_at).toLocaleDateString(languageStore.language, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -176,25 +130,25 @@ const clientStats = computed(() => {
   return [
     {
       label: translations.value.dashboard?.clientInfo?.totalOrders,
-      value: selectedClient.value.Orders_count,
+      value: selectedClient.value.total_orders,
       icon: '📦',
       color: 'text-blue-600'
     },
     {
       label: translations.value.dashboard?.clientInfo?.totalSpent,
-      value: `$${selectedClient.value.SpendMuch.toLocaleString()}`,
+      value: `$${selectedClient.value.total_spent}`,
       icon: '💰',
       color: 'text-green-600'
     },
     {
       label: translations.value.dashboard?.clientInfo?.averageOrder,
-      value: `$${selectedClient.value.averageOrderValue}`,
+      value: `$${selectedClient.value.average_order}`,
       icon: '📊',
       color: 'text-purple-600'
     },
     {
       label: translations.value.dashboard?.clientInfo?.memberSince,
-      value: new Date(selectedClient.value.Registration_date).getFullYear(),
+      value: new Date(selectedClient.value.registration_date).getFullYear(),
       icon: '📅',
       color: 'text-orange-600'
     }
@@ -217,12 +171,12 @@ Client Report
 Name: ${client.name}
 Email: ${client.email}
 Phone: ${client.phone}
-Country: ${client.Country}
+Country: ${client.country}
 Status: ${statusConfig.value.label}
 Registration Date: ${formattedRegistrationDate.value}
-Total Orders: ${client.Orders_count}
-Total Spent: $${client.SpendMuch}
-Average Order Value: $${client.averageOrderValue}
+Total Orders: ${client.orders_count}
+Total Spent: $${client.total_spent}
+Average Order Value: $${client.average_order_value}
 Last Order: ${formattedLastOrderDate.value}
 Notes: ${client.notes}
   `.trim()
@@ -241,18 +195,12 @@ Notes: ${client.notes}
 const updateClientStatus = async (newStatus) => {
   try {
     isUpdating.value = true
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    const clientIndex = clients.value.findIndex((c) => c.id === selectedClient.value.id)
-    if (clientIndex !== -1) {
-      clients.value[clientIndex].status = newStatus
-      showSuccessMessage.value = true
-      setTimeout(() => {
-        showSuccessMessage.value = false
-      }, 3000)
-      emit('statusChanged', { clientId: selectedClient.value.id, status: newStatus })
-    }
+    await clientStore.updateClientStatus(selectedClient.value.id, newStatus)
+    selectedClient.value.status = newStatus
+    showSuccessMessage.value = true
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 3000)
   } catch (err) {
     error.value = 'Failed to update client status'
   } finally {
@@ -274,28 +222,16 @@ const callClient = () => {
 }
 
 // Lifecycle
-onMounted(async () => {
-  try {
-    isLoading.value = true
-    error.value = null
-    // Simulate loading time
-    await new Promise((resolve) => setTimeout(resolve, 800))
-
-    if (!selectedClient.value) {
-      error.value = 'Client not found'
-    }
-  } catch (err) {
-    error.value = 'Error loading client data'
-    console.error('Error loading client:', err)
-  } finally {
-    isLoading.value = false
-  }
+onMounted(() => {
+  loadClient()
 })
 
 watch(
   () => route.params.id,
-  (newId) => {
-    if (newId) onMounted()
+  (newId, oldId) => {
+    if (newId !== oldId) {
+      loadClient()
+    }
   }
 )
 </script>
@@ -351,7 +287,7 @@ watch(
         </div>
         <p class="text-red-700">{{ error }}</p>
         <button
-          @click="onMounted"
+          @click="loadClient"
           class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
         >
           {{ translations.dashboard?.clientInfo?.tryAgain }}
@@ -365,7 +301,7 @@ watch(
           <div class="bg-gradient-to-r from-[var(--color-primary)] to-black px-6 py-8">
             <div class="flex items-center space-x-6">
               <img
-                :src="selectedClient.avatar"
+                :src="selectedClient.avatar || CreateAvatar(selectedClient.name)"
                 :alt="selectedClient.name"
                 class="w-20 h-20 rounded-full border-4 border-white shadow-lg"
               />
@@ -380,7 +316,7 @@ watch(
                   >
                     {{ statusConfig.icon }} {{ statusConfig.label }}
                   </span>
-                  <span class="text-blue-100">📍 {{ selectedClient.Country }}</span>
+                  <span class="text-blue-100">📍 {{ selectedClient.country }}</span>
                 </div>
               </div>
             </div>
@@ -514,7 +450,7 @@ watch(
                   <label class="text-sm font-medium text-gray-500">{{
                     translations.dashboard?.clientInfo?.country
                   }}</label>
-                  <p class="text-gray-900 font-medium">{{ selectedClient.Country }}</p>
+                  <p class="text-gray-900 font-medium">{{ selectedClient.country }}</p>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
