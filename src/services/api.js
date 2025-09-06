@@ -111,6 +111,15 @@ const customer = {
 };
 
 // ================================================================
+// 🔑 Google OAuth (Customer)
+// ================================================================
+const googleAuth = {
+  redirect: () => api.get("/customer/auth/google/redirect"), // يرجع URL للتحويل
+  callback: (query) => api.get(`/customer/auth/google/callback${query}`), // يستقبل الكود بعد العودة
+};
+
+
+// ================================================================
 // 📚 Public Resources
 // ================================================================
 const publicResources = {
@@ -166,7 +175,8 @@ const admin = {
   customers: {
     all: () => api.get("/admin/customers"),
     get: (id) => api.get(`/admin/customers/${id}`),
-    update: (id, data) => api.put(`/admin/customers/${id}`, data),
+    activate: (id, data) => api.put(`/admin/customers/${id}/activate`, data),
+    deactivate: (id, data) => api.put(`/admin/customers/${id}/deactivate`, data),
     delete: (id) => api.delete(`/admin/customers/${id}`),
   },
   orders: {
@@ -216,6 +226,7 @@ const admin = {
 const apiService = {
   auth,
   customerAuth,
+  googleAuth,
   customer,
   publicResources,
   cart,

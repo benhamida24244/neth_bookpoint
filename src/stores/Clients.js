@@ -43,10 +43,21 @@ export const useClientsStore = defineStore("clients", {
       this.loading = true;
       this.error = null;
       try {
-        await apiService.admin.customers.update(clientId, { status });
+        if(status === 'active')
+        {
+          await apiService.admin.customers.activate(clientId, { status });
         const index = this.clients.findIndex(c => c.id === clientId);
         if (index !== -1) {
           this.clients[index].status = status;
+        }
+        }
+        else if (status === 'inactive')
+        {
+          await apiService.admin.customers.deactivate(clientId, { status });
+        const index = this.clients.findIndex(c => c.id === clientId);
+        if (index !== -1) {
+          this.clients[index].status = status;
+        }
         }
       } catch (error) {
         this.error = "Failed to update client status.";
@@ -71,5 +82,10 @@ export const useClientsStore = defineStore("clients", {
         this.loading = false;
       }
     },
+  },
+  getters: {
+    getClientById: (state) => (id) => {
+      return state.clients.find(client => client.id === id);
+    }
   },
 });

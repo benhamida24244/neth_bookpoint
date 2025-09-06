@@ -14,11 +14,11 @@ import {
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useLanguageStore } from '@/stores/language'
 import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/Auth'
 
-const userStore = useCustomerAuthStore()
+const userStore = useAuthStore()
 const { user } = storeToRefs(userStore)
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
@@ -108,6 +108,45 @@ watch(
   },
   { immediate: true }
 )
+
+const CreateAvatar = (name) => {
+  if (!name) return ''
+  const getInitials = (name) => {
+    let initials = name.match(/\b\w/g) || []
+    return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase()
+  }
+
+  const stringToColor = (str) => {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    let color = '#'
+    for (let i = 0; i < 3; i++) {
+      let value = (hash >> (i * 8)) & 0xff
+      color += ('00' + value.toString(16)).substr(-2)
+    }
+    return color
+  }
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  canvas.width = 200
+  canvas.height = 200
+
+  // Background
+  context.fillStyle = stringToColor(name)
+  context.fillRect(0, 0, canvas.width, canvas.height)
+
+  // Text
+  context.font = 'bold 100px Arial'
+  context.fillStyle = '#fff'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillText(getInitials(name), canvas.width / 2, canvas.height / 2)
+
+  return canvas.toDataURL('image/png')
+}
 </script>
 
 <template>
@@ -150,12 +189,12 @@ watch(
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div class="flex items-center gap-3">
           <img
-            src="https://i.pravatar.cc/40"
+            :src="CreateAvatar(user?.name || 'Admin')"
             alt="Admin"
             class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-primary)]"
           />
           <div>
-            <h2 class="font-semibold text-sm text-gray-800">{{ user?.name || "Guest" }}</h2>
+            <h2 class="font-semibold text-sm text-gray-800">{{ user?.name || "Admin" }}</h2>
             <p class="text-xs text-gray-500">Administrator</p>
           </div>
         </div>

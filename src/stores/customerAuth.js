@@ -31,6 +31,25 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
         return false;
       }
     },
+    async loginWithGoogle(queryString) {
+  try {
+    const response = await apiService.googleAuth.callback(queryString);
+    const { customer_token, user } = response.data;
+
+    this.token = customer_token;
+    this.user = user;
+    this.isAuthenticated = true;
+
+    localStorage.setItem("customer_token", customer_token);
+    localStorage.setItem("role", "customer");
+
+    return true;
+  } catch (error) {
+    this.logout();
+    console.error("Google login failed:", error);
+    return false;
+  }
+    },
     async register(credentials) {
       try {
         const response = await apiService.customer.register(credentials);
@@ -50,7 +69,6 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
         return false;
       }
     },
-
     async logout() {
       try {
         // Ask the server to invalidate the token, but don't block client-side cleanup
@@ -66,7 +84,6 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
         localStorage.removeItem('role');
       }
     },
-
     async fetchProfile() {
       if (!this.token) return;
 
@@ -80,14 +97,12 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
         this.logout();
       }
     },
-
     async tryAutoLogin() {
         if (this.token) {
             // Token exists, try to fetch user profile to validate it
             await this.fetchProfile();
         }
     },
-
     async updateProfile(data) {
       if (!this.token) return;
 

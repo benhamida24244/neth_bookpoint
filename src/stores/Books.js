@@ -38,7 +38,9 @@ export const useBooksStore = defineStore("books", {
       this.book = null;
       try {
         const response = await apiService.publicResources.books.get(id);
-        this.book = response.data; // The API returns the book object directly
+        this.book = response.data.data;
+        console.log(this.book);
+         // The API returns the book object nested under a 'data' key
       } catch (error) {
         console.error(`Failed to fetch book ${id}:`, error);
       } finally {

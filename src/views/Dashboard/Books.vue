@@ -20,8 +20,7 @@ const selectedBook = ref(null)
 const filters = computed(() => [
   { label: translations.value.dashboard?.books?.filters?.all, value: 'All Books' },
   { label: translations.value.dashboard?.books?.filters?.published, value: 1 },
-  { label: translations.value.dashboard?.books?.filters?.pending, value: 2 },
-  { label: translations.value.dashboard?.books?.filters?.draft, value: 3 }
+  { label: translations.value.dashboard?.books?.filters?.draft, value: 0 }
 ])
 
 const settingStore = useSettingsStore()

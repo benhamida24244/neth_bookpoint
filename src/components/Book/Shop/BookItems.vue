@@ -5,7 +5,7 @@
     <!-- صورة الكتاب -->
     <div class="relative mb-3 overflow-hidden rounded-md">
       <img
-        :src="book.cover"
+        :src="`${apiBaseUrl}${book.cover}`"
         :alt="book.title"
         class="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
       />
@@ -20,7 +20,7 @@
         {{ book.title }}
       </h3>
       <p class="font-BonaRegular text-sm text-gray-600">
-        {{ book.author }}
+        {{ book.author.name }}
       </p>
 
       <!-- التقييم -->
@@ -59,6 +59,7 @@ defineProps({
   }
 })
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const settingsStore = useSettingsStore()
 
 </script>

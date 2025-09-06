@@ -11,6 +11,9 @@ export const useCategoriesStore = defineStore('categories', {
   }),
 
   getters: {
+    // Returns all categories
+    allCategories: (state) => state.categories,
+
     // Returns a category from the local list, useful for quick access without a new API call
     getCategoryById: (state) => (id) => {
       return state.categories.find((cat) => cat.id === id)

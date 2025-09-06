@@ -7,23 +7,38 @@ import coverAspect from "@/assets/Auth/LoginImg.png"
 const router = useRouter()
 const authStore = useCustomerAuthStore()
 
+// تعريف الأحداث التي يمكن إرسالها
+const emit = defineEmits(['close', 'openRegister'])
+
 const email = ref('')
 const password = ref('')
 const error = ref(null)
 
+const isLoading = ref(false)
+
 const handleLogin = async () => {
   error.value = null // Reset error
+  isLoading.value = true
+
   const success = await authStore.login({
     email: email.value,
     password: password.value,
   });
 
+  isLoading.value = false
+
   if (success) {
-    router.push('/profile');
+    // إغلاق نافذة تسجيل الدخول بعد النجاح فقط
+    emit('close')
   } else {
     error.value = 'Login failed. Please check your credentials.';
   }
 };
+const handleGoogleLogin = () => {
+  const googleAuthUrl = import.meta.env.VITE_API_BASE_URL + "/api/customer/auth/google/redirect";
+  window.location.href = googleAuthUrl;
+};
+
 </script>
 
 <template>
@@ -44,7 +59,7 @@ const handleLogin = async () => {
         <!-- زر الإغلاق -->
         <button
           type="button"
-          @click="$emit('close')"
+          @click="emit('close')"
           class="absolute top-4 right-4 text-gray-500 hover:text-black transition"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -92,8 +107,10 @@ const handleLogin = async () => {
           <button
             type="submit"
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="isLoading"
           >
-            Login
+            <span v-if="isLoading">Login...</span>
+            <span v-else>Login</span>
           </button>
         </form>
 
@@ -106,6 +123,7 @@ const handleLogin = async () => {
 
         <!-- تسجيل الدخول عبر Google -->
         <button
+          @click="handleGoogleLogin"
           class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
         >
           <img
@@ -121,7 +139,7 @@ const handleLogin = async () => {
           Don’t have an account?
           <span
           class="text-[var(--color-primary)] font-semibold hover:underline"
-          @click="$emit('openRegister')"
+          @click="emit('openRegister')"
           >Sign up</span>
         </p>
       </div>

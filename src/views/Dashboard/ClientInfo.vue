@@ -117,7 +117,8 @@ const formattedRegistrationDate = computed(() => {
 })
 
 const formattedLastOrderDate = computed(() => {
-  if (!selectedClient.value?.last_orders) return ''
+  if (!selectedClient.value?.last_orders || !Array.isArray(selectedClient.value.last_orders) || selectedClient.value.last_orders.length === 0) return ''
+  if (!selectedClient.value.last_orders[0]?.created_at) return ''
   return new Date(selectedClient.value.last_orders[0].created_at).toLocaleDateString(languageStore.language, {
     year: 'numeric',
     month: 'long',
@@ -444,7 +445,7 @@ watch(
                   <label class="text-sm font-medium text-gray-500">{{
                     translations.dashboard?.clientInfo?.phoneNumber
                   }}</label>
-                  <p class="text-gray-900 font-medium">{{ selectedClient.phone }}</p>
+                  <p class="text-gray-900 font-medium">{{ selectedClient.phone_number }}</p>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{

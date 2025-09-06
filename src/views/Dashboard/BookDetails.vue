@@ -8,18 +8,12 @@ import { useLanguageStore } from '@/stores/language'
 // --- Constants ---
 const BOOK_STATUS = {
   PUBLISHED: 1,
-  PENDING: 2,
-  DRAFT: 3,
-  PROCESSING: 4, // Assuming more statuses might exist
-  SHIPPED: 5
+  DRAFT: 0,
 }
 
 const STATUS_CONFIG = {
   [BOOK_STATUS.PUBLISHED]: { color: 'text-green-700 bg-green-100', icon: CheckCircleIcon, label: 'Published' },
-  [BOOK_STATUS.PENDING]: { color: 'text-yellow-500 bg-yellow-100', icon: ClockIcon, label: 'Pending' },
   [BOOK_STATUS.DRAFT]: { color: 'text-red-700 bg-red-100', icon: XCircleIcon, label: 'Draft' },
-  [BOOK_STATUS.PROCESSING]: { color: 'text-blue-700 bg-blue-100', icon: TruckIcon, label: 'Processing' },
-  [BOOK_STATUS.SHIPPED]: { color: 'text-purple-700 bg-purple-100', icon: TruckIcon, label: 'Shipped' }
 }
 
 // --- Props & Emits ---

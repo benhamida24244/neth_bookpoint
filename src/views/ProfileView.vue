@@ -30,7 +30,7 @@ const showEditModal = ref(false);
 
 // Fetch data on component mount
 onMounted(() => {
-  // authStore.fetchProfile(); // This should be called on auto-login, not every time profile is viewed
+  authStore.fetchProfile(); // Ensure profile data is loaded when viewing the profile page
   ordersStore.fetchOrders();
   cartStore.fetchCart();
 })
@@ -57,6 +57,12 @@ const formatCurrency = (amount) => {
     }
     return amount.toFixed(2);
 }
+
+const getAvatarText = (name) => {
+  if (!name) return ''
+  return name.charAt(0).toUpperCase()
+}
+
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
@@ -89,10 +95,14 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
             <div class="flex items-center gap-6 mb-6">
               <div class="relative">
                 <img
-                  :src="currentUser.avatar || 'https://randomuser.me/api/portraits/men/75.jpg'"
+                  v-if="currentUser.avatar"
+                  :src="currentUser.avatar"
                   alt="User Avatar"
                   class="w-20 h-20 rounded-full shadow-lg border-4 border-white object-cover"
                 />
+                <div v-else class="w-20 h-20 rounded-full shadow-lg border-4 border-white bg-gray-300 flex items-center justify-center">
+                  <span class="text-4xl font-bold text-white">{{ getAvatarText(currentUser.name) }}</span>
+                </div>
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div>
@@ -126,6 +136,31 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                 <div>
                   <p class="text-sm text-gray-500 font-medium">{{ t('profile.email') }}</p>
                   <p class="font-semibold text-gray-800">{{ currentUser.email }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50/80 hover:bg-blue-50/80 transition-colors">
+                <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 font-medium">{{ t('profile.phone') }}</p>
+                  <p class="font-semibold text-gray-800">{{ currentUser.phone_number || 'Not set' }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50/80 hover:bg-blue-50/80 transition-colors">
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 font-medium">{{ t('profile.country') }}</p>
+                  <p class="font-semibold text-gray-800">{{ currentUser.country || 'Not set' }}</p>
                 </div>
               </div>
 

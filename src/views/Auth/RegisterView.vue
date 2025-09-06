@@ -6,6 +6,7 @@ import { useCustomerAuthStore } from '@/stores/customerAuth.js';
 
 const router = useRouter();
 const CustomerAuth = useCustomerAuthStore();
+const emit = defineEmits(['close', 'openLogin'])
 
 const formData = reactive({
   name: '',
@@ -86,8 +87,20 @@ const handleRegister = async () => {
       password_confirmation: formData.password_confirmation
     });
 
-    // Registration successful, redirect to home or login
-    router.push('/');
+    // Registration successful, now try to login automatically
+    try {
+      await CustomerAuth.login({
+        email: formData.email,
+        password: formData.password
+      });
+      // Login successful, redirect to home
+      router.push('/');
+      emit('close');
+    } catch (loginError) {
+      console.error('Login error after registration:', loginError);
+      // If auto-login fails, redirect to login page
+      router.push('/login');
+    }
   } catch (error) {
     // Handle registration error
     console.error('Registration failed:', error);
@@ -115,6 +128,10 @@ const handleRegister = async () => {
     isLoading.value = false;
   }
 };
+const handleGoogleRegister = () => {
+  const googleAuthUrl = import.meta.env.VITE_API_BASE_URL + "/api/customer/auth/google/redirect";
+  window.location.href = googleAuthUrl;
+};
 </script>
 
 <template>
@@ -122,7 +139,7 @@ const handleRegister = async () => {
     id="register-popup"
     tabindex="-1"
     class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10"
-    @click.self="$emit('close')"
+    @click.self="emit('close')"
   >
     <div
       class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl w-full flex flex-col md:flex-row font-BonaRegular"
@@ -137,7 +154,7 @@ const handleRegister = async () => {
         <!-- زر إغلاق -->
         <button
           type="button"
-          @click="$emit('close')"
+          @click="emit('close')"
           class="absolute top-4 right-4 text-gray-500 hover:text-black transition"
         >
           <svg
@@ -231,6 +248,7 @@ const handleRegister = async () => {
         <!-- التسجيل عبر Google -->
         <button
           class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+          @click="handleGoogleRegister"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -243,7 +261,7 @@ const handleRegister = async () => {
         <!-- تحويل لتسجيل الدخول -->
         <p class="mt-6 text-center text-sm text-gray-600">
           Already have an account?
-          <span @click="$emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
+          <span @click="emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
             >Login</span
           >
         </p>

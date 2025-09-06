@@ -688,6 +688,8 @@
     "name": "Name",
     "email": "Email",
     "address": "Address",
+    "phone": "Phone",
+    "country": "Country",
     "goTocart": "Go to cart",
     "loadingD": "Loading...",
     "shoppingCart": "Shopping Cart",

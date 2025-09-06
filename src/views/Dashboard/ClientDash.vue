@@ -40,7 +40,7 @@ const totalOrders = computed(() => {
   return filteredClients.value.reduce((sum, client) => sum + client.total_orders, 0);
 });
 
-const statusOptions = ['Active', 'Inactive', 'Pending'];
+const statusOptions = ['Active', 'inActive'];
 const sourceOptions = ['Website', 'Social Media', 'Referral', 'Advertisement'];
 const saleDateOptions = ['Last 7 days', 'Last 30 days', 'Last 90 days', 'All time'];
 
