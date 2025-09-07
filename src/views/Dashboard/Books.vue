@@ -6,6 +6,7 @@ import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
 import { useLanguageStore } from '@/stores/language'
+import * as XLSX from 'xlsx'
 
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
@@ -42,6 +43,43 @@ const Deletebook = (book) => {
   if (confirm(`${translations.value.dashboard?.books?.deleteConfirm} "${book.title}"?`)) {
     bookStore.deleteBook(book.id)
   }
+}
+
+const exportData = () => {
+  const data = filteredBooks.value.map(book => ({
+    'ID': book.id,
+    'Title': book.title,
+    'Category': book.category.name,
+    'Author': book.author.name,
+    'Publisher': book.publisher.name,
+    'Status': getStatusItem(book.status),
+    'Price': book.price,
+    'Date': book.publisherDate
+  }))
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Books')
+  XLSX.writeFile(wb, 'books.xlsx')
+}
+
+const importData = (event) => {
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result)
+    const workbook = XLSX.read(data, { type: 'array' })
+    const sheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[sheetName]
+    const json = XLSX.utils.sheet_to_json(worksheet)
+    // Handle the imported data, e.g., by adding it to the store
+    console.log(json)
+    alert('Data imported successfully! Check the console for the data.')
+  }
+  reader.readAsArrayBuffer(file)
+}
+
+const triggerImport = () => {
+  document.getElementById('import-input').click()
 }
 
 // الإحصائيات
@@ -216,6 +254,13 @@ const handleUpdateBook = (updatedBook) => {
             class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
           >
             {{ translations.dashboard?.books?.addNew }}
+          </button>
+          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
+            Export Data
+          </button>
+          <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
+          <button @click="triggerImport" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
+            Import Data
           </button>
         </div>
       </div>

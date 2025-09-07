@@ -7,7 +7,7 @@ import { useRoute } from 'vue-router';
 const authorStore = useAuthorStore();
 const route = useRoute();
 const showEditModal = ref(false);
-const editForm = ref({ name: '', Country: '', description: '', img: '' });
+const editForm = ref({ name: '', Country: '', descriptionKey: '', img: '' });
 const loading = ref(true);
 const error = ref(null);
 const currentAuthor = ref(null);
@@ -74,7 +74,7 @@ function openEditModal() {
     editForm.value = {
       name: currentAuthor.value.name,
       Country: currentAuthor.value.Country,
-      description: currentAuthor.value.description,
+      descriptionKey: currentAuthor.value.descriptionKey,
       img: currentAuthor.value.img
     };
     showEditModal.value = true;
@@ -98,7 +98,7 @@ async function saveAuthor() {
   try {
     const formData = new FormData();
     formData.append('name', editForm.value.name);
-    formData.append('description', editForm.value.description);
+    formData.append('descriptionKey', editForm.value.descriptionKey);
     if (editForm.value.Country) formData.append('Country', editForm.value.Country);
     if (editForm.value.img instanceof File) {
       formData.append('img', editForm.value.img);
@@ -150,7 +150,7 @@ async function saveAuthor() {
   <div class="uppercase tracking-wide text-sm text-[var(--color-primary)] font-semibold">{{ currentAuthor.Country }}</div>
   <h1 class="block mt-1 text-4xl leading-tight font-bold text-gray-900">{{ currentAuthor.name }}</h1>
   <a v-if="currentAuthor.email" :href="`mailto:${currentAuthor.email}`" class="mt-2 text-gray-500 hover:text-[var(--color-primary)] transition-colors block">{{ currentAuthor.email }}</a>
-  <p class="mt-4 text-gray-700">{{ currentAuthor.description }}</p>
+  <p class="mt-4 text-gray-700">{{ currentAuthor.descriptionKey }}</p>
 
         <div class="mt-8">
           <h2 class="text-2xl font-bold text-gray-800 mb-4">Statistics</h2>
@@ -183,7 +183,7 @@ async function saveAuthor() {
         <input v-model="editForm.Country" type="text" class="w-full border rounded-lg px-3 py-2 mb-4">
 
         <label class="block mb-2 font-medium">Description</label>
-        <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
+        <textarea v-model="editForm.descriptionKey" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4"></textarea>
 
             <label for="AuthorImage" class="block mb-2 font-medium">Image</label>
 

@@ -2,6 +2,7 @@
 import { useAuthorStore } from '@/stores/Authors';
 import { ref, computed, onMounted } from 'vue';
 import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue';
+import * as XLSX from 'xlsx';
 
 const addAuthorModal = ref(null);
 const searchQuery = ref('');
@@ -81,6 +82,41 @@ const getSortIcon = (field) => {
   return sortOrder.value === 'asc' ? '↑' : '↓';
 };
 
+const exportData = () => {
+  const data = filteredAuthors.value.map(author => ({
+    'ID': author.id,
+    'Name': author.name,
+    'Country': author.Country,
+    'Orders': author.Orders_count,
+    'Rewards': author.SpendMuch,
+    'Books': author.nmbBook
+  }));
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Authors');
+  XLSX.writeFile(wb, 'authors.xlsx');
+};
+
+const importData = (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(worksheet);
+    // Handle the imported data, e.g., by adding it to the store
+    console.log(json);
+    alert('Data imported successfully! Check the console for the data.');
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+const triggerImport = () => {
+  document.getElementById('import-input').click();
+};
+
 const deleteAuthor = (authorId) => {
   if (window.confirm('Are you sure you want to delete this author?')) {
     AuthorsStore.deleteAuthor(authorId);
@@ -125,8 +161,12 @@ const openEditModal = (author) => {
         <button @click="addAuthorModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 flex-1 lg:flex-none">
           Add Author
         </button>
-        <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none">
+        <button @click="exportData" class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary)] flex-1 lg:flex-none">
           Export
+        </button>
+        <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
+        <button @click="triggerImport" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1 lg:flex-none">
+          Import
         </button>
       </div>
     </div>

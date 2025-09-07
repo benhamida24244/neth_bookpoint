@@ -7,7 +7,7 @@ const categories = categoriesStore.categories
 </script>
 
 <template>
-  <div class="w-full mx-auto px-4 mt-5 mb-8">
+  <div class="max-w-6xl mx-auto px-4 mt-5 mb-8">
     <span class="block w-full h-px bg-gray-300 my-8"></span>
 
     <!-- 🟢 حاوية التمرير -->

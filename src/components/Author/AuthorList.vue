@@ -11,7 +11,8 @@ defineProps({
 </script>
 
 <template>
-  <!-- 🟢 حاوية التمرير -->
+  <div class="max-w-6xl mx-auto px-4 mt-5 mb-8">
+      <!-- 🟢 حاوية التمرير -->
   <div class="overflow-x-auto p-4">
     <!-- 🟢 صف أفقي قابل للتمرير -->
     <div class="inline-flex gap-4">
@@ -22,5 +23,6 @@ defineProps({
         class="shrink-0"
       />
     </div>
+  </div>
   </div>
 </template>

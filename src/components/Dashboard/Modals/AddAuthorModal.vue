@@ -14,7 +14,7 @@ const AuthorData = ref({
   id: null,
   name: '',
   Country: '',
-  description: '',
+  descriptionKey: '',
   img: null, // لتخزين الملف الجديد المرفوع
   currentImageUrl: null, // لتخزين رابط الصورة الحالية في وضع التعديل
 });
@@ -29,7 +29,7 @@ const openModal = (Author = null) => {
       id: Author.id,
       name: Author.name,
       Country: Author.Country,
-      description: Author.description,
+      descriptionKey: Author.descriptionKey,
       img: null, // نبدأ بدون ملف جديد
       currentImageUrl: Author.img, // افترض أن 'img' هو رابط الصورة
     };
@@ -49,7 +49,7 @@ const closeModal = () => {
 
 const resetForm = () => {
   isEditMode.value = false;
-  AuthorData.value = { id: null, name: '', Country: '', description: '', img: null, currentImageUrl: null };
+  AuthorData.value = { id: null, name: '', Country: '', descriptionKey: '', img: null, currentImageUrl: null };
   validationError.value = '';
   AuthorStore.error = null;
   const fileInput = document.getElementById('AuthorImage');
@@ -75,7 +75,7 @@ const handleSubmit = async () => {
   const formData = new FormData();
   formData.append('name', AuthorData.value.name);
   formData.append('Country', AuthorData.value.Country);
-  formData.append('description', AuthorData.value.description);
+  formData.append('descriptionKey', AuthorData.value.descriptionKey);
 
   // إذا تم اختيار ملف صورة جديد، قم بإضافته
   if (AuthorData.value.img) {
@@ -133,13 +133,13 @@ defineExpose({ openModal });
             <input id="AuthorCountry" v-model="AuthorData.Country" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" required>
           </div>
           <div>
-            <label for="AuthorDescription" class="block mb-2 font-medium">Description</label>
-            <textarea id="AuthorDescription" v-model="AuthorData.description" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+            <label for="AuthordescriptionKey" class="block mb-2 font-medium">Description</label>
+            <textarea id="AuthordescriptionKey" v-model="AuthorData.descriptionKey" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
           </div>
 
           <div>
             <label for="AuthorImage" class="block mb-2 font-medium">Image</label>
-           
+
             <input id="AuthorImage" @change="handleAuthorFileUpload" type="file" accept="image/*"
                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
           </div>

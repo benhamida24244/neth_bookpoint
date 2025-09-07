@@ -74,9 +74,7 @@
               <button @click="handleBuyNow" class="bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="translations.bookdetails.buyNowTooltip">
                 {{ translations.bookdetails.buyNow }}
               </button>
-              <button class="text-gray-500 hover:text-red-500 transition duration-300" :title="translations.bookdetails.addToWishlistTooltip">
-                <i class="pi pi-heart" style="font-size: 1.5rem"></i>
-              </button>
+           
             </div>
           </div>
         </div>

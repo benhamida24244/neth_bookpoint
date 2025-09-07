@@ -4,6 +4,7 @@ import { useCategoriesStore } from '@/stores/Categories'
 import { useLanguageStore } from '@/stores/language'
 import { computed, ref, onMounted } from 'vue'
 import AddCategoryModal from '@/components/Dashboard/Modals/AddCategoryModal.vue'
+import * as XLSX from 'xlsx'
 
 const categoriesStore = useCategoriesStore()
 const languageStore = useLanguageStore()
@@ -45,6 +46,38 @@ const handleCategoryAdded = () => {
   // The store action now handles refetching, so we just need to close the modal.
   showAddCategoryModal.value = false
 }
+
+const exportData = () => {
+  const data = categories.value.map(category => ({
+    'ID': category.id,
+    'Name': category.name,
+    'Status': category.status === 1 ? 'Active' : 'Inactive',
+  }))
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Categories')
+  XLSX.writeFile(wb, 'categories.xlsx')
+}
+
+const importData = (event) => {
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result)
+    const workbook = XLSX.read(data, { type: 'array' })
+    const sheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[sheetName]
+    const json = XLSX.utils.sheet_to_json(worksheet)
+    // Handle the imported data, e.g., by adding it to the store
+    console.log(json)
+    alert('Data imported successfully! Check the console for the data.')
+  }
+  reader.readAsArrayBuffer(file)
+}
+
+const triggerImport = () => {
+  document.getElementById('import-input').click()
+}
 </script>
 
 <template>
@@ -62,12 +95,21 @@ const handleCategoryAdded = () => {
         </h1>
         <p class="text-gray-500 text-base">{{ translations.dashboard?.categories?.subtitle }}</p>
       </div>
-      <button
-        @click="showAddCategoryModal = true"
-        class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
-      >
-        Add New Category
-      </button>
+      <div class="flex items-center gap-4">
+        <button
+          @click="showAddCategoryModal = true"
+          class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
+        >
+          Add New Category
+        </button>
+        <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
+          Export Data
+        </button>
+        <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
+        <button @click="triggerImport" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
+          Import Data
+        </button>
+      </div>
     </header>
 
     <!-- Stats Cards -->

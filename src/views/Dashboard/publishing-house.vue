@@ -5,6 +5,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { useI18n } from 'vue-i18n';
 import AddPublisherModal from '@/components/Dashboard/Modals/AddPublisherModal.vue';
 import { useRouter } from 'vue-router';
+import * as XLSX from 'xlsx';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -87,6 +88,40 @@ const getSortIcon = (field) => {
   return sortOrder.value === 'asc' ? '↑' : '↓';
 };
 
+const exportData = () => {
+  const data = filteredPublishingHouses.value.map(house => ({
+    'ID': house.id,
+    'Name': house.name,
+    'Orders': house.orders,
+    'Status': formatStatus(house.status),
+    'Books': house.nmBook
+  }));
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'PublishingHouses');
+  XLSX.writeFile(wb, 'publishing_houses.xlsx');
+};
+
+const importData = (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(worksheet);
+    // Handle the imported data, e.g., by adding it to the store
+    console.log(json);
+    alert('Data imported successfully! Check the console for the data.');
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+const triggerImport = () => {
+  document.getElementById('import-input').click();
+};
+
 // دوال إجراءات CRUD
 const openEditModal = (publisher) => {
   // افترض أن المكون Modal يقبل `publisher` كـ prop للتعديل
@@ -157,8 +192,12 @@ const formatNumber = (number) => {
         <button @click="publisherModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors flex-1 lg:flex-none whitespace-nowrap">
           Add Publisher
         </button>
-        <button class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex-1 lg:flex-none">
+        <button @click="exportData" class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex-1 lg:flex-none">
           Export
+        </button>
+        <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
+        <button @click="triggerImport" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-opacity flex-1 lg:flex-none">
+          Import
         </button>
       </div>
     </div>

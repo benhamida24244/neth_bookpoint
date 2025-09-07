@@ -38,7 +38,7 @@
           </button>
         </div>
 
-        <div class="relative w-full md:w-auto">
+        <div class="relative w-full md:w-auto flex gap-2">
           <input
             v-model="searchQuery"
             type="text"
@@ -46,6 +46,9 @@
             class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
           >
           <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-[var(--color-primary)] text-white hover:bg-gray-50">
+            Export Data
+          </button>
         </div>
       </div>
 
@@ -154,6 +157,7 @@ import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
 import { ref, computed, onMounted } from 'vue'
+import * as XLSX from 'xlsx'
 
 const settingsStore = useSettingsStore()
 
@@ -165,6 +169,21 @@ const searchQuery = ref('')
 onMounted(() => {
   ordersStore.fetchOrders()
 })
+
+    const exportData = () => {
+      const data = filteredOrders.value.map(order => ({
+        'Order ID': order.id,
+        'Customer': TheCustomer(order.customer_id),
+        'Book': order.items.map(item => `${item.quantity} x ${item.book.title}`).join(', '),
+        'Status': order.status,
+        'Price': order.total_price,
+        'Date': formatDate(order.created_at)
+      }))
+      const ws = XLSX.utils.json_to_sheet(data)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Orders')
+      XLSX.writeFile(wb, 'orders.xlsx')
+    }
 
     const stats = computed(() => {
       const allOrders = ordersStore.orders;
