@@ -7,6 +7,9 @@ import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
 import { useLanguageStore } from '@/stores/language'
 import * as XLSX from 'xlsx'
+import { useAuthorStore } from '@/stores/Authors'
+import { usePublishingHouseStore } from '@/stores/PublishingHouses'
+import { useCategoriesStore } from '@/stores/Categories'
 
 const languageStore = useLanguageStore()
 const translations = computed(() => languageStore.translations)
@@ -28,13 +31,22 @@ const settingStore = useSettingsStore()
 
 // استدعاء الـ Store
 const bookStore = useBooksStore()
+const authorStore = useAuthorStore()
+const publishingHouseStore = usePublishingHouseStore()
+const categoriesStore = useCategoriesStore()
 
 onMounted(async () => {
   await bookStore.fetchBooks()
+  await authorStore.fetchAuthors()
+  await publishingHouseStore.fetchPublisher()
+  await categoriesStore.fetchCategories()
 })
 
 // بيانات الكتب
 const books = computed(() => bookStore.books || [])
+const authors = computed(() => authorStore.authors)
+const publishers = computed(() => publishingHouseStore.publishingHouses)
+const categories = computed(() => categoriesStore.categories)
 
 // 2. Get the API base URL from the .env file
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
@@ -62,21 +74,86 @@ const exportData = () => {
   XLSX.writeFile(wb, 'books.xlsx')
 }
 
-const importData = (event) => {
-  const file = event.target.files[0]
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result)
-    const workbook = XLSX.read(data, { type: 'array' })
-    const sheetName = workbook.SheetNames[0]
-    const worksheet = workbook.Sheets[sheetName]
-    const json = XLSX.utils.sheet_to_json(worksheet)
-    // Handle the imported data, e.g., by adding it to the store
-    console.log(json)
-    alert('Data imported successfully! Check the console for the data.')
+const importData = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+
+      for (const book of json) {
+        const author = authorStore.getAuthorById(book.author_id);
+        const publisher = publishingHouseStore.getPublisherById(book.publisher_id);
+        const category = categoriesStore.getCategoryById(book.category_id);
+
+        if (!author || !publisher || !category || !book.title || !book.price) {
+          console.warn(`Skipping book "${book.title}" due to missing required data.`);
+          continue;
+        }
+
+        const formData = new FormData();
+        formData.append('title', book.title);
+        formData.append('author_id', author.id);
+        formData.append('publisher_id', publisher.id);
+        formData.append('category_id', category.id);
+        formData.append('price', book.price);
+
+        // Optional fields
+        formData.append('description', book.description || '');
+        formData.append('stock', book.stock || 0);
+        formData.append('pages', book.pages || 0);
+        formData.append('discount', book.discount || 0);
+        formData.append('rating', book.rating || 0);
+        formData.append('age_group', book.age_group || '');
+        formData.append('language', book.language || '');
+        formData.append('publisherDate', book.publisherDate || '');
+
+        // Cover image
+        // Cover image
+if (book.cover) {
+  try {
+    // استخراج اسم الملف من المسار
+    const fileName = book.cover.split('/').pop(); // "اسم الملف.jpg"
+    
+    // الوصول إلى الملف في مجلد public (الملف يجب أن يكون ضمن public/storage/cover)
+    const fileInput = document.querySelector(`#coverInput[data-filename="${fileName}"]`);
+    
+    if (fileInput && fileInput.files.length > 0) {
+      formData.append('cover', fileInput.files[0]); // إضافة الصورة مباشرة
+    } else {
+      console.warn(`⚠️ File not found for "${book.title}": ${fileName}`);
+    }
+  } catch (err) {
+    console.warn(`⚠️ Failed to append cover for "${book.title}":`, err);
   }
-  reader.readAsArrayBuffer(file)
 }
+
+
+console.log(formData);
+
+        // Send to API
+        await bookStore.addBook(formData);
+      }
+
+      alert('Data imported successfully!');
+      event.target.value = '';
+    } catch (error) {
+      console.error('Error during data import:', error);
+      alert('Failed to import data. Please check the console for more details.');
+      
+    }
+  };
+
+  reader.readAsArrayBuffer(file);
+};
+
+
 
 const triggerImport = () => {
   document.getElementById('import-input').click()

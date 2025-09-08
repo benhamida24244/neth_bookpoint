@@ -46,7 +46,7 @@
             class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
           >
           <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-[var(--color-primary)] text-white hover:bg-gray-50">
+          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-[var(--color-primary)] text-white hover:bg-[var(--color-hover)]">
             Export Data
           </button>
         </div>

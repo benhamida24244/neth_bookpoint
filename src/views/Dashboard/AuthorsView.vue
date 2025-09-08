@@ -97,21 +97,57 @@ const exportData = () => {
   XLSX.writeFile(wb, 'authors.xlsx');
 };
 
-const importData = (event) => {
+const importData = async (event) => {
   const file = event.target.files[0];
   const reader = new FileReader();
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: 'array' });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(worksheet);
-    // Handle the imported data, e.g., by adding it to the store
-    console.log(json);
-    alert('Data imported successfully! Check the console for the data.');
+  reader.onload = async (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+
+      for (const author of json) {
+        const formData = new FormData();
+        formData.append('name', author.name);
+        formData.append('Country', author.Country);
+
+        if (author.descriptionKey) {
+          formData.append('descriptionKey', author.descriptionKey);
+        }
+
+        
+        if (author.img) {
+          try {
+            const response = await fetch(author.img);
+            const blob = await response.blob();
+            // تحويل blob إلى ملف
+            const fileName = author.name.replace(/\s+/g, "_") + ".jpg";
+            const fileImg = new File([blob], fileName, { type: blob.type });
+            formData.append('img', fileImg);
+          } catch (err) {
+            console.warn(`⚠️ فشل تحميل صورة للكاتب ${author.name}:`, err);
+          }
+        }
+
+        if (author.Registration_date) {
+          formData.append('Registration_date', author.Registration_date);
+        }
+
+        await AuthorsStore.addAuthor(formData);
+      }
+
+      alert('Data imported successfully!');
+      event.target.value = '';
+    } catch (error) {
+      console.error('Error during data import:', error);
+      alert('Failed to import data. Please check the console for more details.');
+    }
   };
   reader.readAsArrayBuffer(file);
 };
+
 
 const triggerImport = () => {
   document.getElementById('import-input').click();
