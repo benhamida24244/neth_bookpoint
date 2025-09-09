@@ -20,7 +20,7 @@ const authorDescription = computed(() => {
   if (selectedAuthor.value && selectedAuthor.value.descriptionKey) {
     return t(selectedAuthor.value.descriptionKey)
   }
-  return 'Description not available.'
+  return t('singleAuthorPage.descriptionNotAvailable')
 })
 
 onMounted(() => {
@@ -78,7 +78,7 @@ onMounted(() => {
                   <span class="text-2xl">📚</span>
                   <div>
                     <p class="text-[var(--color-primary)] font-bold text-xl">{{ selectedAuthor.nmbBook }}</p>
-                    <p class="text-gray-400 text-sm">Books</p>
+                    <p class="text-gray-400 text-sm">{{ t('singleAuthorPage.books') }}</p>
                   </div>
                 </div>
 
@@ -87,8 +87,8 @@ onMounted(() => {
                 >
                   <span class="text-2xl">⭐</span>
                   <div>
-                    <p class="text-[var(--color-primary)] font-bold text-xl">Author</p>
-                    <p class="text-gray-400 text-sm">Featured</p>
+                    <p class="text-[var(--color-primary)] font-bold text-xl">{{ t('singleAuthorPage.author') }}</p>
+                    <p class="text-gray-400 text-sm">{{ t('singleAuthorPage.featured') }}</p>
                   </div>
                 </div>
               </div>
@@ -117,8 +117,8 @@ onMounted(() => {
                   ></path>
                 </svg>
               </div>
-              <h2 class="text-2xl font-bold text-red-500 mb-2">Author Not Found!</h2>
-              <p class="text-gray-400">Please check the URL or return to the authors list.</p>
+              <h2 class="text-2xl font-bold text-red-500 mb-2">{{ t('singleAuthorPage.authorNotFound') }}</h2>
+              <p class="text-gray-400">{{ t('singleAuthorPage.checkUrl') }}</p>
             </div>
 
             <button
@@ -133,7 +133,7 @@ onMounted(() => {
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 ></path>
               </svg>
-              Go Back
+              {{ t('singleAuthorPage.goBack') }}
             </button>
           </div>
         </div>
@@ -145,7 +145,7 @@ onMounted(() => {
       <div class="max-w-6xl mx-auto px-4 py-8">
         <div class="text-center mb-8">
           <h2 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular mb-4">
-            Books by {{ selectedAuthor?.name }}
+            {{ t('singleAuthorPage.booksBy') }} {{ selectedAuthor?.name }}
           </h2>
           <div
             class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"

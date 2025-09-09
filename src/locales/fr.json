@@ -36,11 +36,20 @@
     "pages": "Pages",
     "language": "Langue",
     "dimensions": "Dimensions",
+    "unknownAuthor": "Auteur inconnu",
+    "unknownPublisher": "Éditeur inconnu",
+    "noDescription": "Pas de description disponible",
+    "notAvailable": "N/A",
+    "outOfStock": "En rupture de stock",
+    "bookNotFound": "Livre introuvable",
+    "publisher": "Éditeur",
+    "publishedDate": "Date de publication",
     "booksSameCategory": "Livres de la même catégorie",
     "booksSameAuthor": "Livres du même auteur",
     "booksSamePublisher": "Livres du même éditeur"
   },
   "header": {
+    "title": "NETH<br />BOOKPOINT",
     "home": "Accueil",
     "about": "À propos",
     "shop": "Boutique",
@@ -181,391 +190,391 @@
       }
     },
     "categories": {
-      "title": "Categories Dashboard",
-      "subtitle": "Track and manage all your categories efficiently.",
-      "totalCategories": "Total Categories",
-      "activeCategories": "Active Categories",
-      "newThisMonth": "New This Month",
-      "addNew": "Add New Category",
+      "title": "Tableau de bord des catégories",
+      "subtitle": "Suivez et gérez toutes vos catégories efficacement.",
+      "totalCategories": "Catégories totales",
+      "activeCategories": "Catégories actives",
+      "newThisMonth": "Nouveau ce mois-ci",
+      "addNew": "Ajouter une nouvelle catégorie",
       "table": {
         "hash": "#",
-        "name": "Name",
-        "status": "Status",
-        "orders": "Orders",
-        "books": "N.Books",
-        "createdAt": "Created At",
+        "name": "Nom",
+        "status": "Statut",
+        "orders": "Commandes",
+        "books": "N.Livres",
+        "createdAt": "Créé le",
         "action": "Action",
-        "view": "View"
+        "view": "Voir"
       },
-      "statusActive": "Active",
-      "statusInactive": "Inactive",
-      "emptyHeader": "No categories found",
-      "emptySubtext": "Try adding new categories to populate this dashboard."
+      "statusActive": "Actif",
+      "statusInactive": "Inactif",
+      "emptyHeader": "Aucune catégorie trouvée",
+      "emptySubtext": "Essayez d'ajouter de nouvelles catégories pour remplir ce tableau de bord."
     },
     "books": {
-      "title": "Books Dashboard",
-      "subtitle": "Track and manage all your books efficiently",
-      "addNew": "Add New Book",
+      "title": "Tableau de bord des livres",
+      "subtitle": "Suivez et gérez tous vos livres efficacement",
+      "addNew": "Ajouter un nouveau livre",
       "filters": {
-        "all": "All Books",
-        "published": "Published",
-        "pending": "Pending",
-        "draft": "Draft"
+        "all": "Tous les livres",
+        "published": "Publié",
+        "pending": "En attente",
+        "draft": "Brouillon"
       },
-      "searchPlaceholder": "Search books...",
+      "searchPlaceholder": "Rechercher des livres...",
       "table": {
         "id": "Id",
-        "cover": "Cover",
-        "title": "Title",
-        "category": "Category",
-        "author": "Author",
-        "publisher": "Publisher",
-        "status": "Status",
-        "price": "Price",
+        "cover": "Couverture",
+        "title": "Titre",
+        "category": "Catégorie",
+        "author": "Auteur",
+        "publisher": "Éditeur",
+        "status": "Statut",
+        "price": "Prix",
         "date": "Date",
         "action": "Action"
       },
       "actions": {
-        "view": "View",
-        "edit": "Edit",
-        "delete": "Delete"
+        "view": "Voir",
+        "edit": "Modifier",
+        "delete": "Supprimer"
       },
-      "emptyHeader": "No books found",
-      "emptySubtext": "Try adjusting your search or filter to find what you're looking for.",
-      "deleteConfirm": "Are you sure you want to delete",
-      "addSuccess": "Book added successfully!",
-      "addFailed": "Failed to add book.",
-      "updateSuccess": "Book updated successfully!",
+      "emptyHeader": "Aucun livre trouvé",
+      "emptySubtext": "Essayez d'ajuster votre recherche ou votre filtre pour trouver ce que vous cherchez.",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer",
+      "addSuccess": "Livre ajouté avec succès !",
+      "addFailed": "Échec de l'ajout du livre.",
+      "updateSuccess": "Livre mis à jour avec succès !",
       "stats": {
-        "total": "Total Books",
-        "authors": "Total Authors",
-        "publishers": "Total Publishers",
-        "categories": "Total Categories"
+        "total": "Total des livres",
+        "authors": "Total des auteurs",
+        "publishers": "Total des éditeurs",
+        "categories": "Total des catégories"
       },
       "status": {
-        "published": "Published",
-        "pending": "Pending",
-        "draft": "Draft",
-        "unknown": "Unknown"
+        "published": "Publié",
+        "pending": "En attente",
+        "draft": "Brouillon",
+        "unknown": "Inconnu"
       }
     },
     "addBookModal": {
-      "title": "Add New Book",
+      "title": "Ajouter un nouveau livre",
       "labels": {
-        "title": "Title",
-        "price": "Price",
+        "title": "Titre",
+        "price": "Prix",
         "description": "Description",
-        "author": "Author",
-        "publisher": "Publisher",
-        "category": "Category",
+        "author": "Auteur",
+        "publisher": "Éditeur",
+        "category": "Catégorie",
         "stock": "Stock",
-        "pages": "Number of Pages",
-        "cover": "Cover Image"
+        "pages": "Nombre de pages",
+        "cover": "Image de couverture"
       },
       "placeholders": {
-        "author": "Select an author",
-        "publisher": "Select a publisher",
-        "category": "Select a category"
+        "author": "Sélectionnez un auteur",
+        "publisher": "Sélectionnez un éditeur",
+        "category": "Sélectionnez une catégorie"
       },
-      "save": "Save",
-      "cancel": "Cancel"
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     },
     "editBookModal": {
-      "title": "Edit Book",
+      "title": "Modifier le livre",
       "labels": {
-        "title": "Title",
-        "price": "Price",
+        "title": "Titre",
+        "price": "Prix",
         "description": "Description",
-        "author": "Author",
-        "publisher": "Publisher",
+        "author": "Auteur",
+        "publisher": "Éditeur",
         "stock": "Stock",
         "image": "Image"
       },
-      "save": "Save",
-      "cancel": "Cancel"
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     },
     "addCategoryModal": {
-      "title": "Add New Category",
+      "title": "Ajouter une nouvelle catégorie",
       "labels": {
-        "name": "Category Name",
+        "name": "Nom de la catégorie",
         "description": "Description"
       },
-      "save": "Save",
-      "cancel": "Cancel"
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     },
     "authors": {
-      "title": "Authors Dashboard",
-      "subtitle": "Track and manage all authors",
-      "addNew": "Add New Author",
+      "title": "Tableau de bord des auteurs",
+      "subtitle": "Suivez et gérez tous les auteurs",
+      "addNew": "Ajouter un nouvel auteur",
       "filters": {
-        "allCountries": "All Countries"
+        "allCountries": "Tous les pays"
       },
-      "sortBy": "Sort by:",
+      "sortBy": "Trier par:",
       "stats": {
-        "total": "Total Authors:",
-        "orders": "Total Orders:",
-        "books": "Total Books:"
+        "total": "Total des auteurs:",
+        "orders": "Total des commandes:",
+        "books": "Total des livres:"
       },
       "table": {
         "id": "ID",
-        "name": "Name",
-        "country": "Country",
-        "orders": "Orders",
-        "books": "Books",
+        "name": "Nom",
+        "country": "Pays",
+        "orders": "Commandes",
+        "books": "Livres",
         "action": "Action"
       },
       "actions": {
-        "view": "View",
-        "edit": "Edit",
-        "delete": "Delete"
+        "view": "Voir",
+        "edit": "Modifier",
+        "delete": "Supprimer"
       },
-      "emptyHeader": "No authors found",
-      "emptySubtext": "Try adjusting your search or filter criteria."
+      "emptyHeader": "Aucun auteur trouvé",
+      "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre."
     },
     "publishers": {
-      "title": "Publishing Houses",
-      "subtitle": "Track and manage all publishing houses",
-      "addNew": "Add New Publisher",
-      "sortBy": "Sort by:",
+      "title": "Maisons d'édition",
+      "subtitle": "Suivez et gérez toutes les maisons d'édition",
+      "addNew": "Ajouter un nouvel éditeur",
+      "sortBy": "Trier par:",
       "stats": {
-        "total": "Total Publishers",
-        "orders": "Total Orders",
-        "books": "Total Books"
+        "total": "Total des éditeurs",
+        "orders": "Total des commandes",
+        "books": "Total des livres"
       },
       "table": {
         "id": "ID",
-        "name": "Name",
-        "orders": "Orders",
-        "books": "Books",
+        "name": "Nom",
+        "orders": "Commandes",
+        "books": "Livres",
         "actions": "Actions"
       },
       "actions": {
-        "view": "View",
-        "edit": "Edit",
-        "delete": "Delete"
+        "view": "Voir",
+        "edit": "Modifier",
+        "delete": "Supprimer"
       },
-      "emptyHeader": "No Publishers Found",
-      "emptySubtext": "Try adjusting your search or filter criteria.",
-      "deleteConfirm": "Confirm Deletion"
+      "emptyHeader": "Aucun éditeur trouvé",
+      "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre.",
+      "deleteConfirm": "Confirmer la suppression"
     },
     "orders": {
-      "title": "Order Management",
-      "subtitle": "Track and manage all your book orders efficiently",
+      "title": "Gestion des commandes",
+      "subtitle": "Suivez et gérez efficacement toutes vos commandes de livres",
       "filters": {
-        "all": "All Orders",
-        "pending": "Pending",
-        "completed": "Completed",
-        "shipped": "Shipped",
-        "paid": "Paid"
+        "all": "Toutes les commandes",
+        "pending": "En attente",
+        "completed": "Terminé",
+        "shipped": "Expédié",
+        "paid": "Payé"
       },
       "table": {
-        "id": "Order ID",
-        "customer": "Customer",
-        "items": "Items",
-        "status": "Status",
-        "price": "Price",
+        "id": "ID de commande",
+        "customer": "Client",
+        "items": "Articles",
+        "status": "Statut",
+        "price": "Prix",
         "date": "Date",
         "actions": "Actions"
       },
       "actions": {
-        "view": "View"
+        "view": "Voir"
       },
-      "emptyHeader": "No orders found",
-      "emptySubtext": "Try adjusting your search or filter to find what you're looking for.",
+      "emptyHeader": "Aucune commande trouvée",
+      "emptySubtext": "Essayez d'ajuster votre recherche ou votre filtre pour trouver ce que vous cherchez.",
       "stats": {
-        "pending": "Pending Orders",
-        "completed": "Completed Orders",
-        "shipped": "Shipped Orders",
-        "paid": "Paid Orders"
+        "pending": "Commandes en attente",
+        "completed": "Commandes terminées",
+        "shipped": "Commandes expédiées",
+        "paid": "Commandes payées"
       }
     },
     "clients": {
-      "title": "Clients Dashboard",
-      "subtitle": "Track and manage all your clients",
-      "filter": "Filter",
-      "analytics": "Analytics",
-      "shippingMethod": "Shipping Method",
+      "title": "Tableau de bord des clients",
+      "subtitle": "Suivez et gérez tous vos clients",
+      "filter": "Filtrer",
+      "analytics": "Analytique",
+      "shippingMethod": "Méthode d'envoi",
       "shippingOptions": {
         "standard": "Standard",
         "express": "Express",
-        "overnight": "Overnight"
+        "overnight": "Nocturne"
       },
-      "status": "Status",
+      "status": "Statut",
       "source": "Source",
-      "saleDate": "Sale Date",
+      "saleDate": "Date de vente",
       "stats": {
-        "total": "Total Clients:",
-        "orders": "Total Orders:"
+        "total": "Total des clients:",
+        "orders": "Total des commandes:"
       },
       "table": {
-        "name": "Name",
+        "name": "Nom",
         "id": "ID",
         "email": "Email",
-        "phone": "Phone",
-        "registrationDate": "Registration Date",
-        "orders": "Orders",
-        "totalSpent": "Total Spent",
-        "country": "Country",
+        "phone": "Téléphone",
+        "registrationDate": "Date d'inscription",
+        "orders": "Commandes",
+        "totalSpent": "Total dépensé",
+        "country": "Pays",
         "action": "Action"
       },
-      "emptyHeader": "No clients found",
-      "emptySubtext": "Try adjusting your search or filter criteria."
+      "emptyHeader": "Aucun client trouvé",
+      "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre."
     },
     "settings": {
-      "title": "Settings",
-      "primaryColor": "Primary Color",
-      "primaryColorSubtext": "Choose a primary color for the application theme. The change will be applied instantly.",
-      "livePreview": "Live Preview",
-      "localization": "Localization",
-      "currency": "Currency",
-      "language": "Language"
+      "title": "Paramètres",
+      "primaryColor": "Couleur primaire",
+      "primaryColorSubtext": "Choisissez une couleur principale pour le thème de l'application. Le changement sera appliqué instantanément.",
+      "livePreview": "Aperçu en direct",
+      "localization": "Localisation",
+      "currency": "Devise",
+      "language": "Langue"
     },
     "editCategory": {
-      "title": "Edit Category",
-      "subtitle": "Update the details for the category.",
-      "loading": "Loading category data...",
-      "selectDefault": "Please select one",
-      "statusActive": "Active",
-      "statusInactive": "Inactive",
+      "title": "Modifier la catégorie",
+      "subtitle": "Mettre à jour les détails de la catégorie.",
+      "loading": "Chargement des données de la catégorie...",
+      "selectDefault": "Veuillez en sélectionner un",
+      "statusActive": "Actif",
+      "statusInactive": "Inactif",
       "labels": {
-        "name": "Name",
+        "name": "Nom",
         "description": "Description",
-        "icon": "Icon",
-        "status": "Status"
+        "icon": "Icône",
+        "status": "Statut"
       },
-      "save": "Save Changes",
-      "cancel": "Cancel"
+      "save": "Enregistrer les modifications",
+      "cancel": "Annuler"
     },
     "bookDetails": {
-      "error": "Error!",
-      "success": "Success!",
-      "editTitle": "Edit Book Details",
+      "error": "Erreur !",
+      "success": "Succès !",
+      "editTitle": "Modifier les détails du livre",
       "labels": {
-        "title": "Title",
-        "author": "Author",
+        "title": "Titre",
+        "author": "Auteur",
         "pages": "Pages",
         "stock": "Stock",
-        "price": "Price",
-        "category": "Category",
+        "price": "Prix",
+        "category": "Catégorie",
         "description": "Description",
-        "cover": "Cover Image"
+        "cover": "Image de couverture"
       },
-      "cancel": "Cancel",
-      "save": "Save Changes",
-      "deleteConfirmTitle": "Confirm Delete",
-      "deleteConfirmText": "Are you sure you want to delete this book?",
-      "addOfferTitle": "Add Offer/Discount",
-      "discountType": "Discount Type",
-      "percentage": "Percentage (%)",
-      "fixed": "Fixed Amount ($)",
-      "startDate": "Start Date",
-      "endDate": "End Date (Optional)",
-      "description": "Description (Optional)",
-      "print": "Print",
-      "back": "Back",
-      "status": "Status:",
-      "edit": "Edit",
-      "delete": "Delete",
-      "addOffer": "Add Offer",
-      "availabilityPricing": "Availability & Pricing",
-      "priceLabel": "Price:",
-      "ratingLabel": "Rating:",
-      "manageOffers": "Manage Offers"
+      "cancel": "Annuler",
+      "save": "Enregistrer les modifications",
+      "deleteConfirmTitle": "Confirmer la suppression",
+      "deleteConfirmText": "Êtes-vous sûr de vouloir supprimer ce livre ?",
+      "addOfferTitle": "Ajouter une offre/remise",
+      "discountType": "Type de remise",
+      "percentage": "Pourcentage (%)",
+      "fixed": "Montant fixe ($)",
+      "startDate": "Date de début",
+      "endDate": "Date de fin (facultatif)",
+      "description": "Description (facultatif)",
+      "print": "Imprimer",
+      "back": "Retour",
+      "status": "Statut:",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "addOffer": "Ajouter une offre",
+      "availabilityPricing": "Disponibilité et prix",
+      "priceLabel": "Prix:",
+      "ratingLabel": "Évaluation:",
+      "manageOffers": "Gérer les offres"
     },
     "authorDetails": {
-      "loading": "Loading author details...",
-      "error": "Error!",
-      "notFound": "Author not found.",
-      "statistics": "Statistics",
-      "booksPublished": "Books Published",
-      "totalOrders": "Total Orders",
-      "totalSpent": "Total Spent",
-      "editTitle": "Edit Author",
+      "loading": "Chargement des détails de l'auteur...",
+      "error": "Erreur !",
+      "notFound": "Auteur non trouvé.",
+      "statistics": "Statistiques",
+      "booksPublished": "Livres publiés",
+      "totalOrders": "Total des commandes",
+      "totalSpent": "Total dépensé",
+      "editTitle": "Modifier l'auteur",
       "labels": {
-        "name": "Name",
-        "country": "Country",
+        "name": "Nom",
+        "country": "Pays",
         "description": "Description",
         "image": "Image"
       },
-      "cancel": "Cancel",
-      "save": "Save"
+      "cancel": "Annuler",
+      "save": "Enregistrer"
     },
     "publisherDetails": {
-      "error": "An Error Occurred!",
-      "statistics": "Statistics",
-      "booksPublished": "Books Published",
-      "totalOrders": "Total Orders",
-      "status": "Status",
-      "editTitle": "Edit Publishing House",
+      "error": "Une erreur est survenue !",
+      "statistics": "Statistiques",
+      "booksPublished": "Livres publiés",
+      "totalOrders": "Total des commandes",
+      "status": "Statut",
+      "editTitle": "Modifier la maison d'édition",
       "labels": {
-        "name": "Name",
+        "name": "Nom",
         "description": "Description",
-        "imagePath": "Image Path"
+        "imagePath": "Chemin de l'image"
       },
-      "cancel": "Cancel",
-      "save": "Save Changes"
+      "cancel": "Annuler",
+      "save": "Enregistrer les modifications"
     },
     "orderDetails": {
-      "goBack": "Go Back",
-      "updateSuccess": "Order status updated successfully",
-      "statusTitle": "Order Status",
-      "updateStatus": "Update Order Status",
-      "itemsTitle": "Order Items",
-      "customerInfoTitle": "Customer Information",
-      "summaryTitle": "Order Summary"
+      "goBack": "Retour",
+      "updateSuccess": "Le statut de la commande a été mis à jour avec succès",
+      "statusTitle": "Statut de la commande",
+      "updateStatus": "Mettre à jour le statut de la commande",
+      "itemsTitle": "Articles de la commande",
+      "customerInfoTitle": "Informations sur le client",
+      "summaryTitle": "Résumé de la commande"
     },
     "addAuthorModal": {
-      "title": "Add New Author",
+      "title": "Ajouter un nouvel auteur",
       "labels": {
-        "name": "Name",
-        "country": "Country",
+        "name": "Nom",
+        "country": "Pays",
         "description": "Description",
         "image": "Image"
       },
-      "cancel": "Cancel",
-      "add": "Add Author"
+      "cancel": "Annuler",
+      "add": "Ajouter un auteur"
     },
     "addPublisherModal": {
-      "title": "Add New Publisher",
+      "title": "Ajouter un nouvel éditeur",
       "labels": {
-        "name": "Name",
+        "name": "Nom",
         "description": "Description",
         "image": "Image"
       },
-      "cancel": "Cancel",
-      "add": "Add Publisher"
+      "cancel": "Annuler",
+      "add": "Ajouter un éditeur"
     },
     "sidebar": {
-        "dashboard": "Dashboard",
-        "books": "Books",
-        "addBook": "Add Book",
-        "categories": "Categories",
-        "authors": "Authors",
-        "publishingHouses": "Publishing Houses",
-        "users": "Users",
+        "dashboard": "Tableau de bord",
+        "books": "Livres",
+        "addBook": "Ajouter un livre",
+        "categories": "Catégories",
+        "authors": "Auteurs",
+        "publishingHouses": "Maisons d'édition",
+        "users": "Utilisateurs",
         "clients": "Clients",
-        "orders": "Orders",
+        "orders": "Commandes",
         "messages": "Messages",
-        "settings": "Settings",
-        "logout": "Logout",
-        "administrator": "Administrator"
+        "settings": "Paramètres",
+        "logout": "Se déconnecter",
+        "administrator": "Administrateur"
     },
     "latestOrders": {
-        "title": "Latest Orders",
+        "title": "Dernières commandes",
         "table": {
-            "orderId": "Order ID",
+            "orderId": "ID de commande",
             "client": "Client",
             "email": "Email",
-            "status": "Status",
+            "status": "Statut",
             "total": "Total",
-            "payment": "Payment",
+            "payment": "Paiement",
             "date": "Date"
         },
-        "emptyHeader": "No orders found"
+        "emptyHeader": "Aucune commande trouvée"
     },
     "recentBooks": {
-        "title": "Recently Added Books",
-        "emptyHeader": "No books found"
+        "title": "Livres récemment ajoutés",
+        "emptyHeader": "Aucun livre trouvé"
     }
   },
   "login": {
@@ -579,10 +588,19 @@
     "or": "OU",
     "googleContinue": "Continuer avec Google",
     "noAccount": "Vous n'avez pas de compte ?",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "failed": "La connexion a échoué. Veuillez vérifier vos identifiants."
   },
   "register": {
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "nameRequired": "Le nom est requis",
+    "emailRequired": "L'email est requis",
+    "emailInvalid": "Veuillez entrer un email valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordLength": "Le mot de passe doit comporter au moins 6 caractères",
+    "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+    "passwordsMismatch": "Les mots de passe ne correspondent pas",
+    "registrationFailed": "L'inscription a échoué. Veuillez réessayer.",
     "title": "Créez votre compte",
     "subtitle": "Rejoignez la communauté Neth BookPoint et profitez d'une expérience de lecture personnalisée.",
     "fullNamePlaceholder": "Nom complet",
@@ -614,6 +632,7 @@
   },
   "sidebar": {
     "title": "Filtre et catégories",
+    "clear": "Effacer",
     "popularSections": {
       "title": "Sections populaires",
       "customerFavorites": "Favoris des clients",
@@ -649,13 +668,20 @@
       "p25to50": "25 $ - 50 $",
       "over50": "Plus de 50 $"
     },
-    "age": {
+    "ageRanges": {
       "title": "Âge",
       "a0to2": "0 - 2 ans",
       "a3to5": "3 - 5 ans",
       "a6to8": "6 - 8 ans",
       "a9to12": "9 - 12 ans",
       "teens": "Adolescents"
+    },
+    "age": {
+      "child": "Enfant",
+      "tween": "Préadolescent",
+      "teen": "Adolescent",
+      "adult": "Adulte",
+      "allAges": "Tous les âges"
     },
     "language": {
       "title": "Langue",
@@ -697,7 +723,12 @@
     "noOrders": "Aucune commande pour l'instant",
     "noOrdersSuggestion": "L'historique de vos commandes apparaîtra ici",
     "quantity": "Qté",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "loadingProfile": "Chargement du profil...",
+    "failedToLoadProfile": "Échec du chargement du profil : ",
+    "notSet": "Non défini",
+    "loadingOrders": "Chargement des commandes...",
+    "loginToView": "Veuillez vous connecter pour voir votre profil."
   },
   "editProfile": {
     "title": "Modifier le profil",
@@ -706,6 +737,106 @@
     "address": "Adresse",
     "cancel": "Annuler",
     "save": "Enregistrer les modifications"
+  },
+  "paymentSuccess": {
+    "title": "Paiement réussi !",
+    "subtitle": "Merci pour votre achat. Votre commande est confirmée.",
+    "orderSummary": "Résumé de la commande",
+    "quantity": "Quantité : ",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "vat": "TVA (15%)",
+    "total": "Total",
+    "continueShopping": "Continuer vos achats",
+    "viewOrderHistory": "Voir l'historique des commandes",
+    "noOrderDetails": "Aucun détail de commande trouvé.",
+    "completePurchase": "Veuillez effectuer un achat pour voir le résumé de votre commande.",
+    "goToShop": "Aller à la boutique"
+  },
+  "googleCallback": {
+    "loggingIn": "Connexion avec Google en cours..."
+  },
+  "checkoutPage": {
+    "product": "Produit ",
+    "paymentAndShipping": "Détails de paiement et d'expédition",
+    "payWithPaypal": "Payer avec PayPal",
+    "cardholderName": "Nom du titulaire de la carte",
+    "cardholderNamePlaceholder": "John Doe",
+    "cardNumber": "Numéro de carte",
+    "cardNumberPlaceholder": "**** **** **** ****",
+    "expirationDate": "Date d'expiration (MM/AA)",
+    "expirationDatePlaceholder": "MM/AA",
+    "cvv": "CVV",
+    "cvvPlaceholder": "***"
+  },
+  "singleCategoryPage": {
+    "loading": "Chargement de la catégorie...",
+    "error": "Erreur:",
+    "retry": "Réessayer",
+    "booksIn": "Livres en"
+  },
+  "cartView": {
+    "title": "Détails de votre panier",
+    "unknownBook": "Livre inconnu",
+    "noDescription": "Description non disponible",
+    "quantity": "Quantité :",
+    "emptyCart": "Votre panier est actuellement vide.",
+    "totalPrice": "Prix total :",
+    "processing": "En cours de traitement...",
+    "checkout": "Passer à la caisse"
+  },
+  "singleAuthorPage": {
+    "descriptionNotAvailable": "Description non disponible.",
+    "books": "Livres",
+    "author": "Auteur",
+    "featured": "En vedette",
+    "authorNotFound": "Auteur non trouvé !",
+    "checkUrl": "Veuillez vérifier l'URL ou revenir à la liste des auteurs.",
+    "goBack": "Retour",
+    "booksBy": "Livres de"
+  },
+  "loginAdmin": {
+    "title": "Connexion administrateur",
+    "subtitle": "Veuillez vous connecter avec votre compte administrateur",
+    "emailPlaceholder": "E-mail de l'administrateur",
+    "passwordPlaceholder": "Mot de passe",
+    "loginButton": "Connexion",
+    "back": "Retour à",
+    "home": "Accueil",
+    "notAuthorized": "Vous n'êtes pas autorisé à accéder au tableau de bord.",
+    "invalidCredentials": "Email ou mot de passe invalide.",
+    "genericError": "Une erreur s'est produite. Veuillez réessayer plus tard."
+  },
+  "bookList": {
+    "loading": "Chargement des livres...",
+    "noMatch": "Aucun livre ne correspond à vos filtres actuels. Essayez d'ajuster votre recherche.",
+    "noBooks": "Aucun livre disponible pour le moment. Veuillez vérifier plus tard.",
+    "seeAll": "Voir tout"
+  },
+  "relatedBooksCarousel": {
+    "relatedBooks": "Livres similaires"
+  },
+  "bookItemsCategory": {
+    "quickAdd": "Ajout rapide"
+  },
+  "bookCategoryList": {
+    "noBooks": "Aucun livre trouvé dans cette catégorie."
+  },
+  "authorsList": {
+    "featuredAuthors": "Auteurs en vedette"
+  },
+  "authorsItems": {
+    "book": "Livre",
+    "books": "Livres"
+  },
+  "singlePublishingHousePage": {
+    "loading": "Chargement de l'éditeur...",
+    "error": "Erreur:",
+    "retry": "Réessayer",
+    "invalidId": "ID d'éditeur non valide fourni dans l'URL.",
+    "notFound": "Éditeur avec l'ID {id} non trouvé.",
+    "unknownError": "Une erreur inconnue est survenue.",
+    "booksBy": "Livres de"
   },
   "orderDetails": {
     "loading": "Chargement des données de la commande...",

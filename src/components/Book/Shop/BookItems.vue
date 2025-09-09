@@ -1,5 +1,6 @@
 <template>
-  <RouterLink :to="`/book/${book.id}`"
+  <RouterLink
+    :to="`/book/${book.id}`"
     class="relative m-4 flex w-44 cursor-pointer flex-col rounded-lg bg-white p-3 shadow-md transition-shadow duration-300 hover:shadow-xl"
   >
     <!-- صورة الكتاب -->
@@ -13,10 +14,7 @@
 
     <!-- تفاصيل الكتاب -->
     <div class="flex flex-grow flex-col items-center text-center space-y-2">
-      <h3
-        class="font-bona truncate text-md font-bold w-full"
-        :title="book.title"
-      >
+      <h3 class="font-bona truncate text-md font-bold w-full" :title="book.title">
         {{ book.title }}
       </h3>
       <p class="font-BonaRegular text-sm text-gray-600">
@@ -28,7 +26,9 @@
         <span v-for="i in 5" :key="i">
           <i
             class="pi mx-px text-base"
-            :class="i <= book.rating ? 'pi-star-fill text-[var(--color-light)]' : 'pi-star text-gray-300'"
+            :class="
+              i <= book.rating ? 'pi-star-fill text-[var(--color-light)]' : 'pi-star text-gray-300'
+            "
           ></i>
         </span>
       </div>
@@ -42,24 +42,25 @@
       <button
         class="mt-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-primary)]"
       >
-        Add to Cart
+        {{ t('bookdetails.addToCart') }}
       </button>
     </div>
   </RouterLink>
 </template>
 
 <script setup>
-import { useSettingsStore } from '@/stores/settings';
+import { useSettingsStore } from '@/stores/settings'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 
 defineProps({
   book: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 const settingsStore = useSettingsStore()
-
 </script>

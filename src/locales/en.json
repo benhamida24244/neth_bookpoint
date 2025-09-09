@@ -36,11 +36,20 @@
     "pages": "Pages",
     "language": "Language",
     "dimensions": "Dimensions",
+    "unknownAuthor": "Unknown Author",
+    "unknownPublisher": "Unknown Publisher",
+    "noDescription": "No description available",
+    "notAvailable": "N/A",
+    "outOfStock": "Out of Stock",
+    "bookNotFound": "Book not found",
+    "publisher": "Publisher",
+    "publishedDate": "Published Date",
     "booksSameCategory": "Books from the same category",
     "booksSameAuthor": "Books from the same author",
     "booksSamePublisher": "Books from the same publisher"
   },
   "header": {
+    "title": "NETH<br />BOOKPOINT",
     "home": "Home",
     "about": "About",
     "shop": "Shop",
@@ -583,10 +592,19 @@
     "or": "OR",
     "googleContinue": "Continue with Google",
     "noAccount": "Don’t have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "failed": "Login failed. Please check your credentials."
   },
   "register": {
     "passwordMismatch": "Passwords do not match.",
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "passwordRequired": "Password is required",
+    "passwordLength": "Password must be at least 6 characters",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordsMismatch": "Passwords do not match",
+    "registrationFailed": "Registration failed. Please try again.",
     "title": "Create Your Account",
     "subtitle": "Join the Neth BookPoint community and enjoy a personalized book experience.",
     "fullNamePlaceholder": "Full Name",
@@ -618,6 +636,7 @@
   },
   "sidebar": {
     "title": "Filter & Categories",
+    "clear": "Clear",
     "popularSections": {
       "title": "Popular Sections",
       "customerFavorites": "Customer Favorites",
@@ -653,13 +672,20 @@
       "p25to50": "$25 - $50",
       "over50": "Over $50"
     },
-    "age": {
+    "ageRanges": {
       "title": "Age",
       "a0to2": "0 - 2 Years",
       "a3to5": "3 - 5 Years",
       "a6to8": "6 - 8 Years",
       "a9to12": "9 - 12 Years",
       "teens": "Teens"
+    },
+    "age": {
+      "child": "Child",
+      "tween": "Tween",
+      "teen": "Teen",
+      "adult": "Adult",
+      "allAges": "All Ages"
     },
     "language": {
       "title": "Language",
@@ -703,7 +729,12 @@
     "noOrders": "No orders yet",
     "noOrdersSuggestion": "Your order history will appear here",
     "quantity": "Qty",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loadingProfile": "Loading profile...",
+    "failedToLoadProfile": "Failed to load profile: ",
+    "notSet": "Not set",
+    "loadingOrders": "Loading orders...",
+    "loginToView": "Please log in to see your profile."
   },
   "editProfile": {
     "title": "Edit Profile",
@@ -712,6 +743,116 @@
     "address": "Address",
     "cancel": "Cancel",
     "save": "Save Changes"
+  },
+  "paymentSuccess": {
+    "title": "Payment Successful!",
+    "subtitle": "Thank you for your purchase. Your order is confirmed.",
+    "orderSummary": "Order Summary",
+    "quantity": "Quantity: ",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "vat": "VAT (15%)",
+    "total": "Total",
+    "continueShopping": "Continue Shopping",
+    "viewOrderHistory": "View Order History",
+    "noOrderDetails": "No order details found.",
+    "completePurchase": "Please complete a purchase to see your order summary.",
+    "goToShop": "Go to Shop"
+  },
+  "googleCallback": {
+    "loggingIn": "Logging in with Google..."
+  },
+  "checkoutPage": {
+    "product": "Product ",
+    "paymentAndShipping": "Payment & Shipping Details",
+    "payWithPaypal": "Pay with PayPal",
+    "cardholderName": "Cardholder Name",
+    "cardholderNamePlaceholder": "John Doe",
+    "cardNumber": "Card Number",
+    "cardNumberPlaceholder": "**** **** **** ****",
+    "expirationDate": "Expiration Date (MM/YY)",
+    "expirationDatePlaceholder": "MM/YY",
+    "cvv": "CVV",
+    "cvvPlaceholder": "***"
+  },
+  "singleCategoryPage": {
+    "loading": "Loading Category...",
+    "error": "Error:",
+    "retry": "Retry",
+    "booksIn": "Books in"
+  },
+  "cartView": {
+    "title": "Your Cart Details",
+    "unknownBook": "Unknown Book",
+    "noDescription": "Description not available",
+    "quantity": "Quantity:",
+    "emptyCart": "Your cart is currently empty.",
+    "totalPrice": "Total Price:",
+    "processing": "Processing...",
+    "checkout": "Proceed to Checkout"
+  },
+  "singleAuthorPage": {
+    "descriptionNotAvailable": "Description not available.",
+    "books": "Books",
+    "author": "Author",
+    "featured": "Featured",
+    "authorNotFound": "Author Not Found!",
+    "checkUrl": "Please check the URL or return to the authors list.",
+    "goBack": "Go Back",
+    "booksBy": "Books by"
+  },
+  "loginAdmin": {
+    "title": "Admin Login",
+    "subtitle": "Please sign in with your admin account",
+    "emailPlaceholder": "Admin Email",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Login",
+    "back": "Back to",
+    "home": "Home",
+    "notAuthorized": "You are not authorized to access the dashboard.",
+    "invalidCredentials": "Invalid email or password.",
+    "genericError": "Something went wrong. Please try again later."
+  },
+  "sidebar": {
+    "clear": "Clear",
+    "age": {
+      "child": "Child",
+      "tween": "Tween",
+      "teen": "Teen",
+      "adult": "Adult",
+      "allAges": "All Ages"
+    }
+  },
+  "bookList": {
+    "loading": "Loading books...",
+    "noMatch": "No books match your current filters. Try adjusting your search.",
+    "noBooks": "No books available at the moment. Please check back later.",
+    "seeAll": "See All"
+  },
+  "relatedBooksCarousel": {
+    "relatedBooks": "Related Books"
+  },
+  "bookItemsCategory": {
+    "quickAdd": "Quick Add"
+  },
+  "bookCategoryList": {
+    "noBooks": "No books found in this category."
+  },
+  "authorsList": {
+    "featuredAuthors": "Featured Authors"
+  },
+  "authorsItems": {
+    "book": "Book",
+    "books": "Books"
+  },
+  "singlePublishingHousePage": {
+    "loading": "Loading Publisher...",
+    "error": "Error:",
+    "retry": "Retry",
+    "invalidId": "Invalid Publisher ID provided in the URL.",
+    "notFound": "Publisher with ID {id} not found.",
+    "unknownError": "An unknown error occurred.",
+    "booksBy": "Books by"
   },
   "orderDetails": {
     "loading": "Loading order data...",

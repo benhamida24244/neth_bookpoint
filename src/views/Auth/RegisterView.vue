@@ -1,137 +1,139 @@
 <script setup>
 import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة إذا أردت
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { useCustomerAuthStore } from '@/stores/customerAuth.js';
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCustomerAuthStore } from '@/stores/customerAuth.js'
+import { useI18n } from 'vue-i18n'
 
-const router = useRouter();
-const CustomerAuth = useCustomerAuthStore();
+const { t } = useI18n()
+const router = useRouter()
+const CustomerAuth = useCustomerAuthStore()
 const emit = defineEmits(['close', 'openLogin'])
 
 const formData = reactive({
   name: '',
   email: '',
   password: '',
-  password_confirmation: ''
-});
+  password_confirmation: '',
+})
 
 const errors = reactive({
   name: '',
   email: '',
   password: '',
-  password_confirmation: ''
-});
+  password_confirmation: '',
+})
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 
 const validateForm = () => {
-  let isValid = true;
+  let isValid = true
 
   // Reset errors
-  Object.keys(errors).forEach(key => {
-    errors[key] = '';
-  });
+  Object.keys(errors).forEach((key) => {
+    errors[key] = ''
+  })
 
   // Name validation
   if (!formData.name.trim()) {
-    errors.name = 'Name is required';
-    isValid = false;
+    errors.name = t('register.nameRequired')
+    isValid = false
   }
 
   // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!formData.email) {
-    errors.email = 'Email is required';
-    isValid = false;
+    errors.email = t('register.emailRequired')
+    isValid = false
   } else if (!emailRegex.test(formData.email)) {
-    errors.email = 'Please enter a valid email';
-    isValid = false;
+    errors.email = t('register.emailInvalid')
+    isValid = false
   }
 
   // Password validation
   if (!formData.password) {
-    errors.password = 'Password is required';
-    isValid = false;
+    errors.password = t('register.passwordRequired')
+    isValid = false
   } else if (formData.password.length < 6) {
-    errors.password = 'Password must be at least 6 characters';
-    isValid = false;
+    errors.password = t('register.passwordLength')
+    isValid = false
   }
 
   // Confirm password validation
   if (!formData.password_confirmation) {
-    errors.password_confirmation = 'Please confirm your password';
-    isValid = false;
+    errors.password_confirmation = t('register.confirmPasswordRequired')
+    isValid = false
   } else if (formData.password !== formData.password_confirmation) {
-    errors.password_confirmation = 'Passwords do not match';
-    isValid = false;
+    errors.password_confirmation = t('register.passwordsMismatch')
+    isValid = false
   }
 
-  return isValid;
-};
+  return isValid
+}
 
 const handleRegister = async () => {
-  if (!validateForm()) return;
+  if (!validateForm()) return
 
-  isLoading.value = true;
+  isLoading.value = true
 
   // Reset all errors
-  Object.keys(errors).forEach(key => {
-    errors[key] = '';
-  });
+  Object.keys(errors).forEach((key) => {
+    errors[key] = ''
+  })
 
   try {
     await CustomerAuth.register({
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      password_confirmation: formData.password_confirmation
-    });
+      password_confirmation: formData.password_confirmation,
+    })
 
     // Registration successful, now try to login automatically
     try {
       await CustomerAuth.login({
         email: formData.email,
-        password: formData.password
-      });
+        password: formData.password,
+      })
       // Login successful, redirect to home
-      router.push('/');
-      emit('close');
+      router.push('/')
+      emit('close')
     } catch (loginError) {
-      console.error('Login error after registration:', loginError);
+      console.error('Login error after registration:', loginError)
       // If auto-login fails, redirect to login page
-      router.push('/login');
+      router.push('/login')
     }
   } catch (error) {
     // Handle registration error
-    console.error('Registration failed:', error);
+    console.error('Registration failed:', error)
 
     // Display server validation errors if available
     if (error.response && error.response.data && error.response.data.errors) {
-      const serverErrors = error.response.data.errors;
+      const serverErrors = error.response.data.errors
 
       // Map server errors to our form errors
-      Object.keys(serverErrors).forEach(key => {
+      Object.keys(serverErrors).forEach((key) => {
         if (errors.hasOwnProperty(key)) {
-          errors[key] = serverErrors[key][0]; // Take the first error message
+          errors[key] = serverErrors[key][0] // Take the first error message
         }
-      });
+      })
 
       // If there's a general error message, show it
       if (error.response.data.message) {
-        alert(error.response.data.message);
+        alert(error.response.data.message)
       }
     } else {
       // Generic error message
-      alert('Registration failed. Please try again.');
+      alert(t('register.registrationFailed'))
     }
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 const handleGoogleRegister = () => {
-  const googleAuthUrl = import.meta.env.VITE_API_BASE_URL + "/api/customer/auth/google/redirect";
-  window.location.href = googleAuthUrl;
-};
+  const googleAuthUrl = import.meta.env.VITE_API_BASE_URL + '/api/customer/auth/google/redirect'
+  window.location.href = googleAuthUrl
+}
 </script>
 
 <template>
@@ -170,9 +172,11 @@ const handleGoogleRegister = () => {
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Create Your Account</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">
+            {{ t('register.title') }}
+          </h2>
           <p class="text-sm text-gray-600 italic">
-            Join the Neth BookPoint community and enjoy a personalized book experience.
+            {{ t('register.subtitle') }}
           </p>
         </div>
 
@@ -184,7 +188,7 @@ const handleGoogleRegister = () => {
               name="name"
               type="text"
               required
-              placeholder="Full Name"
+              :placeholder="t('register.fullNamePlaceholder')"
               class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
             />
             <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
@@ -196,7 +200,7 @@ const handleGoogleRegister = () => {
               name="email"
               type="email"
               required
-              placeholder="Email Address"
+              :placeholder="t('register.emailPlaceholder')"
               class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
             />
             <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
@@ -209,7 +213,7 @@ const handleGoogleRegister = () => {
               type="password"
               required
               autocomplete="new-password"
-              placeholder="Password"
+              :placeholder="t('register.passwordPlaceholder')"
               class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
             />
             <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
@@ -222,10 +226,12 @@ const handleGoogleRegister = () => {
               type="password"
               required
               autocomplete="new-password"
-              placeholder="Confirm Password"
+              :placeholder="t('register.confirmPasswordPlaceholder')"
               class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
             />
-            <p v-if="errors.password_confirmation" class="text-red-500 text-sm mt-1">{{ errors.password_confirmation }}</p>
+            <p v-if="errors.password_confirmation" class="text-red-500 text-sm mt-1">
+              {{ errors.password_confirmation }}
+            </p>
           </div>
 
           <button
@@ -233,15 +239,15 @@ const handleGoogleRegister = () => {
             :disabled="isLoading"
             class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <span v-if="isLoading">Creating Account...</span>
-            <span v-else>Create Account</span>
+            <span v-if="isLoading">{{ t('register.creatingAccount') }}</span>
+            <span v-else>{{ t('register.createAccount') }}</span>
           </button>
         </form>
 
         <!-- فاصل -->
         <div class="flex items-center gap-2 my-6 text-sm text-gray-400">
           <div class="flex-grow h-px bg-gray-200"></div>
-          OR
+          {{ t('register.or') }}
           <div class="flex-grow h-px bg-gray-200"></div>
         </div>
 
@@ -255,14 +261,16 @@ const handleGoogleRegister = () => {
             alt="Google"
             class="h-5 w-5"
           />
-          <span class="text-sm font-medium text-black">Sign up with Google</span>
+          <span class="text-sm font-medium text-black">{{ t('register.googleSignUp') }}</span>
         </button>
 
         <!-- تحويل لتسجيل الدخول -->
         <p class="mt-6 text-center text-sm text-gray-600">
-          Already have an account?
-          <span @click="emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
-            >Login</span
+          {{ t('register.alreadyAccount') }}
+          <span
+            @click="emit('openLogin')"
+            class="text-[var(--color-primary)] font-semibold hover:underline"
+            >{{ t('register.login') }}</span
           >
         </p>
       </div>

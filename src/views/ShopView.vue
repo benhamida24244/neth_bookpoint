@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import LargeBanner from '@/components/Banner/LargeBanner.vue'
-import BookList from '@/components/Book/Shop/BookList.vue';
-import SidebarContent from '@/components/Book/Shop/Sidebar/SidebarContent.vue';
-import { onMounted, ref } from 'vue';
-import { useBooksStore } from '@/stores/Books';
-import { useCategoriesStore } from '@/stores/Categories';
-import Pagination from '@/components/Pagination.vue';
+import BookList from '@/components/Book/Shop/BookList.vue'
+import SidebarContent from '@/components/Book/Shop/Sidebar/SidebarContent.vue'
+import { onMounted, ref } from 'vue'
+import { useBooksStore } from '@/stores/Books'
+import { useCategoriesStore } from '@/stores/Categories'
+import Pagination from '@/components/Pagination.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 
 const imgBanner = {
   id: 1,
@@ -14,27 +16,27 @@ const imgBanner = {
   url: 'https://www.barnesandnoble.com/',
 }
 
-const booksStore = useBooksStore();
-const categoriesStore = useCategoriesStore();
+const booksStore = useBooksStore()
+const categoriesStore = useCategoriesStore()
 
 // State for filters
-const activeFilters = ref({});
-const currentPage = ref(1);
+const activeFilters = ref({})
+const currentPage = ref(1)
 
 // Handler for filter changes from the sidebar
 const handleFiltersChanged = (filters: any) => {
-  activeFilters.value = filters;
+  activeFilters.value = filters
   // Re-fetch books with the new filters
-  booksStore.fetchBooks(filters);
-};
+  booksStore.fetchBooks(filters)
+}
 
 // Fetch books and categories when the component is mounted
 onMounted(async () => {
-  console.log("Fetching data...");
-  window.scrollTo(0,0)
-  await booksStore.fetchBooks({}); // Fetch initial books without filters
-  await categoriesStore.fetchCategories();
-  console.log("Data fetched!");
+  console.log('Fetching data...')
+  window.scrollTo(0, 0)
+  await booksStore.fetchBooks({}) // Fetch initial books without filters
+  await categoriesStore.fetchCategories()
+  console.log('Data fetched!')
 })
 </script>
 
@@ -44,14 +46,14 @@ onMounted(async () => {
       <!-- Sidebar -->
       <aside class="w-64 hidden md:block sticky top-8 h-fit bg-white rounded-lg shadow p-4">
         <SidebarContent @filters-changed="handleFiltersChanged" />
-
       </aside>
       <!-- Main Content -->
       <main class="flex-1">
-        <p class="font-bold text-[var(--color-primary)] text-2xl text-center mb-2">Explore All Books Here</p>
+        <p class="font-bold text-[var(--color-primary)] text-2xl text-center mb-2">
+          {{ t('shop.title') }}
+        </p>
         <p class="text-center mb-4 text-gray-700">
-          Discover the best books to read right now including trending titles, bookseller
-          recommendations, new releases and more.
+          {{ t('shop.subtitle') }}
         </p>
         <LargeBanner :banner="imgBanner" class="mb-6" />
         <BookList :filters="activeFilters" />

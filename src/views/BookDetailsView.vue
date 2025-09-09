@@ -26,11 +26,11 @@
             <h1 class="text-3xl font-bold text-[#111827]">{{ book.title }}</h1>
             <p class="text-lg text-gray-600 mt-2">
               {{ t('bookdetails.by') }}
-              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.author?.name || 'Unknown Author' }}</a>
+              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.author?.name || t('bookdetails.unknownAuthor') }}</a>
             </p>
             <p class="text-sm text-gray-500 mt-1">
               {{ t('bookdetails.publishedBy') }}
-              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.publisher?.name || 'Unknown Publisher' }}</a>
+              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.publisher?.name || t('bookdetails.unknownPublisher') }}</a>
             </p>
 
             <div class="flex items-center mt-4">
@@ -60,7 +60,7 @@
 
             <div class="mt-4 text-gray-700">
               <p v-if="!showFullDescription">
-                {{ book.description || 'No description available' }}
+                {{ book.description || t('bookdetails.noDescription') }}
                 <a href="#" @click.prevent="showFullDescription = true" class="text-[#1E40AF] hover:underline">
                   {{ t('bookdetails.readMore') }}
                 </a>
@@ -83,13 +83,13 @@
         <Transition name="fade">
           <div class="mt-12" v-if="showFullDescription">
             <h2 class="text-2xl font-bold text-[#111827]">{{ t('bookdetails.fullDescription') }}</h2>
-            <p class="text-gray-700 mt-4">{{ book.description || 'No description available' }}</p>
+            <p class="text-gray-700 mt-4">{{ book.description || t('bookdetails.noDescription') }}</p>
             <h3 class="text-xl font-bold text-[#111827] mt-6">{{ t('bookdetails.specifications') }}</h3>
             <ul class="list-disc list-inside mt-4 text-gray-700">
-              <li>{{ t('bookdetails.pages') }}: {{ book.pages || 'N/A' }}</li>
-              <li>{{ t('bookdetails.language') }}: {{ book.language || 'N/A' }}</li>
-              <li>{{ t('bookdetails.publisher') }}: {{ book.publisher?.name || 'N/A' }}</li>
-              <li>{{ t('bookdetails.publishedDate') }}: {{ book.publisherDate || 'N/A' }}</li>
+              <li>{{ t('bookdetails.pages') }}: {{ book.pages || t('bookdetails.notAvailable') }}</li>
+              <li>{{ t('bookdetails.language') }}: {{ book.language || t('bookdetails.notAvailable') }}</li>
+              <li>{{ t('bookdetails.publisher') }}: {{ book.publisher?.name || t('bookdetails.notAvailable') }}</li>
+              <li>{{ t('bookdetails.publishedDate') }}: {{ book.publisherDate || t('bookdetails.notAvailable') }}</li>
             </ul>
           </div>
         </Transition>

@@ -36,11 +36,20 @@
     "pages": "عدد الصفحات",
     "language": "اللغة",
     "dimensions": "الأبعاد",
+    "unknownAuthor": "مؤلف غير معروف",
+    "unknownPublisher": "ناشر غير معروف",
+    "noDescription": "لا يوجد وصف متاح",
+    "notAvailable": "غير متوفر",
+    "outOfStock": "غير متوفر",
+    "bookNotFound": "لم يتم العثور على الكتاب",
+    "publisher": "الناشر",
+    "publishedDate": "تاريخ النشر",
     "booksSameCategory": "كتب من نفس الفئة",
     "booksSameAuthor": "كتب من نفس المؤلف",
     "booksSamePublisher": "كتب من نفس الناشر"
   },
   "header": {
+    "title": "NETH<br />BOOKPOINT",
     "home": "الرئيسية",
     "about": "حولنا",
     "shop": "المتجر",
@@ -583,10 +592,19 @@
     "or": "أو",
     "googleContinue": "المتابعة باستخدام جوجل",
     "noAccount": "ليس لديك حساب؟",
-    "signUp": "إنشاء حساب"
+    "signUp": "إنشاء حساب",
+    "failed": "فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك."
   },
   "register": {
     "passwordMismatch": "كلمات المرور غير متطابقة.",
+    "nameRequired": "الاسم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "confirmPasswordRequired": "الرجاء تأكيد كلمة المرور الخاصة بك",
+    "passwordsMismatch": "كلمات المرور غير متطابقة",
+    "registrationFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
     "title": "أنشئ حسابك",
     "subtitle": "انضم إلى مجتمع نيث بوك بوينت واستمتع بتجربة كتب مخصصة.",
     "fullNamePlaceholder": "الاسم الكامل",
@@ -618,6 +636,7 @@
   },
   "sidebar": {
     "title": "تصفية والفئات",
+    "clear": "مسح",
     "popularSections": {
       "title": "الأقسام الشائعة",
       "customerFavorites": "مفضلات العملاء",
@@ -653,13 +672,20 @@
       "p25to50": "25 - 50 دولارًا",
       "over50": "أكثر من 50 دولارًا"
     },
-    "age": {
+    "ageRanges": {
       "title": "العمر",
       "a0to2": "0 - 2 سنوات",
       "a3to5": "3 - 5 سنوات",
       "a6to8": "6 - 8 سنوات",
       "a9to12": "9 - 12 سنة",
       "teens": "المراهقون"
+    },
+    "age": {
+      "child": "طفل",
+      "tween": "مراهق",
+      "teen": "شاب",
+      "adult": "بالغ",
+      "allAges": "كل الأعمار"
     },
     "language": {
       "title": "اللغة",
@@ -703,7 +729,12 @@
     "noOrders": "لا توجد طلبات حتى الآن",
     "noOrdersSuggestion": "سيظهر سجل طلباتك هنا",
     "quantity": "الكمية",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "loadingProfile": "جاري تحميل الملف الشخصي ...",
+    "failedToLoadProfile": "فشل تحميل الملف الشخصي: ",
+    "notSet": "غير محدد",
+    "loadingOrders": "جاري تحميل الطلبات ...",
+    "loginToView": "الرجاء تسجيل الدخول لرؤية ملفك الشخصي."
   },
   "editProfile": {
     "title": "تعديل الملف الشخصي",
@@ -712,6 +743,106 @@
     "address": "العنوان",
     "cancel": "إلغاء",
     "save": "حفظ التغييرات"
+  },
+  "paymentSuccess": {
+    "title": "تم الدفع بنجاح!",
+    "subtitle": "شكرا لك على شرائك. تم تأكيد طلبك.",
+    "orderSummary": "ملخص الطلب",
+    "quantity": "الكمية: ",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "vat": "ضريبة القيمة المضافة (15٪)",
+    "total": "المجموع",
+    "continueShopping": "مواصلة التسوق",
+    "viewOrderHistory": "عرض سجل الطلبات",
+    "noOrderDetails": "لم يتم العثور على تفاصيل الطلب.",
+    "completePurchase": "يرجى إكمال عملية شراء لرؤية ملخص طلبك.",
+    "goToShop": "اذهب إلى المتجر"
+  },
+  "googleCallback": {
+    "loggingIn": "جاري تسجيل الدخول عبر Google..."
+  },
+  "checkoutPage": {
+    "product": "المنتج ",
+    "paymentAndShipping": "تفاصيل الدفع والشحن",
+    "payWithPaypal": "الدفع عن طريق باي بال",
+    "cardholderName": "اسم صاحب البطاقة",
+    "cardholderNamePlaceholder": "جون دو",
+    "cardNumber": "رقم البطاقة",
+    "cardNumberPlaceholder": "**** **** **** ****",
+    "expirationDate": "تاريخ انتهاء الصلاحية (MM/YY)",
+    "expirationDatePlaceholder": "MM/YY",
+    "cvv": "CVV",
+    "cvvPlaceholder": "***"
+  },
+  "singleCategoryPage": {
+    "loading": "جاري تحميل الفئة ...",
+    "error": "خطأ:",
+    "retry": "إعادة المحاولة",
+    "booksIn": "كتب في"
+  },
+  "cartView": {
+    "title": "تفاصيل سلتك",
+    "unknownBook": "كتاب غير معروف",
+    "noDescription": "الوصف غير متوفر",
+    "quantity": "الكمية:",
+    "emptyCart": "سلتك فارغة حاليا.",
+    "totalPrice": "السعر الإجمالي:",
+    "processing": "جار المعالجة...",
+    "checkout": "المتابعة إلى الدفع"
+  },
+  "singleAuthorPage": {
+    "descriptionNotAvailable": "الوصف غير متوفر.",
+    "books": "كتب",
+    "author": "مؤلف",
+    "featured": "متميز",
+    "authorNotFound": "لم يتم العثور على المؤلف!",
+    "checkUrl": "يرجى التحقق من عنوان URL أو العودة إلى قائمة المؤلفين.",
+    "goBack": "عد",
+    "booksBy": "كتب بواسطة"
+  },
+  "loginAdmin": {
+    "title": "دخول المسؤول",
+    "subtitle": "الرجاء تسجيل الدخول بحساب المسؤول الخاص بك",
+    "emailPlaceholder": "بريد المسؤول الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "loginButton": "تسجيل الدخول",
+    "back": "العودة إلى",
+    "home": "الرئيسية",
+    "notAuthorized": "أنت غير مصرح لك بالوصول إلى لوحة التحكم.",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صالحة.",
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى في وقت لاحق."
+  },
+  "bookList": {
+    "loading": "جاري تحميل الكتب...",
+    "noMatch": "لا توجد كتب تطابق فلاترك الحالية. حاول تعديل بحثك.",
+    "noBooks": "لا توجد كتب متاحة في الوقت الحالي. يرجى التحقق مرة أخرى في وقت لاحق.",
+    "seeAll": "عرض الكل"
+  },
+  "relatedBooksCarousel": {
+    "relatedBooks": "كتب ذات صلة"
+  },
+  "bookItemsCategory": {
+    "quickAdd": "إضافة سريعة"
+  },
+  "bookCategoryList": {
+    "noBooks": "لم يتم العثور على كتب في هذه الفئة."
+  },
+  "authorsList": {
+    "featuredAuthors": "المؤلفون المميزون"
+  },
+  "authorsItems": {
+    "book": "كتاب",
+    "books": "كتب"
+  },
+  "singlePublishingHousePage": {
+    "loading": "جاري تحميل الناشر ...",
+    "error": "خطأ:",
+    "retry": "إعادة المحاولة",
+    "invalidId": "معرف الناشر غير صالح في عنوان URL.",
+    "notFound": "لم يتم العثور على ناشر بالمعرف {id}.",
+    "unknownError": "حدث خطأ غير معروف.",
+    "booksBy": "كتب بواسطة"
   },
   "orderDetails": {
     "loading": "جار تحميل بيانات الطلب...",

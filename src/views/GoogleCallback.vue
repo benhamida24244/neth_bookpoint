@@ -1,31 +1,33 @@
 <template>
   <div>
-    <p>جاري تسجيل الدخول عبر Google...</p>
+    <p>{{ t('googleCallback.loggingIn') }}</p>
   </div>
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-import { onMounted } from "vue";
-import { useCustomerAuthStore } from "@/stores/customerAuth";
+import { useRoute, useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+import { useCustomerAuthStore } from '@/stores/customerAuth'
+import { useI18n } from 'vue-i18n'
 
-const route = useRoute();
-const router = useRouter();
-const authStore = useCustomerAuthStore();
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const authStore = useCustomerAuthStore()
 
 onMounted(() => {
-  const token = route.query.token;
+  const token = route.query.token
 
   if (token) {
-    authStore.token = token;
-    authStore.isAuthenticated = true;
-    localStorage.setItem("customer_token", token);
-    localStorage.setItem("role", "customer");
+    authStore.token = token
+    authStore.isAuthenticated = true
+    localStorage.setItem('customer_token', token)
+    localStorage.setItem('role', 'customer')
 
-    router.push("/"); // رجعه للصفحة الرئيسية
+    router.push('/') // رجعه للصفحة الرئيسية
   } else {
-    router.push("/login");
+    router.push('/login')
   }
-});
+})
 </script>
 

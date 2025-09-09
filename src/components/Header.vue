@@ -113,14 +113,16 @@ const isRtl = computed(() => {
       <RouterLink to="/">
         <div v-if="!isRtl" class="flex flex-row- items-center gap-2">
            <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
-          <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
-            NETH<br />BOOKPOINT
-          </p>
+          <p
+            v-html="t('header.title')"
+            class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden"
+          ></p>
         </div>
         <div v-else class="flex flex-row-reverse items-center gap-2">
-            <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
-              NETH<br />BOOKPOINT
-            </p>
+          <p
+            v-html="t('header.title')"
+            class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden"
+          ></p>
           <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
         </div>
       </RouterLink>

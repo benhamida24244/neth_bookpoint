@@ -1,29 +1,31 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps({
   books: {
     type: Array,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 // استيراد الأنماط
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 import BookItem from './bookItem.vue'
-
 </script>
 
 <template>
   <div class="relative w-full max-w-6xl mx-auto px-4 mb-8">
     <Swiper
-        :modules="[Navigation]"
-        :slides-per-view="6"
-        :space-between="15"
-        :breakpoints="{
+      :modules="[Navigation]"
+      :slides-per-view="6"
+      :space-between="15"
+      :breakpoints="{
         320: {
           slidesPerView: 1.5,
         },
@@ -41,17 +43,17 @@ import BookItem from './bookItem.vue'
         },
         1280: {
           slidesPerView: 6,
-        }
+        },
       }"
-        navigation
-        class="mySwiper"
+      navigation
+      class="mySwiper"
     >
       <SwiperSlide v-for="book in books" :key="book.id">
         <BookItem :book="book" />
       </SwiperSlide>
     </Swiper>
     <div class="absolute underline text-gray-400 right-0">
-      <a href="/">See All</a>
+      <a href="/">{{ t('bookList.seeAll') }}</a>
     </div>
   </div>
 </template>

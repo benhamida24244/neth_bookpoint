@@ -183,11 +183,12 @@ const handleSubmit = () => {
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 font-BonaRegular">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
         <!-- Order Summary Sidebar -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">{{ t('orderSummary') }}</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+              {{ t('orderSummary') }}
+            </h2>
 
             <!-- Order Items -->
             <div class="space-y-4 mb-6">
@@ -197,10 +198,14 @@ const handleSubmit = () => {
                 class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
-                  <p class="font-medium text-gray-800 text-sm">{{ item.title || item.book.title || "Product " + (index + 1) }}</p>
+                  <p class="font-medium text-gray-800 text-sm">
+                    {{ item.title || item.book.title || t('checkoutPage.product') + (index + 1) }}
+                  </p>
                   <p class="text-gray-600 text-xs">Quantity: {{ item.quantity || 0 }}</p>
                 </div>
-                <span class="font-bold text-[var(--color-primary)]">${{ Number(item.price || 0).toFixed(2) }}</span>
+                <span class="font-bold text-[var(--color-primary)]"
+                  >${{ Number(item.price || 0).toFixed(2) }}</span
+                >
               </div>
             </div>
 
@@ -220,14 +225,20 @@ const handleSubmit = () => {
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
                 <span>{{ t('total') }}</span>
-                <span class="text-[var(--color-primary)]">${{ Number(grandTotal || 0).toFixed(2) }}</span>
+                <span class="text-[var(--color-primary)]"
+                  >${{ Number(grandTotal || 0).toFixed(2) }}</span
+                >
               </div>
             </div>
 
             <!-- Free Shipping Notice -->
-            <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div
+              v-if="amountNeededForFreeShipping > 0"
+              class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+            >
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }} {{ t('freeShippingNotice') }}
+                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }}
+                {{ t('freeShippingNotice') }}
               </p>
             </div>
           </div>
@@ -238,24 +249,19 @@ const handleSubmit = () => {
           <div class="bg-black rounded-2xl shadow-2xl overflow-hidden">
             <div class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] p-6">
               <h1 class="text-black text-3xl font-bold text-center">
-                Payment & Shipping Details
+                {{ t('checkoutPage.paymentAndShipping') }}
               </h1>
             </div>
 
             <form @submit.prevent="handleSubmit" class="p-8">
-
               <!-- Customer Information -->
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <InfoIcon class="w-5 h-5 mr-2" />
-                 {{t('customerInformation')}}
+                  {{ t('customerInformation') }}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    v-for="field in formFields"
-                    :key="field.key"
-                    class="relative"
-                  >
+                  <div v-for="field in formFields" :key="field.key" class="relative">
                     <label
                       :for="field.key"
                       class="block text-[var(--color-primary)] text-sm font-medium mb-2"
@@ -280,14 +286,10 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <Truck class="w-5 h-5 mr-2" />
-                  {{t('shippingOptions')}}
+                  {{ t('shippingOptions') }}
                 </h3>
                 <div class="space-y-3">
-                  <div
-                    v-for="option in shippingOptions"
-                    :key="option.id"
-                    class="relative"
-                  >
+                  <div v-for="option in shippingOptions" :key="option.id" class="relative">
                     <input
                       :id="option.id"
                       v-model="selectedShipping"
@@ -299,13 +301,21 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="flex items-center justify-between p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedShipping === option.id }"
+                      :class="{
+                        'ring-2 ring-[var(--color-primary)] bg-gray-700':
+                          selectedShipping === option.id,
+                      }"
                     >
                       <div class="flex items-center">
-                        <component :is="icons[option.icon]" class="w-5 h-5 text-[var(--color-primary)] mr-3" />
+                        <component
+                          :is="icons[option.icon]"
+                          class="w-5 h-5 text-[var(--color-primary)] mr-3"
+                        />
                         <span class="text-white font-medium">{{ option.name }}</span>
                       </div>
-                      <span class="text-[var(--color-primary)] font-bold">${{ option.price.toFixed(2) }}</span>
+                      <span class="text-[var(--color-primary)] font-bold"
+                        >${{ option.price.toFixed(2) }}</span
+                      >
                     </label>
                   </div>
                 </div>
@@ -315,14 +325,10 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <CreditCard class="w-5 h-5 mr-2" />
-                  {{t('paymentMethods')}}
+                  {{ t('paymentMethods') }}
                 </h3>
                 <div class="space-y-3">
-                  <div
-                    v-for="option in paymentOptions"
-                    :key="option.id"
-                    class="relative"
-                  >
+                  <div v-for="option in paymentOptions" :key="option.id" class="relative">
                     <input
                       :id="option.id"
                       v-model="selectedPayment"
@@ -334,15 +340,23 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="block p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedPayment === option.id }"
+                      :class="{
+                        'ring-2 ring-[var(--color-primary)] bg-gray-700':
+                          selectedPayment === option.id,
+                      }"
                     >
                       <div class="flex items-center justify-between">
                         <div>
                           <div class="text-white font-medium">{{ option.name }}</div>
                           <div class="text-gray-400 text-sm mt-1">{{ option.subtitle }}</div>
                         </div>
-                        <div class="w-4 h-4 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center">
-                          <div v-if="selectedPayment === option.id" class="w-2 h-2 bg-[var(--color-primary)] rounded-full"></div>
+                        <div
+                          class="w-4 h-4 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center"
+                        >
+                          <div
+                            v-if="selectedPayment === option.id"
+                            class="w-2 h-2 bg-[var(--color-primary)] rounded-full"
+                          ></div>
                         </div>
                       </div>
                     </label>
@@ -351,30 +365,77 @@ const handleSubmit = () => {
 
                 <!-- PayPal Button -->
                 <div v-if="selectedPayment === 'paypal'" class="mt-6">
-                  <button type="button" class="w-full bg-[#0070BA] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#005ea6]">
-                    <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" alt="PayPal" class="h-6 mr-2">
-                    <span>Pay with PayPal</span>
+                  <button
+                    type="button"
+                    class="w-full bg-[#0070BA] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#005ea6]"
+                  >
+                    <img
+                      src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png"
+                      alt="PayPal"
+                      class="h-6 mr-2"
+                    />
+                    <span>{{ t('checkoutPage.payWithPaypal') }}</span>
                   </button>
                 </div>
 
                 <!-- Visa Card Form -->
                 <div v-if="selectedPayment === 'visa'" class="mt-6 space-y-4">
                   <div>
-                    <label for="cardholderName" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Cardholder Name</label>
-                    <input id="cardholderName" type="text" v-model="visaCardDetails.cardholderName" placeholder="John Doe" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                    <label
+                      for="cardholderName"
+                      class="block text-[var(--color-primary)] text-sm font-medium mb-2"
+                      >{{ t('checkoutPage.cardholderName') }}</label
+                    >
+                    <input
+                      id="cardholderName"
+                      type="text"
+                      v-model="visaCardDetails.cardholderName"
+                      :placeholder="t('checkoutPage.cardholderNamePlaceholder')"
+                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                    />
                   </div>
                   <div>
-                    <label for="cardNumber" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Card Number</label>
-                    <input id="cardNumber" type="text" v-model="visaCardDetails.cardNumber" placeholder="**** **** **** ****" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                    <label
+                      for="cardNumber"
+                      class="block text-[var(--color-primary)] text-sm font-medium mb-2"
+                      >{{ t('checkoutPage.cardNumber') }}</label
+                    >
+                    <input
+                      id="cardNumber"
+                      type="text"
+                      v-model="visaCardDetails.cardNumber"
+                      :placeholder="t('checkoutPage.cardNumberPlaceholder')"
+                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                    />
                   </div>
                   <div class="grid grid-cols-2 gap-4">
                     <div>
-                      <label for="expirationDate" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Expiration Date (MM/YY)</label>
-                      <input id="expirationDate" type="text" v-model="visaCardDetails.expirationDate" placeholder="MM/YY" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                      <label
+                        for="expirationDate"
+                        class="block text-[var(--color-primary)] text-sm font-medium mb-2"
+                        >{{ t('checkoutPage.expirationDate') }}</label
+                      >
+                      <input
+                        id="expirationDate"
+                        type="text"
+                        v-model="visaCardDetails.expirationDate"
+                        :placeholder="t('checkoutPage.expirationDatePlaceholder')"
+                        class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                      />
                     </div>
                     <div>
-                      <label for="cvv" class="block text-[var(--color-primary)] text-sm font-medium mb-2">CVV</label>
-                      <input id="cvv" type="text" v-model="visaCardDetails.cvv" placeholder="***" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                      <label
+                        for="cvv"
+                        class="block text-[var(--color-primary)] text-sm font-medium mb-2"
+                        >{{ t('checkoutPage.cvv') }}</label
+                      >
+                      <input
+                        id="cvv"
+                        type="text"
+                        v-model="visaCardDetails.cvv"
+                        :placeholder="t('checkoutPage.cvvPlaceholder')"
+                        class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -387,20 +448,36 @@ const handleSubmit = () => {
                   :disabled="isLoading"
                   class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  <span v-if="!isLoading">{{t('placeOrder')}}</span>
+                  <span v-if="!isLoading">{{ t('placeOrder') }}</span>
                   <span v-else class="flex items-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      class="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
-                    {{t('processing')}}
+                    {{ t('processing') }}
                   </span>
                 </button>
                 <RouterLink
                   to="/cart"
                   class="bg-transparent hover:bg-[var(--color-primary)] hover:text-black text-white border-2 border-[var(--color-primary)] font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
                 >
-                 {{t('backToCart')}}
+                  {{ t('backToCart') }}
                 </RouterLink>
               </div>
             </form>
