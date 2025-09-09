@@ -217,7 +217,8 @@ const admin = {
   },
 
   settings: {
-    update: (data) => uploadFile("/admin/settings", data),
+    get: () => publicResources.settings(),
+    update: (data) => api.post("/admin/settings", data),
   },
 };
 

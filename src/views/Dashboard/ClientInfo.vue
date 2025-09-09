@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { useClientsStore } from '@/stores/Clients'
 
 const CreateAvatar = (name) => {
@@ -43,9 +43,9 @@ const CreateAvatar = (name) => {
   return canvas.toDataURL('image/png')
 }
 
-const languageStore = useLanguageStore()
+const { t } = useI18n()
 const clientStore = useClientsStore()
-const translations = computed(() => languageStore.translations)
+
 
 // Client Status Configuration
 const STATUS_CONFIG = computed(() => ({
@@ -256,10 +256,10 @@ watch(
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              {{ translations.dashboard?.clientInfo?.back }}
+              {{ t('dashboard.clientInfo.back') }}
             </button>
             <h1 class="text-3xl font-bold text-gray-900">
-              {{ translations.dashboard?.clientInfo?.title }}
+              {{ t('dashboard.clientInfo.title') }}
             </h1>
           </div>
 
@@ -268,7 +268,7 @@ watch(
             v-if="showSuccessMessage"
             class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"
           >
-            ✓ {{ translations.dashboard?.clientInfo?.updatedSuccess }}
+            ✓ {{ t('dashboard.clientInfo.updatedSuccess') }}
           </div>
         </div>
       </div>
@@ -277,21 +277,21 @@ watch(
       <div v-if="isLoading" class="flex items-center justify-center py-16">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <span class="ml-3 text-gray-600">{{
-          translations.dashboard?.clientInfo?.loading
+          t('dashboard.clientInfo.loading')
         }}</span>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <div class="text-red-600 text-lg font-medium mb-2">
-          ⚠️ {{ translations.dashboard?.clientInfo?.error }}
+          ⚠️ {{ t('dashboard.clientInfo.error') }}
         </div>
         <p class="text-red-700">{{ error }}</p>
         <button
           @click="loadClient"
           class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
         >
-          {{ translations.dashboard?.clientInfo?.tryAgain }}
+          {{ t('dashboard.clientInfo.tryAgain') }}
         </button>
       </div>
 
@@ -338,7 +338,7 @@ watch(
                     d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                {{ translations.dashboard?.clientInfo?.sendEmail }}
+                {{ t('dashboard.clientInfo.sendEmail') }}
               </button>
 
               <button
@@ -353,7 +353,7 @@ watch(
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                {{ translations.dashboard?.clientInfo?.callClient }}
+                {{ t('dashboard.clientInfo.callClient') }}
               </button>
 
               <button
@@ -368,7 +368,7 @@ watch(
                     d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
                   />
                 </svg>
-                {{ translations.dashboard?.clientInfo?.print }}
+                {{ t('dashboard.clientInfo.print') }}
               </button>
 
               <button
@@ -383,7 +383,7 @@ watch(
                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                {{ translations.dashboard?.clientInfo?.downloadReport }}
+                {{ t('dashboard.clientInfo.downloadReport') }}
               </button>
             </div>
           </div>
@@ -424,32 +424,32 @@ watch(
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              {{ translations.dashboard?.clientInfo?.personalInformation }}
+              {{ t('dashboard.clientInfo.personalInformation') }}
             </h3>
 
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
-                    translations.dashboard?.clientInfo?.fullName
+                    t('dashboard.clientInfo.fullName')
                   }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.name }}</p>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
-                    translations.dashboard?.clientInfo?.emailAddress
+                    t('dashboard.clientInfo.emailAddress')
                   }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.email }}</p>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
-                    translations.dashboard?.clientInfo?.phoneNumber
+                    t('dashboard.clientInfo.phoneNumber')
                   }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.phone_number }}</p>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
-                    translations.dashboard?.clientInfo?.country
+                    t('dashboard.clientInfo.country')
                   }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.country }}</p>
                 </div>

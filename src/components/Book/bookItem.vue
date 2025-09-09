@@ -35,7 +35,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     <RouterLink :to="`/book/${book.id}`" class="mt-auto text-center">
       <h3 class="font-bold text-md font-bona truncate" :title="book.title">{{ book.title }}</h3>
       <p class="text-sm text-gray-500 font-BonaRegular underline">{{ book.author.name }}</p>
-      <p class="text-black font-bold font-BonaRegular ">{{ book.price + settingsStore.currency }} </p>
+      <p class="text-black font-bold font-BonaRegular ">{{ book.price }} {{ settingsStore.currency }}</p>
 
       <!-- ⭐️ التقييم بالنجوم -->
       <div class="flex justify-center mt-2">

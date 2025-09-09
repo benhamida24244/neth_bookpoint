@@ -5,7 +5,7 @@
       <nav class="text-sm mb-4 py-2 sticky top-0 z-10 bg-[#F3F4F6]">
         <ol class="list-none p-0 inline-flex">
           <li class="flex items-center">
-            <a href="#" class="text-gray-500 hover:text-gray-700">{{ translations.bookdetails.home }}</a>
+            <a href="#" class="text-gray-500 hover:text-gray-700">{{ t('bookdetails.home') }}</a>
             <span class="mx-2">/</span>
           </li>
           <li class="flex items-center" v-if="book.category && book.category.name">
@@ -25,11 +25,11 @@
           <div class="md:col-span-2">
             <h1 class="text-3xl font-bold text-[#111827]">{{ book.title }}</h1>
             <p class="text-lg text-gray-600 mt-2">
-              {{ translations.bookdetails.by }}
+              {{ t('bookdetails.by') }}
               <a href="#" class="text-[#1E40AF] hover:underline">{{ book.author?.name || 'Unknown Author' }}</a>
             </p>
             <p class="text-sm text-gray-500 mt-1">
-              {{ translations.bookdetails.publishedBy }}
+              {{ t('bookdetails.publishedBy') }}
               <a href="#" class="text-[#1E40AF] hover:underline">{{ book.publisher?.name || 'Unknown Publisher' }}</a>
             </p>
 
@@ -38,7 +38,7 @@
                 <span v-for="i in 5" :key="i" class="text-yellow-400">
                   <i class="pi" :class="i <= Math.floor(book.rating) ? 'pi-star-fill' : 'pi-star'"></i>
                 </span>
-                <span class="text-gray-600 ml-2">({{ book.reviews }} {{ translations.bookdetails.reviews }})</span>
+                <span class="text-gray-600 ml-2">({{ book.reviews }} {{ t('bookdetails.reviews') }})</span>
               </div>
             </div>
 
@@ -55,24 +55,24 @@
             </div>
 
             <p class="text-green-600 font-semibold mt-2">
-              {{ book.stock && book.stock > 0 ? translations.bookdetails.inStock : translations.bookdetails.outOfStock }}
+              {{ book.stock && book.stock > 0 ? t('bookdetails.inStock') : t('bookdetails.outOfStock') }}
             </p>
 
             <div class="mt-4 text-gray-700">
               <p v-if="!showFullDescription">
                 {{ book.description || 'No description available' }}
                 <a href="#" @click.prevent="showFullDescription = true" class="text-[#1E40AF] hover:underline">
-                  {{ translations.bookdetails.readMore }}
+                  {{ t('bookdetails.readMore') }}
                 </a>
               </p>
             </div>
 
             <div class="mt-6 flex items-center space-x-4">
-              <button @click="handleAddToCart" class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="translations.bookdetails.addToCartTooltip">
-                {{ translations.bookdetails.addToCart }}
+              <button @click="handleAddToCart" class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="t('bookdetails.addToCartTooltip')">
+                {{ t('bookdetails.addToCart') }}
               </button>
-              <button @click="handleBuyNow" class="bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="translations.bookdetails.buyNowTooltip">
-                {{ translations.bookdetails.buyNow }}
+              <button @click="handleBuyNow" class="bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="t('bookdetails.buyNowTooltip')">
+                {{ t('bookdetails.buyNow') }}
               </button>
 
             </div>
@@ -82,14 +82,14 @@
         <!-- Detailed Description Section -->
         <Transition name="fade">
           <div class="mt-12" v-if="showFullDescription">
-            <h2 class="text-2xl font-bold text-[#111827]">{{ translations.bookdetails.fullDescription }}</h2>
+            <h2 class="text-2xl font-bold text-[#111827]">{{ t('bookdetails.fullDescription') }}</h2>
             <p class="text-gray-700 mt-4">{{ book.description || 'No description available' }}</p>
-            <h3 class="text-xl font-bold text-[#111827] mt-6">{{ translations.bookdetails.specifications }}</h3>
+            <h3 class="text-xl font-bold text-[#111827] mt-6">{{ t('bookdetails.specifications') }}</h3>
             <ul class="list-disc list-inside mt-4 text-gray-700">
-              <li>{{ translations.bookdetails.pages }}: {{ book.pages || 'N/A' }}</li>
-              <li>{{ translations.bookdetails.language }}: {{ book.language || 'N/A' }}</li>
-              <li>{{ translations.bookdetails.publisher }}: {{ book.publisher?.name || 'N/A' }}</li>
-              <li>{{ translations.bookdetails.publishedDate }}: {{ book.publisherDate || 'N/A' }}</li>
+              <li>{{ t('bookdetails.pages') }}: {{ book.pages || 'N/A' }}</li>
+              <li>{{ t('bookdetails.language') }}: {{ book.language || 'N/A' }}</li>
+              <li>{{ t('bookdetails.publisher') }}: {{ book.publisher?.name || 'N/A' }}</li>
+              <li>{{ t('bookdetails.publishedDate') }}: {{ book.publisherDate || 'N/A' }}</li>
             </ul>
           </div>
         </Transition>
@@ -97,13 +97,13 @@
 
       <!-- Related Books Section -->
       <div v-if="muchCategory" class="mt-12">
-        <RelatedBooksCarousel :books="relatedBooksCategory" :title="translations.bookdetails.booksSameCategory" />
+        <RelatedBooksCarousel :books="relatedBooksCategory" :title="t('bookdetails.booksSameCategory')" />
       </div>
       <div v-if="muchAuthor" class="mt-12">
-        <RelatedBooksCarousel :books="relatedBooksAuthor" :title="translations.bookdetails.booksSameAuthor" />
+        <RelatedBooksCarousel :books="relatedBooksAuthor" :title="t('bookdetails.booksSameAuthor')" />
       </div>
       <div v-if="muchPublisher" class="mt-12">
-        <RelatedBooksCarousel :books="relatedBooksPublisher" :title="translations.bookdetails.booksSamePublisher" />
+        <RelatedBooksCarousel :books="relatedBooksPublisher" :title="t('bookdetails.booksSamePublisher')" />
       </div>
     </div>
   </div>
@@ -116,17 +116,15 @@ import { onBeforeRouteUpdate } from 'vue-router';
 import RelatedBooksCarousel from '@/components/Book/RelatedBooksCarousel.vue';
 import { useCartStore } from '@/stores/Cart';
 import { useBooksStore } from '@/stores/Books';
-import { useLanguageStore } from '@/stores/language';
+import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 const booksStore = useBooksStore();
 const showFullDescription = ref(false);
-
-const languageStore = useLanguageStore();
-const { translations } = storeToRefs(languageStore);
 
 const bookId = Number(route.params.id);
 const book = computed(() => booksStore.book || {});
@@ -200,10 +198,10 @@ const handleAddToCart = () => {
     if (book.value.stock && book.value.stock > 0) {
       cartStore.addToCart(book.value.id, 1);
     } else {
-      alert(translations.value.bookdetails.outOfStock);
+      alert(t('bookdetails.outOfStock'));
     }
   } else {
-    alert(translations.value.bookdetails.bookNotFound);
+    alert(t('bookdetails.bookNotFound'));
   }
 };
 const handleBuyNow = () => {
@@ -212,10 +210,10 @@ const handleBuyNow = () => {
       cartStore.addToCart(book.value.id, 1);
       router.push('/checkout');
     } else {
-      alert(translations.value.bookdetails.outOfStock);
+      alert(t('bookdetails.outOfStock'));
     }
   } else {
-    alert(translations.value.bookdetails.bookNotFound);
+    alert(t('bookdetails.bookNotFound'));
   }
 };
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL

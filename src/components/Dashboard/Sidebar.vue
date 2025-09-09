@@ -14,14 +14,13 @@ import {
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/Auth'
 
+const { t } = useI18n()
 const userStore = useAuthStore()
 const { user } = storeToRefs(userStore)
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
 
 const emit = defineEmits(['close'])
 
@@ -33,25 +32,25 @@ const route = useRoute()
 
 const Menu = computed(() => [
   {
-    title: translations.value.dashboard?.sidebar?.dashboard,
+    title: t('dashboard.sidebar.dashboard'),
     icon: PanelBottom,
     url: '/dashboard'
   },
-  { title: translations.value.dashboard?.sidebar?.orders, icon: ShoppingCart, url: '/dashboard/orders' },
-  { title: translations.value.dashboard?.sidebar?.books, icon: Book, url: '/dashboard/books' },
+  { title: t('dashboard.sidebar.orders'), icon: ShoppingCart, url: '/dashboard/orders' },
+  { title: t('dashboard.sidebar.books'), icon: Book, url: '/dashboard/books' },
   {
-    title: translations.value.dashboard?.sidebar?.categories,
+    title: t('dashboard.sidebar.categories'),
     icon: Layers,
     url: '/dashboard/categories'
   },
-  { title: translations.value.dashboard?.sidebar?.clients, icon: ServerIcon, url: '/dashboard/clients' },
-  { title: translations.value.dashboard?.sidebar?.authors, icon: BookOpen, url: '/dashboard/authors' },
+  { title: t('dashboard.sidebar.clients'), icon: ServerIcon, url: '/dashboard/clients' },
+  { title: t('dashboard.sidebar.authors'), icon: BookOpen, url: '/dashboard/authors' },
   {
-    title: translations.value.dashboard?.sidebar?.publishingHouses,
+    title: t('dashboard.sidebar.publishingHouses'),
     icon: Layers,
     url: '/dashboard/publishing-house'
   },
-  { title: translations.value.dashboard?.sidebar?.settings, icon: Settings, url: '/dashboard/settings' }
+  { title: t('dashboard.sidebar.settings'), icon: Settings, url: '/dashboard/settings' }
 ])
 
 const checkScreenSize = () => {
@@ -162,14 +161,14 @@ const CreateAvatar = (name) => {
     <aside
       v-motion-slide-visible-left
       :class="[
-        'fixed lg:relative h-screen bg-white shadow-2xl rounded-r-2xl flex flex-col z-50 transition-all duration-300',
+        `fixed lg:relative h-screen bg-white shadow-2xl ${$i18n.language === 'ar' ? 'rounded-l-2xl' : 'rounded-r-2xl'} flex flex-col z-50 transition-all duration-300`,
         isMobile
           ? ['w-[280px] sm:w-[300px]', MenuOpen ? 'translate-x-0' : '-translate-x-full']
           : 'w-[240px]'
       ]"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between bg-black text-white py-4 px-6 rounded-se-2xl">
+      <div :class="`flex items-center justify-between bg-black text-white py-4 px-6 ${$i18n.language === 'ar' ? 'rounded-ss-2xl' : 'rounded-se-2xl'}`">
         <div class="flex items-center gap-2">
           <img :src="Logo" alt="logo" class="h-8 sm:h-10" />
           <span class="font-BonaRegular text-[var(--color-primary)] text-base sm:text-lg">
@@ -253,7 +252,7 @@ const CreateAvatar = (name) => {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
             />
           </svg>
-          {{ translations.dashboard?.sidebar?.logout }}
+          {{ t('dashboard.sidebar.logout') }}
         </button>
         <div class="text-xs text-gray-400 text-center">© 2024 Neth BookPoint</div>
       </div>

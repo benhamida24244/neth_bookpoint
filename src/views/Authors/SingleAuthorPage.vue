@@ -3,9 +3,10 @@ import { useRoute } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import BookList from '@/components/Book/Shop/BookList.vue'
 import { useAuthorStore } from '@/stores/Authors'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
+const { t } = useI18n()
 const route = useRoute()
 const authorId = computed(() => parseInt(route.params.id))
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
@@ -13,28 +14,11 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 const authorStore = useAuthorStore()
 const { authors } = storeToRefs(authorStore)
 
-const languageStore = useLanguageStore()
-const { translations } = storeToRefs(languageStore)
-
 const selectedAuthor = computed(() => authors.value.find((a) => a.id === authorId.value))
-
-const getTranslation = (key) => {
-  const keys = key.split('.')
-  let current = translations.value
-  for (const k of keys) {
-    if (current && typeof current === 'object' && k in current) {
-      current = current[k]
-    } else {
-      return null
-    }
-  }
-  return current
-}
-
 
 const authorDescription = computed(() => {
   if (selectedAuthor.value && selectedAuthor.value.descriptionKey) {
-    return getTranslation(selectedAuthor.value.descriptionKey) || 'Description not available.'
+    return t(selectedAuthor.value.descriptionKey)
   }
   return 'Description not available.'
 })

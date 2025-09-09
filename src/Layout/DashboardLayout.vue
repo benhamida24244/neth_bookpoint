@@ -1,12 +1,14 @@
 <script setup>
 import Sidebar from '@/components/Dashboard/Sidebar.vue'
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
 import { Menu } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
+import { useSettingsStore } from '@/stores/settings'
 
 const MenuIsOpen = ref(false)
 const isLogout = ref(false)
 const router = useRouter()
+const settingsStore = useSettingsStore()
 const OpenMenu = () => {
   MenuIsOpen.value = true
 }
@@ -20,6 +22,10 @@ const logout = () => {
   isLogout.value = false
   router.push('/loginAdmin')
 }
+
+const isLtr = computed(() => {
+  return settingsStore.language != 'ar' || settingsStore.language === 'he'
+})
 </script>
 
 <template>
@@ -34,7 +40,7 @@ const logout = () => {
       </div>
     </div>
     <!-- Sidebar ثابت على الحاسوب -->
-    <aside class="fixed top-0 left-0 h-screen w-[240px] z-50 hidden lg:block">
+    <aside  :class=" isLtr? 'fixed top-0 left-0 h-screen w-[240px] z-50 hidden lg:block' : 'fixed top-0 right-0 h-screen w-[240px] z-50 hidden lg:block'">
       <Sidebar :MenuOpen="true" @logout="isLogout = true" />
     </aside>
 
@@ -42,7 +48,7 @@ const logout = () => {
     <Sidebar v-if="MenuIsOpen" :MenuOpen="true" @close="CloseMenu" @logout="isLogout = true" class="lg:hidden" />
 
     <!-- Main content -->
-    <main class="flex-1 ml-0 lg:ml-[240px] w-full min-h-screen overflow-x-hidden relative">
+    <main :class=" isLtr? 'flex-1 ml-0 lg:ml-[240px] w-full min-h-screen overflow-x-hidden relative' : 'flex-1 mr-0 lg:mr-[240px] w-full min-h-screen overflow-x-hidden relative'">
       <!-- زر فتح القائمة في الهاتف -->
       <div
         class="h-12 w-12 bg-[var(--color-primary)] left-5 top-5 rounded-full fixed lg:hidden flex items-center justify-center text-white z-50"

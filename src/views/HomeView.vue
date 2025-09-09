@@ -2,10 +2,13 @@
 import { defineAsyncComponent, onMounted, ref, computed } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
 import { useBooksStore } from '@/stores/Books'
+
+
+const { t } = useI18n()
 
 // --- State ---
 const isLoading = ref(true)
@@ -23,12 +26,10 @@ const PublishingHousesList = defineAsyncComponent(() => import('@/components/Pub
 // --- Stores ---
 const PublishingHousesStore = usePublishingHouseStore()
 const authorsStore = useAuthorStore()
-const languageStore = useLanguageStore()
 const categoriesStore = useCategoriesStore()
 const booksStore = useBooksStore()
 
 // --- Refs ---
-const { translations } = storeToRefs(languageStore)
 const { authors } = storeToRefs(authorsStore)
 const { publishingHouses } = storeToRefs(PublishingHousesStore)
 const { categories } = storeToRefs(categoriesStore)
@@ -98,26 +99,26 @@ onMounted(async () => {
   <div v-else>
     <Hero />
     <div class="w-full">
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.bestsellers || 'BestSellers' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.bestsellers') }}</h1>
       <BookList :books="bestsellersBooks" />
       <LargeBanner :banner="banner" />
       <SmallBannerList :smallBanner="smallBanner" />
       <LargeBanner :banner="bannerTow" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.everyonesTalkingAbout || 'Everyone\'s Talking About' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.everyonesTalkingAbout') }}</h1>
       <BookList :books="books" />
       <SmallBannerList :smallBanner="smallBannerTwo" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestPaperbacks || 'Our Best Paperbacks' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.ourBestPaperbacks') }}</h1>
       <BookList :books="books" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.shopByCategory || 'Shop by Category' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.shopByCategory') }}</h1>
       <CatigoryList :categories="categories"/>
       <LargeBanner :banner="bannerThree" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.ourBestYABooks || 'Our Best YA Books' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.ourBestYABooks') }}</h1>
       <BookList :books="books" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.authors || 'Authors' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.authors')}}</h1>
       <AuthorList :authors="authors"/>
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.signedAndSpecialEditions || 'Signed & Special Editions' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.signedAndSpecialEditions')}}</h1>
       <BookList :books="books" />
-      <h1 class="text-center text-5xl p-6 font-bona">{{ translations.home?.publishingHouse || 'Publishing House' }}</h1>
+      <h1 class="text-center text-5xl p-6 font-bona">{{ t('home.publishingHouse') }}</h1>
       <PublishingHousesList :PublishingHouses="publishingHouses"/>
       <Footer/>
     </div>

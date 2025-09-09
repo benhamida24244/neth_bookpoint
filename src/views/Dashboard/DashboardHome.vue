@@ -2,7 +2,7 @@
 import { onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/stores/Dashboard'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue'
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue'
 import OrdersByTheCountry from '@/components/Dashboard/Charts/OrdersByTheCountry.vue'
@@ -15,8 +15,7 @@ import { useSettingsStore } from '@/stores/settings'
 
 const dashboardStore = useDashboardStore()
 const { stats } = storeToRefs(dashboardStore)
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
+const { t } = useI18n()
 
 onMounted(() => {
   dashboardStore.fetchDashboardData()
@@ -26,25 +25,25 @@ const settingStore = useSettingsStore()
 const info = computed(() => [
   {
     id: 1,
-    name: translations.value.dashboard?.booksd,
+    name: t('dashboard.booksd'),
     icon: BookOpen,
     Num: stats.value.books
   },
   {
     id: 2,
-    name: translations.value.dashboard?.ordersToday,
+    name: t('dashboard.ordersToday'),
     icon: ShoppingCart,
     Num: stats.value.ordersToday
   },
   {
     id: 3,
-    name: translations.value.dashboard?.clientsd,
+    name: t('dashboard.clientsd'),
     icon: Users,
     Num: stats.value.clients
   },
   {
     id: 4,
-    name: translations.value.dashboard?.salesToday,
+    name: t('dashboard.salesToday'),
     icon: DollarSign,
     Num: `${stats.value.salesToday} ${settingStore.currency}`
   }
@@ -55,7 +54,7 @@ const info = computed(() => [
   <div class="w-full min-h-screen px-6 py-8 bg-gray-50">
     <!-- عنوان -->
     <h1 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular text-center mb-8">
-      {{ translations.dashboard?.overview }}
+      {{ t('dashboard.overview') }}
     </h1>
 
     <!-- بطاقات الإحصائيات -->

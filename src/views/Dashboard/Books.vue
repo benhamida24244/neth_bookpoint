@@ -6,14 +6,13 @@ import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
 import Pagination from '@/components/Pagination.vue'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import * as XLSX from 'xlsx'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { useCategoriesStore } from '@/stores/Categories'
 
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
+const { t } = useI18n()
 
 // الفلاتر
 const activeFilter = ref('All Books')
@@ -23,9 +22,9 @@ const showEditBookModal = ref(false)
 const selectedBook = ref(null)
 
 const filters = computed(() => [
-  { label: translations.value.dashboard?.books?.filters?.all, value: 'All Books' },
-  { label: translations.value.dashboard?.books?.filters?.published, value: 1 },
-  { label: translations.value.dashboard?.books?.filters?.draft, value: 0 }
+  { label: t('dashboard.books.filters.all'), value: 'All Books' },
+  { label: t('dashboard.books.filters.published'), value: 1 },
+  { label: t('dashboard.books.filters.draft'), value: 0 }
 ])
 
 const settingStore = useSettingsStore()
@@ -63,7 +62,7 @@ const categories = computed(() => categoriesStore.categories)
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 const Deletebook = (book) => {
-  if (confirm(`${translations.value.dashboard?.books?.deleteConfirm} "${book.title}"?`)) {
+  if (confirm(`${t('dashboard.books.deleteConfirm')} "${book.title}"?`)) {
     bookStore.deleteBook(book.id)
   }
 }
@@ -173,25 +172,25 @@ const triggerImport = () => {
 // الإحصائيات
 const stats = computed(() => [
   {
-    label: translations.value.dashboard?.books?.stats?.total,
+    label: t('dashboard.books.stats.total'),
     value: bookStore.stats.books?.toString() || '0',
     icon: 'fas fa-book text-blue-500',
     iconBg: 'bg-blue-50'
   },
   {
-    label: translations.value.dashboard?.books?.stats?.authors,
+    label: t('dashboard.books.stats.authors'),
     value: bookStore.stats.authors?.toString() || '0',
     icon: 'fas fa-user-pen text-green-500',
     iconBg: 'bg-green-50'
   },
   {
-    label: translations.value.dashboard?.books?.stats?.publishers,
+    label: t('dashboard.books.stats.publishers'),
     value: bookStore.stats.publishers?.toString() || '0',
     icon: 'fas fa-building text-[var(--color-light)]',
     iconBg: 'bg-yellow-50'
   },
   {
-    label: translations.value.dashboard?.books?.stats?.categories,
+    label: t('dashboard.books.stats.categories'),
     value: bookStore.stats.categories?.toString() || '0',
     icon: 'fas fa-layer-group text-emerald-500',
     iconBg: 'bg-emerald-50'
@@ -243,13 +242,13 @@ const getStatusClass = (status) => {
 const getStatusItem = (status) => {
   const numericStatus = Number(status)
   if (numericStatus === 1) {
-    return translations.value.dashboard?.books?.status?.published
+    return t('dashboard.books.status.published')
   } else if (numericStatus === 2) {
-    return translations.value.dashboard?.books?.status?.pending
+    return t('dashboard.books.status.pending')
   } else if (numericStatus === 3) {
-    return translations.value.dashboard?.books?.status?.draft
+    return t('dashboard.books.status.draft')
   } else {
-    return translations.value.dashboard?.books?.status?.unknown
+    return t('dashboard.books.status.unknown')
   }
 }
 
@@ -257,9 +256,9 @@ const handleSaveBook = async (formData) => {
   const success = await bookStore.addBook(formData)
   showAddBookModal.value = false
   if (success) {
-    alert(translations.value.dashboard?.books?.addSuccess)
+    alert(t('dashboard.books.addSuccess'))
   } else {
-    alert(translations.value.dashboard?.books?.addFailed)
+    alert(t('dashboard.books.addFailed'))
   }
 }
 
@@ -271,7 +270,7 @@ const openEditModal = (book) => {
 const handleUpdateBook = (updatedBook) => {
   bookStore.updateBook(updatedBook.id, updatedBook)
   showEditBookModal.value = false
-  alert(translations.value.dashboard?.books?.updateSuccess)
+  alert(t('dashboard.books.updateSuccess'))
 }
 
 const handlePageChange = (page) => {
@@ -300,9 +299,9 @@ const handlePageChange = (page) => {
     <div class="w-full px-4 md:px-6 py-8">
       <div class="max-w-7xl mx-auto mb-8 font-BonaRegular">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-          {{ translations.dashboard?.books?.title }}
+          {{ t('dashboard.books.title') }}
         </h1>
-        <p class="text-gray-600 mt-1">{{ translations.dashboard?.books?.subtitle }}</p>
+        <p class="text-gray-600 mt-1">{{ t('dashboard.books.subtitle') }}</p>
       </div>
 
       <!-- Stats Cards -->
@@ -347,7 +346,7 @@ const handlePageChange = (page) => {
             <input
               v-model="searchQuery"
               type="text"
-              :placeholder="translations.dashboard?.books?.searchPlaceholder"
+              :placeholder="t('dashboard.books.searchPlaceholder')"
               class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
             />
             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
@@ -356,7 +355,7 @@ const handlePageChange = (page) => {
             @click="showAddBookModal = true"
             class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
           >
-            {{ translations.dashboard?.books?.addNew }}
+            {{ t('dashboard.books.addNew') }}
           </button>
           <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
             Export Data
@@ -377,52 +376,52 @@ const handlePageChange = (page) => {
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.id }}
+                  {{ t('dashboard.books.table.id') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.cover}}
+                  {{ t('dashboard.books.table.cover')}}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.title }}
+                  {{ t('dashboard.books.table.title') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.category }}
+                  {{ t('dashboard.books.table.category') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.author }}
+                  {{ t('dashboard.books.table.author') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.publisher }}
+                  {{ t('dashboard.books.table.publisher') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.status }}
+                  {{ t('dashboard.books.table.status') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.price }}
+                  {{ t('dashboard.books.table.price') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.date }}
+                  {{ t('dashboard.books.table.date') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ translations.dashboard?.books?.table?.action }}
+                  {{ t('dashboard.books.table.action') }}
                 </th>
               </tr>
             </thead>
@@ -479,16 +478,16 @@ const handlePageChange = (page) => {
                     :to="`/dashboard/books/${book.id}`"
                     class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
                   >
-                    <i class="far fa-eye"></i> {{ translations.dashboard?.books?.actions?.view }}
+                    <i class="far fa-eye"></i> {{ t('dashboard.books.actions.view') }}
                   </RouterLink>
                   <button
                     @click="openEditModal(book)"
                     class="text-indigo-600 hover:text-indigo-900"
                   >
-                    {{ translations.dashboard?.books?.actions?.edit }}
+                    {{ t('dashboard.books.actions.edit') }}
                   </button>
                   <button @click="Deletebook(book)" class="text-red-600 hover:text-red-900">
-                    {{ translations.dashboard?.books?.actions?.delete }}
+                    {{ t('dashboard.books.actions.delete') }}
                   </button>
                 </td>
               </tr>
@@ -504,10 +503,10 @@ const handlePageChange = (page) => {
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-1">
-            {{ translations.dashboard?.books?.emptyHeader }}
+            {{ t('dashboard.books.emptyHeader') }}
           </h3>
           <p class="text-gray-500">
-            {{ translations.dashboard?.books?.emptySubtext }}
+            {{ t('dashboard.books.emptySubtext') }}
           </p>
         </div>
       </div>

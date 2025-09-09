@@ -1,4 +1,5 @@
 <script setup>
+import DashboardBooks from '@/components/Dashboard/DashboardBooks.vue';
 import { useAuthorStore } from '@/stores/Authors';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref ,computed} from 'vue';
@@ -193,6 +194,12 @@ async function saveAuthor() {
           <button @click="showEditModal = false" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
           <button @click="saveAuthor" class="px-4 py-2 bg-[var(--color-light)] text-white rounded-lg hover:bg-[var(--color-primary)]">Save</button>
         </div>
+      </div>
+    </div>
+    <div v-if="currentAuthor.nmbBook > 1" class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden mt-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 p-8 text-center">Books by {{ currentAuthor?.name }}</h2>
+      <div class="w-full px-4 pb-8">
+        <DashboardBooks :author_id="currentAuthor.id" />
       </div>
     </div>
   </div>

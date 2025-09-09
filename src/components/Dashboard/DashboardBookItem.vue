@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to="`/book/${book.id}`"
+  <RouterLink :to="`/dashboard/books/${book.id}`"
     class="relative m-4 flex w-44 cursor-pointer flex-col rounded-lg bg-white p-3 shadow-md transition-shadow duration-300 hover:shadow-xl"
   >
     <!-- صورة الكتاب -->
@@ -37,13 +37,6 @@
       <p class="text-lg font-semibold text-gray-800">
         {{ book.price }} {{ settingsStore.currency }}
       </p>
-
-      <!-- زر الإضافة إلى السلة -->
-      <button
-        class="mt-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-primary)]"
-      >
-        Add to Cart
-      </button>
     </div>
   </RouterLink>
 </template>

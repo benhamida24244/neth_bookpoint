@@ -16,7 +16,7 @@ onMounted(() => {
 // عرض فقط الفئات الأكثر أهمية (الأعلى عددًا من الكتب)
 const chartData = computed(() => {
   const topPublishers = [...publishingHouseStore.publishingHouses]
-    .sort((a, b) => b.book_count - a.book_count)
+    .sort((a, b) => b.nmBook - a.nmBook)
     .slice(0, 5) // عرض فقط أفضل 5 دور نشر
 
   return {
@@ -24,7 +24,7 @@ const chartData = computed(() => {
     datasets: [
       {
         label: 'عدد الكتب حسب دار النشر',
-        data: topPublishers.map((publisher) => publisher.book_count),
+        data: topPublishers.map((publisher) => publisher.nmBook),
         backgroundColor: [
           '#facc15', // Yellow
           '#60a5fa', // Blue

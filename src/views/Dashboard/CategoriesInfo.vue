@@ -46,7 +46,7 @@ const formattedStatistics = computed(() => [
   {
     id: 1,
     name: 'Total Books',
-    displayValue: currentCategory.value.books_count ?? 0,
+    displayValue: currentCategory.value.nmBook ?? 0,
     icon: 'fas fa-book',
     color: 'bg-blue-500',
     ariaLabel: 'Total number of books in category'
@@ -54,7 +54,7 @@ const formattedStatistics = computed(() => [
   {
     id: 2,
     name: 'Orders',
-    displayValue: currentCategory.value.orders_count ?? 0,
+    displayValue: currentCategory.value.orders ?? 0,
     icon: 'fas fa-shopping-cart',
     color: 'bg-green-500',
     ariaLabel: 'Total number of orders for this category'
@@ -63,7 +63,7 @@ const formattedStatistics = computed(() => [
     id: 3,
     name: 'Profit',
     displayValue: currentCategory.value.total_profit
-      ? `$${currentCategory.value.total_profit}`
+      ? `$${currentCategory.value.profit}`
       : '$0',
     icon: 'fas fa-dollar-sign',
     color: 'bg-yellow-500',

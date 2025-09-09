@@ -54,7 +54,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
         {{ book.author.name }}
       </p>
       <p class="text-black font-bold font-BonaRegular">
-        {{ book.price + settingsStore.currency }}
+        {{ book.price }} {{ settingsStore.currency }}
       </p>
 
       <!-- ⭐️ التقييم -->

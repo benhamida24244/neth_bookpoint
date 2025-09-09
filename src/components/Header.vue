@@ -7,9 +7,10 @@ import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { useCustomerAuthStore } from '@/stores/customerAuth'
-import LanguageSwitcher from './LanguageSwitcher.vue'
+
+const { t } = useI18n()
 
 // Ref for mobile menu state
 const isMenuOpen = ref(false)
@@ -55,11 +56,9 @@ const isActive = (link) => {
 
 // Pinia stores
 const settingsStore = useSettingsStore()
-const languageStore = useLanguageStore()
 const userStore = useCustomerAuthStore()
 
 // Reactive state from stores
-const { translations } = storeToRefs(languageStore)
 const { isLoggedIn } = storeToRefs(userStore)
 
 const headerBackground = computed(() => {
@@ -74,29 +73,34 @@ onMounted(() => {
 
 const MenuContent = computed(() => [
   {
-    name: translations.value.header?.home || 'Home',
+    name: t('header.home'),
     link: '/',
   },
   {
-    name: translations.value.header?.about || 'About',
+    name: t('header.about'),
     link: '/about',
   },
   {
-    name: translations.value.header?.shop || 'Shop',
+    name: t('header.shop'),
     link: '/shop',
   },
   {
-    name: translations.value.header?.delivery_theme || 'Delivery theme',
+    name: t('header.delivery_theme'),
     link: '/delivery-theme',
   },
   {
-    name: translations.value.header?.authors || 'Authors',
+    name: t('header.authors'),
     link: '/authors',
   },
 ])
 
 const cartStore = useCartStore()
 const { cartCount } = storeToRefs(cartStore)
+
+// Computed property to check if current language is RTL
+const isRtl = computed(() => {
+  return settingsStore.locale === 'ar' || settingsStore.locale === 'he'
+})
 </script>
 
 <template>
@@ -106,11 +110,19 @@ const { cartCount } = storeToRefs(cartStore)
     class="flex shadow-md py-4 px-4 sm:px-10 min-h-[70px] tracking-wide relative z-50"
   >
     <div class="flex flex-wrap items-center justify-between gap-4 w-full">
-      <RouterLink to="/" class="flex items-center gap-2">
-        <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
-        <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
-          NETH<br />BOOKPOINT
-        </p>
+      <RouterLink to="/">
+        <div v-if="!isRtl" class="flex flex-row- items-center gap-2">
+           <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
+          <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
+            NETH<br />BOOKPOINT
+          </p>
+        </div>
+        <div v-else class="flex flex-row-reverse items-center gap-2">
+            <p class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden">
+              NETH<br />BOOKPOINT
+            </p>
+          <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
+        </div>
       </RouterLink>
 
       <div
@@ -144,7 +156,6 @@ const { cartCount } = storeToRefs(cartStore)
       </div>
 
       <div class="flex max-lg:ml-auto space-x-4">
-        <LanguageSwitcher />
         <RouterLink
   to="/cart"
   class="relative text-white hover:text-[var(--color-hover)] self-center"
@@ -172,13 +183,13 @@ const { cartCount } = storeToRefs(cartStore)
             class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
             @click="openLogin"
           >
-            {{ translations.header?.login || 'Login' }}
+            {{ t('header.login') }}
           </button>
           <button
             @click="openRegister"
             class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
           >
-            {{ translations.header?.signup || 'Sign up' }}
+            {{ t('header.signup') }}
           </button>
         </template>
 

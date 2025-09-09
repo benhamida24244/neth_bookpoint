@@ -1,11 +1,10 @@
 <script setup>
 import { useSettingsStore } from '@/stores/settings'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
+const { t } = useI18n()
 const settingsStore = useSettingsStore()
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
 
 // Dynamic background image from the store
 const heroBackground = computed(() => {
@@ -32,14 +31,14 @@ const heroBackground = computed(() => {
           <!-- Title -->
           <div class="mt-5 max-w-5xl">
             <h1 class="block font-bona text-[var(--color-light)] text-4xl md:text-5xl lg:text-5xl">
-              {{ translations.hero?.title }}
+              {{ t('hero.title') }}
             </h1>
           </div>
           <!-- End Title -->
 
           <div class="mt-5 max-w-3xl">
             <p class="text-lg text-gray-300 font-BonaRegular">
-              {{ translations.hero?.subtitle }}
+              {{ t('hero.subtitle') }}
             </p>
           </div>
 
@@ -59,14 +58,14 @@ const heroBackground = computed(() => {
                   type="search"
                   id="search-input"
                   class="block w-full p-4 ps-10 text-sm text-white border border-[var(--color-primary)] rounded-full bg-black/30 backdrop-blur-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] placeholder-gray-400"
-                  :placeholder="translations.hero?.searchPlaceholder"
+                  :placeholder="t('hero.searchPlaceholder')"
                   required
                 />
                 <button
                   type="submit"
                   class="text-white absolute end-2.5 bottom-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:ring-4 focus:outline-none focus:ring-[var(--color-light)] font-medium rounded-full text-sm px-4 py-2"
                 >
-                  {{ translations.hero?.searchButton }}
+                  {{ t('hero.searchButton') }}
                 </button>
               </div>
             </form>

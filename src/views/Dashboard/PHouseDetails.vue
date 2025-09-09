@@ -2,7 +2,7 @@
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 import { onMounted, ref, computed } from 'vue'; // <-- Import computed
 import { useRoute } from 'vue-router';
-
+import DashboardBooks from '@/components/Dashboard/DashboardBooks.vue';
 // Initialize store and router
 const publishingHouseStore = usePublishingHouseStore();
 const route = useRoute();
@@ -204,6 +204,11 @@ async function savePublishingHouse() {
         </div>
       </div>
     </div>
-
+ <div v-if="currentPublishingHouse?.nmBook > 1" class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden mt-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 p-8 text-center">Books by {{ currentPublishingHouse?.name }}</h2>
+      <div class="w-full px-4 pb-8">
+        <DashboardBooks :publisher_id="currentPublishingHouse?.id" />
+      </div>
+    </div>
   </div>
 </template>

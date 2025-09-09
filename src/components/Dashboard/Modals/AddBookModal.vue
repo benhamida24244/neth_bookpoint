@@ -4,10 +4,9 @@ import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { useCategoriesStore } from '@/stores/Categories'
 import AddAttributeModal from './AddAttributeModal.vue'
-import { useLanguageStore } from '@/stores/language'
+import { useI18n } from 'vue-i18n'
 
-const languageStore = useLanguageStore()
-const translations = computed(() => languageStore.translations)
+const { t } = useI18n()
 
 const props = defineProps({
   show: Boolean
@@ -140,14 +139,14 @@ const handleSaveAttribute = async (name) => {
     />
     <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
       <div class="p-6 border-b sticky top-0 bg-white z-10">
-        <h3 class="text-xl font-semibold">{{ translations.dashboard?.addBookModal?.title }}</h3>
+        <h3 class="text-xl font-semibold">{{ t('dashboard.addBookModal.title') }}</h3>
       </div>
       <div class="p-6">
         <form @submit.prevent="saveBook">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="title" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.title
+                t('dashboard.addBookModal.labels.title')
               }}</label>
               <input
                 v-model="newBook.title"
@@ -159,7 +158,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="price" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.price
+                t('dashboard.addBookModal.labels.price')
               }}</label>
               <input
                 v-model.number="newBook.price"
@@ -172,7 +171,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div class="md:col-span-2">
               <label for="description" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.description
+                t('dashboard.addBookModal.labels.description')
               }}</label>
               <textarea
                 v-model="newBook.description"
@@ -183,7 +182,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="author" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.author
+                t('dashboard.addBookModal.labels.author')
               }}</label>
               <div class="flex items-center gap-2">
                 <select
@@ -193,7 +192,7 @@ const handleSaveAttribute = async (name) => {
                   required
                 >
                   <option disabled value="">
-                    {{ translations.dashboard?.addBookModal?.placeholders?.author }}
+                    {{ t('dashboard.addBookModal.placeholders.author') }}
                   </option>
                   <option v-for="author in authors" :key="author.id" :value="author.id">
                     {{ author.name }}
@@ -210,7 +209,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="publishingHouse" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.publisher
+                t('dashboard.addBookModal.labels.publisher')
               }}</label>
               <div class="flex items-center gap-2">
                 <select
@@ -220,7 +219,7 @@ const handleSaveAttribute = async (name) => {
                   required
                 >
                   <option disabled value="">
-                    {{ translations.dashboard?.addBookModal?.placeholders?.publisher }}
+                    {{ t('dashboard.addBookModal.placeholders.publisher') }}
                   </option>
                   <option
                     v-for="publisher in publishers"
@@ -241,7 +240,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="category" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.category
+                t('dashboard.addBookModal.labels.category')
               }}</label>
               <select
                 v-model="newBook.category_id"
@@ -250,7 +249,7 @@ const handleSaveAttribute = async (name) => {
                 required
               >
                 <option disabled value="">
-                  {{ translations.dashboard?.addBookModal?.placeholders?.category }}
+                  {{ t('dashboard.addBookModal.placeholders.category') }}
                 </option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                   {{ category.name }}
@@ -259,7 +258,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="stock" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.stock
+                t('dashboard.addBookModal.labels.stock')
               }}</label>
               <input
                 v-model.number="newBook.stock"
@@ -271,7 +270,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div>
               <label for="pages" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.pages
+                t('dashboard.addBookModal.labels.pages')
               }}</label>
               <input
                 v-model.number="newBook.pages"
@@ -283,7 +282,7 @@ const handleSaveAttribute = async (name) => {
             </div>
             <div class="md:col-span-2">
               <label for="cover" class="block text-sm font-medium text-gray-700">{{
-                translations.dashboard?.addBookModal?.labels?.cover
+                t('dashboard.addBookModal.labels.cover')
               }}</label>
               <input
                 @change="onFileChange"
@@ -301,13 +300,13 @@ const handleSaveAttribute = async (name) => {
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         >
-          {{ translations.dashboard?.addBookModal?.cancel }}
+          {{ t('dashboard.addBookModal.cancel') }}
         </button>
         <button
           @click="saveBook"
           class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-hover)]"
         >
-          {{ translations.dashboard?.addBookModal?.save }}
+          {{ t('dashboard.addBookModal.save') }}
         </button>
       </div>
     </div>

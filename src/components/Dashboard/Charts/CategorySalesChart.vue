@@ -16,15 +16,15 @@ onMounted(() => {
 const chartData = computed(() => {
   // عرض فقط أفضل 5 فئات من حيث عدد الكتب
   const topCategories = [...CategoriesStore.categories]
-    .sort((a, b) => b.bookCount - a.bookCount)
+    .sort((a, b) => b.nmBook - a.nmBook)
     .slice(0, 5) // عرض فقط أفضل 5 فئات
-    
+
   return {
     labels: topCategories.map((category) => category.name),
     datasets: [
       {
         label: 'فئات الكتب',
-        data: topCategories.map((category) => category.bookCount),
+        data: topCategories.map((category) => category.nmBook),
         backgroundColor: [
           '#facc15', // Yellow
           '#60a5fa', // Blue

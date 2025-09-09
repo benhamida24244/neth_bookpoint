@@ -7,9 +7,10 @@ import { useCustomerAuthStore } from '@/stores/customerAuth';
 import { useOrdersStore } from '@/stores/Orders';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import { useLanguageStore } from '@/stores/language';
+import { useI18n } from 'vue-i18n';
 
 
+const { t } = useI18n();
 const icons = {
   Truck,
   Package,
@@ -18,9 +19,6 @@ const icons = {
 const isLoading = ref(false);
 const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
 const selectedPayment = ref('paypal'); // 'paypal', or 'visa'
-
-const languageStore = useLanguageStore()
-const { translations } = storeToRefs(languageStore)
 
 const cartStore = useCartStore();
 const { cart: orderItems } = storeToRefs(cartStore);
@@ -104,12 +102,12 @@ const formData = ref({
 // Form field configuration
 const formFields = computed(() =>
   [
-    { key: 'receiverName', placeholder: translations.value.receiverName, type: 'text', required: true },
-    { key: 'email', placeholder: translations.value.email, type: 'email', required: true },
-    { key: 'phone', placeholder: translations.value.phone, type: 'tel', required: true },
-    { key: 'address', placeholder: translations.value.address, type: 'text', required: selectedShipping.value === 'delivery' },
-    { key: 'city', placeholder: translations.value.city, type: 'text', required: true },
-    { key: 'postalCode', placeholder: translations.value.postalCode, type: 'text', required: false }
+    { key: 'receiverName', placeholder: t('receiverName'), type: 'text', required: true },
+    { key: 'email', placeholder: t('email'), type: 'email', required: true },
+    { key: 'phone', placeholder: t('phone'), type: 'tel', required: true },
+    { key: 'address', placeholder: t('address'), type: 'text', required: selectedShipping.value === 'delivery' },
+    { key: 'city', placeholder: t('city'), type: 'text', required: true },
+    { key: 'postalCode', placeholder: t('postalCode'), type: 'text', required: false }
   ]
 );
 
@@ -189,7 +187,7 @@ const handleSubmit = () => {
         <!-- Order Summary Sidebar -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">{{ translations.orderSummary }}</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">{{ t('orderSummary') }}</h2>
 
             <!-- Order Items -->
             <div class="space-y-4 mb-6">
@@ -209,19 +207,19 @@ const handleSubmit = () => {
             <!-- Totals -->
             <div class="border-t pt-4 space-y-2">
               <div class="flex justify-between text-gray-600">
-                <span>{{ translations.subtotal }}</span>
+                <span>{{ t('subtotal') }}</span>
                 <span>${{ Number(subtotal || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
-                <span>{{ translations.shipping }}</span>
+                <span>{{ t('shipping') }}</span>
                 <span>${{ Number(shippingCost || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 text-sm">
-                <span>{{ translations.vat }} (15%)</span>
+                <span>{{ t('vat') }} (15%)</span>
                 <span>${{ Number(vatAmount || 0).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
-                <span>{{ translations.total }}</span>
+                <span>{{ t('total') }}</span>
                 <span class="text-[var(--color-primary)]">${{ Number(grandTotal || 0).toFixed(2) }}</span>
               </div>
             </div>
@@ -229,7 +227,7 @@ const handleSubmit = () => {
             <!-- Free Shipping Notice -->
             <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }} {{ translations.freeShippingNotice }}
+                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }} {{ t('freeShippingNotice') }}
               </p>
             </div>
           </div>
@@ -250,7 +248,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <InfoIcon class="w-5 h-5 mr-2" />
-                 {{translations.customerInformation}}
+                 {{t('customerInformation')}}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div
@@ -282,7 +280,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <Truck class="w-5 h-5 mr-2" />
-                  {{translations.shippingOptions}}
+                  {{t('shippingOptions')}}
                 </h3>
                 <div class="space-y-3">
                   <div
@@ -317,7 +315,7 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <CreditCard class="w-5 h-5 mr-2" />
-                  {{translations.paymentMethods}}
+                  {{t('paymentMethods')}}
                 </h3>
                 <div class="space-y-3">
                   <div
@@ -389,20 +387,20 @@ const handleSubmit = () => {
                   :disabled="isLoading"
                   class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  <span v-if="!isLoading">{{translations.placeOrder}}</span>
+                  <span v-if="!isLoading">{{t('placeOrder')}}</span>
                   <span v-else class="flex items-center">
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    {{translations.processing}}
+                    {{t('processing')}}
                   </span>
                 </button>
                 <RouterLink
                   to="/cart"
                   class="bg-transparent hover:bg-[var(--color-primary)] hover:text-black text-white border-2 border-[var(--color-primary)] font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
                 >
-                 {{translations.backToCart}}
+                 {{t('backToCart')}}
                 </RouterLink>
               </div>
             </form>
