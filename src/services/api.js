@@ -189,6 +189,7 @@ const admin = {
     add: (data) => uploadFile("/admin/books", data),
     update: (id, data) => uploadFile(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
+    stats: () => api.get("/admin/dashboard/books-stats"),
   },
 
   categories: {

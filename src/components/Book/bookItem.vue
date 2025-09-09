@@ -19,7 +19,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 </script>
 <template>
-  <div class="group relative cursor-pointer w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg  hover:shadow-lg">
+  <div class="group relative cursor-pointer min-w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg  hover:shadow-lg">
     <div class="relative mb-2 overflow-hidden rounded-md">
       <img :src="`${apiBaseUrl}${book.cover}`" :alt="book.title" class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out" />
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon } from '@heroicons/vue/24/outline'
 import { useBooksStore } from '@/stores/Books'
 import { useLanguageStore } from '@/stores/language'
@@ -420,7 +420,9 @@ const translations = computed(() => languageStore.translations)
             <h2 class="font-bold text-3xl text-gray-900 mb-2">{{ selectedBook.title }}</h2>
             <div class="w-24 h-1 bg-[var(--color-light)] mb-4 rounded-full"></div>
             <div class="space-y-2 mb-6 text-gray-700">
-                <p><strong>Author:</strong> {{ selectedBook.author.name }}</p>
+                <RouterLink :to="`/dashboard/authors/${selectedBook.author.id}`"><strong>Author:</strong>
+                  {{ selectedBook.author.name }}
+                </RouterLink>
                 </div>
             <div class="flex items-center">
               <strong class="text-lg text-gray-700 mr-2">{{ translations.dashboard?.bookDetails?.status }}</strong>

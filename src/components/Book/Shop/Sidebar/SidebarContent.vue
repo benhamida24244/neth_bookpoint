@@ -1,14 +1,18 @@
 <template>
   <aside class="w-full bg-white text-gray-900 p-4 font-BonaRegular rounded-lg shadow-md overflow-y-auto">
-    <!-- Title -->
-    <h2 class="text-xl font-bold text-[var(--color-primary)] mb-6">Filter & Categories</h2>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold text-[var(--color-primary)]">Filter & Categories</h2>
+      <button v-if="hasActiveFilters" @click="clearFilters" class="text-sm text-red-500 hover:underline">Clear</button>
+    </div>
 
     <!-- Popular Sections -->
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Popular Sections</h3>
       <ul class="space-y-1 text-sm">
         <li v-for="item in popularSections" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
+          <button @click="selectFilter('popular', item)" :class="['w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition', { 'bg-yellow-100 font-semibold': selectedPopular === item }]">
+            {{ item }}
+          </button>
         </li>
       </ul>
     </section>
@@ -24,7 +28,7 @@
       <!-- Display the list of categories -->
       <ul v-else class="space-y-1 text-sm">
         <li v-for="category in allCategories" :key="category.id">
-          <a :href="category.url" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ category.name }}</a>
+          <button @click="selectFilter('category', category.id)" :class="['w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition', { 'bg-yellow-100 font-semibold': selectedCategory === category.id }]">{{ category.name }}</button>
         </li>
       </ul>
     </section>
@@ -34,8 +38,10 @@
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Price</h3>
       <ul class="space-y-1 text-sm">
-        <li v-for="item in prices" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
+        <li v-for="price in prices" :key="price.label">
+          <button @click="selectFilter('price', price.value)" :class="['w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition', { 'bg-yellow-100 font-semibold': selectedPrice === price.value }]">
+            {{ price.label }}
+          </button>
         </li>
       </ul>
     </section>
@@ -45,8 +51,10 @@
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Age</h3>
       <ul class="space-y-1 text-sm">
-        <li v-for="item in ages" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
+        <li v-for="age in ages" :key="age">
+          <button @click="selectFilter('age', age.toLowerCase())" :class="['w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition', { 'bg-yellow-100 font-semibold': selectedAge === age }]">
+            {{ age }}
+          </button>
         </li>
       </ul>
     </section>
@@ -57,7 +65,9 @@
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">Language</h3>
       <ul class="columns-2 gap-4 text-sm space-y-1">
         <li v-for="item in languages" :key="item">
-          <a href="#" class="block px-2 py-1 rounded hover:bg-yellow-50 transition">{{ item }}</a>
+          <button @click="selectFilter('language', item.trim().slice(0, 2).toLowerCase())" :class="['w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition', { 'bg-yellow-100 font-semibold': selectedLanguage === item }]">
+            {{ item }}
+          </button>
         </li>
       </ul>
     </section>
@@ -65,19 +75,68 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useCategoriesStore } from '@/stores/Categories';
 
-// Access the categories store
+const emit = defineEmits(['filters-changed']);
 const categoriesStore = useCategoriesStore();
 
-// Get all categories from the store using the allCategories getter
 const allCategories = computed(() => categoriesStore.allCategories);
-
-// Get the loading state from the store
 const isLoading = computed(() => categoriesStore.isLoading);
 
-console.log('allCategories', allCategories.value);
+const selectedCategory = ref<number | null>(null);
+const selectedPrice = ref<string | null>(null);
+const selectedAge = ref<string | null>(null);
+const selectedLanguage = ref<string | null>(null);
+const selectedPopular = ref<string | null>(null);
+
+const hasActiveFilters = computed(() => {
+  return (
+    selectedCategory.value !== null ||
+    selectedPrice.value !== null ||
+    selectedAge.value !== null ||
+    selectedLanguage.value !== null ||
+    selectedPopular.value !== null
+  );
+});
+
+function selectFilter(type: 'category' | 'price' | 'age' | 'language' | 'popular', value: any) {
+  if (type === 'category') selectedCategory.value = selectedCategory.value === value ? null : value;
+  if (type === 'price') selectedPrice.value = selectedPrice.value === value ? null : value;
+  if (type === 'age') selectedAge.value = selectedAge.value === value ? null : value;
+  if (type === 'language') selectedLanguage.value = selectedLanguage.value === value ? null : value;
+  if (type === 'popular') selectedPopular.value = selectedPopular.value === value ? null : value;
+}
+
+function clearFilters() {
+  selectedCategory.value = null;
+  selectedPrice.value = null;
+  selectedAge.value = null;
+  selectedLanguage.value = null;
+  selectedPopular.value = null;
+}
+
+// 🔥 هنا التعديل: تجهيز القيم حسب الباك اند
+watch([selectedCategory, selectedPrice, selectedAge, selectedLanguage, selectedPopular], () => {
+  let filters: Record<string, any> = {};
+
+  if (selectedCategory.value) filters.category_id = selectedCategory.value;
+  if (selectedAge.value) filters.age_group = selectedAge.value;
+  if (selectedLanguage.value) filters.language = selectedLanguage.value;
+  if (selectedPopular.value) filters.section = selectedPopular.value;
+
+  if (selectedPrice.value) {
+    if (selectedPrice.value.includes('-')) {
+      const [min, max] = selectedPrice.value.split('-');
+      filters.price_min = min;
+      filters.price_max = max;
+    } else if (selectedPrice.value.endsWith('+')) {
+      filters.price_min = selectedPrice.value.replace('+', '');
+    }
+  }
+
+  emit('filters-changed', filters);
+});
 
 const popularSections = [
   'Customer Favorites', 'Bestsellers', 'Teens & YA Bestsellers', 'Kids Bestsellers',
@@ -89,12 +148,13 @@ const popularSections = [
 ];
 
 const prices = [
-  'Under $5', '$5 - $10', '$10 - $25', '$25 - $50', 'Over $50'
+  { label: 'Under $10', value: '0-10' },
+  { label: '$10 - $25', value: '10-25' },
+  { label: '$25 - $50', value: '25-50' },
+  { label: 'Over $50', value: '50+' }
 ];
 
-const ages = [
-  '0 - 2 Years', '3 - 5 Years', '6 - 8 Years', '9 - 12 Years', 'Teens'
-];
+const ages = ['Child', 'Tween', 'Teen', 'Adult', 'All Ages'];
 
 const languages = [
   'English', 'German', 'French', 'Spanish', 'Russian', 'Italian', 'Portuguese',

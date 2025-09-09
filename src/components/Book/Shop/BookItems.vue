@@ -1,5 +1,5 @@
 <template>
-  <div
+  <RouterLink :to="`/book/${book.id}`"
     class="relative m-4 flex w-44 cursor-pointer flex-col rounded-lg bg-white p-3 shadow-md transition-shadow duration-300 hover:shadow-xl"
   >
     <!-- صورة الكتاب -->
@@ -45,7 +45,7 @@
         Add to Cart
       </button>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup>

@@ -2,9 +2,11 @@
 import LargeBanner from '@/components/Banner/LargeBanner.vue'
 import BookList from '@/components/Book/Shop/BookList.vue';
 import SidebarContent from '@/components/Book/Shop/Sidebar/SidebarContent.vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useBooksStore } from '@/stores/Books';
 import { useCategoriesStore } from '@/stores/Categories';
+import Pagination from '@/components/Pagination.vue';
+
 
 const imgBanner = {
   id: 1,
@@ -12,13 +14,33 @@ const imgBanner = {
   url: 'https://www.barnesandnoble.com/',
 }
 
+const booksStore = useBooksStore();
+const categoriesStore = useCategoriesStore();
+
+// State for filters
+const activeFilters = ref({});
+const currentPage = ref(1);
+
+// Handler for filter changes from the sidebar
+const handleFiltersChanged = (filters: any) => {
+  activeFilters.value = filters;
+  // Re-fetch books with the new filters
+  booksStore.fetchBooks(filters);
+};
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+  booksStore.fetchBooks({
+    page,
+    status: activeFilters.value !== 'All Books' ? activeFilters.value : undefined,
+  })
+}
+
 // Fetch books and categories when the component is mounted
 onMounted(async () => {
   console.log("Fetching data...");
   window.scrollTo(0,0)
-  const booksStore = useBooksStore();
-  const categoriesStore = useCategoriesStore();
-  await booksStore.fetchBooks();
+  await booksStore.fetchBooks({}); // Fetch initial books without filters
   await categoriesStore.fetchCategories();
   console.log("Data fetched!");
 })
@@ -29,7 +51,8 @@ onMounted(async () => {
     <div class="container mx-auto flex gap-8">
       <!-- Sidebar -->
       <aside class="w-64 hidden md:block sticky top-8 h-fit bg-white rounded-lg shadow p-4">
-        <SidebarContent />
+        <SidebarContent @filters-changed="handleFiltersChanged" />
+
       </aside>
       <!-- Main Content -->
       <main class="flex-1">
@@ -39,7 +62,14 @@ onMounted(async () => {
           recommendations, new releases and more.
         </p>
         <LargeBanner :banner="imgBanner" class="mb-6" />
-        <BookList />
+        <BookList :filters="activeFilters" />
+       <Pagination
+      v-if="booksStore.pagination"
+      :current-page="currentPage"
+      :last-page="booksStore.pagination.last_page"
+      :total-items="booksStore.pagination.total"
+      @page-changed="handlePageChange"
+    />
       </main>
     </div>
   </div>

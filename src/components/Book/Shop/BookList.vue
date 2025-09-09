@@ -2,15 +2,28 @@
 import { computed } from 'vue';
 import BookItems from './BookItems.vue';
 import { useBooksStore } from '@/stores/Books';
+// Define props to accept filters from the parent
+const props = defineProps({
+  filters: {
+    type: Object,
+    default: () => ({})
+  }
+});
 
 // Access the books store
 const booksStore = useBooksStore();
 
 // Get all books from the store using the allBooks getter
+// This list is already filtered by the parent component (ShopView.vue)
 const allBooks = computed(() => booksStore.allBooks);
 
 // Get the loading state from the store
 const isLoading = computed(() => booksStore.isLoading);
+
+// Check if any filters are active to show a more specific message
+const hasActiveFilters = computed(() => {
+  return Object.values(props.filters).some(value => value !== null && value !== undefined && value !== '');
+});
 </script>
 
 <template>
@@ -21,11 +34,17 @@ const isLoading = computed(() => booksStore.isLoading);
     </div>
     <!-- Show a message if there are no books -->
     <div v-else-if="allBooks.length === 0" class="text-center py-10">
-      <p class="text-lg text-gray-500">No books available at the moment. Please check back later.</p>
+      <p v-if="hasActiveFilters" class="text-lg text-gray-500">
+        No books match your current filters. Try adjusting your search.
+      </p>
+      <p v-else class="text-lg text-gray-500">
+        No books available at the moment. Please check back later.
+      </p>
     </div>
     <!-- Display the list of books -->
     <template v-else>
       <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
     </template>
+
   </div>
 </template>

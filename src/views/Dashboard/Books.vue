@@ -1,10 +1,11 @@
 <script setup>
 import { useBooksStore } from '@/stores/Books'
 import { useSettingsStore } from '@/stores/settings'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import { useLanguageStore } from '@/stores/language'
 import * as XLSX from 'xlsx'
 import { useAuthorStore } from '@/stores/Authors'
@@ -36,11 +37,21 @@ const publishingHouseStore = usePublishingHouseStore()
 const categoriesStore = useCategoriesStore()
 
 onMounted(async () => {
-  await bookStore.fetchBooks()
+  await bookStore.fetchBooks({ page: 1 })
   await authorStore.fetchAuthors()
   await publishingHouseStore.fetchPublisher()
   await categoriesStore.fetchCategories()
 })
+
+// Current page state
+const currentPage = ref(1)
+
+// Watch for pagination updates
+watch(() => bookStore.pagination, (newPagination) => {
+  if (newPagination) {
+    currentPage.value = newPagination.current_page
+  }
+}, { immediate: true })
 
 // بيانات الكتب
 const books = computed(() => bookStore.books || [])
@@ -120,10 +131,10 @@ if (book.cover) {
   try {
     // استخراج اسم الملف من المسار
     const fileName = book.cover.split('/').pop(); // "اسم الملف.jpg"
-    
+
     // الوصول إلى الملف في مجلد public (الملف يجب أن يكون ضمن public/storage/cover)
     const fileInput = document.querySelector(`#coverInput[data-filename="${fileName}"]`);
-    
+
     if (fileInput && fileInput.files.length > 0) {
       formData.append('cover', fileInput.files[0]); // إضافة الصورة مباشرة
     } else {
@@ -146,7 +157,7 @@ console.log(formData);
     } catch (error) {
       console.error('Error during data import:', error);
       alert('Failed to import data. Please check the console for more details.');
-      
+
     }
   };
 
@@ -163,25 +174,25 @@ const triggerImport = () => {
 const stats = computed(() => [
   {
     label: translations.value.dashboard?.books?.stats?.total,
-    value: books.value.length.toString(),
+    value: bookStore.stats.books?.toString() || '0',
     icon: 'fas fa-book text-blue-500',
     iconBg: 'bg-blue-50'
   },
   {
     label: translations.value.dashboard?.books?.stats?.authors,
-    value: (bookStore.getTotalAuthors || []).length.toString(),
+    value: bookStore.stats.authors?.toString() || '0',
     icon: 'fas fa-user-pen text-green-500',
     iconBg: 'bg-green-50'
   },
   {
     label: translations.value.dashboard?.books?.stats?.publishers,
-    value: (bookStore.getTotalPublishedBooks || []).length.toString(),
+    value: bookStore.stats.publishers?.toString() || '0',
     icon: 'fas fa-building text-[var(--color-light)]',
     iconBg: 'bg-yellow-50'
   },
   {
     label: translations.value.dashboard?.books?.stats?.categories,
-    value: (bookStore.getTotalCategories || []).length.toString(),
+    value: bookStore.stats.categories?.toString() || '0',
     icon: 'fas fa-layer-group text-emerald-500',
     iconBg: 'bg-emerald-50'
   }
@@ -207,6 +218,12 @@ const filteredBooks = computed(() => {
   }
 
   return filtered
+})
+
+// Watch for filter changes to reset pagination
+watch([activeFilter, searchQuery], () => {
+  currentPage.value = 1
+  bookStore.fetchBooks({ page: 1, status: activeFilter.value !== 'All Books' ? activeFilter.value : undefined, search: searchQuery.value })
 })
 
 // تصنيف الحالة
@@ -255,6 +272,15 @@ const handleUpdateBook = (updatedBook) => {
   bookStore.updateBook(updatedBook.id, updatedBook)
   showEditBookModal.value = false
   alert(translations.value.dashboard?.books?.updateSuccess)
+}
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+  bookStore.fetchBooks({
+    page,
+    status: activeFilter.value !== 'All Books' ? activeFilter.value : undefined,
+    search: searchQuery.value
+  })
 }
 </script>
 
@@ -416,14 +442,23 @@ const handleUpdateBook = (updatedBook) => {
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ book.category.name }}
+                <td  class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  <RouterLink :to="`/dashboard/categories/${book.category.id}`">
+                    {{ book.category.name }}
+                  </RouterLink>
+
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.author.name }}
+                  <RouterLink :to="`/dashboard/authors/${book.author.id}`">
+                    {{ book.author.name }}
+                  </RouterLink>
+
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publisher.name }}
+                  <RouterLink :to="`/dashboard/publishing-house/${book.publisher.id}`">
+                     {{ book.publisher.name }}
+                  </RouterLink>
+
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -476,6 +511,14 @@ const handleUpdateBook = (updatedBook) => {
           </p>
         </div>
       </div>
+        <!-- pagination -->
+    <Pagination
+      v-if="bookStore.pagination"
+      :current-page="currentPage"
+      :last-page="bookStore.pagination.last_page"
+      :total-items="bookStore.pagination.total"
+      @page-changed="handlePageChange"
+    />
     </div>
   </div>
 </template>

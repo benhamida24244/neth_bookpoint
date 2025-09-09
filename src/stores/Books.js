@@ -5,12 +5,15 @@ export const useBooksStore = defineStore("books", {
   state: () => ({
     isLoading: false,
     books: [],
+    stats: [],
     book: null, // To hold a single book's details
+    pagination: null
   }),
   getters: {
     allBooks: (state) => state.books,
     singleBook: (state) => state.book,
     RecentBooks: (state) => state.books.slice(-5),
+    paginationInfo: (state) => state.pagination,
     // Keep other getters if they are still relevant
   },
   actions: {
@@ -21,7 +24,16 @@ export const useBooksStore = defineStore("books", {
       this.isLoading = true;
       try {
         const response = await apiService.publicResources.books.all(params);
+        const stats = await apiService.admin.books.stats();
+        this.stats = stats.data.stats;
         this.books = response.data.data; // The API returns data nested under a 'data' key
+        this.pagination = {
+      current_page: response.data.meta.current_page,
+      last_page: response.data.meta.last_page,
+      per_page: response.data.meta.per_page,
+      total: response.data.meta.total,
+      links: response.data.links
+    }
       } catch (error) {
         console.error("Failed to fetch books:", error);
         // Handle error appropriately in the UI
@@ -43,6 +55,23 @@ export const useBooksStore = defineStore("books", {
          // The API returns the book object nested under a 'data' key
       } catch (error) {
         console.error(`Failed to fetch book ${id}:`, error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Fetches a list of books based on params without storing them in the main state.
+     * @returns {Promise<Array>} A promise that resolves to an array of books.
+     */
+    async fetchBooksBy(params = {}) {
+      this.isLoading = true;
+      try {
+        const response = await apiService.publicResources.books.all(params);
+        return response.data.data;
+      } catch (error) {
+        console.error("Failed to fetch books by params:", error);
+        return []; // Return empty array on error
       } finally {
         this.isLoading = false;
       }

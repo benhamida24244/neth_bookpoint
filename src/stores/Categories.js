@@ -60,6 +60,7 @@ export const useCategoriesStore = defineStore('categories', {
         this.isLoading = false
       }
     },
+    
 
     // Add a new category
     async addCategory(categoryData) {

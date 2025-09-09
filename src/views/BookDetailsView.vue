@@ -74,7 +74,7 @@
               <button @click="handleBuyNow" class="bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3 px-6 rounded-lg transition duration-300" :title="translations.bookdetails.buyNowTooltip">
                 {{ translations.bookdetails.buyNow }}
               </button>
-           
+
             </div>
           </div>
         </div>
@@ -110,8 +110,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { onBeforeRouteUpdate } from 'vue-router';
 import RelatedBooksCarousel from '@/components/Book/RelatedBooksCarousel.vue';
 import { useCartStore } from '@/stores/Cart';
 import { useBooksStore } from '@/stores/Books';
@@ -127,37 +128,77 @@ const showFullDescription = ref(false);
 const languageStore = useLanguageStore();
 const { translations } = storeToRefs(languageStore);
 
-// اقرأ id من الرابط
 const bookId = Number(route.params.id);
-
-// جلب بيانات الكتاب من الـ API
 const book = computed(() => booksStore.book || {});
 
-// تحميل بيانات الكتاب والكتب المرتبطة عند تحميل الصفحة
+const relatedBooksCategory = ref([]);
+const relatedBooksAuthor = ref([]);
+const relatedBooksPublisher = ref([]);
+
+
+
+// ...
+
+onBeforeRouteUpdate(async (to, from, next) => {
+  const newBookId = Number(to.params.id);
+   window.scrollTo(0, 0);
+  if (newBookId) {
+    await booksStore.fetchBook(newBookId);
+    await fetchRelatedData();
+  }
+  next();
+});
+
+
+const fetchRelatedData = async () => {
+  if (!book.value || !book.value.id) return;
+
+  const currentBookId = book.value.id;
+
+  // Fetch by category
+  if (book.value.category?.id) {
+    const books = await booksStore.fetchBooksBy({ category_id: book.value.category.id, limit: 21 });
+    relatedBooksCategory.value = books.filter(b => b.id !== currentBookId).slice(0, 20);
+  }
+
+  // Fetch by author
+  if (book.value.author?.id) {
+    // Assuming the backend supports filtering by author_id
+    const books = await booksStore.fetchBooksBy({ author_id: book.value.author.id, limit: 21 });
+    relatedBooksAuthor.value = books.filter(b => b.id !== currentBookId).slice(0, 20);
+  }
+
+  // Fetch by publisher
+  if (book.value.publisher?.id) {
+    // Assuming the backend supports filtering by publisher_id
+    const books = await booksStore.fetchBooksBy({ publisher_id: book.value.publisher.id, limit: 21 });
+    relatedBooksPublisher.value = books.filter(b => b.id !== currentBookId).slice(0, 20);
+  }
+};
+
 onMounted(async () => {
   if (bookId) {
     await booksStore.fetchBook(bookId);
-    // جلب جميع الكتب لضمان توفر الكتب المرتبطة
-    await booksStore.fetchBooks();
   }
 });
 
-// Related books حسب الفئة، المؤلف، والناشر
-const relatedBooksCategory = computed(() => booksStore.books.filter(b => b.category && book.value.category && b.category.id === book.value.category.id && b.id !== bookId));
-const relatedBooksAuthor = computed(() => booksStore.books.filter(b => b.author && book.value.author && b.author.id === book.value.author.id && b.id !== bookId));
-const relatedBooksPublisher = computed(() => booksStore.books.filter(b => b.publisher && book.value.publisher && b.publisher.id === book.value.publisher.id && b.id !== bookId));
+// Watch for the book data to be loaded, then fetch related books.
+watch(book, (newBook) => {
+  if (newBook && newBook.id) {
+    fetchRelatedData();
+  }
+}, { immediate: true, deep: true });
+
 
 // تحقق إذا يوجد أكثر من كتاب بنفس الفئة/المؤلف/الناشر
 const muchCategory = computed(() => relatedBooksCategory.value.length > 0);
 const muchAuthor = computed(() => relatedBooksAuthor.value.length > 0);
 const muchPublisher = computed(() => relatedBooksPublisher.value.length > 0);
 
-// أزرار الإضافة للسلة والشراء الآن
 const handleAddToCart = () => {
   if (book.value.id) {
-    // التحقق من توفر الكتاب في المخزون
     if (book.value.stock && book.value.stock > 0) {
-      cartStore.addToCart(book.value.id, 1); // تمرير معرف الكتاب والكمية
+      cartStore.addToCart(book.value.id, 1);
     } else {
       alert(translations.value.bookdetails.outOfStock);
     }
@@ -167,9 +208,8 @@ const handleAddToCart = () => {
 };
 const handleBuyNow = () => {
   if (book.value.id) {
-    // التحقق من توفر الكتاب في المخزون
     if (book.value.stock && book.value.stock > 0) {
-      cartStore.addToCart(book.value.id, 1); // تمرير معرف الكتاب والكمية
+      cartStore.addToCart(book.value.id, 1);
       router.push('/checkout');
     } else {
       alert(translations.value.bookdetails.outOfStock);
