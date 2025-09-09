@@ -28,14 +28,6 @@ const handleFiltersChanged = (filters: any) => {
   booksStore.fetchBooks(filters);
 };
 
-const handlePageChange = (page) => {
-  currentPage.value = page
-  booksStore.fetchBooks({
-    page,
-    status: activeFilters.value !== 'All Books' ? activeFilters.value : undefined,
-  })
-}
-
 // Fetch books and categories when the component is mounted
 onMounted(async () => {
   console.log("Fetching data...");
@@ -63,13 +55,6 @@ onMounted(async () => {
         </p>
         <LargeBanner :banner="imgBanner" class="mb-6" />
         <BookList :filters="activeFilters" />
-       <Pagination
-      v-if="booksStore.pagination"
-      :current-page="currentPage"
-      :last-page="booksStore.pagination.last_page"
-      :total-items="booksStore.pagination.total"
-      @page-changed="handlePageChange"
-    />
       </main>
     </div>
   </div>

@@ -8,6 +8,7 @@ import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const authorId = computed(() => parseInt(route.params.id))
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 const authorStore = useAuthorStore()
 const { authors } = storeToRefs(authorStore)
@@ -29,6 +30,7 @@ const getTranslation = (key) => {
   }
   return current
 }
+
 
 const authorDescription = computed(() => {
   if (selectedAuthor.value && selectedAuthor.value.descriptionKey) {
@@ -64,7 +66,7 @@ onMounted(() => {
                   class="absolute -inset-4 bg-gradient-to-r from-[var(--color-primary)] to-yellow-400 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-300"
                 ></div>
                 <img
-                  :src="selectedAuthor.img"
+                  :src="`${apiBaseUrl}${selectedAuthor.img}`"
                   :alt="selectedAuthor.name"
                   class="relative w-64 h-64 object-cover rounded-full shadow-2xl ring-4 ring-[var(--color-primary)]/20 group-hover:ring-[var(--color-primary)]/40 transition-all duration-300"
                 />
@@ -165,7 +167,8 @@ onMounted(() => {
             class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"
           ></div>
         </div>
-        <BookList />
+
+        <BookList :author_id="selectedAuthor?.id" />
       </div>
     </div>
   </div>

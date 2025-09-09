@@ -1,20 +1,50 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import BookItems from './BookItems.vue';
 import { useBooksStore } from '@/stores/Books';
+import Pagination from '@/components/Pagination.vue';
 // Define props to accept filters from the parent
 const props = defineProps({
   filters: {
     type: Object,
     default: () => ({})
+  },
+  author_id: {
+    type: Number,
+    default: null
+  },
+  category_id: {
+    type: Number,
+    default: null
+  },
+  publisher_id: {
+    type: Number,
+    default: null
   }
 });
 
 // Access the books store
 const booksStore = useBooksStore();
+const currentPage = ref(1);
+// Function to fetch books based on props
+const fetchFilteredBooks = async (page = 1) => {
+  const params = { ...props.filters, page };
+
+  if (props.author_id) {
+    await booksStore.fetchBooksByAuthor(props.author_id, page);
+  } else if (props.category_id) {
+    await booksStore.fetchBooksByCategory(props.category_id, page);
+  } else if (props.publisher_id) {
+    await booksStore.fetchBooksByPublisher(props.publisher_id, page);
+  } else {
+    await booksStore.fetchBooks(params);
+  }
+};
+
+// Watch for changes in props and refetch books when they change
+watch(() => [props.filters, props.author_id, props.category_id, props.publisher_id], fetchFilteredBooks, { immediate: true, deep: true });
 
 // Get all books from the store using the allBooks getter
-// This list is already filtered by the parent component (ShopView.vue)
 const allBooks = computed(() => booksStore.allBooks);
 
 // Get the loading state from the store
@@ -23,6 +53,14 @@ const isLoading = computed(() => booksStore.isLoading);
 // Check if any filters are active to show a more specific message
 const hasActiveFilters = computed(() => {
   return Object.values(props.filters).some(value => value !== null && value !== undefined && value !== '');
+});
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+  fetchFilteredBooks(page)
+}
+onMounted(() => {
+  fetchFilteredBooks();
 });
 </script>
 
@@ -44,6 +82,15 @@ const hasActiveFilters = computed(() => {
     <!-- Display the list of books -->
     <template v-else>
       <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
+      <div class="w-full">
+         <Pagination
+      v-if="booksStore.pagination"
+      :current-page="currentPage"
+      :last-page="booksStore.pagination.last_page"
+      :total-items="booksStore.pagination.total"
+      @page-changed="handlePageChange"
+    />
+      </div>
     </template>
 
   </div>

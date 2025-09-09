@@ -78,6 +78,81 @@ export const useBooksStore = defineStore("books", {
     },
 
     /**
+     * Fetches books by a specific author ID.
+     * @param {Number} authorId - The ID of the author
+     * @param {Number} page - The page number to fetch
+     */
+    async fetchBooksByAuthor(authorId, page = 1) {
+      this.isLoading = true;
+      try {
+        const response = await apiService.publicResources.books.all({ author_id: authorId, page });
+        this.books = response.data.data;
+        this.pagination = {
+          current_page: response.data.meta.current_page,
+          last_page: response.data.meta.last_page,
+          per_page: response.data.meta.per_page,
+          total: response.data.meta.total,
+          links: response.data.links
+        };
+      } catch (error) {
+        console.error(`Failed to fetch books by author ${authorId}:`, error);
+        this.books = []; // Reset to empty array on error
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Fetches books by a specific category ID.
+     * @param {Number} categoryId - The ID of the category
+     * @param {Number} page - The page number to fetch
+     */
+    async fetchBooksByCategory(categoryId, page = 1) {
+      this.isLoading = true;
+      try {
+        const response = await apiService.publicResources.books.all({ category_id: categoryId, page });
+        this.books = response.data.data;
+        this.pagination = {
+          current_page: response.data.meta.current_page,
+          last_page: response.data.meta.last_page,
+          per_page: response.data.meta.per_page,
+          total: response.data.meta.total,
+          links: response.data.links
+        };
+      } catch (error) {
+        console.error(`Failed to fetch books by category ${categoryId}:`, error);
+        this.books = []; // Reset to empty array on error
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Fetches books by a specific publisher ID.
+     * @param {Number} publisherId - The ID of the publisher
+     * @param {Number} page - The page number to fetch
+     */
+    async fetchBooksByPublisher(publisherId, page = 1) {
+      this.isLoading = true;
+      try {
+        const response = await apiService.publicResources.books.all({ publisher_id: publisherId, page });
+        this.books = response.data.data;
+        this.pagination = {
+          current_page: response.data.meta.current_page,
+          last_page: response.data.meta.last_page,
+          per_page: response.data.meta.per_page,
+          total: response.data.meta.total,
+          links: response.data.links
+        };
+      } catch (error) {
+        console.error(`Failed to fetch books by publisher ${publisherId}:`, error);
+        this.books = []; // Reset to empty array on error
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
      * Action to add a new book (Admin).
      */
     async addBook(formData) {

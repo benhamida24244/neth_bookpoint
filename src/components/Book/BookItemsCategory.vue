@@ -18,7 +18,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
 
 <template>
-  <div
+  <RouterLink :to="`/book/${book.id}`"
     class="group relative cursor-pointer w-44 transition-all duration-300 ease-in-out m-4 p-3 flex flex-col bg-white rounded-lg hover:shadow-lg"
   >
     <!-- صورة الكتاب + زر Quick Add -->
@@ -34,8 +34,8 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
         class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out rounded-md"
       >
         <button
-          class="bg-[var(--color-primary)] text-white font-semibold py-2 px-4 rounded-full hover:bg-[var(--color-hover)] transition hover:scale-105"
-          @click.stop="cartStore.addToCart(book.id, 1)"
+          class="z-50 bg-[var(--color-primary)] text-white font-semibold py-2 px-4 rounded-full hover:bg-[var(--color-hover)] transition hover:scale-105"
+          @click.stop.prevent="cartStore.addToCart(book.id, 1)"
         >
           Quick Add
         </button>
@@ -43,7 +43,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     </div>
 
     <!-- رابط تفاصيل الكتاب -->
-    <RouterLink :to="`/book/${book.id}`" class="mt-auto text-center block">
+    <div class="mt-auto text-center block">
       <h3
         class="font-bold text-md font-bona truncate"
         :title="book.title"
@@ -67,6 +67,6 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
           ></i>
         </span>
       </div>
-    </RouterLink>
-  </div>
+    </div>
+  </RouterLink>
 </template>

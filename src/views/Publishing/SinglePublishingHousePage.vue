@@ -2,7 +2,7 @@
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import BookList from '@/components/Book/BookCategoryList.vue'
+import BookList from '@/components/Book/Shop/BookList.vue'
 
 
 // --- Stores & Router ---
@@ -100,7 +100,7 @@ onMounted(()=> {
         </header>
 
         <Suspense>
-          <BookList :publisherId="currentPublishingHouse.id" />
+          <BookList :publisher_id="currentPublishingHouse.id" />
           <template #fallback>
             <div class="flex justify-center items-center py-12">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)]"></div>
