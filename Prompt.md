@@ -1,12 +1,69 @@
+أنت مساعد برمجة محترف. لديك مشروع Vue يحتوي على Views وComponents وModels وChat وكل النصوص فيه مكتوبة باللغة الإنجليزية فقط. مطلوب منك:
 
+1. تحويل جميع النصوص في المشروع لاستخدام i18n بحيث يمكن عرضها بثلاث لغات: العربية (ar)، الفرنسية (fr)، والإنجليزية (en).
+2. لكل نص في المشروع، استبدله باستدعاء الدالة t من vue-i18n، مثال:
+   ```javascript
+   const { t } = useI18n()
+   const MenuContent = computed(() => [
+     { name: t('header.home'), link: '/' },
+     { name: t('header.about'), link: '/about' },
+   ])
+إنشاء ملفات اللغة في مجلد locales/:
 
-> **Bug:**
-client:733 [vite] connecting...
-client:826 [vite] connected.
-:5174/src/stores/language.js?t=1757441184398:1  Failed to load resource: the server responded with a status of 404 (Not Found)
-vue-router.js?v=88488d42:204 [Vue Router warn]: uncaught error during route navigation:
-warn @ vue-router.js?v=88488d42:204
-vue-router.js?v=88488d42:2773 TypeError: Failed to fetch dynamically imported module: http://localhost:5174/src/Layout/DashboardLayout.vue?t=1757441327349
-triggerError @ vue-router.js?v=88488d42:2773
-vue-router.js?v=88488d42:204 [Vue Router warn]: Unexpected error when starting the router: TypeError: Failed to fetch dynamically imported module: http://localhost:5174/src/Layout/DashboardLayout.vue?t=1757441327349
-warn @ vue-router.js?v=88488d42:204
+ar.json
+
+fr.json
+
+en.json
+
+تنظيم ملفات اللغة بشكل هرمي حسب الأقسام، مثال للملف ar.json:
+
+json
+Copy code
+{
+  "header": {
+    "home": "الرئيسية",
+    "about": "عن الموقع",
+    "shop": "المتجر",
+    "delivery_theme": "موضوع التوصيل",
+    "authors": "المؤلفون"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "subtitle": "إدارة ملفك الشخصي وسجل الطلبات",
+    "myProfile": "ملفي الشخصي",
+    "activeAccount": "حساب نشط",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "phone": "الهاتف",
+    "country": "الدولة",
+    "goTocart": "الذهاب إلى البطاقة",
+    "loadingD": "جاري تحميل البيانات ...",
+    "shoppingCart": "عربة التسوق",
+    "itemsInCart": "{count} عناصر في عربة التسوق الخاصة بك",
+    "total": "المجموع",
+    "emptyCart": "عربة التسوق فارغة",
+    "emptyCartSuggestion": "أضف بعض العناصر للبدء",
+    "orderHistory": "سجل الطلبات",
+    "totalOrders": "{count} إجمالي الطلبات",
+    "order": "طلب",
+    "noOrders": "لا توجد طلبات حتى الآن",
+    "noOrdersSuggestion": "سيظهر سجل طلباتك هنا",
+    "quantity": "الكمية",
+    "logout": "تسجيل الخروج"
+  }
+}
+إنشاء نفس الهيكلية للملفات الفرنسية والإنجليزية (fr.json, en.json) مع ترجمة النصوص لكل لغة.
+
+التأكد من أن كل مكون (Component) وView وModel وChat يستخدم النصوص من ملفات اللغة عبر t('key.path').
+
+لا تترك أي نص صريح في القوالب أو السكريبت، كل النصوص يجب أن تأتي من ملفات اللغة.
+
+عند وجود نصوص ديناميكية (مثل {count})، تأكد من استخدامها بنفس الطريقة في جميع اللغات.
+
+ملاحظات إضافية:
+
+إذا وجد نصوص متكررة في عدة Views أو Components، ضعها في ملف اللغة مرة واحدة فقط لتجنب التكرار.
+
+استخدم التسميات الواضحة للـ keys لتعكس مكان استخدامها، مثال: profile.title, cart.emptyCart.
