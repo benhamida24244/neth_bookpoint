@@ -4,7 +4,7 @@
   "shipping": "الشحن",
   "vat": "الضريبة (15%)",
   "total": "المجموع الكلي",
-  "freeShippingNotice": "أضف ${{amount}} للحصول على شحن مجاني!",
+  "freeShippingNotice": "أضف {amount} للحصول على شحن مجاني!",
   "customerInformation": "معلومات العميل",
   "receiverName": "اسم المستلم",
   "email": "البريد الإلكتروني",

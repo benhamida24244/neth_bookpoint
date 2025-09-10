@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import apiService from '@/services/api';
-import { useAuthStore } from './Auth';
+import { useCustomerAuthStore } from './customerAuth';
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
@@ -12,7 +12,7 @@ export const useCartStore = defineStore('cart', {
 
   getters: {
    cartCount: (state) => {
-  const authStore = useAuthStore();
+  const authStore = useCustomerAuthStore();
 
   if (authStore.isAuthenticated) {
     if (!state.cart || !state.cart.items) return 0;
@@ -27,7 +27,7 @@ export const useCartStore = defineStore('cart', {
 }
 ,
     cartItems: (state) => {
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       
       // إذا كان المستخدم مسجلاً، استخدم السلة من الخادم
       if (authStore.isAuthenticated) {
@@ -38,7 +38,7 @@ export const useCartStore = defineStore('cart', {
       return state.localCart;
     },
     cartTotal: (state) => {
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       
       // إذا كان المستخدم مسجلاً، استخدم السلة من الخادم
       if (authStore.isAuthenticated) {
@@ -59,7 +59,7 @@ export const useCartStore = defineStore('cart', {
       }
     },
     async fetchCart() {
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       if (!authStore.isAuthenticated) {
         return;
       }
@@ -67,7 +67,20 @@ export const useCartStore = defineStore('cart', {
       this.error = null;
       try {
         const response = await apiService.cart.show();
-        this.cart = response.data.data;
+        const cartData = response.data.data;
+
+        // توحيد بنية السلة لتكون دائمًا كائنًا يحتوي على مصفوفة `items`
+        // هذا يحل مشكلة اختفاء السلة بعد تسجيل الدخول
+        if (Array.isArray(cartData)) {
+          // إذا كانت الاستجابة مصفوفة مباشرة
+          this.cart = { items: cartData };
+        } else if (cartData && Array.isArray(cartData.items)) {
+          // إذا كانت الاستجابة كائنًا يحتوي على `items`
+          this.cart = cartData;
+        } else {
+          // في حالة وجود بنية غير متوقعة، يتم تعيين سلة فارغة
+          this.cart = { items: [] };
+        }
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch cart.';
         if (error.response && error.response.status === 404) {
@@ -79,7 +92,7 @@ export const useCartStore = defineStore('cart', {
     },
 
     async addToCart(bookId, quantity) {
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       if (!authStore.isAuthenticated) {
         // Logic for guest user remains the same
         this.loading = true;
@@ -88,12 +101,12 @@ export const useCartStore = defineStore('cart', {
           existingItem.quantity += quantity;
         } else {
           try {
-            const bookResponse = await apiService.publicResources.books.get(bookId);
-            const book = bookResponse.data;
+            const response = await apiService.publicResources.books.get(bookId);
+            const book = response.data.data; // Correctly unwrap the book data
             this.localCart.push({
               id: book.id,
               title: book.title,
-              price: book.price,
+              price: parseFloat(book.price), // Ensure price is a number
               cover: book.cover,
               author: book.author.name,
               quantity: quantity
@@ -135,8 +148,8 @@ export const useCartStore = defineStore('cart', {
     async updateQuantity(cartItemId, quantity) {
       // ... (keeping original for now, can be improved later if needed)
       this.loading = true;
-      this.error = null;
-      const authStore = useAuthStore();
+      this.error = null; // Reset error state
+      const authStore = useCustomerAuthStore();
       
       try {
         if (authStore.isAuthenticated) {
@@ -160,7 +173,7 @@ export const useCartStore = defineStore('cart', {
     },
 
     async removeFromCart(cartItemId) {
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       if (!authStore.isAuthenticated) {
         this.localCart = this.localCart.filter(item => item.id !== cartItemId);
         localStorage.setItem('cart', JSON.stringify(this.localCart));
@@ -195,7 +208,7 @@ export const useCartStore = defineStore('cart', {
     
     async syncLocalCart() {
       if (this.localCart.length === 0) return;
-      const authStore = useAuthStore();
+      const authStore = useCustomerAuthStore();
       if (!authStore.isAuthenticated) return;
       
       this.loading = true;

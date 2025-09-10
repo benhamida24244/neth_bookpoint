@@ -7,6 +7,7 @@ import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
 import { useCartStore } from '@/stores/Cart'
 import { useSettingsStore } from '@/stores/settings'
+import { useUIStore } from '@/stores/ui' // 1. استيراد UI store
 import { useI18n } from 'vue-i18n'
 import { useCustomerAuthStore } from '@/stores/customerAuth'
 
@@ -15,23 +16,10 @@ const { t } = useI18n()
 // Ref for mobile menu state
 const isMenuOpen = ref(false)
 const route = useRoute()
-// Refs for login and register modal state
-const showLogin = ref(false)
-const showRegister = ref(false)
 
-// Functions to control login and register modals
-const openLogin = () => {
-  showLogin.value = !showLogin.value
-  showRegister.value = false
-}
-const openRegister = () => {
-  showRegister.value = true
-  showLogin.value = false
-}
-const CloseModal = () => {
-  showLogin.value = false
-  showRegister.value = false
-}
+// 2. استخدام UI store لإدارة حالة النوافذ المنبثقة
+const uiStore = useUIStore()
+const { isLoginModalOpen, isRegisterModalOpen } = storeToRefs(uiStore)
 
 // Function to toggle the mobile menu
 const toggleMenu = () => {
@@ -183,12 +171,12 @@ const isRtl = computed(() => {
         <template v-else>
           <button
             class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-gray-400 bg-transparent hover:bg-gray-50 hover:text-black transition-all"
-            @click="openLogin"
+            @click="uiStore.openLoginModal"
           >
             {{ t('header.login') }}
           </button>
           <button
-            @click="openRegister"
+            @click="uiStore.openRegisterModal"
             class="px-4 py-2 text-sm rounded-full font-medium cursor-pointer tracking-wide text-white border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-hover)] transition-all"
           >
             {{ t('header.signup') }}
@@ -216,7 +204,6 @@ const isRtl = computed(() => {
       </div>
     </div>
   </header>
-  <LoginView v-if="showLogin" @openRegister="openRegister" @close="CloseModal" />
-  <RegisterView v-if="showRegister" @openLogin="openLogin" @close="CloseModal" />
+  <LoginView v-if="isLoginModalOpen" @openRegister="uiStore.openRegisterModal" @close="uiStore.closeModal" />
+  <RegisterView v-if="isRegisterModalOpen" @openLogin="uiStore.openLoginModal" @close="uiStore.closeModal" />
 </template>
-plate>

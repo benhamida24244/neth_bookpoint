@@ -117,12 +117,15 @@ import RelatedBooksCarousel from '@/components/Book/RelatedBooksCarousel.vue';
 import { useCartStore } from '@/stores/Cart';
 import { useBooksStore } from '@/stores/Books';
 import { useI18n } from 'vue-i18n';
-import { storeToRefs } from 'pinia';
+import { useCustomerAuthStore } from '@/stores/customerAuth';
+import { useUIStore } from '@/stores/ui';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
+const customerAuthStore = useCustomerAuthStore();
+const uiStore = useUIStore();
 const booksStore = useBooksStore();
 const showFullDescription = ref(false);
 
@@ -208,7 +211,11 @@ const handleBuyNow = () => {
   if (book.value.id) {
     if (book.value.stock && book.value.stock > 0) {
       cartStore.addToCart(book.value.id, 1);
-      router.push('/checkout');
+      if (customerAuthStore.isAuthenticated) {
+        router.push('/checkout');
+      } else {
+        uiStore.openLoginModal();
+      }
     } else {
       alert(t('bookdetails.outOfStock'));
     }

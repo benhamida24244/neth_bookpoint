@@ -1,11 +1,13 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import TallBanner from '@/components/Banner/TallBanner.vue'
 import Cover from '@/assets/Img/Cover.png'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/Cart'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
+import { useUIStore } from '@/stores/ui' // 1. استيراد UI store
+import { useCustomerAuthStore } from '@/stores/customerAuth'
 
 const { t } = useI18n()
 const isLoading = ref(false)
@@ -19,35 +21,24 @@ const banner = {
 }
 
 const CartStore = useCartStore()
-const { cart, cartItems } = storeToRefs(CartStore)
-
-// تحقق من وجود بيانات السلة
-const cartData = computed(() => {
-  console.log('Cart data computed:', cartItems.value)
-  console.log('Cart data raw:', cart.value)
-
-  // إذا كانت cartItems فارغة ولكن cart.data تحتوي على items، استخدمها
-  if (cartItems.value.length === 0 && cart.value && cart.value.data && cart.value.data.items) {
-    console.log('Using cart.data.items')
-    return cart.value.data.items
-  }
-
-  return cartItems.value
-})
-
-// جلب بيانات السلة عند تحميل المكون
-import { onMounted, watch } from 'vue'
+const { cart, cartItems, loading } = storeToRefs(CartStore)
+const customerAuthStore = useCustomerAuthStore()
+const uiStore = useUIStore() // 2. تهيئة UI store
 
 // جلب بيانات السلة عند تحميل المكون
 onMounted(async () => {
-  console.log('Fetching cart data...')
-  try {
-    await CartStore.fetchCart()
-    console.log('Cart data fetched:', cartItems.value)
-    console.log('Cart raw data:', cart.value)
-  } catch (error) {
-    console.error('Error fetching cart:', error)
+  // لا تستدعي fetchCart إلا إذا كان المستخدم مسجلاً دخوله
+  if (customerAuthStore.isAuthenticated) {
+    console.log('User is authenticated, fetching cart data...')
+    try {
+      await CartStore.fetchCart()
+      console.log('Cart data fetched:', cartItems.value)
+      console.log('Cart raw data:', cart.value)
+    } catch (error) {
+      console.error('Error fetching cart:', error)
+    }
   }
+  // بالنسبة للضيوف، يتم التعامل مع السلة محليًا داخل CartStore
 })
 
 // مراقبة أي تغييرات في بيانات السلة
@@ -70,15 +61,7 @@ watch(
 
 // Total price computation
 const totalPrice = computed(() => {
-  // استخدام البيانات مباشرة من cart.value.data إذا كانت متوفرة
-  if (cart.value && cart.value.data && cart.value.data.items) {
-    return cart.value.data.items
-      .reduce((sum, item) => sum + parseFloat(item.price || 0) * (item.quantity || 1), 0)
-      .toFixed(2)
-  }
-
-  // العودة إلى الاعتماد على cartItems كخيار بديل
-  if (!cartItems.value || cartItems.value.length === 0) return 0
+  if (!cartItems.value || cartItems.value.length === 0) return '0.00'
   return cartItems.value
     .reduce((sum, item) => sum + parseFloat(item.price || 0) * (item.quantity || 1), 0)
     .toFixed(2)
@@ -86,14 +69,20 @@ const totalPrice = computed(() => {
 
 // Checkout button handler
 const handleCheckout = () => {
-  if (isLoading.value) return
-
-  isLoading.value = true
-  setTimeout(() => {
-    checkout.value = true
-    isLoading.value = false
-    router.push('/checkout')
-  }, 1500)
+  // 3. التحقق من حالة تسجيل الدخول
+  if (customerAuthStore.isAuthenticated) {
+    // إذا كان المستخدم مسجلاً، انتقل إلى صفحة الدفع
+    if (isLoading.value) return
+    isLoading.value = true
+    setTimeout(() => {
+      checkout.value = true
+      isLoading.value = false
+      router.push('/checkout')
+    }, 1500)
+  } else {
+    // إذا لم يكن المستخدم مسجلاً، افتح نافذة تسجيل الدخول
+    uiStore.openLoginModal()
+  }
 }
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
@@ -114,11 +103,19 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
           {{ t('cartView.title') }}
         </h1>
 
+        <!-- مؤشر التحميل -->
+        <div v-if="loading" class="flex justify-center items-center h-64">
+          <svg class="animate-spin h-10 w-10 text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+
         <!-- Cart Items -->
-        <div v-if="cartData && cartData.length > 0">
+        <div v-else-if="cartItems && cartItems.length > 0">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
-              v-for="item in cartData"
+              v-for="item in cartItems"
               :key="item.id"
               class="flex flex-col justify-between items-center border p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 relative"
             >
@@ -143,20 +140,20 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                 :src="
                   item.book
                     ? `${apiBaseUrl}${item.book.cover}`
-                    : '/storage/books/default-placeholder.jpg'
+                    : `${apiBaseUrl}${item.cover}`
                 "
                 alt="Book Cover"
                 class="w-24 h-32 object-cover rounded"
               />
               <div class="text-center mt-4">
                 <h2 class="text-lg font-semibold">
-                  {{ item.book ? item.book.title : t('cartView.unknownBook') }}
+                  {{ item.book ? item.book.title : (item.title || t('cartView.unknownBook')) }}
                 </h2>
                 <p class="text-sm text-gray-500">
                   {{
                     item.book
-                      ? item.book.description.substring(0, 50) + '...'
-                      : t('cartView.noDescription')
+                      ? (item.book.author ? item.book.author.name : '') + (item.book.description ? ' - ' + item.book.description.substring(0, 50) + '...' : '')
+                      : (item.author || t('cartView.noDescription'))
                   }}
                 </p>
                 <p class="text-green-600 font-medium mt-2">

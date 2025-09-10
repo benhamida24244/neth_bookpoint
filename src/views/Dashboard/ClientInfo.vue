@@ -43,9 +43,38 @@ const CreateAvatar = (name) => {
   return canvas.toDataURL('image/png')
 }
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const clientStore = useClientsStore()
 
+// 定义翻译对象
+const translations = computed(() => {
+  return {
+    dashboard: {
+      clientInfo: {
+        status: {
+          active: t('dashboard.clientInfo.status.active'),
+          inactive: t('dashboard.clientInfo.status.inactive'),
+          pending: t('dashboard.clientInfo.status.pending')
+        },
+        totalOrders: t('dashboard.clientInfo.totalOrders'),
+        totalSpent: t('dashboard.clientInfo.totalSpent'),
+        averageOrder: t('dashboard.clientInfo.averageOrder'),
+        memberSince: t('dashboard.clientInfo.memberSince'),
+        country: t('dashboard.clientInfo.country'),
+        registrationDate: t('dashboard.clientInfo.registrationDate'),
+        lastOrder: t('dashboard.clientInfo.lastOrder'),
+        address: t('dashboard.clientInfo.address'),
+        notes: t('dashboard.clientInfo.notes'),
+        statusManagement: t('dashboard.clientInfo.statusManagement'),
+        currentStatus: t('dashboard.clientInfo.currentStatus'),
+        changeStatus: t('dashboard.clientInfo.changeStatus')
+      }
+    }
+  }
+})
+
+// 定义语言存储
+const languageStore = { language: locale.value }
 
 // Client Status Configuration
 const STATUS_CONFIG = computed(() => ({
@@ -449,7 +478,7 @@ watch(
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">{{
-                    t('dashboard.clientInfo.country')
+                    translations.dashboard?.clientInfo?.country
                   }}</label>
                   <p class="text-gray-900 font-medium">{{ selectedClient.country }}</p>
                 </div>

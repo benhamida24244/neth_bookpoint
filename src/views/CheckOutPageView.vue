@@ -83,18 +83,20 @@ const visaCardDetails = ref({
 
 onMounted(async () => {
   checkoutStore.fetchCheckoutData();
-
-  // تأكد من تحميل بيانات السلة عند تحميل صفحة الدفع
-  await cartStore.fetchCart();
-  console.log("Cart data loaded:", cartStore.cart);
+  
+  // تأكد من تحميل بيانات السلة عند تحميل صفحة الدفع، فقط إذا كان المستخدم مسجلاً
+  if (userStore.isAuthenticated) {
+    await cartStore.fetchCart();
+    console.log("Cart data loaded:", cartStore.cart);
+  }
 });
 
 // Form data structure
 const formData = ref({
-  receiverName: user.value.name,
-  email: user.value.email,
+  receiverName: user.value?.name || '',
+  email: user.value?.email || '',
   phone: '',
-  address: user.value.address,
+  address: user.value?.address || '',
   city: '',
   postalCode: ''
 });

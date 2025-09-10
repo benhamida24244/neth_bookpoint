@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import apiService from '@/services/api.js'
+import { useCartStore } from './Cart'
 
 export const useCustomerAuthStore = defineStore('customerAuth', {
   state: () => ({
@@ -23,6 +24,10 @@ export const useCustomerAuthStore = defineStore('customerAuth', {
         localStorage.setItem('customer_token', customer_token);
         // Also set the role for the router guard if needed
         localStorage.setItem('role', 'customer');
+
+        // مزامنة السلة المحلية مع الخادم بعد تسجيل الدخول
+        const cartStore = useCartStore();
+        await cartStore.syncLocalCart();
 
         return true;
       } catch (error) {

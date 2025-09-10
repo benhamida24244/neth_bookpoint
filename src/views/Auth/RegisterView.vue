@@ -82,6 +82,7 @@ const handleRegister = async () => {
   })
 
   try {
+    // 1. محاولة تسجيل المستخدم
     await CustomerAuth.register({
       name: formData.name,
       email: formData.email,
@@ -89,19 +90,18 @@ const handleRegister = async () => {
       password_confirmation: formData.password_confirmation,
     })
 
-    // Registration successful, now try to login automatically
-    try {
-      await CustomerAuth.login({
-        email: formData.email,
-        password: formData.password,
-      })
-      // Login successful, redirect to home
-      router.push('/')
+    // 2. إذا نجح التسجيل، قم بتسجيل الدخول تلقائيًا
+    const loginSuccess = await CustomerAuth.login({
+      email: formData.email,
+      password: formData.password,
+    })
+
+    if (loginSuccess) {
+      // عند النجاح، أغلق النافذة. سيبقى المستخدم في الصفحة الحالية.
       emit('close')
-    } catch (loginError) {
-      console.error('Login error after registration:', loginError)
-      // If auto-login fails, redirect to login page
-      router.push('/login')
+    } else {
+      // إذا فشل تسجيل الدخول التلقائي، أظهر نافذة تسجيل الدخول للمحاولة اليدوية.
+      emit('openLogin')
     }
   } catch (error) {
     // Handle registration error

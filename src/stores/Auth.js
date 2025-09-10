@@ -107,19 +107,19 @@ export const useAuthStore = defineStore('auth', {
         const { user, token, access_token, role } = response.data;
 
         this.user = user || null;
-        this.token = token || access_token || null;
+        this.customerToken = token || access_token || null;
         this.role = role || 'customer';
 
-        this.saveSession(this.user, this.token, this.role, true);
+        this.saveSession(this.user, this.customerToken, this.role, true);
         
         // مزامنة السلة المحلية مع السلة في الخادم
         const cartStore = useCartStore();
         await cartStore.syncLocalCart();
 
-        router.push('/');
+        return true;
       } catch (error) {
         this.error = error.response?.data?.message || 'An error occurred during customer login.';
-        throw error;
+        return false;
       } finally {
         this.loading = false;
       }
