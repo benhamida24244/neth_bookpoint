@@ -206,7 +206,7 @@ async function saveAuthor() {
     </div>
 
     <!-- Edit Modal -->
-    <div v-if="showEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div v-if="showEditModal" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative">
         <h2 class="text-xl font-bold mb-4">{{ t('dashboard.authorDetails.editAuthor') }}</h2>
 

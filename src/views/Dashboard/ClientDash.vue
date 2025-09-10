@@ -305,13 +305,13 @@ const formatDate = (dateString) => {
       <!-- Analytics Row -->
       <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
         <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
-          <p class="text-lg font-bold text-gray-600">{{ t('dashboard.clients.stats.total') }}</p>
+          <p class="text-lg font-bold text-gray-600">{{ t('dashboard.clients_dash.stats.total') }}</p>
           <span class="ml-2 text-[var(--color-primary)] font-bold text-lg">{{
             filteredClients.length
           }}</span>
         </div>
         <div class="flex items-center bg-green-50 px-4 py-2 rounded-lg">
-          <p class="text-lg font-bold text-gray-600">{{ t('dashboard.clients.stats.orders') }}</p>
+          <p class="text-lg font-bold text-gray-600">{{ t('dashboard.clients_dash.stats.orders') }}</p>
           <span class="ml-2 text-green-600 font-bold text-lg">{{ totalOrders }}</span>
         </div>
       </div>
@@ -331,29 +331,29 @@ const formatDate = (dateString) => {
             </div>
             <div class="space-y-1 text-sm text-gray-600">
               <p>
-                <span class="font-medium">{{ t('dashboard.clients.table.email') }}:</span>
+                <span class="font-medium">{{ t('dashboard.clients_dash.table.email') }}:</span>
                 {{ client.email }}
               </p>
               <p>
-                <span class="font-medium">{{ t('dashboard.clients.table.phone') }}:</span>
+                <span class="font-medium">{{ t('dashboard.clients_dash.table.phone') }}:</span>
                 {{ client.phone }}
               </p>
               <p>
-                <span class="font-medium">{{ t('dashboard.clients.table.country') }}:</span>
+                <span class="font-medium">{{ t('dashboard.clients_dash.table.country') }}:</span>
                 {{ client.country }}
               </p>
               <p>
                 <span class="font-medium"
-                  >{{ t('dashboard.clients.table.registrationDate') }}:</span
+                  >{{ t('dashboard.clients_dash.table.registrationDate') }}:</span
                 >
                 {{ client.Registration_date }}
               </p>
               <p>
-                <span class="font-medium">{{ t('dashboard.clients.table.orders') }}:</span>
+                <span class="font-medium">{{ t('dashboard.clients_dash.table.orders') }}:</span>
                 {{ client.total_orders }}
               </p>
               <p>
-                <span class="font-medium">{{ t('dashboard.clients.table.totalSpent') }}:</span> ${{
+                <span class="font-medium">{{ t('dashboard.clients_dash.table.totalSpent') }}:</span> ${{
                   client.total_spent
                 }}
               </p>
@@ -390,47 +390,47 @@ const formatDate = (dateString) => {
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.name') }}
+                  {{ t('dashboard.clients_dash.table.name') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.id') }}
+                  {{ t('dashboard.clients_dash.table.id') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.email') }}
+                  {{ t('dashboard.clients_dash.table.email') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.phone') }}
+                  {{ t('dashboard.clients_dash.table.phone') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.registrationDate') }}
+                  {{ t('dashboard.clients_dash.table.registrationDate') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.orders') }}
+                  {{ t('dashboard.clients_dash.table.orders') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.totalSpent') }}
+                  {{ t('dashboard.clients_dash.table.totalSpent') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.country') }}
+                  {{ t('dashboard.clients_dash.table.country') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.clients.table.action') }}
+                  {{ t('dashboard.clients_dash.table.action') }}
                 </th>
               </tr>
             </thead>
@@ -499,10 +499,10 @@ const formatDate = (dateString) => {
             />
           </svg>
           <h3 class="mt-2 text-sm font-medium text-gray-900">
-            {{ t('dashboard.clients.emptyHeader') }}
+            {{ t('dashboard.clients_dash.emptyHeader') }}
           </h3>
           <p class="mt-1 text-sm text-gray-500">
-            {{ t('dashboard.clients.emptySubtext') }}
+            {{ t('dashboard.clients_dash.emptySubtext') }}
           </p>
         </div>
       </div>

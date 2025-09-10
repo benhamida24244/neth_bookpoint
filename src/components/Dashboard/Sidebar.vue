@@ -271,7 +271,7 @@ nav::-webkit-scrollbar {
   width: 4px;
 }
 nav::-webkit-scrollbar-thumb {
-  background: #d4af37;
+  background: var(--color-primary);
   border-radius: 4px;
 }
 </style>

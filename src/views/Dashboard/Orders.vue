@@ -4,9 +4,9 @@
       <!-- Header -->
       <div class="mb-8 font-BonaRegular">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-          {{ t('dashboard.orders.title') }}
+          {{ t('dashboard.orders_dash.title') }}
         </h1>
-        <p class="text-gray-600 mt-1">{{ t('dashboard.orders.subtitle') }}</p>
+        <p class="text-gray-600 mt-1">{{ t('dashboard.orders_dash.subtitle') }}</p>
       </div>
 
       <!-- Stats Cards -->
@@ -72,37 +72,37 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.id') }}
+                  {{ t('dashboard.orders_dash.table.id') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.customer') }}
+                  {{ t('dashboard.orders_dash.table.customer') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.book') }}
+                  {{ t('dashboard.orders_dash.table.book') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.status') }}
+                  {{ t('dashboard.orders_dash.table.status') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.price') }}
+                  {{ t('dashboard.orders_dash.table.price') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.date') }}
+                  {{ t('dashboard.orders_dash.table.date') }}
                 </th>
                 <th
                   class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.orders.table.actions') }}
+                  {{ t('dashboard.orders_dash.table.actions') }}
                 </th>
               </tr>
             </thead>
@@ -158,9 +158,9 @@
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-1">
-            {{ t('dashboard.orders.emptyHeader') }}
+            {{ t('dashboard.orders_dash.emptyHeader') }}
           </h3>
-          <p class="text-gray-500">{{ t('dashboard.orders.emptySubtext') }}</p>
+          <p class="text-gray-500">{{ t('dashboard.orders_dash.emptySubtext') }}</p>
         </div>
 
         <!-- Pagination -->
@@ -239,9 +239,11 @@ import { useCounterStore } from '@/stores/counter'
 import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
+import { useI18n } from 'vue-i18n'
 import { ref, computed, onMounted } from 'vue'
 import * as XLSX from 'xlsx'
 
+const { t } = useI18n()
 const settingsStore = useSettingsStore()
 
 const ordersStore = useOrdersStore()
@@ -272,31 +274,31 @@ onMounted(() => {
       const allOrders = ordersStore.orders;
       return [
         {
-          label: 'Total Orders',
+          label: t('dashboard.orders_filter.stats.totalOrders'),
           value: allOrders.length,
           icon: 'fas fa-list-ol text-blue-500',
           iconBg: 'bg-blue-50'
         },
         {
-          label: 'Avg Delivery Time',
+          label: t('dashboard.orders_filter.stats.avgDeliveryTime'),
           value: '3 days', // This cannot be calculated from current data
           icon: 'far fa-clock text-green-500',
           iconBg: 'bg-green-50'
         },
         {
-          label: 'Pending Orders',
+          label: t('dashboard.orders_filter.stats.pendingOrders'),
           value: allOrders.filter(o => o.status === 'Pending').length,
           icon: 'fas fa-truck text-[var(--color-light)]',
           iconBg: 'bg-yellow-50'
         },
         {
-          label: 'Returned Orders',
+          label: t('dashboard.orders_filter.stats.returnedOrders'),
           value: allOrders.filter(o => o.status === 'Returned').length,
           icon: 'fas fa-undo text-red-500',
           iconBg: 'bg-red-50'
         },
         {
-          label: 'Completed Orders',
+          label: t('dashboard.orders_filter.stats.completedOrders'),
           value: allOrders.filter(o => o.status === 'Completed').length,
           icon: 'fas fa-check-circle text-emerald-500',
           iconBg: 'bg-emerald-50'
@@ -305,11 +307,11 @@ onMounted(() => {
     })
 
     const filters = ref([
-      { label: 'All Orders', value: 'all' },
-      { label: 'Pending', value: 'pending' },
-      { label: 'Shipped', value: 'shipped' },
-      { label: 'Delivered', value: 'delivered' },
-      { label: 'Cancelled', value: 'cancelled' }
+      { label: t('dashboard.orders_filter.filters.allOrders'), value: 'all' },
+      { label: t('dashboard.orders_filter.filters.pending'), value: 'pending' },
+      { label: t('dashboard.orders_filter.filters.shipped'), value: 'shipped' },
+      { label: t('dashboard.orders_filter.filters.delivered'), value: 'delivered' },
+      { label: t('dashboard.orders_filter.filters.cancelled'), value: 'cancelled' }
     ])
 
     const filteredOrders = computed(() => {

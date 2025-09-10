@@ -136,12 +136,66 @@
     "searchPlaceholder": "Rechercher un livre...",
     "searchButton": "Rechercher"
   },
+  "themeExample": {
+    "preview": "Aperçu du composant",
+    "primaryButton": "Bouton principal",
+    "cardTitle": "Titre de la carte",
+    "cardDescription": "La bordure de cette carte utilise la couleur principale.",
+    "accessibilityGuidance": "Conseils d'accessibilité :",
+    "contrast": "Contraste",
+    "contrastText": "Assurez-vous que le texte sur un fond de couleur principale a un contraste suffisant. Pour ces couleurs, le texte blanc (ou un gris très clair) est généralement sûr. Utilisez un outil de vérification du contraste si vous n'êtes pas sûr.",
+    "hoverActiveStates": "États de survol et d'activation",
+    "hoverActiveStatesText": "Fournissez un retour visuel clair pour les éléments interactifs. Le bouton d'exemple utilise `hover:opacity-90` et `active:scale-95` à cet effet. Évitez de vous fier uniquement à la couleur pour transmettre l'état.",
+    "fallback": "Alternative",
+    "fallbackText": "La syntaxe `bg-[var(--color-primary)]` repose sur une variable CSS. L'alternative définie dans `main.css` est cruciale lorsque la variable n'est pas définie.",
+    "developerNotes": "Notes pour les développeurs :",
+    "tailwindJit": "Tailwind JIT",
+    "tailwindJitText": "Cela fonctionne parce que le compilateur Just-In-Time (JIT) de Tailwind voit la classe `bg-[var(--color-primary)]` et génère le CSS correspondant. Aucune liste de sécurité spéciale dans `tailwind.config.js` n'est nécessaire pour cette approche.",
+    "ssrCaveat": "Mise en garde SSR",
+    "ssrCaveatText": "Côté serveur (SSR), `localStorage` n'est pas disponible. La couleur initiale sera toujours celle par défaut du magasin. La bonne couleur sera appliquée côté client une fois que l'application sera hydratée. Cela peut provoquer un bref scintillement de la couleur par défaut au premier chargement pour les utilisateurs ayant un thème non par défaut."
+  },
   "dashboard": {
     "overview": "Aperçu du tableau de bord",
     "booksd": "Livres",
     "ordersToday": "Commandes du jour",
     "clientsd": "Clients",
     "salesToday": "Ventes du jour",
+    "orders_dash": {
+      "title": "Gestion des commandes",
+      "subtitle": "Gérez vos commandes et l'historique d'achat",
+      "table": {
+        "id": "ID de commande",
+        "customer": "Client",
+        "book": "Livre",
+        "status": "Statut",
+        "price": "Prix",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "emptyHeader": "Aucune commande trouvée",
+      "emptySubtext": "Il n'y a pas de commandes correspondant à vos critères"
+    },
+    "orders_filter": {
+      "searchPlaceholder": "Rechercher des commandes...",
+      "exportData": "Exporter les données",
+      "actions": {
+        "view": "Voir"
+      },
+      "stats": {
+        "totalOrders": "Total des commandes",
+        "avgDeliveryTime": "Temps de livraison moyen",
+        "pendingOrders": "Commandes en attente",
+        "returnedOrders": "Commandes retournées",
+        "completedOrders": "Commandes terminées"
+      },
+      "filters": {
+        "allOrders": "Toutes les commandes",
+        "pending": "En attente",
+        "shipped": "Expédié",
+        "delivered": "Livré",
+        "cancelled": "Annulé"
+      }
+    },
     "sidebar": {
       "dashboard": "Tableau de bord",
       "books": "Livres",
@@ -399,38 +453,7 @@
       "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre.",
       "deleteConfirm": "Confirmer la suppression"
     },
-    "orders": {
-      "title": "Gestion des commandes",
-      "subtitle": "Suivez et gérez efficacement toutes vos commandes de livres",
-      "filters": {
-        "all": "Toutes les commandes",
-        "pending": "En attente",
-        "completed": "Terminé",
-        "shipped": "Expédié",
-        "paid": "Payé"
-      },
-      "table": {
-        "id": "ID de commande",
-        "customer": "Client",
-        "items": "Articles",
-        "status": "Statut",
-        "price": "Prix",
-        "date": "Date",
-        "actions": "Actions"
-      },
-      "actions": {
-        "view": "Voir"
-      },
-      "emptyHeader": "Aucune commande trouvée",
-      "emptySubtext": "Essayez d'ajuster votre recherche ou votre filtre pour trouver ce que vous cherchez.",
-      "stats": {
-        "pending": "Commandes en attente",
-        "completed": "Commandes terminées",
-        "shipped": "Commandes expédiées",
-        "paid": "Commandes payées"
-      }
-    },
-    "clients": {
+    "clients_dash": {
       "title": "Tableau de bord des clients",
       "subtitle": "Suivez et gérez tous vos clients",
       "filter": "Filtrer",
@@ -469,7 +492,45 @@
       "livePreview": "Aperçu en direct",
       "localization": "Localisation",
       "currency": "Devise",
-      "language": "Langue"
+      "language": "Langue",
+      "currencies": {
+        "usd": "💵 Dollar américain",
+        "eur": "💶 Euro",
+        "dzd": "🇩🇿 Dinar algérien"
+      },
+      "languages": {
+        "en": "🇺🇸 Anglais",
+        "fr": "🇫🇷 Français",
+        "ar": "🇩🇿 Arabe"
+      }
+    },
+    "publishingHouses": {
+      "name": "Nom",
+      "orders": "Commandes",
+      "status": "Statut",
+      "books": "Livres",
+      "active": "Actif",
+      "draft": "Brouillon",
+      "confirmDeletion": "Confirmer la suppression",
+      "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action ne peut pas être annulée.",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "addPublisher": "Ajouter un éditeur",
+      "export": "Exporter",
+      "import": "Importer",
+      "sortBy": "Trier par",
+      "clearFilters": "Effacer les filtres",
+      "totalPublishers": "Total des éditeurs",
+      "totalOrders": "Total des commandes",
+      "totalBooks": "Total des livres",
+      "view": "Voir",
+      "edit": "Modifier",
+      "actions": "Actions",
+      "noPublishersFound": "Aucun éditeur trouvé",
+      "tryAdjustingSearch": "Essayez d'ajuster votre recherche ou vos critères de filtre.",
+      "clearAllFilters": "Effacer tous les filtres",
+      "importSuccess": "Données importées avec succès !",
+      "importFailed": "Échec de l'importation des données. Veuillez vérifier la console pour plus de détails."
     },
     "editCategory": {
       "title": "Modifier la catégorie",
@@ -992,5 +1053,37 @@
     "errorUpdate": "Erreur lors de la mise à jour du statut de la commande",
     "errorNotFound": "La commande demandée n'a pas été trouvée",
     "errorLoading": "Une erreur est survenue lors du chargement des détails de la commande"
+  },
+  "phouseDetails": {
+    "edit": "Modifier",
+    "statistics": "Statistiques",
+    "booksPublished": "Livres publiés",
+    "totalOrders": "Commandes totales",
+    "status": "Statut",
+    "active": "Actif",
+    "draft": "Brouillon",
+    "editPublishingHouse": "Modifier la maison d'édition",
+    "name": "Nom",
+    "description": "Description",
+    "imagePath": "Chemin de l'image",
+    "cancel": "Annuler",
+    "saveChanges": "Enregistrer les modifications",
+    "booksBy": "Livres de",
+    "errorOccurred": "Une erreur s'est produite!",
+    "loading": "Chargement de la maison d'édition..."
+  },
+  "categoriesInfo": {
+    "loadingCategory": "Chargement de la catégorie...",
+    "error": "Erreur:",
+    "retry": "Réessayer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "totalBooks": "Total des livres",
+    "orders": "Commandes",
+    "profit": "Profit",
+    "booksIn": "Livres dans",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer cette catégorie? Cette action ne peut pas être annulée.",
+    "categoryDeleted": "Catégorie supprimée avec succès.",
+    "deleteFailed": "Échec de la suppression de la catégorie. Veuillez réessayer."
   }
 }

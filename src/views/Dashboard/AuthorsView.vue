@@ -180,7 +180,7 @@ const openEditModal = (author) => {
           v-model="selectedCountry"
           class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         >
-          <option value="">{{ t('dashboard.authors.allCountries') }}</option>
+          <option value="">{{ t('dashboard.authors.filters.allCountries') }}</option>
           <option v-for="country in countries" :key="country" :value="country">
             {{ country }}
           </option>

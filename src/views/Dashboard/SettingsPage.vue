@@ -41,9 +41,9 @@
         @change="handleCurrencyChange"
         class="w-full p-2 border rounded"
       >
-        <option value="$">💵 USD</option>
-        <option value="€">💶 EUR</option>
-        <option value="DA">🇩🇿 DZD</option>
+        <option value="$">{{ t('dashboard.settings.currencies.usd') }}</option>
+        <option value="€">{{ t('dashboard.settings.currencies.eur') }}</option>
+        <option value="DA">{{ t('dashboard.settings.currencies.dzd') }}</option>
       </select>
 
       <!-- Language -->
@@ -53,18 +53,20 @@
         @change="handleLanguageChange"
         class="w-full p-2 border rounded"
       >
-        <option value="en">🇺🇸 English</option>
-        <option value="fr">🇫🇷 French</option>
-        <option value="ar">🇩🇿 Arabic</option>
+        <option value="en">{{ t('dashboard.settings.languages.en') }}</option>
+        <option value="fr">{{ t('dashboard.settings.languages.fr') }}</option>
+        <option value="ar">{{ t('dashboard.settings.languages.ar') }}</option>
       </select>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settings'
 import ExampleComponent from '@/components/Theme/ExampleComponent.vue'
 
+const { t } = useI18n()
 const settingsStore = useSettingsStore()
 
 const handleCurrencyChange = (event) => {

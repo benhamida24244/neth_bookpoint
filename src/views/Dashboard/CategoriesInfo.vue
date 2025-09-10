@@ -1,12 +1,14 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
 import BookCategoryList from '@/components/Book/BookCategoryList.vue'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const categoriesStore = useCategoriesStore()
 const { category, isLoading, error } = storeToRefs(categoriesStore)
 
@@ -25,14 +27,14 @@ const goToEditPage = () => {
 }
 
 const handleDeleteCategory = async () => {
-  if (confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+  if (confirm(t('categoriesInfo.deleteConfirmation'))) {
     try {
       await categoriesStore.deleteCategory(currentId)
-      alert('Category deleted successfully.')
+      alert(t('categoriesInfo.categoryDeleted'))
       router.push('/dashboard/categories')
     } catch (err) {
       console.error('Delete failed:', err)
-      alert('Failed to delete category. Please try again.')
+      alert(t('categoriesInfo.deleteFailed'))
     }
   }
 }
@@ -45,7 +47,7 @@ const currentCategory = computed(
 const formattedStatistics = computed(() => [
   {
     id: 1,
-    name: 'Total Books',
+    name: t('categoriesInfo.totalBooks'),
     displayValue: currentCategory.value.nmBook ?? 0,
     icon: 'fas fa-book',
     color: 'bg-blue-500',
@@ -53,7 +55,7 @@ const formattedStatistics = computed(() => [
   },
   {
     id: 2,
-    name: 'Orders',
+    name: t('categoriesInfo.orders'),
     displayValue: currentCategory.value.orders ?? 0,
     icon: 'fas fa-shopping-cart',
     color: 'bg-green-500',
@@ -61,7 +63,7 @@ const formattedStatistics = computed(() => [
   },
   {
     id: 3,
-    name: 'Profit',
+    name: t('categoriesInfo.profit'),
     displayValue: currentCategory.value.total_profit
       ? `$${currentCategory.value.profit}`
       : '$0',
@@ -77,13 +79,13 @@ const formattedStatistics = computed(() => [
   <div class="w-full min-h-screen bg-gray-50 py-8 px-4 sm:py-16">
     <div v-if="isLoading" class="text-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto"></div>
-      <p class="mt-4 text-gray-600">Loading Category...</p>
+      <p class="mt-4 text-gray-600">{{ t('categoriesInfo.loadingCategory') }}</p>
     </div>
     <div v-else-if="error" class="text-center py-20">
-      <p class="text-red-500 font-semibold">Error:</p>
+      <p class="text-red-500 font-semibold">{{ t('categoriesInfo.error') }}</p>
       <p class="text-gray-600">{{ error }}</p>
       <button @click="categoriesStore.fetchCategory(currentId)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-        Retry
+        {{ t('categoriesInfo.retry') }}
       </button>
     </div>
     <div v-else-if="currentCategory" class="max-w-7xl mx-auto">
@@ -101,14 +103,28 @@ const formattedStatistics = computed(() => [
         <!-- Details and Actions -->
         <div class="lg:col-span-2 flex flex-col justify-center space-y-6 relative">
           <!-- Action Buttons -->
-          <div class="absolute top-0 right-0 flex flex-col sm:flex-row gap-3">
-            <button @click="goToEditPage" class="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200 shadow-sm flex items-center gap-2">
-              <i class="fas fa-pencil-alt"></i> Edit
-            </button>
-            <button @click="handleDeleteCategory" class="px-5 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors duration-200 shadow-sm flex items-center gap-2">
-              <i class="fas fa-trash"></i> Delete
-            </button>
-          </div>
+        <!-- Action Buttons -->
+<div 
+  class="absolute top-4 flex flex-col sm:flex-row gap-3"
+  :class="{
+    'right-4': $i18n.locale === 'en' || $i18n.locale === 'fr', // LTR
+    'left-4 flex-row-reverse': $i18n.locale === 'ar'            // RTL
+  }"
+>
+  <button 
+    @click="goToEditPage" 
+    class="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200 shadow-sm flex items-center gap-2"
+  >
+    <i class="fas fa-pencil-alt"></i> {{ t('categoriesInfo.edit') }}
+  </button>
+
+  <button 
+    @click="handleDeleteCategory" 
+    class="px-5 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors duration-200 shadow-sm flex items-center gap-2"
+  >
+    <i class="fas fa-trash"></i> {{ t('categoriesInfo.delete') }}
+  </button>
+</div>
 
           <!-- Category Info -->
           <div class="h-1 bg-gradient-to-r from-[var(--color-primary)] to-transparent w-full max-w-xs"></div>
@@ -139,7 +155,7 @@ const formattedStatistics = computed(() => [
       <section class="max-w-7xl mx-auto px-4 py-12 lg:py-16">
         <header class="text-center mb-12">
           <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-primary)] mb-4 font-BonaRegular">
-            Books in {{ currentCategory.name }}
+            {{ t('categoriesInfo.booksIn') }} {{ currentCategory.name }}
           </h2>
           <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"></div>
         </header>
