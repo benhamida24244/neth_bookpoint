@@ -3,6 +3,9 @@ import { computed, onMounted } from 'vue'
 import { Chart as PieChart, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'vue-chartjs'
 import { useCategoriesStore } from '@/stores/Categories'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // تسجيل جميع المكونات اللازمة
 PieChart.register(ArcElement, Tooltip, Legend, Title)
@@ -30,12 +33,12 @@ const chartData = computed(() => {
           '#60a5fa', // Blue
           '#f87171', // Red
           '#34d399', // Green
-          '#c084fc' // Purple
+          '#c084fc', // Purple
         ],
         borderColor: '#fff',
-        borderWidth: 2
-      }
-    ]
+        borderWidth: 2,
+      },
+    ],
   }
 })
 
@@ -45,18 +48,18 @@ const chartOptions = {
     legend: {
       position: 'bottom',
       labels: {
-        color: '#000'
-      }
+        color: '#000',
+      },
     },
     title: {
       display: true,
-      text: 'Book Categories Distribution',
+      text: t('categorySalesChart.title'),
       color: '#000',
       font: {
-        size: 16
-      }
-    }
-  }
+        size: 16,
+      },
+    },
+  },
 }
 </script>
 

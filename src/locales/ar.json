@@ -255,6 +255,11 @@
         "publishers": "إجمالي الناشرين",
         "categories": "إجمالي الفئات"
       },
+      "exportData": "تصدير البيانات",
+      "importData": "استيراد البيانات",
+      "skippingBook": "تخطي الكتاب \"{{title}}\" بسبب عدم وجود بيانات مطلوبة.",
+      "importSuccess": "تم استيراد البيانات بنجاح!",
+      "importFailed": "فشل استيراد البيانات. يرجى التحقق من وحدة التحكم لمزيد من التفاصيل.",
       "status": {
         "published": "منشور",
         "pending": "قيد الانتظار",
@@ -281,7 +286,12 @@
         "category": "اختر فئة"
       },
       "save": "حفظ",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "requiredFields": "يرجى ملء جميع الحقول المطلوبة.",
+      "addNew": "إضافة ",
+      "name": " اسم",
+      "new": "جديد",
+      "failed": "فشل إضافة "
     },
     "editBookModal": {
       "title": "تعديل الكتاب",
@@ -294,8 +304,14 @@
         "stock": "المخزون",
         "image": "الصورة"
       },
-      "save": "حفظ",
-      "cancel": "إلغاء"
+      "save": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "requiredFields": "يرجى ملء جميع الحقول المطلوبة.",
+      "addNew": "إضافة ",
+      "name": " اسم",
+      "new": "جديد",
+      "selectAuthor": "اختر مؤلفًا",
+      "selectPublisher": "اختر ناشرًا"
     },
     "addCategoryModal": {
       "title": "إضافة فئة جديدة",
@@ -303,8 +319,10 @@
         "name": "اسم الفئة",
         "description": "الوصف"
       },
-      "save": "حفظ",
-      "cancel": "إلغاء"
+      "save": "حفظ الفئة",
+      "cancel": "إلغاء",
+      "enterName": "الرجاء إدخال اسم الفئة.",
+      "failed": "فشل حفظ الفئة. يرجى المحاولة مرة أخرى."
     },
     "authors": {
       "title": "لوحة تحكم المؤلفين",
@@ -333,7 +351,33 @@
         "delete": "حذف"
       },
       "emptyHeader": "لم يتم العثور على مؤلفين",
-      "emptySubtext": "حاول تعديل البحث أو معايير الفلترة."
+      "emptySubtext": "حاول تعديل البحث أو معايير الفلترة.",
+      "search": "البحث عن مؤلف",
+      "clearFilters": "مسح الفلاتر",
+      "addAuthor": "إضافة مؤلف",
+      "export": "تصدير",
+      "import": "استيراد",
+      "totalAuthors": "إجمالي المؤلفين:",
+      "totalOrders": "إجمالي الطلبات:",
+      "totalBooks": "إجمالي الكتب:",
+      "countryLabel": "البلد:",
+      "ordersLabel": "الطلبات:",
+      "rewardsLabel": "المكافآت:",
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "name": "الاسم",
+      "id": "المعرف",
+      "orders": "الطلبات",
+      "rewards": "المكافآت",
+      "books": "الكتب",
+      "country": "البلد",
+      "action": "الإجراء",
+      "noAuthors": "لم يتم العثور على مؤلفين",
+      "adjustFilters": "حاول تعديل البحث أو معايير الفلترة.",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المؤلف؟",
+      "importSuccess": "تم استيراد البيانات بنجاح!",
+      "importFailed": "فشل استيراد البيانات. يرجى التحقق من وحدة التحكم لمزيد من التفاصيل."
     },
     "publishers": {
       "title": "دور النشر",
@@ -483,7 +527,33 @@
       "availabilityPricing": "التوفر والتسعير",
       "priceLabel": "السعر:",
       "ratingLabel": "التقييم:",
-      "manageOffers": "إدارة العروض"
+      "manageOffers": "إدارة العروض",
+      "tryAgain": "حاول مرة أخرى",
+      "bookTitle": "عنوان الكتاب",
+      "authorName": "اسم المؤلف",
+      "pagesLabel": "عدد الصفحات",
+      "stockLabel": "كمية المخزون",
+      "pricePlaceholder": "0.00 دولار",
+      "categoryPlaceholder": "فئة الكتاب",
+      "descriptionPlaceholder": "وصف الكتاب",
+      "imagePreview": "معاينة الصورة",
+      "saving": "جارٍ الحفظ...",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف \"{{title}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleting": "جارٍ الحذف...",
+      "discountValue": "قيمة الخصم ",
+      "adding": "جارٍ الإضافة...",
+      "bookDetailsTitle": "تفاصيل الكتاب #",
+      "authorLabel": "المؤلف:",
+      "unpublish": "إلغاء النشر",
+      "publish": "نشر",
+      "inStock": "متوفر",
+      "limitedStock": "مخزون محدود",
+      "onlyRemaining": "تبقى {{stock}} نسخ فقط!",
+      "outOfStock": "غير متوفر",
+      "outOf5": " من 5",
+      "deactivate": "إلغاء التنشيط",
+      "activate": "تنشيط",
+      "remove": "إزالة"
     },
     "authorDetails": {
       "loading": "جاري تحميل تفاصيل المؤلف...",
@@ -501,7 +571,18 @@
         "image": "الصورة"
       },
       "cancel": "إلغاء",
-      "save": "حفظ"
+      "save": "حفظ",
+      "invalidId": "معرف المؤلف غير صالح",
+      "failedToLoad": "فشل تحميل المؤلف.",
+      "portraitOf": "صورة ",
+      "edit": "تعديل",
+      "editAuthor": "تعديل المؤلف",
+      "name": "الاسم",
+      "country": "البلد",
+      "description": "الوصف",
+      "image": "الصورة",
+      "failedToUpdate": "فشل تحديث المؤلف.",
+      "booksBy": "كتب بواسطة "
     },
     "publisherDetails": {
       "error": "حدث خطأ!",
@@ -536,7 +617,13 @@
         "image": "الصورة"
       },
       "cancel": "إلغاء",
-      "add": "إضافة مؤلف"
+      "add": "إضافة مؤلف",
+      "editTitle": "تعديل المؤلف",
+      "addTitle": "إضافة مؤلف جديد",
+      "nameRequired": "اسم المؤلف مطلوب.",
+      "saving": "جارٍ الحفظ...",
+      "adding": "جارٍ الإضافة...",
+      "save": "حفظ التغييرات"
     },
     "addPublisherModal": {
       "title": "إضافة ناشر جديد",
@@ -546,7 +633,14 @@
         "image": "الصورة"
       },
       "cancel": "إلغاء",
-      "add": "إضافة ناشر"
+      "add": "إضافة ناشر",
+      "editTitle": "تعديل الناشر",
+      "addTitle": "إضافة ناشر جديد",
+      "nameRequired": "اسم الناشر مطلوب.",
+      "imagePreview": "معاينة الصورة",
+      "saving": "جارٍ الحفظ...",
+      "adding": "جارٍ الإضافة...",
+      "save": "حفظ التغييرات"
     },
     "sidebar": {
         "dashboard": "لوحة التحكم",
@@ -561,10 +655,15 @@
         "messages": "الرسائل",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج",
-        "administrator": "مسؤول"
+        "administrator": "مسؤول",
+        "brand": "Neth BookPoint",
+        "admin": "مدير",
+        "copyright": "© 2024 Neth BookPoint"
     },
     "latestOrders": {
         "title": "أحدث الطلبات",
+        "loading": "جار التحميل...",
+        "customer": "عميل",
         "table": {
             "orderId": "معرف الطلب",
             "client": "العميل",
@@ -579,7 +678,43 @@
     "recentBooks": {
         "title": "الكتب المضافة حديثًا",
         "emptyHeader": "لم يتم العثور على كتب"
-    }
+    },
+    "clients": {
+      "searchPlaceholder": "البحث عن عملاء",
+      "export": "تصدير",
+      "filter": "تصفية",
+      "analytics": "تحليلات",
+      "registrationDatePlaceholder": "تاريخ التسجيل",
+      "lastOrderDatePlaceholder": "تاريخ آخر طلب",
+      "minTotalSpendPlaceholder": "أدنى إجمالي إنفاق",
+      "status": "الحالة",
+      "selectStatus": "اختر الحالة",
+      "source": "المصدر",
+      "selectSource": "اختر المصدر",
+      "saleDate": "تاريخ البيع",
+      "selectPeriod": "اختر الفترة",
+      "clearFilters": "مسح الفلاتر",
+      "viewDetails": "عرض التفاصيل"
+    },
+    "orders": {
+      "searchPlaceholder": "البحث في الطلبات...",
+      "exportData": "تصدير البيانات",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "results": "نتائج"
+      }
+    },
+    "logoutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    "cancel": "إلغاء"
+  },
+  "notFound": {
+    "title": "عفوا! الصفحة غير موجودة",
+    "message": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backToHome": "العودة إلى الرئيسية"
   },
   "login": {
     "welcome": "مرحباً بك في نيث بوك بوينت!",
@@ -812,6 +947,31 @@
     "notAuthorized": "أنت غير مصرح لك بالوصول إلى لوحة التحكم.",
     "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صالحة.",
     "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى في وقت لاحق."
+  },
+  "publishingHouseChart": {
+    "label": "عدد الكتب حسب دار النشر",
+    "title": "الكتب حسب دار النشر"
+  },
+  "ordersByCountryChart": {
+    "label": "دور النشر",
+    "title": "الطلبات حسب البلد",
+    "unknown": "غير معروف"
+  },
+  "addAttributeModal": {
+    "enterName": "الرجاء إدخال اسم.",
+    "cancel": "إلغاء",
+    "save": "حفظ"
+  },
+  "dailySalesChart": {
+    "label": "المبيعات اليومية",
+    "title": "نظرة عامة على المبيعات اليومية"
+  },
+  "dailyOrdersChart": {
+    "label": "الطلبات اليومية",
+    "title": "نظرة عامة على الطلبات اليومية"
+  },
+  "categorySalesChart": {
+    "title": "توزيع فئات الكتب"
   },
   "bookList": {
     "loading": "جاري تحميل الكتب...",

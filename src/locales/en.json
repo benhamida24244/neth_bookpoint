@@ -255,6 +255,11 @@
         "publishers": "Total Publishers",
         "categories": "Total Categories"
       },
+      "exportData": "Export Data",
+      "importData": "Import Data",
+      "skippingBook": "Skipping book \"{{title}}\" due to missing required data.",
+      "importSuccess": "Data imported successfully!",
+      "importFailed": "Failed to import data. Please check the console for more details.",
       "status": {
         "published": "Published",
         "pending": "Pending",
@@ -281,7 +286,12 @@
         "category": "Select a category"
       },
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "requiredFields": "Please fill in all required fields.",
+      "addNew": "Add New ",
+      "name": " Name",
+      "new": "New",
+      "failed": "Failed to add "
     },
     "editBookModal": {
       "title": "Edit Book",
@@ -294,8 +304,14 @@
         "stock": "Stock",
         "image": "Image"
       },
-      "save": "Save",
-      "cancel": "Cancel"
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "requiredFields": "Please fill in all required fields.",
+      "addNew": "Add New ",
+      "name": " Name",
+      "new": "New",
+      "selectAuthor": "Select an author",
+      "selectPublisher": "Select a publisher"
     },
     "addCategoryModal": {
       "title": "Add New Category",
@@ -303,8 +319,10 @@
         "name": "Category Name",
         "description": "Description"
       },
-      "save": "Save",
-      "cancel": "Cancel"
+      "save": "Save Category",
+      "cancel": "Cancel",
+      "enterName": "Please enter a category name.",
+      "failed": "Failed to save category. Please try again."
     },
     "authors": {
       "title": "Authors Dashboard",
@@ -333,7 +351,33 @@
         "delete": "Delete"
       },
       "emptyHeader": "No authors found",
-      "emptySubtext": "Try adjusting your search or filter criteria."
+      "emptySubtext": "Try adjusting your search or filter criteria.",
+      "search": "Search for Author",
+      "clearFilters": "Clear Filters",
+      "addAuthor": "Add Author",
+      "export": "Export",
+      "import": "Import",
+      "totalAuthors": "Total Authors:",
+      "totalOrders": "Total Orders:",
+      "totalBooks": "Total Books:",
+      "countryLabel": "Country:",
+      "ordersLabel": "Orders:",
+      "rewardsLabel": "Rewards:",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Name",
+      "id": "ID",
+      "orders": "Orders",
+      "rewards": "Rewards",
+      "books": "Books",
+      "country": "Country",
+      "action": "Action",
+      "noAuthors": "No authors found",
+      "adjustFilters": "Try adjusting your search or filter criteria.",
+      "deleteConfirm": "Are you sure you want to delete this author?",
+      "importSuccess": "Data imported successfully!",
+      "importFailed": "Failed to import data. Please check the console for more details."
     },
     "publishers": {
       "title": "Publishing Houses",
@@ -483,7 +527,33 @@
       "availabilityPricing": "Availability & Pricing",
       "priceLabel": "Price:",
       "ratingLabel": "Rating:",
-      "manageOffers": "Manage Offers"
+      "manageOffers": "Manage Offers",
+      "tryAgain": "Try Again",
+      "bookTitle": "Book Title",
+      "authorName": "Author Name",
+      "pagesLabel": "Number of Pages",
+      "stockLabel": "Stock Quantity",
+      "pricePlaceholder": "$0.00",
+      "categoryPlaceholder": "Book Category",
+      "descriptionPlaceholder": "Book Description",
+      "imagePreview": "Image Preview",
+      "saving": "Saving...",
+      "deleteConfirm": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+      "deleting": "Deleting...",
+      "discountValue": "Discount Value ",
+      "adding": "Adding...",
+      "bookDetailsTitle": "Book Details #",
+      "authorLabel": "Author:",
+      "unpublish": "Unpublish",
+      "publish": "Publish",
+      "inStock": "In Stock",
+      "limitedStock": "Limited Stock",
+      "onlyRemaining": "Only {{stock}} copies remaining!",
+      "outOfStock": "Out of Stock",
+      "outOf5": " out of 5",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "remove": "Remove"
     },
     "authorDetails": {
       "loading": "Loading author details...",
@@ -501,7 +571,18 @@
         "image": "Image"
       },
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "invalidId": "Invalid author ID",
+      "failedToLoad": "Failed to load author.",
+      "portraitOf": "Portrait of ",
+      "edit": "Edit",
+      "editAuthor": "Edit Author",
+      "name": "Name",
+      "country": "Country",
+      "description": "Description",
+      "image": "Image",
+      "failedToUpdate": "Failed to update author.",
+      "booksBy": "Books by "
     },
     "publisherDetails": {
       "error": "An Error Occurred!",
@@ -536,7 +617,13 @@
         "image": "Image"
       },
       "cancel": "Cancel",
-      "add": "Add Author"
+      "add": "Add Author",
+      "editTitle": "Edit Author",
+      "addTitle": "Add New Author",
+      "nameRequired": "Author name is required.",
+      "saving": "Saving...",
+      "adding": "Adding...",
+      "save": "Save Changes"
     },
     "addPublisherModal": {
       "title": "Add New Publisher",
@@ -546,7 +633,14 @@
         "image": "Image"
       },
       "cancel": "Cancel",
-      "add": "Add Publisher"
+      "add": "Add Publisher",
+      "editTitle": "Edit Publisher",
+      "addTitle": "Add New Publisher",
+      "nameRequired": "Publisher name is required.",
+      "imagePreview": "Image Preview",
+      "saving": "Saving...",
+      "adding": "Adding...",
+      "save": "Save Changes"
     },
     "sidebar": {
         "dashboard": "Dashboard",
@@ -561,10 +655,15 @@
         "messages": "Messages",
         "settings": "Settings",
         "logout": "Logout",
-        "administrator": "Administrator"
+        "administrator": "Administrator",
+        "brand": "Neth BookPoint",
+        "admin": "Admin",
+        "copyright": "© 2024 Neth BookPoint"
     },
     "latestOrders": {
         "title": "Latest Orders",
+        "loading": "Loading...",
+        "customer": "Customer",
         "table": {
             "orderId": "Order ID",
             "client": "Client",
@@ -579,7 +678,43 @@
     "recentBooks": {
         "title": "Recently Added Books",
         "emptyHeader": "No books found"
-    }
+    },
+    "clients": {
+      "searchPlaceholder": "Search for Clients",
+      "export": "Export",
+      "filter": "Filter",
+      "analytics": "Analytics",
+      "registrationDatePlaceholder": "Registration Date",
+      "lastOrderDatePlaceholder": "Last Order Date",
+      "minTotalSpendPlaceholder": "Min Total Spend",
+      "status": "Status",
+      "selectStatus": "Select Status",
+      "source": "Source",
+      "selectSource": "Select Source",
+      "saleDate": "Sale Date",
+      "selectPeriod": "Select Period",
+      "clearFilters": "Clear Filters",
+      "viewDetails": "View Details"
+    },
+    "orders": {
+      "searchPlaceholder": "Search orders...",
+      "exportData": "Export Data",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "results": "results"
+      }
+    },
+    "logoutConfirm": "Are you sure you want to log out?",
+    "cancel": "Cancel"
+  },
+  "notFound": {
+    "title": "Oops! Page Not Found",
+    "message": "The page you're looking for doesn’t exist or has been moved.",
+    "backToHome": "Back to Home"
   },
   "login": {
     "welcome": "Welcome to Neth BookPoint!",
@@ -822,6 +957,31 @@
       "adult": "Adult",
       "allAges": "All Ages"
     }
+  },
+  "publishingHouseChart": {
+    "label": "Number of books by publishing house",
+    "title": "Books by Publishing House"
+  },
+  "ordersByCountryChart": {
+    "label": "Publishing Houses",
+    "title": "Orders by Country",
+    "unknown": "Unknown"
+  },
+  "addAttributeModal": {
+    "enterName": "Please enter a name.",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "dailySalesChart": {
+    "label": "Daily Sales",
+    "title": "Daily Sales Overview"
+  },
+  "dailyOrdersChart": {
+    "label": "Daily Orders",
+    "title": "Daily Orders Overview"
+  },
+  "categorySalesChart": {
+    "title": "Book Categories Distribution"
   },
   "bookList": {
     "loading": "Loading books...",

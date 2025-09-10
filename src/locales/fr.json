@@ -251,6 +251,11 @@
         "publishers": "Total des éditeurs",
         "categories": "Total des catégories"
       },
+      "exportData": "Exporter les données",
+      "importData": "Importer des données",
+      "skippingBook": "Saut du livre \"{{title}}\" en raison de données requises manquantes.",
+      "importSuccess": "Données importées avec succès !",
+      "importFailed": "Échec de l'importation des données. Veuillez consulter la console pour plus de détails.",
       "status": {
         "published": "Publié",
         "pending": "En attente",
@@ -277,7 +282,12 @@
         "category": "Sélectionnez une catégorie"
       },
       "save": "Enregistrer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "requiredFields": "Veuillez remplir tous les champs obligatoires.",
+      "addNew": "Ajouter un nouveau ",
+      "name": " Nom",
+      "new": "Nouveau",
+      "failed": "Échec de l'ajout de "
     },
     "editBookModal": {
       "title": "Modifier le livre",
@@ -290,8 +300,14 @@
         "stock": "Stock",
         "image": "Image"
       },
-      "save": "Enregistrer",
-      "cancel": "Annuler"
+      "save": "Enregistrer les modifications",
+      "cancel": "Annuler",
+      "requiredFields": "Veuillez remplir tous les champs obligatoires.",
+      "addNew": "Ajouter un nouveau ",
+      "name": " Nom",
+      "new": "Nouveau",
+      "selectAuthor": "Sélectionnez un auteur",
+      "selectPublisher": "Sélectionnez un éditeur"
     },
     "addCategoryModal": {
       "title": "Ajouter une nouvelle catégorie",
@@ -329,7 +345,33 @@
         "delete": "Supprimer"
       },
       "emptyHeader": "Aucun auteur trouvé",
-      "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre."
+      "emptySubtext": "Essayez d'ajuster vos critères de recherche ou de filtre.",
+      "search": "Rechercher un auteur",
+      "clearFilters": "Effacer les filtres",
+      "addAuthor": "Ajouter un auteur",
+      "export": "Exporter",
+      "import": "Importer",
+      "totalAuthors": "Total des auteurs:",
+      "totalOrders": "Total des commandes:",
+      "totalBooks": "Total des livres:",
+      "countryLabel": "Pays:",
+      "ordersLabel": "Commandes:",
+      "rewardsLabel": "Récompenses:",
+      "view": "Voir",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "name": "Nom",
+      "id": "ID",
+      "orders": "Commandes",
+      "rewards": "Récompenses",
+      "books": "Livres",
+      "country": "Pays",
+      "action": "Action",
+      "noAuthors": "Aucun auteur trouvé",
+      "adjustFilters": "Essayez d'ajuster vos critères de recherche ou de filtre.",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet auteur ?",
+      "importSuccess": "Données importées avec succès !",
+      "importFailed": "Échec de l'importation des données. Veuillez consulter la console pour plus de détails."
     },
     "publishers": {
       "title": "Maisons d'édition",
@@ -497,7 +539,18 @@
         "image": "Image"
       },
       "cancel": "Annuler",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "invalidId": "ID d'auteur non valide",
+      "failedToLoad": "Échec du chargement de l'auteur.",
+      "portraitOf": "Portrait de ",
+      "edit": "Modifier",
+      "editAuthor": "Modifier l'auteur",
+      "name": "Nom",
+      "country": "Pays",
+      "description": "Description",
+      "image": "Image",
+      "failedToUpdate": "Échec de la mise à jour de l'auteur.",
+      "booksBy": "Livres de "
     },
     "publisherDetails": {
       "error": "Une erreur est survenue !",
@@ -557,10 +610,15 @@
         "messages": "Messages",
         "settings": "Paramètres",
         "logout": "Se déconnecter",
-        "administrator": "Administrateur"
+        "administrator": "Administrateur",
+        "brand": "Neth BookPoint",
+        "admin": "Admin",
+        "copyright": "© 2024 Neth BookPoint"
     },
     "latestOrders": {
         "title": "Dernières commandes",
+        "loading": "Chargement...",
+        "customer": "Client",
         "table": {
             "orderId": "ID de commande",
             "client": "Client",
@@ -575,7 +633,43 @@
     "recentBooks": {
         "title": "Livres récemment ajoutés",
         "emptyHeader": "Aucun livre trouvé"
-    }
+    },
+    "clients": {
+      "searchPlaceholder": "Rechercher des clients",
+      "export": "Exporter",
+      "filter": "Filtrer",
+      "analytics": "Analytique",
+      "registrationDatePlaceholder": "Date d'inscription",
+      "lastOrderDatePlaceholder": "Date de la dernière commande",
+      "minTotalSpendPlaceholder": "Dépense totale minimale",
+      "status": "Statut",
+      "selectStatus": "Sélectionner le statut",
+      "source": "Source",
+      "selectSource": "Sélectionner la source",
+      "saleDate": "Date de vente",
+      "selectPeriod": "Sélectionner la période",
+      "clearFilters": "Effacer les filtres",
+      "viewDetails": "Voir les détails"
+    },
+    "orders": {
+      "searchPlaceholder": "Rechercher des commandes...",
+      "exportData": "Exporter les données",
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "showing": "Affichage",
+        "to": "à",
+        "of": "de",
+        "results": "résultats"
+      }
+    },
+    "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "cancel": "Annuler"
+  },
+  "notFound": {
+    "title": "Oups! Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backToHome": "Retour à l'accueil"
   },
   "login": {
     "welcome": "Bienvenue chez Neth BookPoint !",
@@ -668,15 +762,13 @@
       "p25to50": "25 $ - 50 $",
       "over50": "Plus de 50 $"
     },
-    "ageRanges": {
+    "age": {
       "title": "Âge",
       "a0to2": "0 - 2 ans",
       "a3to5": "3 - 5 ans",
       "a6to8": "6 - 8 ans",
       "a9to12": "9 - 12 ans",
-      "teens": "Adolescents"
-    },
-    "age": {
+      "teens": "Adolescents",
       "child": "Enfant",
       "tween": "Préadolescent",
       "teen": "Adolescent",
@@ -806,6 +898,31 @@
     "notAuthorized": "Vous n'êtes pas autorisé à accéder au tableau de bord.",
     "invalidCredentials": "Email ou mot de passe invalide.",
     "genericError": "Une erreur s'est produite. Veuillez réessayer plus tard."
+  },
+  "publishingHouseChart": {
+    "label": "Nombre de livres par maison d'édition",
+    "title": "Livres par maison d'édition"
+  },
+  "ordersByCountryChart": {
+    "label": "Maisons d'édition",
+    "title": "Commandes par pays",
+    "unknown": "Inconnu"
+  },
+  "addAttributeModal": {
+    "enterName": "Veuillez entrer un nom.",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "dailySalesChart": {
+    "label": "Ventes quotidiennes",
+    "title": "Aperçu des ventes quotidiennes"
+  },
+  "dailyOrdersChart": {
+    "label": "Commandes quotidiennes",
+    "title": "Aperçu des commandes quotidiennes"
+  },
+  "categorySalesChart": {
+    "title": "Distribution des catégories de livres"
   },
   "bookList": {
     "loading": "Chargement des livres...",

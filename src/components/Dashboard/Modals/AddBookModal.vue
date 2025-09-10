@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps({
-  show: Boolean
+  show: Boolean,
 })
 
 const emit = defineEmits(['close', 'save'])
@@ -31,7 +31,7 @@ const newBook = ref({
   stock: null,
   pages: null,
   cover: '',
-  publisherDate: ''
+  publisherDate: '',
 })
 
 const authors = computed(() => authorStore.authors)
@@ -65,7 +65,7 @@ function saveBook() {
     !newBook.value.category_id ||
     newBook.value.price === null
   ) {
-    alert('Please fill in all required fields.')
+    alert(t('dashboard.addBookModal.requiredFields'))
     return
   }
 
@@ -119,7 +119,7 @@ const handleSaveAttribute = async (name) => {
     }
   } catch (error) {
     console.error(`Failed to add ${attributeType.value}:`, error)
-    alert(`There was an error adding the ${attributeType.value}.`)
+    alert(t('dashboard.addBookModal.failed') + `${attributeType.value}.`)
   }
 }
 </script>
@@ -132,8 +132,8 @@ const handleSaveAttribute = async (name) => {
   >
     <AddAttributeModal
       :show="showAddAttributeModal"
-      :title="'Add New ' + attributeType"
-      :label="attributeType + ' Name'"
+      :title="t('dashboard.addBookModal.addNew') + attributeType"
+      :label="attributeType + t('dashboard.addBookModal.name')"
       @close="showAddAttributeModal = false"
       @save="handleSaveAttribute"
     />
@@ -203,7 +203,7 @@ const handleSaveAttribute = async (name) => {
                   type="button"
                   class="mt-1 px-3 py-2 text-sm font-medium text-white bg-gray-600 border border-transparent rounded-md shadow-sm hover:bg-gray-700"
                 >
-                  New
+                  {{ t('dashboard.addBookModal.new') }}
                 </button>
               </div>
             </div>
@@ -234,7 +234,7 @@ const handleSaveAttribute = async (name) => {
                   type="button"
                   class="mt-1 px-3 py-2 text-sm font-medium text-white bg-gray-600 border border-transparent rounded-md shadow-sm hover:bg-gray-700"
                 >
-                  New
+                  {{ t('dashboard.addBookModal.new') }}
                 </button>
               </div>
             </div>

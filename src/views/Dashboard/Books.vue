@@ -24,7 +24,7 @@ const selectedBook = ref(null)
 const filters = computed(() => [
   { label: t('dashboard.books.filters.all'), value: 'All Books' },
   { label: t('dashboard.books.filters.published'), value: 1 },
-  { label: t('dashboard.books.filters.draft'), value: 0 }
+  { label: t('dashboard.books.filters.draft'), value: 0 },
 ])
 
 const settingStore = useSettingsStore()
@@ -46,11 +46,15 @@ onMounted(async () => {
 const currentPage = ref(1)
 
 // Watch for pagination updates
-watch(() => bookStore.pagination, (newPagination) => {
-  if (newPagination) {
-    currentPage.value = newPagination.current_page
-  }
-}, { immediate: true })
+watch(
+  () => bookStore.pagination,
+  (newPagination) => {
+    if (newPagination) {
+      currentPage.value = newPagination.current_page
+    }
+  },
+  { immediate: true }
+)
 
 // بيانات الكتب
 const books = computed(() => bookStore.books || [])
@@ -68,15 +72,15 @@ const Deletebook = (book) => {
 }
 
 const exportData = () => {
-  const data = filteredBooks.value.map(book => ({
-    'ID': book.id,
-    'Title': book.title,
-    'Category': book.category.name,
-    'Author': book.author.name,
-    'Publisher': book.publisher.name,
-    'Status': getStatusItem(book.status),
-    'Price': book.price,
-    'Date': book.publisherDate
+  const data = filteredBooks.value.map((book) => ({
+    ID: book.id,
+    Title: book.title,
+    Category: book.category.name,
+    Author: book.author.name,
+    Publisher: book.publisher.name,
+    Status: getStatusItem(book.status),
+    Price: book.price,
+    Date: book.publisherDate,
   }))
   const ws = XLSX.utils.json_to_sheet(data)
   const wb = XLSX.utils.book_new()
@@ -85,85 +89,81 @@ const exportData = () => {
 }
 
 const importData = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]
+  if (!file) return
 
-  const reader = new FileReader();
+  const reader = new FileReader()
   reader.onload = async (e) => {
     try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(worksheet);
+      const data = new Uint8Array(e.target.result)
+      const workbook = XLSX.read(data, { type: 'array' })
+      const sheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[sheetName]
+      const json = XLSX.utils.sheet_to_json(worksheet)
 
       for (const book of json) {
-        const author = authorStore.getAuthorById(book.author_id);
-        const publisher = publishingHouseStore.getPublisherById(book.publisher_id);
-        const category = categoriesStore.getCategoryById(book.category_id);
+        const author = authorStore.getAuthorById(book.author_id)
+        const publisher = publishingHouseStore.getPublisherById(book.publisher_id)
+        const category = categoriesStore.getCategoryById(book.category_id)
 
         if (!author || !publisher || !category || !book.title || !book.price) {
-          console.warn(`Skipping book "${book.title}" due to missing required data.`);
-          continue;
+          console.warn(t('dashboard.books.skippingBook', { title: book.title }))
+          continue
         }
 
-        const formData = new FormData();
-        formData.append('title', book.title);
-        formData.append('author_id', author.id);
-        formData.append('publisher_id', publisher.id);
-        formData.append('category_id', category.id);
-        formData.append('price', book.price);
+        const formData = new FormData()
+        formData.append('title', book.title)
+        formData.append('author_id', author.id)
+        formData.append('publisher_id', publisher.id)
+        formData.append('category_id', category.id)
+        formData.append('price', book.price)
 
         // Optional fields
-        formData.append('description', book.description || '');
-        formData.append('stock', book.stock || 0);
-        formData.append('pages', book.pages || 0);
-        formData.append('discount', book.discount || 0);
-        formData.append('rating', book.rating || 0);
-        formData.append('age_group', book.age_group || '');
-        formData.append('language', book.language || '');
-        formData.append('publisherDate', book.publisherDate || '');
+        formData.append('description', book.description || '')
+        formData.append('stock', book.stock || 0)
+        formData.append('pages', book.pages || 0)
+        formData.append('discount', book.discount || 0)
+        formData.append('rating', book.rating || 0)
+        formData.append('age_group', book.age_group || '')
+        formData.append('language', book.language || '')
+        formData.append('publisherDate', book.publisherDate || '')
 
         // Cover image
         // Cover image
-if (book.cover) {
-  try {
-    // استخراج اسم الملف من المسار
-    const fileName = book.cover.split('/').pop(); // "اسم الملف.jpg"
+        if (book.cover) {
+          try {
+            // استخراج اسم الملف من المسار
+            const fileName = book.cover.split('/').pop() // "اسم الملف.jpg"
 
-    // الوصول إلى الملف في مجلد public (الملف يجب أن يكون ضمن public/storage/cover)
-    const fileInput = document.querySelector(`#coverInput[data-filename="${fileName}"]`);
+            // الوصول إلى الملف في مجلد public (الملف يجب أن يكون ضمن public/storage/cover)
+            const fileInput = document.querySelector(`#coverInput[data-filename="${fileName}"]`)
 
-    if (fileInput && fileInput.files.length > 0) {
-      formData.append('cover', fileInput.files[0]); // إضافة الصورة مباشرة
-    } else {
-      console.warn(`⚠️ File not found for "${book.title}": ${fileName}`);
-    }
-  } catch (err) {
-    console.warn(`⚠️ Failed to append cover for "${book.title}":`, err);
-  }
-}
+            if (fileInput && fileInput.files.length > 0) {
+              formData.append('cover', fileInput.files[0]) // إضافة الصورة مباشرة
+            } else {
+              console.warn(`⚠️ File not found for "${book.title}": ${fileName}`)
+            }
+          } catch (err) {
+            console.warn(`⚠️ Failed to append cover for "${book.title}":`, err)
+          }
+        }
 
-
-console.log(formData);
+        console.log(formData)
 
         // Send to API
-        await bookStore.addBook(formData);
+        await bookStore.addBook(formData)
       }
 
-      alert('Data imported successfully!');
-      event.target.value = '';
+      alert(t('dashboard.books.importSuccess'))
+      event.target.value = ''
     } catch (error) {
-      console.error('Error during data import:', error);
-      alert('Failed to import data. Please check the console for more details.');
-
+      console.error('Error during data import:', error)
+      alert(t('dashboard.books.importFailed'))
     }
-  };
+  }
 
-  reader.readAsArrayBuffer(file);
-};
-
-
+  reader.readAsArrayBuffer(file)
+}
 
 const triggerImport = () => {
   document.getElementById('import-input').click()
@@ -175,26 +175,26 @@ const stats = computed(() => [
     label: t('dashboard.books.stats.total'),
     value: bookStore.stats.books?.toString() || '0',
     icon: 'fas fa-book text-blue-500',
-    iconBg: 'bg-blue-50'
+    iconBg: 'bg-blue-50',
   },
   {
     label: t('dashboard.books.stats.authors'),
     value: bookStore.stats.authors?.toString() || '0',
     icon: 'fas fa-user-pen text-green-500',
-    iconBg: 'bg-green-50'
+    iconBg: 'bg-green-50',
   },
   {
     label: t('dashboard.books.stats.publishers'),
     value: bookStore.stats.publishers?.toString() || '0',
     icon: 'fas fa-building text-[var(--color-light)]',
-    iconBg: 'bg-yellow-50'
+    iconBg: 'bg-yellow-50',
   },
   {
     label: t('dashboard.books.stats.categories'),
     value: bookStore.stats.categories?.toString() || '0',
     icon: 'fas fa-layer-group text-emerald-500',
-    iconBg: 'bg-emerald-50'
-  }
+    iconBg: 'bg-emerald-50',
+  },
 ])
 
 // تصفية البيانات
@@ -222,7 +222,11 @@ const filteredBooks = computed(() => {
 // Watch for filter changes to reset pagination
 watch([activeFilter, searchQuery], () => {
   currentPage.value = 1
-  bookStore.fetchBooks({ page: 1, status: activeFilter.value !== 'All Books' ? activeFilter.value : undefined, search: searchQuery.value })
+  bookStore.fetchBooks({
+    page: 1,
+    status: activeFilter.value !== 'All Books' ? activeFilter.value : undefined,
+    search: searchQuery.value,
+  })
 })
 
 // تصنيف الحالة
@@ -278,18 +282,14 @@ const handlePageChange = (page) => {
   bookStore.fetchBooks({
     page,
     status: activeFilter.value !== 'All Books' ? activeFilter.value : undefined,
-    search: searchQuery.value
+    search: searchQuery.value,
   })
 }
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <AddBookModal
-      :show="showAddBookModal"
-      @close="showAddBookModal = false"
-      @save="handleSaveBook"
-    />
+    <AddBookModal :show="showAddBookModal" @close="showAddBookModal = false" @save="handleSaveBook" />
     <EditBookModal
       :show="showEditBookModal"
       :book="selectedBook"
@@ -334,7 +334,7 @@ const handlePageChange = (page) => {
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
               activeFilter === filter.value
                 ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                : 'hover:bg-gray-50'
+                : 'hover:bg-gray-50',
             ]"
           >
             {{ filter.label }}
@@ -357,12 +357,24 @@ const handlePageChange = (page) => {
           >
             {{ t('dashboard.books.addNew') }}
           </button>
-          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
-            Export Data
+          <button
+            @click="exportData"
+            class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600"
+          >
+            {{ t('dashboard.books.exportData') }}
           </button>
-          <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
-          <button @click="triggerImport" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
-            Import Data
+          <input
+            type="file"
+            id="import-input"
+            @change="importData"
+            accept=".xlsx, .xls"
+            style="display: none"
+          />
+          <button
+            @click="triggerImport"
+            class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600"
+          >
+            {{ t('dashboard.books.importData') }}
           </button>
         </div>
       </div>
@@ -381,7 +393,7 @@ const handlePageChange = (page) => {
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  {{ t('dashboard.books.table.cover')}}
+                  {{ t('dashboard.books.table.cover') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -441,23 +453,20 @@ const handlePageChange = (page) => {
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
-                <td  class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <RouterLink :to="`/dashboard/categories/${book.category.id}`">
                     {{ book.category.name }}
                   </RouterLink>
-
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   <RouterLink :to="`/dashboard/authors/${book.author.id}`">
                     {{ book.author.name }}
                   </RouterLink>
-
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   <RouterLink :to="`/dashboard/publishing-house/${book.publisher.id}`">
-                     {{ book.publisher.name }}
+                    {{ book.publisher.name }}
                   </RouterLink>
-
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -510,14 +519,14 @@ const handlePageChange = (page) => {
           </p>
         </div>
       </div>
-        <!-- pagination -->
-    <Pagination
-      v-if="bookStore.pagination"
-      :current-page="currentPage"
-      :last-page="bookStore.pagination.last_page"
-      :total-items="bookStore.pagination.total"
-      @page-changed="handlePageChange"
-    />
+      <!-- pagination -->
+      <Pagination
+        v-if="bookStore.pagination"
+        :current-page="currentPage"
+        :last-page="bookStore.pagination.last_page"
+        :total-items="bookStore.pagination.total"
+        @page-changed="handlePageChange"
+      />
     </div>
   </div>
 </template>

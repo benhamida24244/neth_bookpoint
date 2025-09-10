@@ -8,8 +8,11 @@ import {
   LineElement,
   PointElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
 } from 'chart.js'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // تسجيل مكونات Chart.js
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale)
@@ -19,14 +22,14 @@ const chartData = {
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [
     {
-      label: 'Daily Sales',
+      label: t('dailySalesChart.label'),
       data: [120, 90, 150, 200, 170, 210, 180],
       borderColor: '#facc15', // أصفر Tailwind
       backgroundColor: 'rgba(250, 204, 21, 0.2)',
       fill: true,
-      tension: 0.4
-    }
-  ]
+      tension: 0.4,
+    },
+  ],
 }
 
 const chartOptions = {
@@ -39,27 +42,27 @@ const chartOptions = {
         color: '#000',
         font: {
           family: 'inherit',
-        }
-      }
+        },
+      },
     },
     title: {
       display: true,
-      text: 'Daily Sales Overview',
+      text: t('dailySalesChart.title'),
       color: '#000',
       font: {
-        size: 18
-      }
-    }
+        size: 18,
+      },
+    },
   },
   scales: {
     x: {
-      ticks: { color: '#555' }
+      ticks: { color: '#555' },
     },
     y: {
       ticks: { color: '#555' },
-      beginAtZero: true
-    }
-  }
+      beginAtZero: true,
+    },
+  },
 }
 </script>
 

@@ -164,15 +164,17 @@ const CreateAvatar = (name) => {
         `fixed lg:relative h-screen bg-white shadow-2xl ${$i18n.language === 'ar' ? 'rounded-l-2xl' : 'rounded-r-2xl'} flex flex-col z-50 transition-all duration-300`,
         isMobile
           ? ['w-[280px] sm:w-[300px]', MenuOpen ? 'translate-x-0' : '-translate-x-full']
-          : 'w-[240px]'
+          : 'w-[240px]',
       ]"
     >
       <!-- Header -->
-      <div :class="`flex items-center justify-between bg-black text-white py-4 px-6 ${$i18n.language === 'ar' ? 'rounded-ss-2xl' : 'rounded-se-2xl'}`">
+      <div
+        :class="`flex items-center justify-between bg-black text-white py-4 px-6 ${$i18n.language === 'ar' ? 'rounded-ss-2xl' : 'rounded-se-2xl'}`"
+      >
         <div class="flex items-center gap-2">
           <img :src="Logo" alt="logo" class="h-8 sm:h-10" />
           <span class="font-BonaRegular text-[var(--color-primary)] text-base sm:text-lg">
-            <router-link to="/">Neth BookPoint</router-link>
+            <router-link to="/">{{ t('dashboard.sidebar.brand') }}</router-link>
           </span>
         </div>
         <button
@@ -188,13 +190,15 @@ const CreateAvatar = (name) => {
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div class="flex items-center gap-3">
           <img
-            :src="CreateAvatar(user?.name || 'Admin')"
+            :src="CreateAvatar(user?.name || t('dashboard.sidebar.admin'))"
             alt="Admin"
             class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-primary)]"
           />
           <div>
-            <h2 class="font-semibold text-sm text-gray-800">{{ user?.name || "Admin" }}</h2>
-            <p class="text-xs text-gray-500">Administrator</p>
+            <h2 class="font-semibold text-sm text-gray-800">
+              {{ user?.name || t('dashboard.sidebar.admin') }}
+            </h2>
+            <p class="text-xs text-gray-500">{{ t('dashboard.sidebar.administrator') }}</p>
           </div>
         </div>
       </div>
@@ -209,7 +213,7 @@ const CreateAvatar = (name) => {
               'flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 group',
               active === menu.title
                 ? 'bg-[var(--color-primary)] text-black shadow-md'
-                : 'text-gray-800 hover:bg-yellow-100 hover:shadow-sm'
+                : 'text-gray-800 hover:bg-yellow-100 hover:shadow-sm',
             ]"
             @click="setActiveMenu(menu.title)"
           >
@@ -219,7 +223,7 @@ const CreateAvatar = (name) => {
                   'w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200',
                   active === menu.title
                     ? 'bg-white text-black shadow-sm'
-                    : 'bg-[var(--color-primary)] text-white group-hover:bg-[var(--color-primary)]'
+                    : 'bg-[var(--color-primary)] text-white group-hover:bg-[var(--color-primary)]',
                 ]"
               >
                 <component :is="menu.icon" class="w-5 h-5" />
@@ -254,7 +258,9 @@ const CreateAvatar = (name) => {
           </svg>
           {{ t('dashboard.sidebar.logout') }}
         </button>
-        <div class="text-xs text-gray-400 text-center">© 2024 Neth BookPoint</div>
+        <div class="text-xs text-gray-400 text-center">
+          {{ t('dashboard.sidebar.copyright') }}
+        </div>
       </div>
     </aside>
   </div>

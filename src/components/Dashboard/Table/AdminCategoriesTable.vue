@@ -2,7 +2,9 @@
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
 import { useCategoriesStore } from '@/stores/Categories'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const categoriesStore = useCategoriesStore()
 
 // Categories are now fetched by the parent view, so we just need to access them.
@@ -10,9 +12,8 @@ const categories = computed(() => categoriesStore.categories)
 
 const getStatusClass = (status) => {
   // backend status ممكن يكون 1 / 0 بدل active/inactive
-  const normalized = typeof status === 'number'
-    ? (status === 1 ? 'active' : 'inactive')
-    : status?.toString().toLowerCase()
+  const normalized =
+    typeof status === 'number' ? (status === 1 ? 'active' : 'inactive') : status?.toString().toLowerCase()
 
   switch (normalized) {
     case 'active':
@@ -26,9 +27,7 @@ const getStatusClass = (status) => {
 
 // sortedCategories لازم يكون computed جديد
 const sortedCategories = computed(() =>
-  [...categories.value].sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
-  )
+  [...categories.value].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 )
 </script>
 
@@ -38,13 +37,41 @@ const sortedCategories = computed(() =>
       <table class="min-w-full">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N.Books</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.hash') }}
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.name') }}
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.status') }}
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.orders') }}
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.books') }}
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.createdAt') }}
+            </th>
+            <th
+              class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t('dashboard.categories.table.action') }}
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -56,11 +83,24 @@ const sortedCategories = computed(() =>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ index + 1 }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ category.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="[getStatusClass(category.status), 'px-3 py-1 rounded-full text-xs font-medium']">
-                {{ typeof category.status === 'number' ? (category.status === 1 ? 'Active' : 'Inactive') : category.status }}
+              <span
+                :class="[
+                  getStatusClass(category.status),
+                  'px-3 py-1 rounded-full text-xs font-medium',
+                ]"
+              >
+                {{
+                  typeof category.status === 'number'
+                    ? category.status === 1
+                      ? t('dashboard.categories.statusActive')
+                      : t('dashboard.categories.statusInactive')
+                    : category.status
+                }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ category.orders }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ category.orders }}
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ category.nmBook }}</td>
 
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -71,7 +111,7 @@ const sortedCategories = computed(() =>
                 :to="`/dashboard/categories/${category.id}`"
                 class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
               >
-                <i class="far fa-eye"></i> View
+                <i class="far fa-eye"></i> {{ t('dashboard.categories.table.view') }}
               </RouterLink>
             </td>
           </tr>
@@ -81,11 +121,15 @@ const sortedCategories = computed(() =>
 
     <!-- Empty State -->
     <div v-if="categories.length === 0" class="p-12 text-center">
-      <div class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+      <div
+        class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
+      >
         <i class="fas fa-folder-open text-gray-400 text-3xl"></i>
       </div>
-      <h3 class="text-lg font-medium text-gray-900 mb-1">No categories found</h3>
-      <p class="text-gray-500">Try adding new categories to populate this dashboard.</p>
+      <h3 class="text-lg font-medium text-gray-900 mb-1">
+        {{ t('dashboard.categories.emptyHeader') }}
+      </h3>
+      <p class="text-gray-500">{{ t('dashboard.categories.emptySubtext') }}</p>
     </div>
   </div>
 </template>
