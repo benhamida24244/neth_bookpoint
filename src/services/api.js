@@ -150,6 +150,7 @@ const cart = {
   add: (data) => api.post("/cart", data),
   update: (id, data) => api.put(`/cart/${id}`, data),
   remove: (id) => api.delete(`/cart/${id}`),
+  clear: () => api.delete("/cart"),
 };
 
 // ================================================================

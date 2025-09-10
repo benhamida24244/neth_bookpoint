@@ -187,7 +187,17 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
-    clearCart() {
+    async clearCart() {
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated) {
+        try {
+          await apiService.cart.clear();
+          await this.fetchCart(); // Refetch for consistency
+        } catch (error) {
+          this.error = error.response?.data?.message || 'Failed to clear cart.';
+          throw error;
+        }
+      }
       this.cart = null;
       this.localCart = [];
       localStorage.removeItem('cart');
