@@ -26,11 +26,11 @@
             <h1 class="text-3xl font-bold text-[#111827]">{{ book.title }}</h1>
             <p class="text-lg text-gray-600 mt-2">
               {{ t('bookdetails.by') }}
-              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.author?.name || t('bookdetails.unknownAuthor') }}</a>
+              <RouterLink :to="`/authors/${book.author?.id}`" class="text-[#1E40AF] hover:underline">{{ book.author?.name || t('bookdetails.unknownAuthor') }}</RouterLink>
             </p>
             <p class="text-sm text-gray-500 mt-1">
               {{ t('bookdetails.publishedBy') }}
-              <a href="#" class="text-[#1E40AF] hover:underline">{{ book.publisher?.name || t('bookdetails.unknownPublisher') }}</a>
+              <RouterLink :to="`/publishing-house/${book.publisher?.id}`" class="text-[#1E40AF] hover:underline">{{ book.publisher?.name || t('bookdetails.unknownPublisher') }}</RouterLink>
             </p>
 
             <div class="flex items-center mt-4">

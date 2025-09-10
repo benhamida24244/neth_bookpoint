@@ -19,6 +19,10 @@ import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/Auth'
 
 const { t } = useI18n()
+const { locale } = useI18n()
+const isRtl = computed(() => locale.value === 'ar' || document.documentElement.dir === 'rtl')
+const menuOpen = ref(false)
+
 const userStore = useAuthStore()
 const { user } = storeToRefs(userStore)
 
@@ -146,6 +150,22 @@ const CreateAvatar = (name) => {
 
   return canvas.toDataURL('image/png')
 }
+
+
+
+
+const asideClass = computed(() => {
+  const base = 'fixed lg:relative h-screen bg-white shadow-2xl flex flex-col z-50 transition-transform duration-300'
+  const round = isRtl.value ? 'rounded-r-2xl' : 'rounded-l-2xl'
+  const width = isMobile.value ? 'w-[280px] sm:w-[300px]' : 'w-[240px]'
+
+  const translateClosed = isRtl.value ? 'translate-x-full' : '-translate-x-full'
+  const translate = isMobile.value ? (menuOpen.value ? 'translate-x-0' : translateClosed) : ''
+
+  const pos = isRtl.value ? 'right-0 lg:right-auto lg:left-0' : 'left-0 lg:left-auto lg:right-0'
+
+  return [base, round, width, translate, pos].filter(Boolean).join(' ')
+})
 </script>
 
 <template>
@@ -159,8 +179,9 @@ const CreateAvatar = (name) => {
 
     <!-- Sidebar -->
     <aside
-      v-motion-slide-visible-left
+      
       :class="[
+        asideClass,
         `fixed lg:relative h-screen bg-white shadow-2xl ${$i18n.language === 'ar' ? 'rounded-l-2xl' : 'rounded-r-2xl'} flex flex-col z-50 transition-all duration-300`,
         isMobile
           ? ['w-[280px] sm:w-[300px]', MenuOpen ? 'translate-x-0' : '-translate-x-full']

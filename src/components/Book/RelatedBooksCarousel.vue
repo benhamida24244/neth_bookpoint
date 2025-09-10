@@ -12,7 +12,7 @@ defineProps({
   },
   title: {
     type: String,
-    default: t('relatedBooksCarousel.relatedBooks'),
+    default: 'Related Books',
   },
 })
 

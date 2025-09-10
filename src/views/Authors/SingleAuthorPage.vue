@@ -24,6 +24,9 @@ const authorDescription = computed(() => {
 })
 
 onMounted(() => {
+  if (authorId.value) {
+    authorStore.fetchAuthors()
+  }
   window.scrollTo(0, 0)
 })
 </script>
@@ -151,8 +154,9 @@ onMounted(() => {
             class="h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent w-32 mx-auto"
           ></div>
         </div>
-
-        <BookList :author_id="selectedAuthor?.id" />
+        <div v-if="selectedAuthor">
+          <BookList :author_id="selectedAuthor?.id" />
+        </div>
       </div>
     </div>
   </div>
