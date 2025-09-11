@@ -18,11 +18,37 @@ const primaryColors = [
   { name: 'Red', hex: { primary: '#DC2626', light: '#FCA5A5', hover: '#B91C1C', headerWallpaper: walpapperRed, heroWallpaper: HeroCoverRed }}
 ];
 
+// Helper to get settings from localStorage safely
+function getStoredSettings() {
+  try {
+    const settings = localStorage.getItem('settings');
+    return settings ? JSON.parse(settings) : {};
+  } catch (e) {
+    console.error("Failed to parse settings from localStorage", e);
+    return {};
+  }
+}
+
+// Helper to save settings to localStorage
+function storeSettings(settings) {
+  try {
+    localStorage.setItem('settings', JSON.stringify(settings));
+  } catch (e) {
+    console.error("Failed to save settings to localStorage", e);
+  }
+}
+
 export const useSettingsStore = defineStore('settings', () => {
   const toast = useToast();
-  const primaryColor = ref(primaryColors[0].hex); // Default color
-  const currency = ref('$');
-  const language = ref('en');
+  const storedSettings = getStoredSettings();
+
+  const colorName = ref(storedSettings.color_name || 'Yellow');
+  const language = ref(storedSettings.language || 'en');
+
+  const selectedColor = primaryColors.find(c => c.name.toLowerCase() === colorName.value.toLowerCase()) || primaryColors[0];
+  const primaryColor = ref(selectedColor.hex);
+
+  const currency = ref('$'); // Currency is not part of the localStorage settings for now
   const loading = ref(false);
 
   function applyColorToDOM(color) {
@@ -33,7 +59,7 @@ export const useSettingsStore = defineStore('settings', () => {
       root.style.setProperty('--color-light', color.light || '');
       root.style.setProperty('--color-hover', color.hover || '');
     }
-    const header = document.getElementById('header');
+     const header = document.getElementById('header');
     if (header) {
       if (color.headerWallpaper) {
         header.style.setProperty('background', `url("${color.headerWallpaper}") center/cover no-repeat`, 'important');
@@ -49,7 +75,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
   watch(primaryColor, (newColor) => {
     applyColorToDOM(newColor);
-  }, { deep: true });
+  }, { deep: true, immediate: true });
 
   function applyLanguage(lang) {
     i18n.global.locale.value = lang;
@@ -57,65 +83,79 @@ export const useSettingsStore = defineStore('settings', () => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   }
 
+  watch(language, (newLang) => {
+      applyLanguage(newLang);
+  }, { immediate: true });
+
+
   async function fetchSettings() {
     loading.value = true;
     try {
       const response = await apiService.publicResources.settings();
-      const settings = response.data.data;
-      if (settings) {
-        if (settings.color_name) {
-            const colorObject = primaryColors.find(c => c.name.toLowerCase() === settings.color_name.toLowerCase());
-            if (colorObject) {
-                primaryColor.value = colorObject.hex;
-            }
+      const serverSettings = response.data.data;
+      if (serverSettings) {
+        // Update state and localStorage from server data
+        if (serverSettings.color_name) {
+            colorName.value = serverSettings.color_name;
+            const colorObject = primaryColors.find(c => c.name.toLowerCase() === serverSettings.color_name.toLowerCase());
+            if (colorObject) primaryColor.value = colorObject.hex;
         }
-        if (settings.currency) {
-            currency.value = settings.currency;
+        if (serverSettings.language_signal) {
+            language.value = serverSettings.language_signal;
         }
-        if (settings.language_signal) {
-            language.value = settings.language_signal;
-            applyLanguage(settings.language_signal);
+        if (serverSettings.currency) {
+            currency.value = serverSettings.currency;
         }
+        // Update localStorage with fresh data from server
+        storeSettings({
+            color_name: colorName.value,
+            language: language.value
+        });
       }
     } catch (error) {
       console.error('Failed to fetch settings:', error);
-      toast.error('Failed to load settings.');
+      // Don't toast here, as it might be annoying on initial load failure
     } finally {
       loading.value = false;
     }
   }
 
-  async function updateSetting(key, value, successMessage) {
-    loading.value = true;
+  async function updateSettingOnServer(key, value) {
     try {
       await apiService.admin.settings.update({ [key]: value });
-      toast.success(successMessage);
+      toast.success(`${key.replace('_', ' ')} updated successfully!`);
     } catch (error) {
       console.error(`Failed to update ${key}:`, error);
       toast.error(`Failed to update ${key}.`);
       throw error; // Re-throw to allow components to handle it
-    } finally {
-      loading.value = false;
     }
   }
 
   async function setPrimaryColor(newColorName) {
     const colorObject = primaryColors.find(c => c.name.toLowerCase() === newColorName.toLowerCase());
     if (colorObject) {
-      await updateSetting('color_name', newColorName, 'Color updated successfully!');
       primaryColor.value = colorObject.hex;
+      colorName.value = newColorName;
+
+      const currentSettings = getStoredSettings();
+      storeSettings({ ...currentSettings, color_name: newColorName });
+
+      await updateSettingOnServer('color_name', newColorName);
     }
   }
 
   async function setCurrency(newCurrency) {
-    await updateSetting('currency', newCurrency, 'Currency updated successfully!');
     currency.value = newCurrency;
+    await updateSettingOnServer('currency', newCurrency);
   }
 
   async function setLanguage(newLanguage) {
-    await updateSetting('language_signal', newLanguage, 'Language updated successfully!');
     language.value = newLanguage;
-    applyLanguage(newLanguage);
+
+    const currentSettings = getStoredSettings();
+    storeSettings({ ...currentSettings, language: newLanguage });
+
+    await updateSettingOnServer('language_signal', newLanguage);
   }
 
   return {
@@ -123,7 +163,8 @@ export const useSettingsStore = defineStore('settings', () => {
     currency,
     language,
     loading,
-    primaryColors, // Expose for the settings page
+    primaryColors,
+    applyLanguage,
     setPrimaryColor,
     setCurrency,
     setLanguage,

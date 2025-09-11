@@ -41,7 +41,7 @@ const categories = computed(() => categoriesStore.categories)
 onMounted(() => {
   // Assuming fetch actions exist in these stores
   authorStore.fetchAuthors()
-  publishingHouseStore.fetchPublisher()
+  publishingHouseStore.fetchPublishers()
   categoriesStore.fetchCategories()
 })
 

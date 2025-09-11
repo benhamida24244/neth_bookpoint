@@ -1085,5 +1085,15 @@
     "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer cette catégorie? Cette action ne peut pas être annulée.",
     "categoryDeleted": "Catégorie supprimée avec succès.",
     "deleteFailed": "Échec de la suppression de la catégorie. Veuillez réessayer."
+  },
+  "loading": {
+    "books": "Chargement des livres...",
+    "authors": "Chargement des auteurs...",
+    "categories": "Chargement des catégories...",
+    "publishers": "Chargement des éditeurs...",
+    "book": "Chargement des détails du livre...",
+    "author": "Chargement des détails de l'auteur...",
+    "category": "Chargement des détails de la catégorie...",
+    "publisher": "Chargement des détails de l'éditeur..."
   }
 }

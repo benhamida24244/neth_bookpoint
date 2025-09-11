@@ -37,8 +37,9 @@ const categoriesStore = useCategoriesStore()
 
 onMounted(async () => {
   await bookStore.fetchBooks({ page: 1 })
+  await bookStore.fetchBookStats()
   await authorStore.fetchAuthors()
-  await publishingHouseStore.fetchPublisher()
+  await publishingHouseStore.fetchPublishers()
   await categoriesStore.fetchCategories()
 })
 

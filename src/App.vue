@@ -9,15 +9,21 @@ const settingsStore = useSettingsStore()
 const authStore = useCustomerAuthStore()
 const cartStore = useCartStore()
 
+const savedLang = localStorage.getItem('lang')
+if (savedLang) {
+  settingsStore.language = savedLang
+  settingsStore.applyLanguage(savedLang)
+}
+
 // This ensures that when the app is loaded, the primary color from the
 // store (and localStorage) is applied as a CSS variable to the document.
 onMounted(async () => {
   // Attempt to log in the user automatically if a token exists
   await authStore.tryAutoLogin();
-  
+
   // Initialize local cart for guest users
   cartStore.initializeLocalCart();
-  
+
   // Fetch cart data if user is authenticated
   if (authStore.isAuthenticated) {
     await cartStore.fetchCart();

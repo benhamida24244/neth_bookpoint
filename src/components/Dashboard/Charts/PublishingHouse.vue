@@ -12,7 +12,7 @@ PieChart.register(ArcElement, Tooltip, Legend, Title)
 const publishingHouseStore = usePublishingHouseStore()
 
 onMounted(() => {
-  publishingHouseStore.fetchPublisher()
+  publishingHouseStore.fetchPublishers()
 })
 
 // بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا

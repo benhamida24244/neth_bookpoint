@@ -19,7 +19,7 @@ const publisherToDelete = ref(null);
 const publishingHousesStore = usePublishingHouseStore();
 
 onMounted(async () => {
-  await publishingHousesStore.fetchPublisher();
+  await publishingHousesStore.fetchPublishers();
 });
 
 const publishingHouses = computed(() => publishingHousesStore.publishingHouses);

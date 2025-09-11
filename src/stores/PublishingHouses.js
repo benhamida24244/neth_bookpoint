@@ -1,104 +1,68 @@
 import { defineStore } from "pinia";
 import apiService from "@/services/api.js";
+import { ref } from "vue";
 
-export const usePublishingHouseStore = defineStore("publishingHouse", {
-  state: () => ({
-    publishingHouses: [],
-    loading: false,
-    error: null,
-  }),
-  actions: {
-    async fetchPublisher() {
-      this.loading = true; // Fixed from isLoading
-      try {
-        const response = await apiService.publicResources.publishers.all();
-        this.publishingHouses = response.data.data;
-        console.log(this.publishingHouses);
-        this.loading = false;
-        return this.publishingHouses;
-      } catch (error) {
-        console.error('Failed to fetch publishing Houses:', error);
-        this.loading = false;
-        return [];
-      }
-    },
+export const usePublishingHouseStore = defineStore("publishingHouse", () => {
+  const publishingHouses = ref([]);
+  const isLoading = ref(false);
+  const error = ref(null);
 
-    // --- الدالة الجديدة المضافة ---
-    async getPublisherById(publisherId) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.publicResources.publishers.get(publisherId);
-        return response.data.data; // إرجاع بيانات الناشر المحدد مباشرة
-      } catch (error) {
-        this.error = "Failed to fetch publisher by ID.";
-        console.error(error);
-        throw error; // إرسال الخطأ للمعالجة في المكون
-      } finally {
-        this.loading = false;
-      }
-    },
-    // ----------------------------
-
-    async addPublisher(publisher) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.admin.publishers.add(publisher)
-        this.fetchPublisher(); // Refresh the list after adding
-        return response;
-      } catch (error) {
-        this.error = "Failed to add publisher.";
-        console.error(error);
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
-    async updatePublisher(publisherId, publisherData) {
-      this.loading = true;
-      this.error = null;
-      try {
-        // Check if publisherData is FormData or regular object
-        if (publisherData instanceof FormData) {
-          // Handle FormData (for file uploads)
-          await apiService.admin.publishers.update(publisherId, publisherData);
-        } else {
-          // Handle regular JSON data
-          // Convert to FormData since the API expects it
-          const formData = new FormData();
-          
-          // Add all properties from publisherData to formData
-          Object.keys(publisherData).forEach(key => {
-            formData.append(key, publisherData[key]);
-          });
-          
-          await apiService.admin.publishers.update(publisherId, formData);
-        }
-        
-        await this.fetchPublisher(); // Refresh the list after updating
-      } catch (error) {
-        this.error = "Failed to update Publisher.";
-        console.error(error);
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    async deletePublisher(publisherId) {
-      this.loading = true;
-      this.error = null;
-      try {
-        await apiService.admin.publishers.delete(publisherId);
-        this.publishingHouses = this.publishingHouses.filter((publisher) => publisher.id !== publisherId);
-      } catch (error) {
-        this.error = "Failed to delete Publisher.";
-        console.error(error);
-        throw error; // Added for consistency
-      } finally {
-        this.loading = false;
-      }
-    },
+  async function handleRequest(request, ...args) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      return await request(...args);
+    } catch (e) {
+      error.value = e.message || "An error occurred.";
+      console.error(`Failed action: ${request.name}`, e);
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
   }
-})
+
+  async function fetchPublishers() {
+    const response = await handleRequest(apiService.publicResources.publishers.all);
+    if (response) {
+      publishingHouses.value = response.data.data;
+    }
+    return publishingHouses.value;
+  }
+
+  async function getPublisherById(publisherId) {
+    const response = await handleRequest(apiService.publicResources.publishers.get, publisherId);
+    return response ? response.data.data : null;
+  }
+
+  async function addPublisher(publisherData) {
+    const response = await handleRequest(apiService.admin.publishers.add, publisherData);
+    if (response) {
+      await fetchPublishers(); // Refresh
+    }
+    return response;
+  }
+
+  async function updatePublisher(publisherId, publisherData) {
+    const response = await handleRequest(apiService.admin.publishers.update, publisherId, publisherData);
+    if (response) {
+      await fetchPublishers(); // Refresh
+    }
+    return response;
+  }
+
+  async function deletePublisher(publisherId) {
+    await handleRequest(apiService.admin.publishers.delete, publisherId);
+    publishingHouses.value = publishingHouses.value.filter((p) => p.id !== publisherId);
+  }
+
+  return {
+    publishingHouses,
+    isLoading,
+    error,
+    fetchPublishers, // Renamed for consistency
+    getPublisherById,
+    addPublisher,
+    updatePublisher,
+    deletePublisher,
+  };
+});

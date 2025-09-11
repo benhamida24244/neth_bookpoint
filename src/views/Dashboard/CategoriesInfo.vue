@@ -161,7 +161,7 @@ const formattedStatistics = computed(() => [
         </header>
 
         <Suspense>
-          <BookCategoryList :category="currentCategory.id" />
+          <BookCategoryList v-if="currentCategory && currentCategory.id" :category="currentCategory.id" />
           <template #fallback>
             <div class="flex justify-center items-center py-12">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)]"></div>

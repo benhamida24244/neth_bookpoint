@@ -5,6 +5,46 @@
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neth BookPoint</title>
+    <script>
+      (function() {
+        try {
+          // --- Define available colors ---
+          const primaryColors = {
+            'yellow': { primary: '#c67913', light: '#F0B100', hover: '#A65F00' },
+            'green': { primary: '#16A34A', light: '#4ADE80', hover: '#15803D' },
+            'red': { primary: '#DC2626', light: '#FCA5A5', hover: '#B91C1C' }
+          };
+
+          // --- Apply Language and Direction ---
+          const settings = JSON.parse(localStorage.getItem('settings'));
+          if (settings && settings.language) {
+            document.documentElement.lang = settings.language;
+            document.documentElement.dir = settings.language === 'ar' ? 'rtl' : 'ltr';
+          } else {
+            // Default fallback
+            document.documentElement.lang = 'en';
+            document.documentElement.dir = 'ltr';
+          }
+
+          // --- Apply Theme Color ---
+          if (settings && settings.color_name) {
+            const colorTheme = primaryColors[settings.color_name.toLowerCase()];
+            if (colorTheme) {
+              const root = document.documentElement;
+              root.style.setProperty('--color-primary', colorTheme.primary);
+              root.style.setProperty('--color-light', colorTheme.light);
+              root.style.setProperty('--color-hover', colorTheme.hover);
+            }
+          }
+
+        } catch (e) {
+          console.error('Failed to apply initial settings from localStorage:', e);
+          // Fallback to default styles if something goes wrong
+          document.documentElement.lang = 'en';
+          document.documentElement.dir = 'ltr';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
