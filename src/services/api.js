@@ -183,6 +183,8 @@ const admin = {
     all: () => api.get("/admin/orders"),
     get: (id) => api.get(`/admin/orders/${id}`),
     update: (id, data) => api.put(`/admin/orders/${id}`, data),
+    stats: () => api.get("/admin/dashboard/orders-stats"),
+
   },
 
   books: {

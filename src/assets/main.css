@@ -3,11 +3,13 @@
 @font-face {
   font-family: Bona;
   src: url(./Fonts/BonaNova-bold.ttf);
+  font-display: swap;
 }
 
 @font-face {
   font-family: BonaRegular;
   src: url(./Fonts/BonaNova-Regular.ttf);
+  font-display: swap;
 }
 
 @theme {

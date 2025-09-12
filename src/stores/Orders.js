@@ -5,6 +5,7 @@ export const useOrdersStore = defineStore('orders', {
   state: () => ({
     orders: [],
     loading: false,
+    stats: {}, // Changed to object for stats
     error: null,
     role: localStorage.getItem('role') || 'customer',
     // نخزّن الدور في localStorage عند تسجيل الدخول
@@ -43,7 +44,18 @@ export const useOrdersStore = defineStore('orders', {
         this.loading = false;
       }
     },
-
+    async fetchOrderStats() {
+       try {
+            const response = await apiService.admin.orders.stats();
+            if (response) {
+              this.stats = response.data.stats;
+              console.log("Fetched orders stats:", this.stats);
+              
+            }
+          } catch (e) {
+            console.error("Failed to fetch orders stats:", e);
+          }
+    },
     async createOrder(orderData) {
       if (this.role === 'admin') {
         throw new Error("Admins cannot create orders from here.");

@@ -965,6 +965,10 @@
     "label": "Nombre de livres par maison d'édition",
     "title": "Livres par maison d'édition"
   },
+  "categorySalesChart": {
+    "label": "Nombre de livres par catégorie",
+    "title": "Livres par maison d'catégorie"
+  },
   "ordersByCountryChart": {
     "label": "Maisons d'édition",
     "title": "Commandes par pays",
@@ -983,9 +987,7 @@
     "label": "Commandes quotidiennes",
     "title": "Aperçu des commandes quotidiennes"
   },
-  "categorySalesChart": {
-    "title": "Distribution des catégories de livres"
-  },
+  
   "bookList": {
     "loading": "Chargement des livres...",
     "noMatch": "Aucun livre ne correspond à vos filtres actuels. Essayez d'ajuster votre recherche.",
@@ -1101,5 +1103,6 @@
     "publisher": "Chargement des détails de l'éditeur...",
     "home": "Chargement de la page d'accueil...",
     "cart": "Chargement du panier..."
-  }
+  },
+  "noData": "Pas de données"
 }

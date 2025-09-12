@@ -3,14 +3,14 @@
   "subtotal": "Subtotal",
   "shipping": "Shipping",
   "vat": "VAT (15%)",
-  "total": "Grand Total",
-  "freeShippingNotice": "to get free shipping!",
+  "total": "Total",
+  "freeShippingNotice": "Add {amount} to get free shipping!",
   "customerInformation": "Customer Information",
   "receiverName": "Receiver Name",
   "email": "Email",
-  "phone": "Phone",
+  "phone": "Phone Number",
   "address": "Address",
-  "city": "Nationality",
+  "city": "City",
   "postalCode": "Postal Code",
   "quantity": "Quantity",
   "shippingOptions": "Shipping Options",
@@ -20,17 +20,17 @@
   "processing": "Processing...",
   "bookdetails": {
     "home": "Home",
-    "readMore": "Read more",
+    "readMore": "Read More",
     "addToCart": "Add to Cart",
     "buyNow": "Buy Now",
     "addToCartTooltip": "Add to your cart",
     "buyNowTooltip": "Proceed to checkout",
-    "addToWishlistTooltip": "Add to your wishlist",
+    "addToWishlistTooltip": "Add to wishlist",
     "fullDescription": "Full Description",
     "specifications": "Specifications",
     "by": "by",
     "publishedBy": "Published by",
-    "reviews": "reviews",
+    "reviews": "Reviews",
     "inStock": "In Stock",
     "isbn": "ISBN",
     "pages": "Pages",
@@ -39,38 +39,38 @@
     "unknownAuthor": "Unknown Author",
     "unknownPublisher": "Unknown Publisher",
     "noDescription": "No description available",
-    "notAvailable": "N/A",
+    "notAvailable": "Not Available",
     "outOfStock": "Out of Stock",
     "bookNotFound": "Book not found",
     "publisher": "Publisher",
-    "publishedDate": "Published Date",
-    "booksSameCategory": "Books from the same category",
-    "booksSameAuthor": "Books from the same author",
-    "booksSamePublisher": "Books from the same publisher"
+    "publishedDate": "Publication Date",
+    "booksSameCategory": "Books from the Same Category",
+    "booksSameAuthor": "Books from the Same Author",
+    "booksSamePublisher": "Books from the Same Publisher"
   },
   "header": {
     "title": "NETH<br />BOOKPOINT",
     "home": "Home",
-    "about": "About",
+    "about": "About Us",
     "shop": "Shop",
-    "delivery_theme": "Delivery theme",
+    "delivery_theme": "Delivery Theme",
     "authors": "Authors",
     "login": "Login",
-    "signup": "Sign up",
-    "contact": "Contact",
+    "signup": "Sign Up",
+    "contact": "Contact Us",
     "logout": "Logout"
   },
   "footer": {
-    "about": "Visit our branches and register for our online platform to enjoy maximum benefits!",
+    "about": "Visit our branches and register on our online platform to enjoy maximum benefits!",
     "quickLinks": "Quick Links",
     "branches": "Our Branches",
     "followUs": "Follow Us",
-    "promoTitle1": "Your Favorite",
-    "promoTitle2": "Reads Are Here!",
-    "promoDescription": "Buy your favorite books online with ease! Enjoy exclusive offers and discounts on selected titles. Dive into our collection and find special deals that make reading more affordable. Shop now and unlock more savings with every purchase!",
-    "stat1": "book listings",
-    "stat2": "registered members",
-    "stat3": "Branch Count",
+    "promoTitle1": "Your Favorites",
+    "promoTitle2": "Read Here!",
+    "promoDescription": "Buy your favorite books online easily! Enjoy exclusive offers and discounts on selected titles. Dive into our collection and find special deals that make reading affordable. Shop now and unlock more savings with every purchase!",
+    "stat1": "Book Lists",
+    "stat2": "Registered Members",
+    "stat3": "Number of Branches",
     "explore": "Explore More",
     "branchList": {
       "galle": "Galle",
@@ -78,61 +78,61 @@
       "kandy": "Kandy",
       "colombo": "Colombo"
     },
-    "copyright": "© 2025 | Neth BookPoint. All Rights Reserved."
+    "copyright": "© 2025 | Neth BookPoint. All rights reserved."
   },
   "home": {
-    "bestsellers": "BestSellers",
+    "bestsellers": "Bestsellers",
     "everyonesTalkingAbout": "Everyone's Talking About",
     "ourBestPaperbacks": "Our Best Paperbacks",
     "shopByCategory": "Shop by Category",
     "ourBestYABooks": "Our Best YA Books",
     "authors": "Authors",
-    "signedAndSpecialEditions": "Signed & Special Editions",
+    "signedAndSpecialEditions": "Signed and Special Editions",
     "publishingHouse": "Publishing House"
   },
   "about": {
     "title": "About Us",
-    "welcome": "Welcome to <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, your trusted source for a diverse range of books catering to every reader's taste. Established with the mission to foster a love for reading in our community, we pride ourselves on providing excellent service and a wide selection of books. Our journey began in 2021, and since then, we have grown to become a beloved destination for book lovers. Below, you'll find information about our four branches, their locations, and contact numbers.",
+    "welcome": "Welcome to <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, your trusted source for a wide variety of books catering to every reader’s taste. Founded with the goal of promoting a love for reading in our community, we take pride in offering excellent service and an extensive book collection. Our journey began in 2021, and since then we've grown to become a preferred destination for book lovers. Below you will find information about our four branches, their locations, and contact numbers.",
     "branchesTitle": "Our Branches",
     "kurunegalaBranch": {
       "title": "Kurunegala Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "details": "Main Street, City Center<br />Phone: 123-456-7890<br />Opening Hours: Monday–Saturday, 9 AM–7 PM; Sunday, 10 AM–5 PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study Areas"
     },
     "kandyBranch": {
       "title": "Kandy Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "details": "Main Street, City Center<br />Phone: 123-456-7890<br />Opening Hours: Monday–Saturday, 9 AM–7 PM; Sunday, 10 AM–5 PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study Areas"
     },
     "colomboBranch": {
       "title": "Colombo Branch",
-      "details": "Main Street, City Center<br />Contact: 123-456-7890<br />Hours: Mon–Sat, 9AM–7PM; Sun, 10AM–5PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study spaces"
+      "details": "Main Street, City Center<br />Phone: 123-456-7890<br />Opening Hours: Monday–Saturday, 9 AM–7 PM; Sunday, 10 AM–5 PM<br />🎓 Student Discounts, 🧠 Workshops, 📖 Study Areas"
     },
     "commitmentTitle": "Our Commitment",
-    "commitmentText": "At <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, we are committed to providing a welcoming and inspiring environment for all book enthusiasts. Our branches are staffed with knowledgeable and friendly team members ready to assist you in finding the perfect book. Whether you're looking for the latest bestseller, a rare find, or a cozy place to read, we're your destination. We believe in the power of reading to transform lives and build community. Join us at one of our branches or explore our offerings online. We're here to support your reading journey and make your book shopping experience enjoyable and fulfilling."
+    "commitmentText": "At <span class=\"text-[var(--color-primary)] font-semibold\">Neth BookPoint</span>, we are committed to providing a welcoming and inspiring environment for all book enthusiasts. Our branches feature friendly and knowledgeable staff ready to help you find the perfect book. Whether you're looking for the latest bestsellers, a rare title, or a comfortable place to read, we're your destination. We believe in the power of reading to change lives and build communities. Join us at one of our branches or explore our online offerings. We're here to support your reading journey and make your book-buying experience enjoyable and enriching."
   },
   "delivery": {
-    "title": "We’re Always Happy to Serve You!",
-    "welcome": "We welcome your orders with love and are always ready to serve you!",
-    "deliveryTime": "Orders within <strong>Neth BookPoint</strong> are usually delivered within <strong>48 working hours</strong>.<br />For other cities in the Kingdom, delivery takes between <strong>2–5 working days</strong>.",
+    "title": "We’re always happy to serve you!",
+    "welcome": "We warmly receive your orders and are always ready to assist you!",
+    "deliveryTime": "Orders within <strong>Neth BookPoint</strong> are usually delivered within <strong>48 business hours</strong>.<br />For other cities in the Kingdom, delivery takes <strong>2–5 business days</strong>.",
     "optionsTitle": "Delivery Options",
     "homeDelivery": "<span class=\"font-semibold\">Home Delivery – 24 SAR:</span> May not be available in some remote cities or villages.",
-    "lockerPickup": "<span class=\"font-semibold\">Pickup from RedBox Locker – 9 SAR:</span> Not supported in some cities.",
-    "freeDelivery": "<span class=\"font-semibold\">Free Delivery for orders of 300 SAR or more!</span>",
-    "whatsapp": "Contact Us on WhatsApp",
-    "note": "Please note: Orders cannot be canceled after payment is completed."
+    "lockerPickup": "<span class=\"font-semibold\">Pickup from RedBox Lockers – 9 SAR:</span> Not available in some cities.",
+    "freeDelivery": "<span class=\"font-semibold\">Free delivery for orders of 300 SAR or more!</span>",
+    "whatsapp": "Contact us via WhatsApp",
+    "note": "Note: Orders cannot be canceled after payment is completed."
   },
   "authors": {
-    "stephenKing": "An icon of horror, supernatural fiction, and suspense. Known as the \"King of Horror,\" his captivating stories have terrified and thrilled readers for decades.",
-    "jkRowling": "The creative genius behind the enchanting world of Harry Potter. Her magical storytelling has inspired a global generation of readers and dreamers.",
-    "colleenHoover": "A powerhouse in contemporary romance and young adult fiction. Hoover is celebrated for her emotionally charged novels that explore love, heartbreak, and resilience.",
-    "jamesPatterson": "One of the world's most prolific and bestselling authors. Patterson is a master of the thriller genre, known for his fast-paced plots and unforgettable characters.",
-    "agathaChristie": "The undisputed \"Queen of Crime.\" Christie penned timeless detective novels, creating iconic sleuths like Hercule Poirot and Miss Marple who continue to captivate.",
-    "georgeRRMartin": "The architect of the epic fantasy saga \"A Song of Ice and Fire.\" Martin is renowned for his intricate world-building and morally complex characters.",
-    "brandonSanderson": "A master of modern fantasy, famous for his detailed magic systems and the interconnected \"Cosmere\" universe. Sanderson is a prolific and beloved storyteller.",
-    "margaretAtwood": "A literary titan whose work spans speculative fiction, historical fiction, and poetry. Atwood is acclaimed for her sharp social commentary and visionary novels like \"The Handmaid's Tale.\""
+    "stephenKing": "An icon in horror, supernatural fiction, and thriller genres. Known as the \"King of Horror,\" his gripping and terrifying stories have captivated readers for decades.",
+    "jkRowling": "The creative genius behind the magical world of Harry Potter. Her enchanting storytelling has inspired a global generation of readers and dreamers.",
+    "colleenHoover": "A prominent force in contemporary romance and young adult literature. Her emotionally charged novels explore love, heartbreak, and resilience.",
+    "jamesPatterson": "One of the most prolific and widely read authors in the world. A master of thrillers, known for fast-paced plots and unforgettable characters.",
+    "agathaChristie": "The undisputed 'Queen of Crime.' She wrote timeless detective novels and created legendary detectives like Hercule Poirot and Miss Marple who continue to fascinate readers.",
+    "georgeRRMartin": "The architect of the famous fantasy epic 'A Song of Ice and Fire.' Renowned for his intricate world-building and morally complex characters.",
+    "brandonSanderson": "The modern master of fantasy, famous for his detailed magic systems and interconnected Cosmere universe. A prolific and beloved author.",
+    "margaretAtwood": "A distinguished literary figure whose works span speculative fiction, historical fiction, and poetry. Famous for her sharp insight, social commentary, and novels such as 'The Handmaid's Tale.'"
   },
   "hero": {
-    "title": "The Book Lover's Dreamland Awaits!",
-    "subtitle": "Welcome to the ultimate book lover's paradise! Join our community and contribute to the ever-evolving library of stories, where every book has a chance to inspire someone new.",
+    "title": "A dreamland for book lovers awaits you!",
+    "subtitle": "Welcome to the paradise of book lovers! Join our community and contribute to an ever-evolving library of stories, where every book has the chance to inspire someone new.",
     "searchPlaceholder": "Search for a book...",
     "searchButton": "Search"
   },
@@ -153,25 +153,25 @@
     "cardDescription": "This card's border uses the primary color.",
     "accessibilityGuidance": "Accessibility Guidance:",
     "contrast": "Contrast",
-    "contrastText": "Ensure text on a primary color background has sufficient contrast. For these colors, white text (or a very light gray) is generally safe. Use a contrast checker tool if you're unsure.",
+    "contrastText": "Ensure text on the primary color background has sufficient contrast. For these colors, white (or very light gray) is generally safe. Use a contrast checker if unsure.",
     "hoverActiveStates": "Hover & Active States",
-    "hoverActiveStatesText": "Provide clear visual feedback for interactive elements. The example button uses `hover:opacity-90` and `active:scale-95` for this purpose. Avoid relying on color alone to convey state.",
+    "hoverActiveStatesText": "Provide clear visual feedback for interactive elements. The example button uses `hover:opacity-90` and `active:scale-95` for this purpose. Avoid relying solely on color to convey state.",
     "fallback": "Fallback",
-    "fallbackText": "The `bg-[var(--color-primary)]` syntax relies on a CSS variable. The fallback defined in `main.css` is crucial for when the variable isn't set.",
+    "fallbackText": "The `bg-[var(--color-primary)]` syntax relies on a CSS variable. The fallback defined in `main.css` is crucial when the variable isn't set.",
     "developerNotes": "Developer Notes:",
     "tailwindJit": "Tailwind JIT",
-    "tailwindJitText": "This works because Tailwind's Just-In-Time (JIT) compiler sees the `bg-[var(--color-primary)]` class and generates the corresponding CSS. No special `tailwind.config.js` safelisting is needed for this approach.",
+    "tailwindJitText": "This works because the Tailwind Just-In-Time (JIT) compiler sees the `bg-[var(--color-primary)]` class and generates the corresponding CSS. No special safelist in `tailwind.config.js` is needed for this approach.",
     "ssrCaveat": "SSR Caveat",
-    "ssrCaveatText": "On the server-side (SSR), `localStorage` is not available. The initial color will always be the default from the store. The correct color will be applied on the client-side once the app hydrates. This might cause a brief flicker of the default color on first load for users with a non-default theme."
+    "ssrCaveatText": "On the server side (SSR), `localStorage` is unavailable. The initial color will always be the default from the store. The correct color will be applied client-side once the app hydrates. This may cause a brief flash of the default color on first load for users with a non-default theme."
   },
   "dashboard": {
     "overview": "Dashboard Overview",
-    "booksd": "Books",
+    "booksd": " Books",
     "ordersToday": "Orders Today",
     "clientsd": "Clients",
     "salesToday": "Sales Today",
     "orders_dash": {
-      "title": "Orders Management",
+      "title": "Manage Orders",
       "subtitle": "Manage your orders and purchase history",
       "table": {
         "id": "Order ID",
@@ -183,7 +183,7 @@
         "actions": "Actions"
       },
       "emptyHeader": "No orders found",
-      "emptySubtext": "There are no orders matching your criteria"
+      "emptySubtext": "No orders match your search criteria"
     },
     "orders_filter": {
       "searchPlaceholder": "Search orders...",
@@ -193,7 +193,7 @@
       },
       "stats": {
         "totalOrders": "Total Orders",
-        "avgDeliveryTime": "Avg Delivery Time",
+        "avgDeliveryTime": "Average Delivery Time",
         "pendingOrders": "Pending Orders",
         "returnedOrders": "Returned Orders",
         "completedOrders": "Completed Orders"
@@ -226,7 +226,7 @@
       "updatedSuccess": "Client updated successfully",
       "loading": "Loading client data...",
       "error": "Error",
-      "tryAgain": "Try Again",
+      "tryAgain": "Try again",
       "sendEmail": "Send Email",
       "callClient": "Call Client",
       "print": "Print",
@@ -255,7 +255,7 @@
     },
     "categories": {
       "title": "Categories Dashboard",
-      "subtitle": "Track and manage all your categories efficiently.",
+      "subtitle": "Efficiently track and manage all your categories.",
       "totalCategories": "Total Categories",
       "activeCategories": "Active Categories",
       "newThisMonth": "New This Month",
@@ -265,7 +265,7 @@
         "name": "Name",
         "status": "Status",
         "orders": "Orders",
-        "books": "N.Books",
+        "books": "Number of Books",
         "createdAt": "Created At",
         "action": "Action",
         "view": "View"
@@ -287,7 +287,7 @@
       },
       "searchPlaceholder": "Search books...",
       "table": {
-        "id": "Id",
+        "id": "ID",
         "cover": "Cover",
         "title": "Title",
         "category": "Category",
@@ -304,7 +304,7 @@
         "delete": "Delete"
       },
       "emptyHeader": "No books found",
-      "emptySubtext": "Try adjusting your search or filter to find what you're looking for.",
+      "emptySubtext": "Try modifying your search or filters to find what you're looking for.",
       "deleteConfirm": "Are you sure you want to delete",
       "addSuccess": "Book added successfully!",
       "addFailed": "Failed to add book.",
@@ -319,7 +319,7 @@
       "importData": "Import Data",
       "skippingBook": "Skipping book \"{{title}}\" due to missing required data.",
       "importSuccess": "Data imported successfully!",
-      "importFailed": "Failed to import data. Please check the console for more details.",
+      "importFailed": "Failed to import data. Please check the console for details.",
       "status": {
         "published": "Published",
         "pending": "Pending",
@@ -337,7 +337,7 @@
         "publisher": "Publisher",
         "category": "Category",
         "stock": "Stock",
-        "pages": "Number of Pages",
+        "pages": "Pages",
         "cover": "Cover Image"
       },
       "placeholders": {
@@ -348,7 +348,7 @@
       "save": "Save",
       "cancel": "Cancel",
       "requiredFields": "Please fill in all required fields.",
-      "addNew": "Add New ",
+      "addNew": "Add ",
       "name": " Name",
       "new": "New",
       "failed": "Failed to add "
@@ -367,7 +367,7 @@
       "save": "Save Changes",
       "cancel": "Cancel",
       "requiredFields": "Please fill in all required fields.",
-      "addNew": "Add New ",
+      "addNew": "Add ",
       "name": " Name",
       "new": "New",
       "selectAuthor": "Select an author",
@@ -386,7 +386,7 @@
     },
     "authors": {
       "title": "Authors Dashboard",
-      "subtitle": "Track and manage all authors",
+      "subtitle": "Track and manage all your authors",
       "addNew": "Add New Author",
       "filters": {
         "allCountries": "All Countries"
@@ -411,8 +411,8 @@
         "delete": "Delete"
       },
       "emptyHeader": "No authors found",
-      "emptySubtext": "Try adjusting your search or filter criteria.",
-      "search": "Search for Author",
+      "emptySubtext": "Try modifying your search or filter criteria.",
+      "search": "Search for an author",
       "clearFilters": "Clear Filters",
       "addAuthor": "Add Author",
       "export": "Export",
@@ -437,11 +437,11 @@
       "adjustFilters": "Try adjusting your search or filter criteria.",
       "deleteConfirm": "Are you sure you want to delete this author?",
       "importSuccess": "Data imported successfully!",
-      "importFailed": "Failed to import data. Please check the console for more details."
+      "importFailed": "Failed to import data. Please check the console for details."
     },
     "publishers": {
       "title": "Publishing Houses",
-      "subtitle": "Track and manage all publishing houses",
+      "subtitle": "Track and manage all your publishing houses",
       "addNew": "Add New Publisher",
       "sortBy": "Sort by:",
       "stats": {
@@ -461,8 +461,8 @@
         "edit": "Edit",
         "delete": "Delete"
       },
-      "emptyHeader": "No Publishers Found",
-      "emptySubtext": "Try adjusting your search or filter criteria.",
+      "emptyHeader": "No publishers found",
+      "emptySubtext": "Try modifying your search or filter criteria.",
       "deleteConfirm": "Confirm Deletion"
     },
     "clients_dash": {
@@ -495,12 +495,12 @@
         "action": "Action"
       },
       "emptyHeader": "No clients found",
-      "emptySubtext": "Try adjusting your search or filter criteria."
+      "emptySubtext": "Try modifying your search or filter criteria."
     },
     "settings": {
       "title": "Settings",
       "primaryColor": "Primary Color",
-      "primaryColorSubtext": "Choose a primary color for the application theme. The change will be applied instantly.",
+      "primaryColorSubtext": "Choose a primary color for the application theme. Changes will apply immediately.",
       "livePreview": "Live Preview",
       "localization": "Localization",
       "currency": "Currency",
@@ -530,7 +530,7 @@
       "addPublisher": "Add Publisher",
       "export": "Export",
       "import": "Import",
-      "sortBy": "Sort by",
+      "sortBy": "Sort By",
       "clearFilters": "Clear Filters",
       "totalPublishers": "Total Publishers",
       "totalOrders": "Total Orders",
@@ -538,15 +538,15 @@
       "view": "View",
       "edit": "Edit",
       "actions": "Actions",
-      "noPublishersFound": "No Publishers Found",
-      "tryAdjustingSearch": "Try adjusting your search or filter criteria.",
+      "noPublishersFound": "No publishers found",
+      "tryAdjustingSearch": "Try adjusting your search or filtering criteria.",
       "clearAllFilters": "Clear All Filters",
       "importSuccess": "Data imported successfully!",
       "importFailed": "Failed to import data. Please check the console for more details."
     },
     "editCategory": {
       "title": "Edit Category",
-      "subtitle": "Update the details for the category.",
+      "subtitle": "Update category details.",
       "loading": "Loading category data...",
       "selectDefault": "Please select one",
       "statusActive": "Active",
@@ -576,7 +576,7 @@
       },
       "cancel": "Cancel",
       "save": "Save Changes",
-      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirmTitle": "Confirm Deletion",
       "deleteConfirmText": "Are you sure you want to delete this book?",
       "addOfferTitle": "Add Offer/Discount",
       "discountType": "Discount Type",
@@ -600,7 +600,7 @@
       "authorName": "Author Name",
       "pagesLabel": "Number of Pages",
       "stockLabel": "Stock Quantity",
-      "pricePlaceholder": "$0.00",
+      "pricePlaceholder": "0.00 $",
       "categoryPlaceholder": "Book Category",
       "descriptionPlaceholder": "Book Description",
       "imagePreview": "Image Preview",
@@ -615,7 +615,7 @@
       "publish": "Publish",
       "inStock": "In Stock",
       "limitedStock": "Limited Stock",
-      "onlyRemaining": "Only {{stock}} copies remaining!",
+      "onlyRemaining": "Only {{stock}} copies left!",
       "outOfStock": "Out of Stock",
       "outOf5": " out of 5",
       "deactivate": "Deactivate",
@@ -652,7 +652,7 @@
       "booksBy": "Books by "
     },
     "publisherDetails": {
-      "error": "An Error Occurred!",
+      "error": "An error occurred!",
       "statistics": "Statistics",
       "booksPublished": "Books Published",
       "totalOrders": "Total Orders",
@@ -710,51 +710,51 @@
       "save": "Save Changes"
     },
     "sidebar": {
-        "dashboard": "Dashboard",
-        "books": "Books",
-        "addBook": "Add Book",
-        "categories": "Categories",
-        "authors": "Authors",
-        "publishingHouses": "Publishing Houses",
-        "users": "Users",
-        "clients": "Clients",
-        "orders": "Orders",
-        "messages": "Messages",
-        "settings": "Settings",
-        "logout": "Logout",
-        "administrator": "Administrator",
-        "brand": "Neth BookPoint",
-        "admin": "Admin",
-        "copyright": "© 2024 Neth BookPoint"
+      "dashboard": "Dashboard",
+      "books": "Books",
+      "addBook": "Add Book",
+      "categories": "Categories",
+      "authors": "Authors",
+      "publishingHouses": "Publishing Houses",
+      "users": "Users",
+      "clients": "Clients",
+      "orders": "Orders",
+      "messages": "Messages",
+      "settings": "Settings",
+      "logout": "Logout",
+      "administrator": "Administrator",
+      "brand": "Neth BookPoint",
+      "admin": "Admin",
+      "copyright": "© 2024 Neth BookPoint"
     },
     "latestOrders": {
-        "title": "Latest Orders",
-        "loading": "Loading...",
-        "customer": "Customer",
-        "noPayment":"No Payment Method",
-        "table": {
-            "orderId": "Order ID",
-            "client": "Client",
-            "email": "Email",
-            "status": "Status",
-            "total": "Total",
-            "payment": "Payment",
-            "date": "Date"
-        },
-        "emptyHeader": "No orders found"
+      "title": "Latest Orders",
+      "loading": "Loading...",
+      "customer": "Customer",
+      "noPayment": "No payment method",
+      "table": {
+        "orderId": "Order ID",
+        "client": "Client",
+        "email": "Email",
+        "status": "Status",
+        "total": "Total",
+        "payment": "Payment",
+        "date": "Date"
+      },
+      "emptyHeader": "No orders found"
     },
     "recentBooks": {
-        "title": "Recently Added Books",
-        "emptyHeader": "No books found"
+      "title": "Recently Added Books",
+      "emptyHeader": "No books found"
     },
     "clients": {
-      "searchPlaceholder": "Search for Clients",
+      "searchPlaceholder": "Search clients",
       "export": "Export",
       "filter": "Filter",
       "analytics": "Analytics",
       "registrationDatePlaceholder": "Registration Date",
       "lastOrderDatePlaceholder": "Last Order Date",
-      "minTotalSpendPlaceholder": "Min Total Spend",
+      "minTotalSpendPlaceholder": "Minimum Total Spend",
       "status": "Status",
       "selectStatus": "Select Status",
       "source": "Source",
@@ -781,49 +781,49 @@
   },
   "notFound": {
     "title": "Oops! Page Not Found",
-    "message": "The page you're looking for doesn’t exist or has been moved.",
+    "message": "The page you are looking for does not exist or has been moved.",
     "backToHome": "Back to Home"
   },
   "login": {
     "welcome": "Welcome to Neth BookPoint!",
     "discover": "Discover a seamless way to explore books and enjoy exclusive features.",
-    "emailPlaceholder": "Email Address",
+    "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
     "forgotPassword": "Forgot password?",
     "loggingIn": "Logging in...",
     "login": "Login",
-    "or": "OR",
+    "or": "or",
     "googleContinue": "Continue with Google",
-    "noAccount": "Don’t have an account?",
-    "signUp": "Sign up",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign Up",
     "failed": "Login failed. Please check your credentials."
   },
   "register": {
     "passwordMismatch": "Passwords do not match.",
     "nameRequired": "Name is required",
     "emailRequired": "Email is required",
-    "emailInvalid": "Please enter a valid email",
+    "emailInvalid": "Please enter a valid email address",
     "passwordRequired": "Password is required",
-    "passwordLength": "Password must be at least 6 characters",
+    "passwordLength": "Password must be at least 6 characters long",
     "confirmPasswordRequired": "Please confirm your password",
     "passwordsMismatch": "Passwords do not match",
     "registrationFailed": "Registration failed. Please try again.",
     "title": "Create Your Account",
     "subtitle": "Join the Neth BookPoint community and enjoy a personalized book experience.",
     "fullNamePlaceholder": "Full Name",
-    "emailPlaceholder": "Email Address",
+    "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
     "confirmPasswordPlaceholder": "Confirm Password",
-    "creatingAccount": "Creating Account...",
+    "creatingAccount": "Creating account...",
     "createAccount": "Create Account",
-    "or": "OR",
+    "or": "or",
     "googleSignUp": "Sign up with Google",
     "alreadyAccount": "Already have an account?",
     "login": "Login"
   },
   "contact": {
     "title": "Contact Us",
-    "subtitle": "We're happy to hear from you! Fill the form below or reach us via WhatsApp.",
+    "subtitle": "We’d love to hear from you! Fill out the form below or contact us via WhatsApp.",
     "namePlaceholder": "Your Name",
     "emailPlaceholder": "Your Email",
     "messagePlaceholder": "Your Message",
@@ -832,8 +832,8 @@
     "whatsapp": "WhatsApp"
   },
   "shop": {
-    "title": "Explore All Books Here",
-    "subtitle": "Discover the best books to read right now including trending titles, bookseller recommendations, new releases and more.",
+    "title": "Discover All Books Here",
+    "subtitle": "Discover the best books to read now including trending titles, bookseller recommendations, new releases, and more.",
     "loading": "Loading books...",
     "noBooks": "No books available at the moment. Please check back later."
   },
@@ -844,14 +844,14 @@
       "title": "Popular Sections",
       "customerFavorites": "Customer Favorites",
       "bestsellers": "Bestsellers",
-      "teensYABestsellers": "Teens & YA Bestsellers",
+      "teensYABestsellers": "Teen & YA Bestsellers",
       "kidsBestsellers": "Kids Bestsellers",
       "nyTimesBestsellers": "NY Times® Bestsellers",
       "newReleases": "New Releases",
       "comingSoon": "Coming Soon",
       "specialValues": "Special Values",
-      "paperbacksUpTo25Off": "Paperbacks Up to 25% Off",
-      "bestsellers30Off": "Bestsellers 30% Off",
+      "paperbacksUpTo25Off": "Paperbacks up to 25% off",
+      "bestsellers30Off": "Bestsellers 30% off",
       "bookAnnex": "Book Annex",
       "bnCollectibleEditions": "B&N Collectible Editions",
       "specialCollections": "Special Collections",
@@ -901,7 +901,7 @@
       "portuguese": "Portuguese",
       "finnish": "Finnish",
       "welsh": "Welsh",
-      "panjabi": "Panjabi",
+      "panjabi": "Punjabi",
       "arabic": "Arabic",
       "chinese": "Chinese",
       "dutch": "Dutch",
@@ -920,24 +920,24 @@
     "phone": "Phone",
     "country": "Country",
     "goTocart": "Go to cart",
-    "loadingD": "Loading...",
+    "loadingD": "Loading data...",
     "shoppingCart": "Shopping Cart",
-    "itemsInCart": "{count} items in your cart",
+    "itemsInCart": "{count} items in your shopping cart",
     "total": "Total",
-    "emptyCart": "Your cart is empty",
+    "emptyCart": "Shopping cart is empty",
     "emptyCartSuggestion": "Add some items to get started",
     "orderHistory": "Order History",
-    "totalOrders": "{count} total orders",
+    "totalOrders": "{count} Total Orders",
     "order": "Order",
     "noOrders": "No orders yet",
     "noOrdersSuggestion": "Your order history will appear here",
-    "quantity": "Qty",
+    "quantity": "Quantity",
     "logout": "Logout",
     "loadingProfile": "Loading profile...",
     "failedToLoadProfile": "Failed to load profile: ",
     "notSet": "Not set",
     "loadingOrders": "Loading orders...",
-    "loginToView": "Please log in to see your profile."
+    "loginToView": "Please log in to view your profile."
   },
   "editProfile": {
     "title": "Edit Profile",
@@ -949,7 +949,7 @@
   },
   "paymentSuccess": {
     "title": "Payment Successful!",
-    "subtitle": "Thank you for your purchase. Your order is confirmed.",
+    "subtitle": "Thank you for your purchase. Your order has been confirmed.",
     "orderSummary": "Order Summary",
     "quantity": "Quantity: ",
     "subtotal": "Subtotal",
@@ -958,12 +958,12 @@
     "total": "Total",
     "continueShopping": "Continue Shopping",
     "viewOrderHistory": "View Order History",
-    "noOrderDetails": "No order details found.",
-    "completePurchase": "Please complete a purchase to see your order summary.",
+    "noOrderDetails": "Order details not found.",
+    "completePurchase": "Please complete your purchase to see your order summary.",
     "goToShop": "Go to Shop"
   },
   "googleCallback": {
-    "loggingIn": "Logging in with Google..."
+    "loggingIn": "Logging in via Google..."
   },
   "checkoutPage": {
     "product": "Product ",
@@ -979,7 +979,7 @@
     "cvvPlaceholder": "***"
   },
   "singleCategoryPage": {
-    "loading": "Loading Category...",
+    "loading": "Loading category...",
     "error": "Error:",
     "retry": "Retry",
     "booksIn": "Books in"
@@ -999,36 +999,30 @@
     "books": "Books",
     "author": "Author",
     "featured": "Featured",
-    "authorNotFound": "Author Not Found!",
-    "checkUrl": "Please check the URL or return to the authors list.",
+    "authorNotFound": "Author not found!",
+    "checkUrl": "Please check the URL or go back to the authors list.",
     "goBack": "Go Back",
     "booksBy": "Books by"
   },
   "loginAdmin": {
     "title": "Admin Login",
-    "subtitle": "Please sign in with your admin account",
+    "subtitle": "Please log in with your admin account",
     "emailPlaceholder": "Admin Email",
     "passwordPlaceholder": "Password",
     "loginButton": "Login",
     "back": "Back to",
     "home": "Home",
     "notAuthorized": "You are not authorized to access the dashboard.",
-    "invalidCredentials": "Invalid email or password.",
+    "invalidCredentials": "Email or password is invalid.",
     "genericError": "Something went wrong. Please try again later."
   },
-  "sidebar": {
-    "clear": "Clear",
-    "age": {
-      "child": "Child",
-      "tween": "Tween",
-      "teen": "Teen",
-      "adult": "Adult",
-      "allAges": "All Ages"
-    }
-  },
   "publishingHouseChart": {
-    "label": "Number of books by publishing house",
+    "label": "Number of Books by Publishing House",
     "title": "Books by Publishing House"
+  },
+  "categorySalesChart": {
+    "label": "Number of Books by Category",
+    "title": "Books by Category"
   },
   "ordersByCountryChart": {
     "label": "Publishing Houses",
@@ -1047,9 +1041,6 @@
   "dailyOrdersChart": {
     "label": "Daily Orders",
     "title": "Daily Orders Overview"
-  },
-  "categorySalesChart": {
-    "title": "Book Categories Distribution"
   },
   "bookList": {
     "loading": "Loading books...",
@@ -1074,11 +1065,11 @@
     "books": "Books"
   },
   "singlePublishingHousePage": {
-    "loading": "Loading Publisher...",
+    "loading": "Loading publisher...",
     "error": "Error:",
     "retry": "Retry",
-    "invalidId": "Invalid Publisher ID provided in the URL.",
-    "notFound": "Publisher with ID {id} not found.",
+    "invalidId": "Invalid publisher ID in URL.",
+    "notFound": "No publisher found with ID {id}.",
     "unknownError": "An unknown error occurred.",
     "booksBy": "Books by"
   },
@@ -1090,7 +1081,7 @@
     "title": "Order Details #",
     "print": "Print",
     "downloadInvoice": "Download Invoice",
-    "statusTitle": "Order Status",
+    "statusTitle": "Order Status: ",
     "updateStatus": "Update Order Status",
     "itemsTitle": "Order Items",
     "additionalItems": "Additional Items",
@@ -1101,7 +1092,7 @@
     "customerId": "Customer ID:",
     "orderId": "Order ID:",
     "status": "Status:",
-    "created": "Created:",
+    "created": "Created On:",
     "summaryTitle": "Order Summary",
     "subtotal": "Subtotal",
     "total": "Total",
@@ -1112,13 +1103,13 @@
     "statusShipped": "Shipped",
     "statusCompleted": "Completed",
     "statusCancelled": "Cancelled",
-    "bookTitleNotAvailable": "Book Title Not Available",
+    "bookTitleNotAvailable": "Book title not available",
     "unknownAuthor": "Unknown Author",
-    "authorNotAvailable": "Author Not Available",
-    "isbnNotAvailable": "ISBN Not Available",
+    "authorNotAvailable": "Author not available",
+    "isbnNotAvailable": "ISBN not available",
     "errorUpdate": "Error updating order status",
-    "errorNotFound": "The requested order was not found",
-    "errorLoading": "An error occurred while loading the order details"
+    "errorNotFound": "Requested order not found",
+    "errorLoading": "An error occurred while loading order details"
   },
   "phouseDetails": {
     "edit": "Edit",
@@ -1135,11 +1126,11 @@
     "cancel": "Cancel",
     "saveChanges": "Save Changes",
     "booksBy": "Books by",
-    "errorOccurred": "An Error Occurred!",
+    "errorOccurred": "An error occurred!",
     "loading": "Loading publishing house..."
   },
   "categoriesInfo": {
-    "loadingCategory": "Loading Category...",
+    "loadingCategory": "Loading category...",
     "error": "Error:",
     "retry": "Retry",
     "edit": "Edit",
@@ -1153,9 +1144,9 @@
     "deleteFailed": "Failed to delete category. Please try again."
   },
   "loading": {
-    "dashboard": "Loading dashboard...",
-    "orders": "Loading orders...",
-    "clients": "Loading clients...",
+    "dashboard": "Loading dashboard",
+    "orders": "Loading orders",
+    "clients": "Loading clients",
     "books": "Loading books...",
     "authors": "Loading authors...",
     "categories": "Loading categories...",
@@ -1164,6 +1155,8 @@
     "author": "Loading author details...",
     "category": "Loading category details...",
     "publisher": "Loading publisher details...",
-    "home": "Loading Home Page..."
-  }
+    "home": "Loading home page...",
+    "cart": "Loading cart..."
+  },
+  "noData": "No data"
 }

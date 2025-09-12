@@ -25,7 +25,7 @@ const { loading: isLoading } = storeToRefs(ordersStore)
 const ORDER_STATUS = {
   PENDING: 'pending',
   SHIPPED: 'shipped',
-  COMPLETED: 'paid',
+  COMPLETED: 'completed',
   CANCELLED: 'canceled'
 }
 
@@ -82,39 +82,40 @@ const statusConfig = computed(() => {
   if (!selectedOrder.value) return {}
 
   const statusMap = {
-    'pending': {
-      icon: ClockIcon,
-      label: t('orderDetails.statusPending'),
-      color: 'bg-amber-100 text-amber-800 border-amber-200',
-      bgColor: 'bg-amber-50',
-      iconColor: 'text-amber-600',
-      progress: 25
-    },
-    'shipped': {
-      icon: TruckIcon,
-      label: t('orderDetails.statusShipped'),
-      color: 'bg-blue-100 text-blue-800 border-blue-200',
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-[var(--color-primary)]',
-      progress: 75
-    },
-    'paid': {
-      icon: CheckCircleIcon,
-      label: t('orderDetails.statusCompleted'),
-      color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-      bgColor: 'bg-emerald-50',
-      iconColor: 'text-emerald-600',
-      progress: 100
-    },
-    'canceled': {
-      icon: XCircleIcon,
-      label: t('orderDetails.statusCancelled'),
-      color: 'bg-red-100 text-red-800 border-red-200',
-      bgColor: 'bg-red-50',
-      iconColor: 'text-red-600',
-      progress: 0
-    }
+  'pending': {
+    icon: ClockIcon,
+    label: t('orderDetails.statusPending'),
+    color: 'bg-amber-100 text-amber-800 border-amber-200',
+    bgColor: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    progress: 25
+  },
+  'shipped': {
+    icon: TruckIcon,
+    label: t('orderDetails.statusShipped'),
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    bgColor: 'bg-blue-50',
+    iconColor: 'text-[var(--color-primary)]',
+    progress: 75
+  },
+  'completed': { // ✅ بدلنا paid إلى completed
+    icon: CheckCircleIcon,
+    label: t('orderDetails.statusCompleted'),
+    color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    bgColor: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    progress: 100
+  },
+  'canceled': {
+    icon: XCircleIcon,
+    label: t('orderDetails.statusCancelled'),
+    color: 'bg-red-100 text-red-800 border-red-200',
+    bgColor: 'bg-red-50',
+    iconColor: 'text-red-600',
+    progress: 2
   }
+}
+
 
   return statusMap[selectedOrder.value.status] || statusMap['pending']
 })
@@ -123,10 +124,11 @@ const statusOptions = computed(() => {
   return [
     { value: 'pending', label: t('orderDetails.statusPending'), icon: ClockIcon },
     { value: 'shipped', label: t('orderDetails.statusShipped'), icon: TruckIcon },
-    { value: 'paid', label: t('orderDetails.statusCompleted'), icon: CheckCircleIcon },
+    { value: 'completed', label: t('orderDetails.statusCompleted'), icon: CheckCircleIcon },
     { value: 'canceled', label: t('orderDetails.statusCancelled'), icon: XCircleIcon }
   ]
 })
+
 
 const subtotal = computed(() => {
   if (!selectedOrder.value || !selectedOrder.value.items) return 0

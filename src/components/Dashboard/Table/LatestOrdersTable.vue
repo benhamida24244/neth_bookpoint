@@ -11,9 +11,10 @@ const dashboardStore = useDashboardStore()
 const { latestOrders, loading } = storeToRefs(dashboardStore)
 
 const statusColor = {
-  pending: 'text-[var(--color-primary)] bg-yellow-100',
-  shipped: 'text-green-600 bg-green-100',
-  cancelled: 'text-red-600 bg-red-100'
+  pending: 'bg-yellow-500',
+  completed: 'bg-green-600 text-gray-100',
+  shipped: 'bg-blue-200 text-gray-600',
+  canceled: 'bg-red-400'
 }
 
 // تنسيق التاريخ

@@ -179,12 +179,12 @@
             <button
               class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
-              {{ t('pagination.previous') }}
+              {{ t('dashboard.orders.pagination.previous') }}
             </button>
             <button
               class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
-              {{ t('pagination.next') }}
+              {{ t('dashboard.orders.pagination.next') }}
             </button>
           </div>
           <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
@@ -207,7 +207,7 @@
                 <button
                   class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
-                  <span class="sr-only">{{ t('pagination.previous') }}</span>
+                  <span class="sr-only">{{ t('dashboard.orders.pagination.previous') }}</span>
                   <i class="fas fa-chevron-left"></i>
                 </button>
                 <button
@@ -228,7 +228,7 @@
                 <button
                   class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
-                  <span class="sr-only">{{ t('pagination.next') }}</span>
+                  <span class="sr-only">{{ t('dashboard.orders.pagination.next') }}</span>
                   <i class="fas fa-chevron-right"></i>
                 </button>
               </nav>
@@ -262,6 +262,7 @@ const searchQuery = ref('')
 // جلب بيانات الطلبات عند تحميل المكون
 onMounted(() => {
   ordersStore.fetchOrders()
+  ordersStore.fetchOrderStats()
 })
 
     const exportData = () => {
@@ -280,35 +281,35 @@ onMounted(() => {
     }
 
     const stats = computed(() => {
-      const allOrders = ordersStore.orders;
+      const allOrders = ordersStore.stats || {};
       return [
         {
           label: t('dashboard.orders_filter.stats.totalOrders'),
-          value: allOrders.length,
+          value: allOrders.ordersCount || 0,
           icon: 'fas fa-list-ol text-blue-500',
           iconBg: 'bg-blue-50'
         },
         {
           label: t('dashboard.orders_filter.stats.avgDeliveryTime'),
-          value: '3 days', // This cannot be calculated from current data
+          value: allOrders.avgDeliveryTime || 'N/A', // This cannot be calculated from current data
           icon: 'far fa-clock text-green-500',
           iconBg: 'bg-green-50'
         },
         {
           label: t('dashboard.orders_filter.stats.pendingOrders'),
-          value: allOrders.filter(o => o.status === 'Pending').length,
+          value: allOrders.ordersPending,
           icon: 'fas fa-truck text-[var(--color-light)]',
           iconBg: 'bg-yellow-50'
         },
         {
           label: t('dashboard.orders_filter.stats.returnedOrders'),
-          value: allOrders.filter(o => o.status === 'Returned').length,
+          value: allOrders.ordersCanceled,
           icon: 'fas fa-undo text-red-500',
           iconBg: 'bg-red-50'
         },
         {
           label: t('dashboard.orders_filter.stats.completedOrders'),
-          value: allOrders.filter(o => o.status === 'Completed').length,
+          value: allOrders.ordersCompleted,
           icon: 'fas fa-check-circle text-emerald-500',
           iconBg: 'bg-emerald-50'
         }
@@ -319,8 +320,8 @@ onMounted(() => {
       { label: t('dashboard.orders_filter.filters.allOrders'), value: 'all' },
       { label: t('dashboard.orders_filter.filters.pending'), value: 'pending' },
       { label: t('dashboard.orders_filter.filters.shipped'), value: 'shipped' },
-      { label: t('dashboard.orders_filter.filters.delivered'), value: 'delivered' },
-      { label: t('dashboard.orders_filter.filters.cancelled'), value: 'cancelled' }
+      { label: t('dashboard.orders_filter.filters.delivered'), value: 'completed' },
+      { label: t('dashboard.orders_filter.filters.cancelled'), value: 'canceled' }
     ])
 
     const filteredOrders = computed(() => {
@@ -351,7 +352,7 @@ onMounted(() => {
         'processing': 'bg-blue-50 text-blue-700',
         'shipped': 'bg-purple-50 text-purple-700',
         'delivered': 'bg-green-50 text-green-700',
-        'cancelled': 'bg-red-50 text-red-700'
+        'canceled': 'bg-red-50 text-red-700'
       }
       return statusClasses[status] || 'bg-gray-50 text-gray-700'
     }
