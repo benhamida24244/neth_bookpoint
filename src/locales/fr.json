@@ -10,7 +10,7 @@
   "email": "Email",
   "phone": "Téléphone",
   "address": "Adresse",
-  "city": "Ville",
+  "city": "Country",
   "postalCode": "Code postal",
   "quantity": "Quantité",
   "shippingOptions": "Options de livraison",
@@ -680,6 +680,7 @@
         "title": "Dernières commandes",
         "loading": "Chargement...",
         "customer": "Client",
+        "noPayment":"Pas paymentMethods",
         "table": {
             "orderId": "ID de commande",
             "client": "Client",
@@ -818,10 +819,10 @@
     "price": {
       "title": "Prix",
       "under5": "Moins de 5 $",
-      "p5to10": "5 $ - 10 $",
-      "p10to25": "10 $ - 25 $",
-      "p25to50": "25 $ - 50 $",
-      "over50": "Plus de 50 $"
+      "p5to10": "5 $ - 10 $ ",
+      "p10to25": "10 $ - 25 $ ",
+      "p25to50": "25 $ - 50 $ ",
+      "over50": "Plus de 50 $ "
     },
     "age": {
       "title": "Âge",
@@ -1087,6 +1088,9 @@
     "deleteFailed": "Échec de la suppression de la catégorie. Veuillez réessayer."
   },
   "loading": {
+    "dashboard": "Chargement du tableau de bord...",
+    "orders": "Chargement du tableau de orders...",
+    "clients": "Chargement du tableau de clients...",
     "books": "Chargement des livres...",
     "authors": "Chargement des auteurs...",
     "categories": "Chargement des catégories...",
@@ -1094,6 +1098,8 @@
     "book": "Chargement des détails du livre...",
     "author": "Chargement des détails de l'auteur...",
     "category": "Chargement des détails de la catégorie...",
-    "publisher": "Chargement des détails de l'éditeur..."
+    "publisher": "Chargement des détails de l'éditeur...",
+    "home": "Chargement de la page d'accueil...",
+    "cart": "Chargement du panier..."
   }
 }

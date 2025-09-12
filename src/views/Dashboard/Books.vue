@@ -6,6 +6,7 @@ import { RouterLink } from 'vue-router'
 import AddBookModal from '@/components/Dashboard/Modals/AddBookModal.vue'
 import EditBookModal from '@/components/Dashboard/Modals/EditBookModal.vue'
 import Pagination from '@/components/Pagination.vue'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 import { useI18n } from 'vue-i18n'
 import * as XLSX from 'xlsx'
 import { useAuthorStore } from '@/stores/Authors'
@@ -290,6 +291,13 @@ const handlePageChange = (page) => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
+    <!-- Loading State -->
+    <div v-if="bookStore.isLoading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.books')" />
+    </div>
+
+    <!-- Content when not loading -->
+    <div v-else>
     <AddBookModal :show="showAddBookModal" @close="showAddBookModal = false" @save="handleSaveBook" />
     <EditBookModal
       :show="showEditBookModal"
@@ -528,6 +536,7 @@ const handlePageChange = (page) => {
         :total-items="bookStore.pagination.total"
         @page-changed="handlePageChange"
       />
+    </div>
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon } from '@heroicons/vue/24/outline'
 import { useBooksStore } from '@/stores/Books'
 import { useI18n } from 'vue-i18n'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
 
@@ -50,7 +51,7 @@ const offerForm = ref({})
 
 // --- Computed ---
 const bookId = computed(() => Number(props.bookIdProp || route.params.id))
-const selectedBook = computed(() => booksStore.books.find((book) => book.id === bookId.value))
+const selectedBook = computed(() => booksStore.book)
 const isLoading = computed(() => booksStore.isLoading)
 const error = computed(() => booksStore.error)
 
@@ -281,7 +282,7 @@ watch(bookId, (newId, oldId) => {
 <template>
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
     <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
-      <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-[var(--color-primary)]"></div>
+      <LoaderWithText :message="t('loading.book')" />
     </div>
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">

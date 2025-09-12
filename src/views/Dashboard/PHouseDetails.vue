@@ -4,6 +4,7 @@ import { onMounted, ref, computed } from 'vue'; // <-- Import computed
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import DashboardBooks from '@/components/Dashboard/DashboardBooks.vue';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 // Initialize store and router
 const publishingHouseStore = usePublishingHouseStore();
 const route = useRoute();
@@ -115,7 +116,7 @@ async function savePublishingHouse() {
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800 p-4 sm:p-6 lg:p-8">
 
     <div v-if="loading" class="flex justify-center items-center h-screen">
-      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--color-primary)]"></div>
+      <LoaderWithText :message="t('phouseDetails.loading')" />
     </div>
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">

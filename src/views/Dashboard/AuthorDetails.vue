@@ -1,5 +1,6 @@
 <script setup>
 import DashboardBooks from '@/components/Dashboard/DashboardBooks.vue'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, computed } from 'vue'
@@ -129,7 +130,7 @@ async function saveAuthor() {
 
 <template>
   <div v-if="loading" class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="text-gray-600 text-lg">{{ t('dashboard.authorDetails.loading') }}</div>
+    <LoaderWithText :message="t('dashboard.authorDetails.loading')" />
   </div>
   <div v-else-if="error" class="flex justify-center items-center min-h-screen bg-gray-100">
     <div

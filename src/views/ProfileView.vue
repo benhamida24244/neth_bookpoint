@@ -7,6 +7,7 @@ import { computed, onMounted, ref } from 'vue' // Imported onMounted and ref
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import EditProfileModal from '@/components/EditProfileModal.vue';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 
 // Pinia stores
 const authStore = useCustomerAuthStore()
@@ -80,7 +81,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
       <!-- Loading State -->
       <div v-if="!currentUser && authStore.isLoading" class="text-center py-20">
-        <p>{{ t('profile.loadingProfile') }}</p>
+        <LoaderWithText :text="t('profile.loadingProfile')" />
       </div>
 
       <!-- Error State -->
@@ -300,7 +301,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
             <div class="p-6">
               <div v-if="cartLoading" class="text-center py-12">
-                <p>{{ t('profile.loadingD') }}</p>
+                <LoaderWithText :text="t('profile.loadingD')" />
               </div>
               <div v-else-if="cartError" class="text-center py-12 text-red-500">
                 <p>{{ cartError }}</p>
@@ -362,7 +363,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v5a2 2 0 11-4 0v-5m4 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v5"
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                     ></path>
                   </svg>
                 </div>
@@ -403,7 +404,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
             <div class="p-6">
               <div v-if="ordersLoading" class="text-center py-12">
-                <p>{{ t('profile.loadingOrders') }}</p>
+                <LoaderWithText :text="t('profile.loadingOrders')" />
               </div>
               <div v-else-if="ordersError" class="text-center py-12 text-red-500">
                 <p>{{ ordersError }}</p>

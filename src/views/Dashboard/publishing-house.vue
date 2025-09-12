@@ -1,12 +1,13 @@
 <script setup>
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useI18n } from 'vue-i18n';
 import AddPublisherModal from '@/components/Dashboard/Modals/AddPublisherModal.vue';
 import { useRouter } from 'vue-router';
 import * as XLSX from 'xlsx';
-
+import { useLoader } from '../../../useLoader.js';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 const { t } = useI18n();
 const router = useRouter();
 const publisherModal = ref(null);
@@ -17,6 +18,7 @@ const isDeleteDialogOpen = ref(false);
 const publisherToDelete = ref(null);
 
 const publishingHousesStore = usePublishingHouseStore();
+const { isLoading } = useLoader(publishingHousesStore);
 
 onMounted(async () => {
   await publishingHousesStore.fetchPublishers();
@@ -129,7 +131,7 @@ const importData = async (event) => {
           }
            catch {
             console.warn(`⚠️ فشل تحميل صورة للكاتب ${publisher.name}:`, err);
-           } 
+           }
         }
         if (publisher.Registration_date) {
             formData.append('Registration_date', publisher.Registration_date);
@@ -189,7 +191,11 @@ const formatNumber = (number) => {
 <template>
   <div class="w-full sm:px-8 lg:px-16 mt-8">
     <AddPublisherModal ref="publisherModal" />
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+    <LoaderWithText :loading="isLoading" :message="t('phouseDetails.loading')" />
+    </div>
 
+    <div v-if="!isLoading">
     <div v-if="isDeleteDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <h3 class="text-lg font-bold text-gray-900">{{ t('dashboard.publishingHouses.confirmDeletion') }}</h3>
@@ -357,6 +363,7 @@ const formatNumber = (number) => {
           {{ t('dashboard.publishingHouses.clearAllFilters') }}
         </button>
       </div>
+    </div>
     </div>
   </div>
 </template>

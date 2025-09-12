@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useClientsStore } from '@/stores/Clients'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const CreateAvatar = (name) => {
   if (!name) return ''
@@ -304,10 +305,7 @@ watch(
 
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-16">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-gray-600">{{
-          t('dashboard.clientInfo.loading')
-        }}</span>
+        <LoaderWithText :message="t('dashboard.clientInfo.loading')" />
       </div>
 
       <!-- Error State -->

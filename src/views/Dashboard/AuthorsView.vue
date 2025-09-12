@@ -1,10 +1,11 @@
 <script setup>
 import { useAuthorStore } from '@/stores/Authors'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue'
 import AddAuthorModal from '@/components/Dashboard/Modals/AddAuthorModal.vue'
 import * as XLSX from 'xlsx'
 import { useI18n } from 'vue-i18n'
-
+import { useLoader } from '../../../useLoader.js'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 const { t } = useI18n()
 const addAuthorModal = ref(null)
 const searchQuery = ref('')
@@ -12,6 +13,7 @@ const selectedCountry = ref('')
 const sortBy = ref('name')
 const sortOrder = ref('asc')
 const AuthorsStore = useAuthorStore()
+const { isLoading } = useLoader(AuthorsStore)
 
 onMounted(async () => {
   await AuthorsStore.fetchAuthors()
@@ -167,6 +169,11 @@ const openEditModal = (author) => {
 <template>
   <div class="w-full sm:px-8 lg:px-16 mt-8">
     <AddAuthorModal ref="addAuthorModal" />
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+      <LoaderWithText :loading="isLoading" :message="t('dashboard.authorDetails.loading')" />
+    </div>
+
+    <div v-if="!isLoading">
 
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
       <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-2/3">
@@ -401,6 +408,7 @@ const openEditModal = (author) => {
           {{ t('dashboard.authors.clearFilters') }}
         </button>
       </div>
+    </div>
     </div>
   </div>
 </template>

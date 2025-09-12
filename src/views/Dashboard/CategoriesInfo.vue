@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
 import BookCategoryList from '@/components/Book/BookCategoryList.vue'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -78,8 +79,7 @@ const formattedStatistics = computed(() => [
 <template>
   <div class="w-full min-h-screen bg-gray-50 py-8 px-4 sm:py-16">
     <div v-if="isLoading" class="text-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto"></div>
-      <p class="mt-4 text-gray-600">{{ t('categoriesInfo.loadingCategory') }}</p>
+      <LoaderWithText :message="t('categoriesInfo.loadingCategory')" />
     </div>
     <div v-else-if="error" class="text-center py-20">
       <p class="text-red-500 font-semibold">{{ t('categoriesInfo.error') }}</p>
@@ -164,7 +164,7 @@ const formattedStatistics = computed(() => [
           <BookCategoryList v-if="currentCategory && currentCategory.id" :category="currentCategory.id" />
           <template #fallback>
             <div class="flex justify-center items-center py-12">
-              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)]"></div>
+              <LoaderWithText :message="t('categoriesInfo.loadingBooks')" />
             </div>
           </template>
         </Suspense>

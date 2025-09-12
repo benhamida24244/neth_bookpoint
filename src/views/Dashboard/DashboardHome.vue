@@ -3,6 +3,8 @@ import { onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/stores/Dashboard'
 import { useI18n } from 'vue-i18n'
+import LoaderWithText from '@/components/LoaderWithText.vue'
+import { useLoading } from '@/composables/useLoading'
 import CategorySalesChart from '@/components/Dashboard/Charts/CategorySalesChart.vue'
 import DailyOrdersChart from '@/components/Dashboard/Charts/DailyOrdersChart.vue'
 import OrdersByTheCountry from '@/components/Dashboard/Charts/OrdersByTheCountry.vue'
@@ -14,8 +16,9 @@ import { BookOpen, ShoppingCart, Users, DollarSign } from 'lucide-vue-next'
 import { useSettingsStore } from '@/stores/settings'
 
 const dashboardStore = useDashboardStore()
-const { stats } = storeToRefs(dashboardStore)
+const { stats, loading } = storeToRefs(dashboardStore)
 const { t } = useI18n()
+
 
 onMounted(() => {
   dashboardStore.fetchDashboardData()
@@ -53,9 +56,13 @@ const info = computed(() => [
 <template>
   <div class="w-full min-h-screen px-6 py-8 bg-gray-50">
     <!-- عنوان -->
-    <h1 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular text-center mb-8">
-      {{ t('dashboard.overview') }}
-    </h1>
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.dashboard')" />
+    </div>
+    <div v-else>
+      <h1 class="text-3xl font-bold text-[var(--color-primary)] font-BonaRegular text-center mb-8">
+        {{ t('dashboard.overview') }}
+      </h1>
 
     <!-- بطاقات الإحصائيات -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -89,6 +96,7 @@ const info = computed(() => [
 
     <div class="mt-6 px-4">
       <RecentBook />
+    </div>
     </div>
 
   </div>

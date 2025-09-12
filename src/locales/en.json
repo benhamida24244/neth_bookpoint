@@ -10,7 +10,7 @@
   "email": "Email",
   "phone": "Phone",
   "address": "Address",
-  "city": "City",
+  "city": "Nationality",
   "postalCode": "Postal Code",
   "quantity": "Quantity",
   "shippingOptions": "Shipping Options",
@@ -138,7 +138,13 @@
   },
   "orders": {
     "title": "My Orders",
-    "subtitle": "Manage your orders and purchase history"
+    "subtitle": "Manage your orders and purchase history",
+    "pagination": {
+      "previews": "Showing",
+      "to": "to",
+      "of": "of",
+      "results": "results"
+    }
   },
   "themeExample": {
     "preview": "Component Preview",
@@ -725,6 +731,7 @@
         "title": "Latest Orders",
         "loading": "Loading...",
         "customer": "Customer",
+        "noPayment":"No Payment Method",
         "table": {
             "orderId": "Order ID",
             "client": "Client",
@@ -1146,6 +1153,9 @@
     "deleteFailed": "Failed to delete category. Please try again."
   },
   "loading": {
+    "dashboard": "Loading dashboard...",
+    "orders": "Loading orders...",
+    "clients": "Loading clients...",
     "books": "Loading books...",
     "authors": "Loading authors...",
     "categories": "Loading categories...",
@@ -1153,6 +1163,7 @@
     "book": "Loading book details...",
     "author": "Loading author details...",
     "category": "Loading category details...",
-    "publisher": "Loading publisher details..."
+    "publisher": "Loading publisher details...",
+    "home": "Loading Home Page..."
   }
 }

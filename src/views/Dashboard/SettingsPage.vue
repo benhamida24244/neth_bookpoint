@@ -1,5 +1,12 @@
 <template>
   <div class="p-6 max-w-xl mx-auto space-y-8">
+    <!-- Loading State -->
+    <div v-if="settingsStore.loading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('dashboard.settings.loading')" />
+    </div>
+    
+    <!-- Content when not loading -->
+    <div v-else>
     <h1 class="text-2xl font-bold">{{ t('dashboard.settings.title') }}</h1>
 
     <!-- Primary Color Selection -->
@@ -58,6 +65,7 @@
         <option value="ar">{{ t('dashboard.settings.languages.ar') }}</option>
       </select>
     </div>
+    </div>
   </div>
 </template>
 
@@ -65,6 +73,7 @@
 import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settings'
 import ExampleComponent from '@/components/Theme/ExampleComponent.vue'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()

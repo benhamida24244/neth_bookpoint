@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useCategoriesStore } from '@/stores/Categories';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -59,7 +60,7 @@ const cancelEdit = () => {
     </header>
 
     <div v-if="categoriesStore.isLoading" class="text-center">
-      <p>{{ t('dashboard.editCategory.loading') }}</p>
+      <LoaderWithText :message="t('dashboard.editCategory.loading')" />
     </div>
 
     <div v-else-if="categoriesStore.error" class="text-center text-red-500">

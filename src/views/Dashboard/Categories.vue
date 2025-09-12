@@ -1,5 +1,6 @@
 <script setup>
 import AdminCategoriesTable from '@/components/Dashboard/Table/AdminCategoriesTable.vue'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 import { useCategoriesStore } from '@/stores/Categories'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, onMounted } from 'vue'
@@ -93,6 +94,13 @@ const triggerImport = () => {
 
 <template>
   <div class="p-8">
+    <!-- Loading State -->
+    <div v-if="categoriesStore.isLoading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.categories')" />
+    </div>
+
+    <!-- Content when not loading -->
+    <div v-else>
     <AddCategoryModal
       :show="showAddCategoryModal"
       @close="showAddCategoryModal = false"
@@ -140,6 +148,7 @@ const triggerImport = () => {
       </div>
     </div>
     <!-- Categories Table -->
-    <AdminCategoriesTable/>
+      <AdminCategoriesTable/>
+    </div>
   </div>
 </template>

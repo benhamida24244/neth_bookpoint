@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/Orders'
+import LoaderWithText from '@/components/LoaderWithText.vue'
+import { storeToRefs } from 'pinia'
 import { XCircleIcon, CheckCircleIcon, UserIcon, EnvelopeIcon, MapPinIcon, ClockIcon, TruckIcon, DocumentDuplicateIcon, EyeIcon, ArrowPathIcon, InformationCircleIcon, CurrencyDollarIcon, CalendarDaysIcon, TagIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -17,6 +19,7 @@ const emit = defineEmits(['statusChanged', 'orderUpdated'])
 const route = useRoute()
 const { t } = useI18n()
 const ordersStore = useOrdersStore()
+const { loading: isLoading } = storeToRefs(ordersStore)
 
 // تعريف ثابت الحالات داخل نفس الملف
 const ORDER_STATUS = {
@@ -26,7 +29,6 @@ const ORDER_STATUS = {
   CANCELLED: 'canceled'
 }
 
-const isLoading = ref(true)
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
@@ -210,20 +212,19 @@ const getFirstBookIsbn = () => {
 
 onMounted(async () => {
   try {
-    isLoading.value = true
     error.value = null
 
     if (ordersStore.orders.length === 0) {
       await ordersStore.fetchOrders()
     }
-
-    if (!selectedOrder.value) {
-      error.value = t('orderDetails.errorNotFound')
-    }
   } catch (err) {
     error.value = t('orderDetails.errorLoading')
-  } finally {
-    isLoading.value = false
+  }
+})
+
+watch(isLoading, (newLoading) => {
+  if (newLoading === false && !selectedOrder.value) {
+    error.value = t('orderDetails.errorNotFound')
   }
 })
 </script>
@@ -232,17 +233,7 @@ onMounted(async () => {
   <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
     <!-- Loading State with enhanced animation -->
     <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
-      <div class="text-center">
-        <div class="relative">
-          <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
-          <div class="animate-spin rounded-full h-16 w-16 border-4 border-[var(--color-primary)] border-t-transparent absolute top-0 left-0"></div>
-        </div>
-        <div class="mt-4 space-y-2">
-          <div class="animate-pulse bg-gray-200 h-3 w-32 rounded mx-auto"></div>
-          <div class="animate-pulse bg-gray-200 h-3 w-24 rounded mx-auto"></div>
-        </div>
-        <span class="mt-4 block text-gray-600 font-medium">{{ t('orderDetails.loading') }}</span>
-      </div>
+      <LoaderWithText :message="t('orderDetails.loading')" />
     </div>
 
     <!-- Error State with enhanced design -->

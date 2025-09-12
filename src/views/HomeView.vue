@@ -1,17 +1,14 @@
 <script setup>
-import { defineAsyncComponent, onMounted, ref, computed } from 'vue'
+import { defineAsyncComponent, onMounted, computed } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/Categories'
 import { storeToRefs } from 'pinia'
 import { useBooksStore } from '@/stores/Books'
-
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
-
-// --- State ---
-const isLoading = ref(true)
 
 // --- Components ---
 const AuthorList = defineAsyncComponent(() => import('@/components/Author/AuthorList.vue'))
@@ -24,16 +21,21 @@ const Hero = defineAsyncComponent(() => import('@/components/Hero.vue'))
 const PublishingHousesList = defineAsyncComponent(() => import('@/components/Publishing/PublishingHousesList.vue'))
 
 // --- Stores ---
-const PublishingHousesStore = usePublishingHouseStore()
+const publishingHousesStore = usePublishingHouseStore()
 const authorsStore = useAuthorStore()
 const categoriesStore = useCategoriesStore()
 const booksStore = useBooksStore()
 
 // --- Refs ---
-const { authors } = storeToRefs(authorsStore)
-const { publishingHouses } = storeToRefs(PublishingHousesStore)
-const { categories } = storeToRefs(categoriesStore)
-const { books } = storeToRefs(booksStore)
+const { authors, isLoading: isAuthorsLoading } = storeToRefs(authorsStore)
+const { publishingHouses, isLoading: isPublishingHousesLoading } = storeToRefs(publishingHousesStore)
+const { categories, isLoading: isCategoriesLoading } = storeToRefs(categoriesStore)
+const { books, isLoading: isBooksLoading } = storeToRefs(booksStore)
+
+// --- Combined Loading State ---
+const isLoading = computed(() => {
+  return isBooksLoading.value || isAuthorsLoading.value || isPublishingHousesLoading.value || isCategoriesLoading.value;
+});
 
 // --- Computed Properties ---
 const bestsellersBooks = computed(() => books.value.slice(0, 10))
@@ -76,15 +78,13 @@ onMounted(async () => {
     // Fetch all data in parallel
     await Promise.all([
       booksStore.fetchBooks(),
-      PublishingHousesStore.fetchPublisher(),
+      publishingHousesStore.fetchPublishers(),
       authorsStore.fetchAuthors(),
       categoriesStore.fetchCategories()
     ])
   } catch (error) {
     console.error("Failed to load homepage data:", error)
     // Optionally, set an error state to show a message to the user
-  } finally {
-    isLoading.value = false
   }
 })
 </script>
@@ -92,7 +92,7 @@ onMounted(async () => {
 <template>
   <!-- Loading Spinner -->
   <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
-    <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-[var(--color-primary)]"></div>
+    <LoaderWithText :message="t('loading.home')" />
   </div>
 
   <!-- Main Content -->

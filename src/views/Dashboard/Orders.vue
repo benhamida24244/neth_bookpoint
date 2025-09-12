@@ -1,5 +1,12 @@
 <template>
   <div class="min-h-screen bg-gray-50">
+    <!-- Loading State -->
+    <div v-if="ordersStore.loading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.orders')" />
+    </div>
+
+    <!-- Content when not loading -->
+    <div v-else>
     <div class="w-full px-4 md:px-6 py-8">
       <!-- Header -->
       <div class="mb-8 font-BonaRegular">
@@ -142,7 +149,7 @@
                     :to="`/dashboard/orders/${order.id}`"
                     class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
                   >
-                    <i class="far fa-eye"></i> {{ t('dashboard.orders.actions.view') }}
+                    <i class="far fa-eye"></i> {{ t('dashboard.orders_filter.actions.view') }}
                   </RouterLink>
                 </td>
               </tr>
@@ -183,13 +190,13 @@
           <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p class="text-sm text-gray-700">
-                {{ t('pagination.showing') }}
+                {{ t('orders.pagination.previews') }}
                 <span class="font-medium">1</span>
-                {{ t('pagination.to') }}
+                {{ t('orders.pagination.to') }}
                 <span class="font-medium">{{ filteredOrders.length }}</span>
-                {{ t('pagination.of') }}
+                {{ t('orders.pagination.of') }}
                 <span class="font-medium">{{ filteredOrders.length }}</span>
-                {{ t('pagination.results') }}
+                {{ t('orders.pagination.results') }}
               </p>
             </div>
             <div>
@@ -230,6 +237,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -242,6 +250,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onMounted } from 'vue'
 import * as XLSX from 'xlsx'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()

@@ -1,8 +1,13 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LoaderWithText from '@/components/LoaderWithText.vue'
+import { useLoading } from '@/composables/useLoading'
+import { useUIStore } from '@/stores/ui'
 
 const { t } = useI18n()
+const uiStore = useUIStore()
+const { isLoading } = useLoading(uiStore)
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -12,8 +17,12 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-black text-white px-4 py-10 font-BonaRegular">
     <div class="max-w-2xl mx-auto text-center">
-      <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-6">{{ t('contact.title') }}</h1>
-      <p class="mb-8">{{ t('contact.subtitle') }}</p>
+      <div v-if="isLoading" class="flex justify-center items-center h-64">
+        <LoaderWithText :message="t('loading.general')" />
+      </div>
+      <div v-else>
+        <h1 class="text-3xl font-bold text-[var(--color-primary)] mb-6">{{ t('contact.title') }}</h1>
+        <p class="mb-8">{{ t('contact.subtitle') }}</p>
 
       <form class="space-y-4">
         <input
@@ -48,6 +57,7 @@ onMounted(() => {
           >{{ t('contact.whatsapp') }}</a
         >
       </p>
+      </div>
     </div>
   </div>
 </template>

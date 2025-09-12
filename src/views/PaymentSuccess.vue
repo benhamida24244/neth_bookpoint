@@ -4,10 +4,13 @@ import { useOrdersStore } from '@/stores/Orders'
 import { storeToRefs } from 'pinia'
 import { CheckCircle } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import LoaderWithText from '@/components/LoaderWithText.vue'
+import { useLoading } from '@/composables/useLoading'
 
 const { t } = useI18n()
 const ordersStore = useOrdersStore()
-const { latestOrder } = storeToRefs(ordersStore)
+const { latestOrder, isLoading } = storeToRefs(ordersStore)
+const { isLoading: ordersLoading } = useLoading(ordersStore)
 
 const order = computed(() => latestOrder.value)
 
@@ -20,8 +23,11 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 <template>
   <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-BonaRegular">
+    <div v-if="ordersLoading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.order')" />
+    </div>
     <div
-      v-if="order"
+      v-else-if="order"
       class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 transition-all transform hover:scale-105 duration-300"
     >
       <div class="text-center mb-8">

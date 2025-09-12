@@ -6,11 +6,11 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/Cart'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useUIStore } from '@/stores/ui' // 1. استيراد UI store
+import { useUIStore } from '@/stores/ui'
 import { useCustomerAuthStore } from '@/stores/customerAuth'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
-const isLoading = ref(false)
 const checkout = ref(false)
 const router = useRouter()
 
@@ -23,11 +23,9 @@ const banner = {
 const CartStore = useCartStore()
 const { cart, cartItems, loading } = storeToRefs(CartStore)
 const customerAuthStore = useCustomerAuthStore()
-const uiStore = useUIStore() // 2. تهيئة UI store
+const uiStore = useUIStore()
 
-// جلب بيانات السلة عند تحميل المكون
 onMounted(async () => {
-  // لا تستدعي fetchCart إلا إذا كان المستخدم مسجلاً دخوله
   if (customerAuthStore.isAuthenticated) {
     console.log('User is authenticated, fetching cart data...')
     try {
@@ -38,10 +36,8 @@ onMounted(async () => {
       console.error('Error fetching cart:', error)
     }
   }
-  // بالنسبة للضيوف، يتم التعامل مع السلة محليًا داخل CartStore
 })
 
-// مراقبة أي تغييرات في بيانات السلة
 watch(
   () => cartItems.value,
   (newVal) => {
@@ -50,7 +46,6 @@ watch(
   { deep: true }
 )
 
-// مراقبة أي تغييرات في بيانات السلة الخام
 watch(
   () => cart.value,
   (newVal) => {
@@ -59,7 +54,6 @@ watch(
   { deep: true }
 )
 
-// Total price computation
 const totalPrice = computed(() => {
   if (!cartItems.value || cartItems.value.length === 0) return '0.00'
   return cartItems.value
@@ -67,26 +61,16 @@ const totalPrice = computed(() => {
     .toFixed(2)
 })
 
-// Checkout button handler
 const handleCheckout = () => {
-  // 3. التحقق من حالة تسجيل الدخول
   if (customerAuthStore.isAuthenticated) {
-    // إذا كان المستخدم مسجلاً، انتقل إلى صفحة الدفع
-    if (isLoading.value) return
-    isLoading.value = true
-    setTimeout(() => {
-      checkout.value = true
-      isLoading.value = false
-      router.push('/checkout')
-    }, 1500)
+    if (loading && loading.value) return
+    router.push('/checkout')
   } else {
-    // إذا لم يكن المستخدم مسجلاً، افتح نافذة تسجيل الدخول
     uiStore.openLoginModal()
   }
 }
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
-// Optional: If you don’t already have this in the store, you can add it
 </script>
 
 <template>
@@ -103,12 +87,8 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
           {{ t('cartView.title') }}
         </h1>
 
-        <!-- مؤشر التحميل -->
         <div v-if="loading" class="flex justify-center items-center h-64">
-          <svg class="animate-spin h-10 w-10 text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
+          <LoaderWithText :message="t('loading.cart')" />
         </div>
 
         <!-- Cart Items -->
@@ -188,10 +168,10 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
           <button
             class="mt-4 w-full py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-hover)] transition-colors duration-300 flex items-center justify-center gap-2"
             @click="handleCheckout"
-            :disabled="isLoading"
+            :disabled="loading"
           >
             <svg
-              v-if="isLoading"
+              v-if="loading"
               class="animate-spin h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -211,7 +191,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               />
             </svg>
-            <span>{{ isLoading ? t('cartView.processing') : t('cartView.checkout') }}</span>
+            <span>{{ loading ? t('cartView.processing') : t('cartView.checkout') }}</span>
           </button>
         </div>
       </div>

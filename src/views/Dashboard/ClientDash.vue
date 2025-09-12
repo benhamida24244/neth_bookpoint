@@ -2,6 +2,7 @@
 import { useClientsStore } from '@/stores/Clients'
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LoaderWithText from '@/components/LoaderWithText.vue'
 
 const { t } = useI18n()
 const searchQuery = ref('')
@@ -68,6 +69,13 @@ const formatDate = (dateString) => {
 
 <template>
   <div class="w-full px-4 sm:px-8 lg:px-16 mt-8">
+    <!-- Loading State -->
+    <div v-if="ClientStore.loading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('loading.clients')" />
+    </div>
+
+    <!-- Content when not loading -->
+    <div v-else>
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
       <input
@@ -506,6 +514,7 @@ const formatDate = (dateString) => {
           </p>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>

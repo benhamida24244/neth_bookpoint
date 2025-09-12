@@ -8,6 +8,7 @@ import { useOrdersStore } from '@/stores/Orders';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import apiService from '@/services/api';
 
 
 const { t } = useI18n();
@@ -83,7 +84,7 @@ const visaCardDetails = ref({
 
 onMounted(async () => {
   checkoutStore.fetchCheckoutData();
-  
+
   // تأكد من تحميل بيانات السلة عند تحميل صفحة الدفع، فقط إذا كان المستخدم مسجلاً
   if (userStore.isAuthenticated) {
     await cartStore.fetchCart();
@@ -95,9 +96,10 @@ onMounted(async () => {
 const formData = ref({
   receiverName: user.value?.name || '',
   email: user.value?.email || '',
-  phone: '',
+  phone: user.value?.phone_number || '',
   address: user.value?.address || '',
   city: '',
+  country: user.value?.country || '',
   postalCode: ''
 });
 
@@ -120,7 +122,7 @@ const subtotal = computed(() => {
     const price = Number(item.price || 0);
     const quantity = Number(item.quantity || 0);
     const itemTotal = price * quantity;
-    console.log(`Item: ${item.name}, Price: ${price}, Quantity: ${quantity}, Total: ${itemTotal}`);
+    console.log(`Item: ${item.title || item.book?.title}, Price: ${price}, Quantity: ${quantity}, Total: ${itemTotal}`);
     return sum + itemTotal;
   }, 0);
   console.log("Subtotal total:", itemsTotal);
@@ -146,37 +148,68 @@ const amountNeededForFreeShipping = computed(() =>
   Math.max(0, freeShippingThreshold - Number(subtotal.value || 0))
 );
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (isLoading.value) return;
 
   isLoading.value = true;
 
+  // Prepare order data in the format expected by the server
+  const orderItems = normalizedOrderItems.value.map(item => ({
+    book_id: item.book_id || item.id || (item.book && item.book.id),
+    quantity: item.quantity || 1,
+    price: item.price || 0
+  }));
+
   const orderData = {
-    items: normalizedOrderItems.value,
-    shipping: selectedShipping.value,
-    payment: selectedPayment.value,
-    customer: formData.value,
-    totals: {
-      subtotal: subtotal.value,
-      shipping: shippingCost.value,
-      vat: vatAmount.value,
-      total: grandTotal.value
-    }
+    items: orderItems,
+    shipping_method: selectedShipping.value,
+    payment_method: selectedPayment.value,
+    shipping_address: {
+      name: formData.value.receiverName,
+      email: formData.value.email,
+      phone: formData.value.phone,
+      address: formData.value.address,
+      city: formData.value.city,
+      country: formData.value.country,
+      postal_code: formData.value.postalCode
+    },
+    subtotal: subtotal.value,
+    shipping_cost: shippingCost.value,
+    tax_amount: vatAmount.value,
+    total_amount: grandTotal.value
   };
 
+  // Add visa card details if payment method is visa
   if (selectedPayment.value === 'visa') {
-    orderData.visaCard = visaCardDetails.value;
+    orderData.payment_details = {
+      cardholder_name: visaCardDetails.value.cardholderName,
+      card_number: visaCardDetails.value.cardNumber,
+      expiry_date: visaCardDetails.value.expirationDate,
+      cvv: visaCardDetails.value.cvv
+    };
   }
+
+
 
   console.log('Order submitted:', orderData);
 
-  // Simulate API call
-  setTimeout(() => {
-    ordersStore.createOrder(orderData);
+  // Create order using customer API
+  try {
+    await ordersStore.createOrder(orderData);
+
+    if (ordersStore.error) {
+      // إذا حدث خطأ في الـ store، قم بإظهاره
+      throw new Error(ordersStore.error);
+    }
+
     cartStore.clearCart();
     isLoading.value = false;
     router.push('/payment-success');
-  }, 1000);
+  } catch (error) {
+    console.error('Failed to create order:', error);
+    isLoading.value = false;
+    alert(error.message || 'Failed to create order. Please try again.');
+  }
 };
 </script>
 

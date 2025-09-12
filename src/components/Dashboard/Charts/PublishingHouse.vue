@@ -1,33 +1,35 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { Chart as PieChart, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'vue-chartjs'
-import { usePublishingHouseStore } from '@/stores/PublishingHouses'
+import { useDashboardStore } from '@/stores/Dashboard'
+import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 // تسجيل جميع المكونات اللازمة
 PieChart.register(ArcElement, Tooltip, Legend, Title)
-const publishingHouseStore = usePublishingHouseStore()
+const dashboardStore = useDashboardStore()
+const { publishingHouse, loading } = storeToRefs(dashboardStore)
 
-onMounted(() => {
-  publishingHouseStore.fetchPublishers()
-})
-
-// بيانات وهمية لدور النشر – يمكنك ربطها بقاعدة البيانات لاحقًا
-// عرض فقط الفئات الأكثر أهمية (الأعلى عددًا من الكتب)
+// بيانات دور النشر من متجر Dashboard
 const chartData = computed(() => {
-  const topPublishers = [...publishingHouseStore.publishingHouses]
-    .sort((a, b) => b.nmBook - a.nmBook)
-    .slice(0, 5) // عرض فقط أفضل 5 دور نشر
+  if (!publishingHouse.value.labels.length || !publishingHouse.value.data.length) {
+    return { labels: [], datasets: [] }
+  }
+
+  // عرض فقط أفضل 5 دور نشر
+  const topPublishersCount = Math.min(5, publishingHouse.value.labels.length)
+  const labels = publishingHouse.value.labels.slice(0, topPublishersCount)
+  const data = publishingHouse.value.data.slice(0, topPublishersCount)
 
   return {
-    labels: topPublishers.map((publisher) => publisher.name),
+    labels: labels,
     datasets: [
       {
         label: t('publishingHouseChart.label'),
-        data: topPublishers.map((publisher) => publisher.nmBook),
+        data: data,
         backgroundColor: [
           '#facc15', // Yellow
           '#60a5fa', // Blue
@@ -65,6 +67,8 @@ const chartOptions = {
 
 <template>
   <div class="w-full h-[300px]">
-    <Pie :data="chartData" :options="chartOptions" />
+    <Pie v-if="chartData.datasets.length && !loading" :data="chartData" :options="chartOptions" />
+    <p v-else-if="loading">{{ t('loading') }}</p>
+    <p v-else>{{ t('noData') }}</p>
   </div>
 </template>
