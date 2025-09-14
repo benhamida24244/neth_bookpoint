@@ -26,7 +26,7 @@ const menuOpen = ref(false)
 const userStore = useAuthStore()
 const { user } = storeToRefs(userStore)
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'logout'])
 
 const active = ref('Control Panel')
 const isOpen = ref(true)
@@ -179,7 +179,7 @@ const asideClass = computed(() => {
 
     <!-- Sidebar -->
     <aside
-      
+
       :class="[
         asideClass,
         `fixed lg:relative h-screen bg-white shadow-2xl ${$i18n.language === 'ar' ? 'rounded-l-2xl' : 'rounded-r-2xl'} flex flex-col z-50 transition-all duration-300`,

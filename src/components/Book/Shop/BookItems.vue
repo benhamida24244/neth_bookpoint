@@ -40,6 +40,7 @@
 
       <!-- زر الإضافة إلى السلة -->
       <button
+        @click.prevent="addToCart(book)"
         class="mt-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-primary)]"
       >
         {{ t('bookdetails.addToCart') }}
@@ -50,11 +51,12 @@
 
 <script setup>
 import { useSettingsStore } from '@/stores/settings'
+import { useCartStore } from '@/stores/Cart'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-defineProps({
+const props = defineProps({
   book: {
     type: Object,
     required: true,
@@ -63,4 +65,16 @@ defineProps({
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 const settingsStore = useSettingsStore()
+const cartStore = useCartStore()
+
+// دالة لإضافة الكتاب إلى سلة المشتريات
+const addToCart = async (book) => {
+  try {
+    await cartStore.addToCart(book.id, 1)
+    // يمكن إضافة رسالة نجاح هنا إذا رغبت
+  } catch (error) {
+    console.error('Failed to add book to cart:', error)
+    // يمكن إضافة رسالة خطأ هنا إذا رغبت
+  }
+}
 </script>

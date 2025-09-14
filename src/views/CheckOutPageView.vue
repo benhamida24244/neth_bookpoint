@@ -1,15 +1,13 @@
 <script setup>
 import { InfoIcon, CreditCard, Truck, Package } from 'lucide-vue-next';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useCartStore } from '@/stores/Cart';
 import { useCheckoutStore } from '@/stores/Checkout';
 import { useCustomerAuthStore } from '@/stores/customerAuth';
-import { useOrdersStore } from '@/stores/Orders';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import apiService from '@/services/api';
-
+import { loadStripe } from '@stripe/stripe-js';
 
 const { t } = useI18n();
 const icons = {
@@ -18,81 +16,76 @@ const icons = {
 };
 
 const isLoading = ref(false);
-const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
-const selectedPayment = ref('paypal'); // 'paypal', or 'visa'
+const selectedShipping = ref('delivery');
+const selectedPayment = ref('cod'); // Default to 'cod'
 
 const cartStore = useCartStore();
-const { cart: orderItems } = storeToRefs(cartStore);
-
-// Normalize cart data to ensure it's always an array
-const normalizedOrderItems = computed(() => {
-  console.log("OrderItems value:", orderItems.value);
-
-  // إذا كان المستخدم مسجلاً استخدم السلة من الخادم
-  if (user.value) {
-    // التحقق من وجود بيانات السلة بشكل مباشر
-    if (Array.isArray(orderItems.value)) return orderItems.value;
-
-    // التحقق من وجود items مباشرة في orderItems
-    if (orderItems.value && Array.isArray(orderItems.value.items)) {
-      console.log("Using orderItems.items");
-      return orderItems.value.items;
-    }
-
-    // التحقق من وجود data في orderItems
-    if (orderItems.value && orderItems.value.data) {
-      console.log("Using orderItems.data");
-
-      // إذا كانت data هي مصفوفة مباشرة
-      if (Array.isArray(orderItems.value.data)) {
-        return orderItems.value.data;
-      }
-
-      // إذا كانت data تحتوي على items
-      if (orderItems.value.data && Array.isArray(orderItems.value.data.items)) {
-        console.log("Using orderItems.data.items");
-        return orderItems.value.data.items;
-      }
-    }
-  }
-
-  // إذا لم يكن المستخدم مسجلاً استخدم السلة المحلية
-  if (cartStore.localCart && cartStore.localCart.length > 0) {
-    console.log("Using local cart");
-    return cartStore.localCart;
-  }
-
-  console.log("Returning empty array");
-  return [];
-});
+const { cart: orderItems, cartTotal } = storeToRefs(cartStore);
 
 const checkoutStore = useCheckoutStore();
-const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
+const { shippingOptions, paymentOptions, client_secret, error: checkoutError } = storeToRefs(checkoutStore);
 
 const userStore = useCustomerAuthStore();
 const { user } = storeToRefs(userStore);
 
-const ordersStore = useOrdersStore();
 const router = useRouter();
 
-const visaCardDetails = ref({
-  cardholderName: '',
-  cardNumber: '',
-  expirationDate: '',
-  cvv: ''
+// Stripe specific refs
+const stripe = ref(null);
+const cardElement = ref(null);
+const stripeError = ref(null);
+
+const normalizedOrderItems = computed(() => {
+  if (user.value) {
+    if (orderItems.value && Array.isArray(orderItems.value.items)) {
+      return orderItems.value.items;
+    }
+  } else {
+    return cartStore.localCart;
+  }
+  return [];
 });
 
 onMounted(async () => {
-  checkoutStore.fetchCheckoutData();
-
-  // تأكد من تحميل بيانات السلة عند تحميل صفحة الدفع، فقط إذا كان المستخدم مسجلاً
+  await checkoutStore.fetchCheckoutData();
   if (userStore.isAuthenticated) {
     await cartStore.fetchCart();
-    console.log("Cart data loaded:", cartStore.cart);
+  }
+
+  // Initialize Stripe
+  const stripeKey = import.meta.env.VITE_STRIPE_KEY;
+  if (!stripeKey) {
+    console.error('Stripe public key is not set in .env file');
+    return;
+  }
+
+  stripe.value = await loadStripe(stripeKey);
+  const elements = stripe.value.elements();
+  cardElement.value = elements.create('card', {
+    style: {
+      base: {
+        color: '#fff',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    }
+  });
+
+  // Wait for the next tick to ensure the element is in the DOM
+  await nextTick();
+  if(document.getElementById('card-element')) {
+    cardElement.value.mount('#card-element');
   }
 });
 
-// Form data structure
 const formData = ref({
   receiverName: user.value?.name || '',
   email: user.value?.email || '',
@@ -103,7 +96,6 @@ const formData = ref({
   postalCode: ''
 });
 
-// Form field configuration
 const formFields = computed(() =>
   [
     { key: 'receiverName', placeholder: t('receiverName'), type: 'text', required: true },
@@ -115,104 +107,94 @@ const formFields = computed(() =>
   ]
 );
 
-// Computed values
-const subtotal = computed(() => {
-  console.log("normalizedOrderItems:", normalizedOrderItems.value);
-  const itemsTotal = normalizedOrderItems.value.reduce((sum, item) => {
-    const price = Number(item.price || 0);
-    const quantity = Number(item.quantity || 0);
-    const itemTotal = price * quantity;
-    console.log(`Item: ${item.title || item.book?.title}, Price: ${price}, Quantity: ${quantity}, Total: ${itemTotal}`);
-    return sum + itemTotal;
-  }, 0);
-  console.log("Subtotal total:", itemsTotal);
-  return itemsTotal;
-});
+const subtotal = computed(() => cartTotal.value);
 
 const shippingCost = computed(() => {
   const option = shippingOptions.value.find(opt => opt.id === selectedShipping.value);
   return option ? Number(option.price || 0) : 0;
 });
 
-const vatAmount = computed(() => {
-  const total = Number(subtotal.value || 0) + Number(shippingCost.value || 0);
-  return total * 0.15; // 15% VAT
-});
+const vatAmount = computed(() => (subtotal.value + shippingCost.value) * 0.15);
 
-const grandTotal = computed(() =>
-  Number(subtotal.value || 0) + Number(shippingCost.value || 0) + Number(vatAmount.value || 0)
-);
+const grandTotal = computed(() => subtotal.value + shippingCost.value + vatAmount.value);
 
 const freeShippingThreshold = 299.00;
-const amountNeededForFreeShipping = computed(() =>
-  Math.max(0, freeShippingThreshold - Number(subtotal.value || 0))
-);
+const amountNeededForFreeShipping = computed(() => Math.max(0, freeShippingThreshold - subtotal.value));
 
 const handleSubmit = async () => {
   if (isLoading.value) return;
-
   isLoading.value = true;
+  stripeError.value = null;
 
-  // Prepare order data in the format expected by the server
-  const orderItems = normalizedOrderItems.value.map(item => ({
-    book_id: item.book_id || item.id || (item.book && item.book.id),
-    quantity: item.quantity || 1,
-    price: item.price || 0
-  }));
-
-  const orderData = {
-    items: orderItems,
-    shipping_method: selectedShipping.value,
-    payment_method: selectedPayment.value,
-    shipping_address: {
-      name: formData.value.receiverName,
-      email: formData.value.email,
-      phone: formData.value.phone,
-      address: formData.value.address,
-      city: formData.value.city,
-      country: formData.value.country,
-      postal_code: formData.value.postalCode
-    },
-    subtotal: subtotal.value,
-    shipping_cost: shippingCost.value,
-    tax_amount: vatAmount.value,
-    total_amount: grandTotal.value
-  };
-
-  // Add visa card details if payment method is visa
-  if (selectedPayment.value === 'visa') {
-    orderData.payment_details = {
-      cardholder_name: visaCardDetails.value.cardholderName,
-      card_number: visaCardDetails.value.cardNumber,
-      expiry_date: visaCardDetails.value.expirationDate,
-      cvv: visaCardDetails.value.cvv
-    };
-  }
-
-
-
-  console.log('Order submitted:', orderData);
-
-  // Create order using customer API
   try {
-    await ordersStore.createOrder(orderData);
-
-    if (ordersStore.error) {
-      // إذا حدث خطأ في الـ store، قم بإظهاره
-      throw new Error(ordersStore.error);
+    if (selectedPayment.value === 'stripe') {
+      await handleStripePayment();
+    } else if (selectedPayment.value === 'cod') {
+      await handleCodPayment();
+    } else if (selectedPayment.value === 'paypal') {
+      await handlePaypalPayment();
+    } else {
+      throw new Error('Invalid payment method selected');
     }
-
-    cartStore.clearCart();
-    isLoading.value = false;
-    router.push('/payment-success');
   } catch (error) {
-    console.error('Failed to create order:', error);
+    console.error('Failed to process order:', error);
+    stripeError.value = error.message || 'An unexpected error occurred.';
+  } finally {
     isLoading.value = false;
-    alert(error.message || 'Failed to create order. Please try again.');
   }
 };
-</script>
 
+const handleStripePayment = async () => {
+  // 1. Create order on backend to get client_secret
+  await checkoutStore.createOrder('stripe');
+  if (checkoutError.value || !client_secret.value) {
+    throw new Error(checkoutError.value || 'Could not initialize Stripe payment.');
+  }
+
+  // 2. Confirm the card payment with Stripe
+  const { error, paymentIntent } = await stripe.value.confirmCardPayment(
+    client_secret.value,
+    {
+      payment_method: {
+        card: cardElement.value,
+        billing_details: {
+          name: formData.value.receiverName,
+          email: formData.value.email,
+        },
+      },
+    }
+  );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // 3. Confirm the order on the backend
+  await checkoutStore.confirmStripeOrder(paymentIntent.id);
+  if (checkoutError.value) {
+    throw new Error(checkoutError.value);
+  }
+
+  router.push('/payment-success');
+};
+
+const handleCodPayment = async () => {
+  await checkoutStore.createOrder('cod');
+  if (checkoutError.value) {
+    throw new Error(checkoutError.value);
+  }
+  router.push('/payment-success');
+};
+
+const handlePaypalPayment = async () => {
+  await checkoutStore.createOrder('paypal');
+  if (checkoutError.value || !checkoutStore.approval_link) {
+    throw new Error(checkoutError.value || 'Could not initialize PayPal payment.');
+  }
+  window.location.href = checkoutStore.approval_link;
+};
+
+</script>
 
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 font-BonaRegular">
@@ -229,12 +211,12 @@ const handleSubmit = async () => {
             <div class="space-y-4 mb-6">
               <div
                 v-for="(item, index) in normalizedOrderItems"
-                :key="item.name || index"
+                :key="item.id || index"
                 class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
                   <p class="font-medium text-gray-800 text-sm">
-                    {{ item.title || item.book.title || t('checkoutPage.product') + (index + 1) }}
+                    {{ item.title || (item.book && item.book.title) || t('checkoutPage.product') + (index + 1) }}
                   </p>
                   <p class="text-gray-600 text-xs">Quantity: {{ item.quantity || 0 }}</p>
                 </div>
@@ -248,20 +230,20 @@ const handleSubmit = async () => {
             <div class="border-t pt-4 space-y-2">
               <div class="flex justify-between text-gray-600">
                 <span>{{ t('subtotal') }}</span>
-                <span>${{ Number(subtotal || 0).toFixed(2) }}</span>
+                <span>${{ subtotal.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
                 <span>{{ t('shipping') }}</span>
-                <span>${{ Number(shippingCost || 0).toFixed(2) }}</span>
+                <span>${{ shippingCost.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 text-sm">
                 <span>{{ t('vat') }} (15%)</span>
-                <span>${{ Number(vatAmount || 0).toFixed(2) }}</span>
+                <span>${{ vatAmount.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
                 <span>{{ t('total') }}</span>
                 <span class="text-[var(--color-primary)]"
-                  >${{ Number(grandTotal || 0).toFixed(2) }}</span
+                  >${{ grandTotal.toFixed(2) }}</span
                 >
               </div>
             </div>
@@ -272,7 +254,7 @@ const handleSubmit = async () => {
               class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
             >
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ Number(amountNeededForFreeShipping || 0).toFixed(2) }}
+                Add ${{ amountNeededForFreeShipping.toFixed(2) }}
                 {{ t('freeShippingNotice') }}
               </p>
             </div>
@@ -398,81 +380,20 @@ const handleSubmit = async () => {
                   </div>
                 </div>
 
-                <!-- PayPal Button -->
-                <div v-if="selectedPayment === 'paypal'" class="mt-6">
-                  <button
-                    type="button"
-                    class="w-full bg-[#0070BA] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#005ea6]"
-                  >
-                    <img
-                      src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png"
-                      alt="PayPal"
-                      class="h-6 mr-2"
-                    />
-                    <span>{{ t('checkoutPage.payWithPaypal') }}</span>
-                  </button>
+                <!-- Stripe Card Element -->
+                <div v-show="selectedPayment === 'stripe'" class="mt-6">
+                    <label class="block text-[var(--color-primary)] text-sm font-medium mb-2">Card Details</label>
+                    <div id="card-element" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600"></div>
+                    <div v-if="stripeError" class="text-red-400 text-sm mt-2">{{ stripeError }}</div>
                 </div>
 
-                <!-- Visa Card Form -->
-                <div v-if="selectedPayment === 'visa'" class="mt-6 space-y-4">
-                  <div>
-                    <label
-                      for="cardholderName"
-                      class="block text-[var(--color-primary)] text-sm font-medium mb-2"
-                      >{{ t('checkoutPage.cardholderName') }}</label
-                    >
-                    <input
-                      id="cardholderName"
-                      type="text"
-                      v-model="visaCardDetails.cardholderName"
-                      :placeholder="t('checkoutPage.cardholderNamePlaceholder')"
-                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      for="cardNumber"
-                      class="block text-[var(--color-primary)] text-sm font-medium mb-2"
-                      >{{ t('checkoutPage.cardNumber') }}</label
-                    >
-                    <input
-                      id="cardNumber"
-                      type="text"
-                      v-model="visaCardDetails.cardNumber"
-                      :placeholder="t('checkoutPage.cardNumberPlaceholder')"
-                      class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                    />
-                  </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        for="expirationDate"
-                        class="block text-[var(--color-primary)] text-sm font-medium mb-2"
-                        >{{ t('checkoutPage.expirationDate') }}</label
-                      >
-                      <input
-                        id="expirationDate"
-                        type="text"
-                        v-model="visaCardDetails.expirationDate"
-                        :placeholder="t('checkoutPage.expirationDatePlaceholder')"
-                        class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                      />
+                <!-- PayPal Information -->
+                <div v-show="selectedPayment === 'paypal'" class="mt-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <p class="text-blue-800 text-sm">
+                            سيتم توجيهك إلى صفحة باي بال لإتمام عملية الدفع بشكل آمن.
+                        </p>
                     </div>
-                    <div>
-                      <label
-                        for="cvv"
-                        class="block text-[var(--color-primary)] text-sm font-medium mb-2"
-                        >{{ t('checkoutPage.cvv') }}</label
-                      >
-                      <input
-                        id="cvv"
-                        type="text"
-                        v-model="visaCardDetails.cvv"
-                        :placeholder="t('checkoutPage.cvvPlaceholder')"
-                        class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
 

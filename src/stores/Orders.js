@@ -50,12 +50,29 @@ export const useOrdersStore = defineStore('orders', {
             if (response) {
               this.stats = response.data.stats;
               console.log("Fetched orders stats:", this.stats);
-              
+
             }
           } catch (e) {
             console.error("Failed to fetch orders stats:", e);
           }
     },
+    async fetchOrderByPaypalToken(customerId, paymentToken) {
+  this.loading = true;
+  this.error = null;
+
+  try {
+    const response = await apiService.customerOrders.paypalSuccess({ customer: customerId, token: paymentToken });
+    if (response.data && response.data.order) {
+      return response.data.order;
+    }
+    return null;
+  } catch (error) {
+    console.error("Failed to fetch order by PayPal token:", error);
+    return null;
+  } finally {
+    this.loading = false;
+  }
+},
     async createOrder(orderData) {
       if (this.role === 'admin') {
         throw new Error("Admins cannot create orders from here.");

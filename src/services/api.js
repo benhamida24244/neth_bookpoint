@@ -21,12 +21,16 @@ api.interceptors.request.use(
 
     // Admin routes
     if (url.startsWith('/admin/')) {
-        tokenToSend = adminToken;
-    }
-    // Customer routes
-    else if (url.startsWith('/customer/') || url.startsWith('/cart') || url.startsWith('/orders')) {
-        tokenToSend = customerToken;
-    }
+    tokenToSend = adminToken;
+}
+// Include admin token for public books routes if admin is logged in
+else if (url.startsWith('/books') || url.startsWith('/categories') || url.startsWith('/publishers') || url.startsWith('/authors')) {
+    tokenToSend = adminToken;
+}
+else if (url.startsWith('/customer/') || url.startsWith('/cart') || url.startsWith('/orders')) {
+    tokenToSend = customerToken;
+}
+
     // Other specific admin routes that are not prefixed
     else if (url === '/logout' || url === '/profile' || url === '/user/avatar') {
         tokenToSend = adminToken;
@@ -86,6 +90,13 @@ const customerOrders = {
   all: () => api.get("/orders"),
   create: (data) => api.post("/orders", data),
   get: (id) => api.get(`/orders/${id}`),
+  createPaymentIntent: (data) => api.post("/orders", { ...data, action: 'create_payment_intent' }),
+  confirmStripePayment: (data) => api.post("/orders/confirm-stripe", data),
+
+  // ✅ PayPal
+  paypalSuccess: (data) => api.get("/paypal/success", { params: data }),
+  createPayPal: (data) => api.post("/orders/create-paypal", data),
+  capturePayPal: (data) => api.post("/orders/capture-paypal", data),
 };
 
 // ================================================================

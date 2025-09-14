@@ -4,6 +4,9 @@ import { ref,computed } from 'vue'
 import { Menu } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const MenuIsOpen = ref(false)
 const isLogout = ref(false)
