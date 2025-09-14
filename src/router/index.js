@@ -19,7 +19,9 @@ const router = createRouter({
         { path: '/checkout', name: 'Checkout', component: () => import('@/views/CheckOutPageView.vue'), meta: { requiresAuth: true } },
         { path: '/profile', name: 'Profile', component: () => import('../views/ProfileView.vue'), meta: { requiresAuth: true } },
         { path: '/book/:id', name: 'BookDetails', component: () => import('@/views/BookDetailsView.vue') },
-        { path: '/payment-success', name: 'PaymentSuccess', component: () => import('@/views/PaymentSuccess.vue') },
+        { path: '/payment-success', name: 'payment-success', component: () => import('@/views/PaymentSuccess.vue'), props: true },
+        { path: '/paypal/success', name: 'paypal-success', component: () => import('@/views/PayPalSuccess.vue') },
+        { path: '/paypal/cancel', name: 'paypal-cancel', component: () => import('@/views/PaymentCancel.vue') },
         { path: '/login', name: 'Login', component: () => import('@/views/Auth/LoginView.vue') },
         { path: '/register', name: 'Register', component: () => import('@/views/Auth/RegisterView.vue') }
       ]

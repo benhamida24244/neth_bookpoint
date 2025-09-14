@@ -90,7 +90,9 @@ const cart = {
 // ================================================================
 const orders = {
   all: () => api.get("/orders"),
+  get: (id) => api.get(`/orders/${id}`),
   create: (data) => api.post("/orders", data),
+  paypalCapture: (params) => api.get('/paypal/success', { params }),
 };
 
 // ================================================================
