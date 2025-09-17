@@ -64,6 +64,24 @@ const getAvatarText = (name) => {
   return name.charAt(0).toUpperCase()
 }
 
+// دالة لتحديد الألوان المناسبة لكل حالة طلب
+const getStatusClass = (status) => {
+  switch (status.toLowerCase()) {
+    case "مكتمل":
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 border border-green-200";
+    case "قيد المعالجة":
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 border border-blue-200";
+    case "تم الشحن":
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 border border-purple-200";
+    case "ملغي":
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700 border border-red-200";
+    case "في انتظار الدفع":
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700 border border-yellow-200";
+    default:
+      return "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200";
+  }
+};
+
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
@@ -436,7 +454,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
                       </div>
                       <div class="flex items-center gap-4">
                         <span
-                          class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 border border-green-200"
+                          :class="getStatusClass(order.status)"
                         >
                           {{ order.status }}
                         </span>

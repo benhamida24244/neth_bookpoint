@@ -49,7 +49,7 @@
     "booksSamePublisher": "Books from the Same Publisher"
   },
   "header": {
-    "title": "NETH<br />BOOKPOINT",
+    "title": "NETH BOOKPOINT",
     "home": "Home",
     "about": "About Us",
     "shop": "Shop",
@@ -960,7 +960,8 @@
     "viewOrderHistory": "View Order History",
     "noOrderDetails": "Order details not found.",
     "completePurchase": "Please complete your purchase to see your order summary.",
-    "goToShop": "Go to Shop"
+    "goToShop": "Go to Shop",
+    "canceled": "Your payment was canceled"
   },
   "googleCallback": {
     "loggingIn": "Logging in via Google..."

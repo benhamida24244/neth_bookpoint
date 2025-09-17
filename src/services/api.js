@@ -92,7 +92,9 @@ const customerOrders = {
   get: (id) => api.get(`/orders/${id}`),
   createPaymentIntent: (data) => api.post("/orders", { ...data, action: 'create_payment_intent' }),
   confirmStripePayment: (data) => api.post("/orders/confirm-stripe", data),
-
+  async getByPaypalToken(customerId, paymentToken) {
+    return await api.get(`/orders/paypal/${customerId}/${paymentToken}`)
+  },
   // ✅ PayPal
   paypalSuccess: (data) => api.get("/paypal/success", { params: data }),
   createPayPal: (data) => api.post("/orders/create-paypal", data),

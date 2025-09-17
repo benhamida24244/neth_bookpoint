@@ -49,7 +49,7 @@
     "booksSamePublisher": "Livres du même éditeur"
   },
   "header": {
-    "title": "NETH<br />BOOKPOINT",
+    "title": "NETH BOOKPOINT",
     "home": "Accueil",
     "about": "À propos",
     "shop": "Boutique",
@@ -905,7 +905,8 @@
     "viewOrderHistory": "Voir l'historique des commandes",
     "noOrderDetails": "Aucun détail de commande trouvé.",
     "completePurchase": "Veuillez effectuer un achat pour voir le résumé de votre commande.",
-    "goToShop": "Aller à la boutique"
+    "goToShop": "Aller à la boutique",
+    "canceled": "Votre paiement a été annulé"
   },
   "googleCallback": {
     "loggingIn": "Connexion avec Google en cours..."

@@ -12,6 +12,7 @@ const { latestOrders, loading } = storeToRefs(dashboardStore)
 
 const statusColor = {
   pending: 'bg-yellow-500',
+  paid: 'bg-green-300',
   completed: 'bg-green-600 text-gray-100',
   shipped: 'bg-blue-200 text-gray-600',
   canceled: 'bg-red-400'

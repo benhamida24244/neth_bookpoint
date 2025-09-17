@@ -49,7 +49,7 @@
     "booksSamePublisher": "كتب من نفس الناشر"
   },
   "header": {
-    "title": "NETH<br />BOOKPOINT",
+    "title": "NETH BOOKPOINT",
     "home": "الرئيسية",
     "about": "حولنا",
     "shop": "المتجر",
@@ -961,7 +961,8 @@
     "viewOrderHistory": "عرض سجل الطلبات",
     "noOrderDetails": "لم يتم العثور على تفاصيل الطلب.",
     "completePurchase": "يرجى إكمال عملية شراء لرؤية ملخص طلبك.",
-    "goToShop": "اذهب إلى المتجر"
+    "goToShop": "اذهب إلى المتجر",
+    "canceled": "تم إلغاء عملية الدفع الخاصة بك"
   },
   "googleCallback": {
     "loggingIn": "جاري تسجيل الدخول عبر Google..."
@@ -1147,6 +1148,7 @@
   },
   "loading": {
     "dashboard":"جاري تحميل لوحة التحكم",
+    "order":"جاري تحميل الطلب...",
     "orders":"جاري تحميل الطلبيات",
     "clients":"جاري تحميل العملاء",
     "books": "جاري تحميل الكتب...",

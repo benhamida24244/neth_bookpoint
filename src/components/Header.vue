@@ -102,15 +102,15 @@ const isRtl = computed(() => {
         <div v-if="!isRtl" class="flex flex-row- items-center gap-2">
            <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
           <p
-            v-html="t('header.title')"
+            :class="{ 'two-line-title': t('header.title') === 'NETH BOOKPOINT' }"
             class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden"
-          ></p>
+          >{{ t('header.title') }}</p>
         </div>
         <div v-else class="flex flex-row-reverse items-center gap-2">
           <p
-            v-html="t('header.title')"
+            :class="{ 'two-line-title': t('header.title') === 'NETH BOOKPOINT' }"
             class="text-xl font-bold font-bona text-[var(--color-primary)] max-sm:hidden"
-          ></p>
+          >{{ t('header.title') }}</p>
           <img :src="Logo" alt="logo" class="w-20 max-sm:w-12" />
         </div>
       </RouterLink>
@@ -207,3 +207,22 @@ const isRtl = computed(() => {
   <LoginView v-if="isLoginModalOpen" @openRegister="uiStore.openRegisterModal" @close="uiStore.closeModal" />
   <RegisterView v-if="isRegisterModalOpen" @openLogin="uiStore.openLoginModal" @close="uiStore.closeModal" />
 </template>
+
+<style scoped>
+.two-line-title {
+  display: inline-block;
+  line-height: 1.2;
+  position: relative;
+}
+
+.two-line-title::after {
+  content: "\A";
+  white-space: pre;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+}
+</style>

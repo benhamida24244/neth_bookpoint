@@ -59,16 +59,42 @@ const router = createRouter({
           path: '/paypal-success',
           name: 'PaymentSuccess',
           component: () => import('@/views/PaymentSuccess.vue'),
-          props: (route) => ({ customer: route.query.customer, token: route.query.payment_token }),
+          props: (route) => ({ customer: route.query.token, token: route.query.payment_token }),
         },
         {
           path: '/paypal/success',
           name: 'PayPalSuccess',
           component: () => import('@/views/PaymentSuccess.vue'),
+          props: (route) => ({ customer: route.query.token, token: route.query.payment_token }),
         },
         {
-          path: '/paypal/cancel',
-          name: 'PayPalCancel',
+          path: '/paypal-success',
+          name: 'PayPalSuccessLegacy',
+          component: () => import('@/views/PaymentSuccess.vue'),
+          props: (route) => ({ customer: route.query.token, token: route.query.payment_token }),
+        },
+        {
+          path: '/stripe/success',
+          name: 'StripeSuccess',
+          component: () => import('@/views/PaymentSuccess.vue'),
+        },
+        {
+          path: '/cod/success',
+          name: 'CodSuccess',
+          component: () => import('@/views/PaymentSuccess.vue'),
+        },
+        {
+          path: '/payment-success',
+          name: 'PaymentSuccess',
+          component: () => import('@/views/PaymentSuccess.vue'),
+          props: (route) => ({
+            customer: route.query.customer, // تصحيح: customer بدلاً من token
+            token: route.query.token, // تصحيح: token بدلاً من payment_token
+          }),
+        },
+        {
+          path: '/payment-cancelled',
+          name: 'PaymentCancelled',
           component: () => import('@/views/PaymentCancel.vue'),
         },
         { path: '/login', name: 'Login', component: () => import('@/views/Auth/LoginView.vue') },

@@ -56,23 +56,45 @@ export const useOrdersStore = defineStore('orders', {
             console.error("Failed to fetch orders stats:", e);
           }
     },
-    async fetchOrderByPaypalToken(customerId, paymentToken) {
-  this.loading = true;
-  this.error = null;
+    async fetchOrderByPaypalToken (customerId, paymentToken) {
+    this.loading = true
+    this.error = null
 
-  try {
-    const response = await apiService.customerOrders.paypalSuccess({ customer: customerId, token: paymentToken });
-    if (response.data && response.data.order) {
-      return response.data.order;
+    try {
+      const response = await apiService.customerOrders.paypalSuccess({ customer: customerId, token: paymentToken })
+      if (response.data && response.data.order) {
+        return response.data.order
+      }
+      // إذا كانت البيانات تأتي مباشرة
+      if (response.data) {
+        return response.data
+      }
+      return null
+    } catch (err) {
+      this.error = err.message || 'Failed to fetch order by PayPal token'
+      console.error('Error fetching PayPal order:', err)
+      return null
+    } finally {
+      this.loading = false
     }
-    return null;
+  },
+
+  // دالة لمعالجة دفع PayPal
+ async  processPaypalPayment(paymentToken, paypalOrderId) {
+  try {
+    // استخدام كائن عادي بدلاً من FormData
+    const response = await apiService.customerOrders.paypalSuccess({
+      payment_token: paymentToken,
+      token: paypalOrderId
+    });
+
+    return response.data;
   } catch (error) {
-    console.error("Failed to fetch order by PayPal token:", error);
-    return null;
-  } finally {
-    this.loading = false;
+    console.error('Error processing PayPal payment:', error);
+    throw error;
   }
 },
+
     async createOrder(orderData) {
       if (this.role === 'admin') {
         throw new Error("Admins cannot create orders from here.");

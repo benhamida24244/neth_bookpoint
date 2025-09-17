@@ -175,7 +175,7 @@ const handleStripePayment = async () => {
     throw new Error(checkoutError.value);
   }
 
-  router.push('/payment-success');
+  router.push('/stripe/success');
 };
 
 const handleCodPayment = async () => {
@@ -183,7 +183,7 @@ const handleCodPayment = async () => {
   if (checkoutError.value) {
     throw new Error(checkoutError.value);
   }
-  router.push('/payment-success');
+  router.push('/cod/success');
 };
 
 const handlePaypalPayment = async () => {
@@ -191,6 +191,9 @@ const handlePaypalPayment = async () => {
   if (checkoutError.value || !checkoutStore.approval_link) {
     throw new Error(checkoutError.value || 'Could not initialize PayPal payment.');
   }
+  // حفظ رابط الإرجاع في التخزين المؤقت
+  sessionStorage.setItem('paypal_return_url', window.location.origin + '/paypal/return');
+  // التوجيه إلى PayPal
   window.location.href = checkoutStore.approval_link;
 };
 
