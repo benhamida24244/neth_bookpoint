@@ -1,13 +1,13 @@
 <template>
   <div
-    class="flex items-center justify-center gap-2 mt-6 mb-4 flex-wrap font-sans animate-[fadeIn_0.3s_ease-out]"
+    class="flex items-center justify-center gap-2 mt-6 mb-4 flex-wrap animate-[fadeIn_0.3s_ease-out]"
   >
     <!-- الانتقال إلى الصفحة الأولى -->
     <button
       :disabled="currentPage === 1"
       @click="goToPage(1)"
       class="flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hover)] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
-      title="الصفحة الأولى"
+      :title="t('pagination.firstPage')"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -24,12 +24,12 @@
       :disabled="currentPage === 1"
       @click="goToPage(currentPage - 1)"
       class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hover)] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
-      title="الصفحة السابقة"
+      :title="t('pagination.previousPage')"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      <span class="ml-1 hidden sm:inline">السابق</span>
+      <span class="ml-1 hidden sm:inline">{{ t('pagination.previous') }}</span>
     </button>
 
     <!-- أرقام الصفحات -->
@@ -56,10 +56,10 @@
     <button
       :disabled="currentPage === lastPage"
       @click="goToPage(currentPage + 1)"
-      class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring--[var(--color-hover)] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
-      title="الصفحة التالية"
+      class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hover)] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
+      :title="t('pagination.nextPage')"
     >
-      <span class="mr-1 hidden sm:inline">التالي</span>
+      <span class="mr-1 hidden sm:inline">{{ t('pagination.next') }}</span>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
@@ -70,7 +70,7 @@
       :disabled="currentPage === lastPage"
       @click="goToPage(lastPage)"
       class="flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hover)] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
-      title="الصفحة الأخيرة"
+      :title="t('pagination.lastPage')"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -84,16 +84,20 @@
 
     <!-- معلومات الصفحة -->
     <div class="flex flex-col items-center ml-2 sm:ml-4 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-      <span class="font-medium">صفحة {{ currentPage }} من {{ lastPage }}</span>
-      <div v-if="totalItems" class="text-[10px] sm:text-xs text-gray-500 mt-1">({{ totalItems }} عنصر)</div>
+      <span class="font-medium">{{ t('pagination.pageInfo', { currentPage, lastPage }) }}</span>
+      <div v-if="totalItems" class="text-[10px] sm:text-xs text-gray-500 mt-1">
+        {{ t('pagination.totalItems', totalItems) }}
+      </div>
     </div>
   </div>
 </template>
 
 
 <script setup>
-import { computed, defineEmits, defineProps } from 'vue'
+import { computed, defineEmits, defineProps } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 // Props
 const props = defineProps({
   currentPage: {
@@ -124,6 +128,7 @@ const goToPage = (page) => {
   if (page !== props.currentPage && page >= 1 && page <= props.lastPage) {
     emit('page-changed', page)
     emit('update:currentPage', page)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 

@@ -1047,6 +1047,7 @@
     "orderDate": "Date de la commande:",
     "lastUpdated": "Dernière mise à jour:",
     "statusPending": "En attente",
+    "statusPaid": "Payée",
     "statusShipped": "Expédiée",
     "statusCompleted": "Terminée",
     "statusCancelled": "Annulée",
@@ -1105,5 +1106,15 @@
     "home": "Chargement de la page d'accueil...",
     "cart": "Chargement du panier..."
   },
-  "noData": "Pas de données"
+  "noData": "Pas de données",
+   "pagination": {
+    "firstPage": "Première page",
+    "previousPage": "Page précédente",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "nextPage": "Page suivante",
+    "lastPage": "Dernière page",
+    "pageInfo": "Page {currentPage} sur {lastPage}",
+    "totalItems": "{count} article | {count} articles"
+  }
 }

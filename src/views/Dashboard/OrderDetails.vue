@@ -90,6 +90,14 @@ const statusConfig = computed(() => {
     iconColor: 'text-amber-600',
     progress: 25
   },
+  'paid': {
+    icon: ClockIcon,
+    label: t('orderDetails.statusPaid'),
+    color: 'bg-green-100 text-green-800 border-green-200',
+    bgColor: 'bg-green-50',
+    iconColor: 'text-green-600',
+    progress: 50
+  },
   'shipped': {
     icon: TruckIcon,
     label: t('orderDetails.statusShipped'),

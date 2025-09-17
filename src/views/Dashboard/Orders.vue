@@ -115,7 +115,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
               <tr
-                v-for="order in filteredOrders"
+                v-for="order in paginatedOrders"
                 :key="order.id"
                 class="hover:bg-gray-50 transition-colors duration-200"
               >
@@ -172,68 +172,15 @@
 
         <!-- Pagination -->
         <div
-          v-if="filteredOrders.length > 0"
-          class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between"
+          v-if="totalPages > 1"
+          class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-center"
         >
-          <div class="flex-1 flex justify-between sm:hidden">
-            <button
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              {{ t('dashboard.orders.pagination.previous') }}
-            </button>
-            <button
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              {{ t('dashboard.orders.pagination.next') }}
-            </button>
-          </div>
-          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p class="text-sm text-gray-700">
-                {{ t('orders.pagination.previews') }}
-                <span class="font-medium">1</span>
-                {{ t('orders.pagination.to') }}
-                <span class="font-medium">{{ filteredOrders.length }}</span>
-                {{ t('orders.pagination.of') }}
-                <span class="font-medium">{{ filteredOrders.length }}</span>
-                {{ t('orders.pagination.results') }}
-              </p>
-            </div>
-            <div>
-              <nav
-                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
-                  <span class="sr-only">{{ t('dashboard.orders.pagination.previous') }}</span>
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-                <button
-                  class="z-10 bg-yellow-50 border-[var(--color-light)] text-[var(--color-primary)] relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                >
-                  1
-                </button>
-                <button
-                  class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                >
-                  2
-                </button>
-                <button
-                  class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                >
-                  3
-                </button>
-                <button
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
-                  <span class="sr-only">{{ t('dashboard.orders.pagination.next') }}</span>
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </nav>
-            </div>
-          </div>
+          <Pagination
+            :current-page="currentPage"
+            :last-page="totalPages"
+            :total-items="filteredOrders.length"
+            @page-changed="handlePageChange"
+          />
         </div>
       </div>
     </div>
@@ -248,9 +195,10 @@ import { useCustomerAuthStore } from '@/stores/customerAuth'
 import { useOrdersStore } from '@/stores/Orders'
 import { useSettingsStore } from '@/stores/settings'
 import { useI18n } from 'vue-i18n'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import * as XLSX from 'xlsx'
 import LoaderWithText from '@/components/LoaderWithText.vue'
+import Pagination from '@/components/Pagination.vue'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()
@@ -258,6 +206,8 @@ const settingsStore = useSettingsStore()
 const ordersStore = useOrdersStore()
 const activeFilter = ref('all')
 const searchQuery = ref('')
+const currentPage = ref(1)
+const itemsPerPage = 10
 
 // جلب بيانات الطلبات عند تحميل المكون
 onMounted(() => {
@@ -324,6 +274,11 @@ onMounted(() => {
       { label: t('dashboard.orders_filter.filters.cancelled'), value: 'canceled' }
     ])
 
+    // Watch for filter changes to reset page
+    watch([activeFilter, searchQuery], () => {
+      currentPage.value = 1
+    })
+
     const filteredOrders = computed(() => {
       let filtered = ordersStore.orders
 
@@ -343,6 +298,16 @@ onMounted(() => {
       }
 
       return filtered
+    })
+
+    const totalPages = computed(() => {
+      return Math.ceil(filteredOrders.value.length / itemsPerPage)
+    })
+
+    const paginatedOrders = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage
+      const end = start + itemsPerPage
+      return filteredOrders.value.slice(start, end)
     })
 
     const getStatusClass = (status) => {
@@ -379,6 +344,11 @@ onMounted(() => {
     const forceUpdate = () => {
       searchQuery.value = searchQuery.value
     }
+
+    const handlePageChange = (page) => {
+      currentPage.value = page
+    }
+
     // تنسيق التاريخ
     const formatDate = (dateString) => {
       const date = new Date(dateString);

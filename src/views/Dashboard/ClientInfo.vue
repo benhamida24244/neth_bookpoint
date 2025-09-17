@@ -173,7 +173,7 @@ const clientStats = computed(() => {
     },
     {
       label: translations.value.dashboard?.clientInfo?.averageOrder,
-      value: `$${selectedClient.value.average_order}`,
+      value: `$${selectedClient.value.average_order.toFixed(2)}`,
       icon: '📊',
       color: 'text-purple-600'
     },

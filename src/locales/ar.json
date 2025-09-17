@@ -1102,6 +1102,7 @@
     "orderDate": "تاريخ الطلب:",
     "lastUpdated": "آخر تحديث:",
     "statusPending": "قيد الانتظار",
+    "statusPaid": "تم الدفع",
     "statusShipped": "تم الشحن",
     "statusCompleted": "مكتمل",
     "statusCancelled": "ملغي",
@@ -1163,4 +1164,15 @@
     "cart": "جاري تحميل السلة..."
   },
     "noData": "لا توجد بيانات"
+,
+  "pagination": {
+    "firstPage": "الصفحة الأولى",
+    "previousPage": "الصفحة السابقة",
+    "previous": "السابق",
+    "next": "التالي",
+    "nextPage": "الصفحة التالية",
+    "lastPage": "الصفحة الأخيرة",
+    "pageInfo": "صفحة {currentPage} من {lastPage}",
+    "totalItems": "({count} عنصر) | ({count} عناصر)"
+  }
 }

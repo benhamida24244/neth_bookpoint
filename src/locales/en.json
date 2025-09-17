@@ -1101,6 +1101,7 @@
     "orderDate": "Order Date:",
     "lastUpdated": "Last Updated:",
     "statusPending": "Pending",
+    "statusPaid": "Paid",
     "statusShipped": "Shipped",
     "statusCompleted": "Completed",
     "statusCancelled": "Cancelled",
@@ -1159,5 +1160,15 @@
     "home": "Loading home page...",
     "cart": "Loading cart..."
   },
-  "noData": "No data"
+  "noData": "No data",
+  "pagination": {
+    "firstPage": "First Page",
+    "previousPage": "Previous Page",
+    "previous": "Previous",
+    "next": "Next",
+    "nextPage": "Next Page",
+    "lastPage": "Last Page",
+    "pageInfo": "Page {currentPage} of {lastPage}",
+    "totalItems": "{count} item | {count} items"
+  }
 }
