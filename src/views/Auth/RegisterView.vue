@@ -140,11 +140,11 @@ const handleGoogleRegister = () => {
   <div
     id="register-popup"
     tabindex="-1"
-    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10"
+    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
     @click.self="emit('close')"
   >
     <div
-      class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl w-full flex flex-col md:flex-row font-BonaRegular"
+      class="bg-white rounded-xl shadow-lg overflow-hidden max-h-[90vh] max-w-3xl w-full flex flex-col md:flex-row font-BonaRelative m-2 sm:m-0"
     >
       <!-- صورة جانبية -->
       <div class="hidden md:block w-1/2 bg-[var(--color-primary)]">
@@ -152,7 +152,7 @@ const handleGoogleRegister = () => {
       </div>
 
       <!-- محتوى التسجيل -->
-      <div class="w-full md:w-1/2 p-6 md:p-10 text-black relative">
+      <div class="w-full md:w-1/2 p-6 md:p-10 sm:p-8 text-black relative overflow-y-auto max-h-[85vh]">
         <!-- زر إغلاق -->
         <button
           type="button"
@@ -160,7 +160,7 @@ const handleGoogleRegister = () => {
           class="absolute top-4 right-4 text-gray-500 hover:text-black transition"
         >
           <svg
-            class="w-6 h-6"
+            class="w-5 h-5 sm:w-6 sm:h-6"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -189,7 +189,7 @@ const handleGoogleRegister = () => {
               type="text"
               required
               :placeholder="t('register.fullNamePlaceholder')"
-              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
             />
             <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
           </div>
@@ -201,7 +201,7 @@ const handleGoogleRegister = () => {
               type="email"
               required
               :placeholder="t('register.emailPlaceholder')"
-              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
             />
             <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
           </div>
@@ -214,7 +214,7 @@ const handleGoogleRegister = () => {
               required
               autocomplete="new-password"
               :placeholder="t('register.passwordPlaceholder')"
-              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
             />
             <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
           </div>
@@ -227,7 +227,7 @@ const handleGoogleRegister = () => {
               required
               autocomplete="new-password"
               :placeholder="t('register.confirmPasswordPlaceholder')"
-              class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
             />
             <p v-if="errors.password_confirmation" class="text-red-500 text-sm mt-1">
               {{ errors.password_confirmation }}
@@ -237,7 +237,7 @@ const handleGoogleRegister = () => {
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition disabled:opacity-70 disabled:cursor-not-allowed"
+            class="w-full bg-black text-white py-3 sm:py-4 rounded-md font-semibold hover:bg-gray-900 transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             <span v-if="isLoading">{{ t('register.creatingAccount') }}</span>
             <span v-else>{{ t('register.createAccount') }}</span>
@@ -253,23 +253,23 @@ const handleGoogleRegister = () => {
 
         <!-- التسجيل عبر Google -->
         <button
-          class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+          class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2.5 sm:py-3 rounded-md hover:bg-gray-100 transition duration-300"
           @click="handleGoogleRegister"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
-            class="h-5 w-5"
+            class="h-4 w-4 sm:h-5 sm:w-5"
           />
           <span class="text-sm font-medium text-black">{{ t('register.googleSignUp') }}</span>
         </button>
 
         <!-- تحويل لتسجيل الدخول -->
-        <p class="mt-6 text-center text-sm text-gray-600">
+        <p class="mt-6 text-center text-sm sm:text-base text-gray-600">
           {{ t('register.alreadyAccount') }}
           <span
             @click="emit('openLogin')"
-            class="text-[var(--color-primary)] font-semibold hover:underline"
+            class="text-[var(--color-primary)] font-semibold hover:underline cursor-pointer transition-colors duration-300"
             >{{ t('register.login') }}</span
           >
         </p>

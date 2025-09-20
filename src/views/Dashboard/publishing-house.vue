@@ -1,13 +1,13 @@
 <script setup>
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
-import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useI18n } from 'vue-i18n';
 import AddPublisherModal from '@/components/Dashboard/Modals/AddPublisherModal.vue';
 import { useRouter } from 'vue-router';
 import * as XLSX from 'xlsx';
-import { useLoader } from '../../../useLoader.js';
 import LoaderWithText from '@/components/LoaderWithText.vue';
+
 const { t } = useI18n();
 const router = useRouter();
 const publisherModal = ref(null);
@@ -18,7 +18,7 @@ const isDeleteDialogOpen = ref(false);
 const publisherToDelete = ref(null);
 
 const publishingHousesStore = usePublishingHouseStore();
-const { isLoading } = useLoader(publishingHousesStore);
+const isLoading = computed(() => publishingHousesStore.isLoading);
 
 onMounted(async () => {
   await publishingHousesStore.fetchPublishers();
@@ -26,24 +26,19 @@ onMounted(async () => {
 
 const publishingHouses = computed(() => publishingHousesStore.publishingHouses);
 
-// الخصائص المحسوبة للفلترة والترتيب
 const filteredPublishingHouses = computed(() => {
   let filtered = publishingHouses.value.filter(house =>
     house.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 
-  // ترتيب النتائج المفلترة
   return filtered.sort((a, b) => {
     let aValue = a[sortBy.value];
     let bValue = b[sortBy.value];
-
     if (typeof aValue === 'number' && typeof bValue === 'number') {
       return sortOrder.value === 'asc' ? aValue - bValue : bValue - aValue;
     }
-
     aValue = String(aValue).toLowerCase();
     bValue = String(bValue).toLowerCase();
-
     if (sortOrder.value === 'asc') {
       return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
     } else {
@@ -52,16 +47,9 @@ const filteredPublishingHouses = computed(() => {
   });
 });
 
-// الخصائص المحسوبة للإحصائيات (تم التأكد من صحة أسماء الحقول)
-const totalOrders = computed(() =>
-  filteredPublishingHouses.value.reduce((sum, house) => sum + (house.orders || 0), 0)
-);
+const totalOrders = computed(() => filteredPublishingHouses.value.reduce((sum, house) => sum + (house.orders || 0), 0));
+const totalBooks = computed(() => filteredPublishingHouses.value.reduce((sum, house) => sum + (house.nmBook || 0), 0));
 
-const totalBooks = computed(() =>
-  filteredPublishingHouses.value.reduce((sum, house) => sum + (house.nmBook || 0), 0)
-);
-
-// خيارات حقول الترتيب
 const sortFields = [
   { key: 'name', label: t('dashboard.publishingHouses.name') },
   { key: 'orders', label: t('dashboard.publishingHouses.orders') },
@@ -69,7 +57,6 @@ const sortFields = [
   { key: 'nmBook', label: t('dashboard.publishingHouses.books') }
 ];
 
-// الدوال
 const clearFilters = () => {
   searchQuery.value = '';
   sortBy.value = 'name';
@@ -104,59 +91,9 @@ const exportData = () => {
   XLSX.writeFile(wb, 'publishing_houses.xlsx');
 };
 
-const importData = async (event) => {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(worksheet);
+const triggerImport = () => document.getElementById('import-input').click();
 
-      for (const publisher of json) {
-        const formData = new FormData();
-        formData.append('name', publisher.name);
-        if (publisher.Description) {
-            formData.append('description', publisher.Description);
-        }
-        if (publisher.img) {
-          try {
-            const response = await fetch(publisher.img);
-            const blob = await response.blob();
-            const fileName = publisher.name.replace(/\s+/g, "_") + ".jpg";
-            const fileImg = new File([blob], fileName, { type: blob.type });
-            formData.append('img', fileImg);
-          }
-           catch {
-            console.warn(`⚠️ فشل تحميل صورة للكاتب ${publisher.name}:`, err);
-           }
-        }
-        if (publisher.Registration_date) {
-            formData.append('Registration_date', publisher.Registration_date);
-        }
-        await publishingHousesStore.addPublisher(formData);
-      }
-      alert(t('dashboard.publishingHouses.importSuccess'));
-      event.target.value = '';
-    } catch (error) {
-      console.error('Error during data import:', error);
-      alert(t('dashboard.publishingHouses.importFailed'));
-    }
-  };
-  reader.readAsArrayBuffer(file);
-};
-
-const triggerImport = () => {
-  document.getElementById('import-input').click();
-};
-
-// دوال إجراءات CRUD
-const openEditModal = (publisher) => {
-  // افترض أن المكون Modal يقبل `publisher` كـ prop للتعديل
-  publisherModal.value.openModal(publisher);
-};
+const openEditModal = (publisher) => publisherModal.value.openModal(publisher);
 
 const openDeleteDialog = (publisher) => {
   publisherToDelete.value = publisher;
@@ -168,206 +105,129 @@ const confirmDelete = async () => {
     await publishingHousesStore.deletePublisher(publisherToDelete.value.id);
     isDeleteDialogOpen.value = false;
     publisherToDelete.value = null;
-    // يمكنك إضافة إشعار نجاح هنا
   }
 };
 
-// إعدادات تنسيق الأرقام والعملات
 const settingStore = useSettingsStore();
-const formatStatus = (status) => {
- if(status === 1)
- {
-  return t('dashboard.publishingHouses.active')
- }
- else
- return t('dashboard.publishingHouses.draft')
-};
+const formatStatus = (status) => status === 1 ? t('dashboard.publishingHouses.active') : t('dashboard.publishingHouses.draft');
+const getStatusClass = (status) => status === 1 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+const formatNumber = (number) => new Intl.NumberFormat(settingStore.language).format(number);
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const formatNumber = (number) => {
-  return new Intl.NumberFormat(settingStore.language).format(number);
-};
 </script>
 
 <template>
-  <div class="w-full sm:px-8 lg:px-16 mt-8">
+  <div class="p-4 md:p-8 min-h-screen bg-gray-50">
     <AddPublisherModal ref="publisherModal" />
-    <div v-if="isLoading" class="flex justify-center items-center h-64">
-    <LoaderWithText :loading="isLoading" :message="t('phouseDetails.loading')" />
-    </div>
 
-    <div v-if="!isLoading">
-    <div v-if="isDeleteDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h3 class="text-lg font-bold text-gray-900">{{ t('dashboard.publishingHouses.confirmDeletion') }}</h3>
-        <p class="mt-2 text-sm text-gray-600">
+    <!-- Delete Confirmation Modal -->
+    <div v-if="isDeleteDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="isDeleteDialogOpen = false">
+      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+        <h3 class="text-lg font-bold text-gray-900 ltr:text-left rtl:text-right">{{ t('dashboard.publishingHouses.confirmDeletion') }}</h3>
+        <p class="mt-2 text-sm text-gray-600 ltr:text-left rtl:text-right">
           {{ t('dashboard.publishingHouses.deleteConfirmation', { name: publisherToDelete?.name }) }}
         </p>
         <div class="mt-6 flex justify-end gap-3">
-          <button @click="isDeleteDialogOpen = false" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
-            {{ t('dashboard.publishingHouses.cancel') }}
-          </button>
-          <button @click="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            {{ t('dashboard.publishingHouses.delete') }}
-          </button>
+          <button @click="isDeleteDialogOpen = false" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">{{ t('dashboard.publishingHouses.cancel') }}</button>
+          <button @click="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">{{ t('dashboard.publishingHouses.delete') }}</button>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
-      <div class="flex-1 w-full lg:w-auto">
-        <input
-          v-model="searchQuery"
-          :placeholder="t('dashboard.sidebar.publishingHouses')"
-          type="text"
-          class="px-4 py-2 w-full bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-        />
-      </div>
-      <div class="flex gap-3 w-full lg:w-auto">
-        <button @click="publisherModal.openModal()" class="bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors flex-1 lg:flex-none whitespace-nowrap">
-          {{ t('dashboard.publishingHouses.addPublisher') }}
-        </button>
-        <button @click="exportData" class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex-1 lg:flex-none">
-          {{ t('dashboard.publishingHouses.export') }}
-        </button>
-        <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
-        <button @click="triggerImport" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-opacity flex-1 lg:flex-none">
-          {{ t('dashboard.publishingHouses.import') }}
-        </button>
-      </div>
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+      <LoaderWithText :loading="isLoading" :message="t('phouseDetails.loading')" />
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-sm font-medium text-gray-600 mr-2">{{ t('dashboard.publishingHouses.sortBy') }}:</span>
-            <button
-            v-for="field in sortFields"
-            :key="field.key"
-            @click="handleSort(field.key)"
-            :class="[
-                'px-3 py-1 text-xs rounded-full border transition-colors',
-                sortBy === field.key
-                ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-            ]"
-            >
-            {{ field.label }} {{ getSortIcon(field.key) }}
-            </button>
-        </div>
-        <button @click="clearFilters" class="text-sm text-blue-600 hover:underline">
-            {{ t('dashboard.publishingHouses.clearFilters') }}
-        </button>
-    </div>
+    <div v-else>
+      <!-- Header -->
+      <div class="mb-8 font-BonaRegular ltr:text-left rtl:text-right">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ t('dashboard.sidebar.publishingHouses') }}</h1>
+      </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-      <div class="flex items-center bg-yellow-50 p-4 rounded-lg">
-        <div class="flex flex-col">
-          <p class="text-sm font-medium text-gray-600">{{ t('dashboard.publishingHouses.totalPublishers') }}</p>
-          <span class="text-2xl font-bold text-[var(--color-primary)]">{{ filteredPublishingHouses.length }}</span>
-        </div>
-      </div>
-      <div class="flex items-center bg-green-50 p-4 rounded-lg">
-        <div class="flex flex-col">
-          <p class="text-sm font-medium text-gray-600">{{ t('dashboard.publishingHouses.totalOrders') }}</p>
-          <span class="text-2xl font-bold text-green-600">{{ formatNumber(totalOrders) }}</span>
-        </div>
-      </div>
-      <div class="flex items-center bg-blue-50 p-4 rounded-lg">
-        <div class="flex flex-col">
-          <p class="text-sm font-medium text-gray-600">{{ t('dashboard.publishingHouses.totalBooks') }}</p>
-          <span class="text-2xl font-bold text-blue-600">{{ formatNumber(totalBooks) }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-6 mb-8">
-      <div class="lg:hidden">
-        <div v-for="house in filteredPublishingHouses" :key="house.id" class="border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors">
-          <div class="flex justify-between items-start mb-3">
-            <h3 class="font-semibold text-gray-900 text-lg">{{ house.name }}</h3>
-            <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">#{{ house.id }}</span>
+      <!-- Filters and Actions -->
+      <div class="mb-6 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="relative">
+            <i class="fas fa-search absolute top-1/2 -translate-y-1/2 text-gray-400 ltr:left-3 rtl:right-3"></i>
+            <input v-model="searchQuery" :placeholder="t('dashboard.publishingHouses.searchPlaceholder')" type="text" class="w-full ltr:pl-10 rtl:pr-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)]"/>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-            <div><span class="font-medium">{{ t('dashboard.publishingHouses.orders') }}:</span> {{ formatNumber(house.orders) }}</div>
-            <div><span class="font-medium">{{ t('dashboard.publishingHouses.status') }}:</span> <span :class="(formatStatus(house.status) ==='Active')? 'bg-green-400 p-1 rounded-2xl':'bg-red-400 p-1 rounded-2xl'">{{ formatStatus(house.status) }}</span></div>
-            <div><span class="font-medium">{{ t('dashboard.publishingHouses.books') }}:</span> {{ formatNumber(house.nmBook) }}</div>
-          </div>
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pt-3 border-t">
-            <button @click="router.push(`/dashboard/publishing-house/${house.id}`)" class="action-btn text-indigo-600">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-              {{ t('dashboard.publishingHouses.view') }}
+          <div class="flex flex-col sm:flex-row gap-2 justify-start md:justify-end">
+            <button @click="publisherModal.openModal()" class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200 whitespace-nowrap">
+              {{ t('dashboard.publishingHouses.addPublisher') }}
             </button>
-            <button @click="openEditModal(house)" class="action-btn text-blue-600">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-              {{ t('dashboard.publishingHouses.edit') }}
+            <button @click="exportData" class="px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
+              {{ t('dashboard.publishingHouses.export') }}
             </button>
-            <button @click="openDeleteDialog(house)" class="action-btn text-red-600">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              {{ t('dashboard.publishingHouses.delete') }}
+            <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" class="hidden" />
+            <button @click="triggerImport" class="px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
+              {{ t('dashboard.publishingHouses.import') }}
             </button>
           </div>
         </div>
       </div>
 
-      <div class="hidden lg:block overflow-x-auto">
-        <table class="min-w-full">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="p-4 bg-white rounded-xl shadow-sm border flex items-center gap-4"><i class="fas fa-building text-xl text-blue-500"></i><div class="ltr:text-left rtl:text-right"><p class="text-sm text-gray-500">{{ t('dashboard.publishingHouses.totalPublishers') }}</p><p class="text-lg font-bold text-gray-800">{{ filteredPublishingHouses.length }}</p></div></div>
+        <div class="p-4 bg-white rounded-xl shadow-sm border flex items-center gap-4"><i class="fas fa-shopping-cart text-xl text-green-500"></i><div class="ltr:text-left rtl:text-right"><p class="text-sm text-gray-500">{{ t('dashboard.publishingHouses.totalOrders') }}</p><p class="text-lg font-bold text-gray-800">{{ formatNumber(totalOrders) }}</p></div></div>
+        <div class="p-4 bg-white rounded-xl shadow-sm border flex items-center gap-4"><i class="fas fa-book text-xl text-purple-500"></i><div class="ltr:text-left rtl:text-right"><p class="text-sm text-gray-500">{{ t('dashboard.publishingHouses.totalBooks') }}</p><p class="text-lg font-bold text-gray-800">{{ formatNumber(totalBooks) }}</p></div></div>
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="hidden lg:block bg-white rounded-xl shadow-sm border overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
-            <tr>
-              <th @click="handleSort('name')" class="table-header">
-                {{ t('dashboard.clientInfo.fullName') }} {{ getSortIcon('name') }}
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th @click="handleSort('orders')" class="table-header">
-                {{ t('dashboard.sidebar.orders') }} {{ getSortIcon('orders') }}
-              </th>
-              <th @click="handleSort('status')" class="table-header">
-                {{ t('dashboard.publishingHouses.status') }} {{ getSortIcon('status') }}
-              </th>
-              <th @click="handleSort('nmBook')" class="table-header">
-                {{ t('dashboard.publishingHouses.books') }} {{ getSortIcon('nmBook') }}
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.publishingHouses.actions') }}</th>
+            <tr class="ltr:text-left rtl:text-right">
+              <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"><span class="flex items-center gap-2 cursor-pointer" @click="handleSort('name')">{{ t('dashboard.clientInfo.fullName') }} {{ getSortIcon('name') }}</span></th>
+              <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"><span class="flex items-center gap-2 cursor-pointer" @click="handleSort('orders')">{{ t('dashboard.sidebar.orders') }} {{ getSortIcon('orders') }}</span></th>
+              <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"><span class="flex items-center gap-2 cursor-pointer" @click="handleSort('nmBook')">{{ t('dashboard.publishingHouses.books') }} {{ getSortIcon('nmBook') }}</span></th>
+              <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.publishingHouses.status') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.publishingHouses.actions') }}</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="house in filteredPublishingHouses" :key="house.id" class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="font-medium text-gray-900">{{ house.name }}</div>
-                <div class="text-sm text-gray-500">Founded {{ house.foundedYear }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500">#{{ house.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ formatNumber(house.orders) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500"><span :class="(formatStatus(house.status) ==='Active')? 'bg-green-400':'bg-red-400'" class="text-white text-sm p-1 px-2 rounded-2xl">{{ formatStatus(house.status) }}</span></td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ formatNumber(house.nmBook) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex items-center space-x-4">
-                  <RouterLink :to="`/dashboard/publishing-house/${house.id}`" class="text-indigo-600 hover:text-indigo-800 transition-colors">{{ t('dashboard.publishingHouses.view') }}</RouterLink>
-                  <button @click="openEditModal(house)" class="text-blue-600 hover:text-blue-800 transition-colors">{{ t('dashboard.publishingHouses.edit') }}</button>
-                  <button @click="openDeleteDialog(house)" class="text-red-600 hover:text-red-800 transition-colors">{{ t('dashboard.publishingHouses.delete') }}</button>
-                </div>
-              </td>
+          <tbody>
+            <tr v-for="house in filteredPublishingHouses" :key="house.id" class="hover:bg-gray-50 ltr:text-left rtl:text-right">
+              <td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><img class="h-10 w-10 rounded-md object-cover" :src="`${apiBaseUrl}${house.img}`" :alt="house.name"/><span class="font-medium text-gray-900">{{ house.name }}</span></div></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNumber(house.orders) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNumber(house.nmBook) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap"><span :class="getStatusClass(house.status)" class="px-3 py-1 rounded-full text-xs font-medium">{{ formatStatus(house.status) }}</span></td>
+              <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"><div class="flex items-center justify-center gap-4"><router-link :to="`/dashboard/publishing-house/${house.id}`" class="text-gray-500 hover:text-[var(--color-primary)]"><i class="far fa-eye"></i></router-link><button @click="openEditModal(house)" class="text-gray-500 hover:text-indigo-600"><i class="fas fa-pen"></i></button><button @click="openDeleteDialog(house)" class="text-gray-500 hover:text-red-600"><i class="fas fa-trash"></i></button></div></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-if="filteredPublishingHouses.length === 0" class="text-center py-16">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('dashboard.publishingHouses.noPublishersFound') }}</h3>
+      <!-- Mobile/Tablet Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:hidden">
+        <div v-for="house in filteredPublishingHouses" :key="house.id" class="bg-white rounded-xl shadow-sm border overflow-hidden ltr:text-left rtl:text-right">
+          <div class="p-4 flex items-center gap-4">
+            <img class="h-16 w-16 rounded-md object-cover shadow-md" :src="`${apiBaseUrl}${house.img}`" :alt="house.name"/>
+            <div>
+              <h3 class="font-bold text-lg text-gray-800">{{ house.name }}</h3>
+              <span :class="getStatusClass(house.status)" class="px-2 py-0.5 rounded-full text-xs font-medium">{{ formatStatus(house.status) }}</span>
+            </div>
+          </div>
+          <div class="px-4 pb-4 space-y-2 text-sm">
+            <div class="flex justify-between items-center border-t pt-2"><span class="text-gray-500">{{ t('dashboard.sidebar.orders') }}</span><span class="font-semibold text-gray-700">{{ formatNumber(house.orders) }}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">{{ t('dashboard.publishingHouses.books') }}</span><span class="font-semibold text-gray-700">{{ formatNumber(house.nmBook) }}</span></div>
+          </div>
+          <div class="bg-gray-50 p-3 flex justify-end gap-3">
+            <router-link :to="`/dashboard/publishing-house/${house.id}`" class="text-gray-500 hover:text-[var(--color-primary)] p-2 rounded-full hover:bg-gray-100"><i class="far fa-eye"></i></router-link>
+            <button @click="openEditModal(house)" class="text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100"><i class="fas fa-pen"></i></button>
+            <button @click="openDeleteDialog(house)" class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-gray-100"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-if="!isLoading && filteredPublishingHouses.length === 0" class="text-center py-12 bg-white rounded-xl shadow-sm border mt-6">
+        <i class="fas fa-building-user text-gray-400 text-4xl mx-auto"></i>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">{{ t('dashboard.publishingHouses.noPublishersFound') }}</h3>
         <p class="mt-1 text-sm text-gray-500">{{ t('dashboard.publishingHouses.tryAdjustingSearch') }}</p>
-        <button
-          @click="clearFilters"
-          class="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
-        >
+        <button @click="clearFilters" class="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-hover)] transition-colors">
           {{ t('dashboard.publishingHouses.clearAllFilters') }}
         </button>
       </div>
     </div>
-    </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

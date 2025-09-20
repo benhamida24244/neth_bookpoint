@@ -30,7 +30,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
       <img
         :src="`${apiBaseUrl}${book.cover}`"
         :alt="book.title"
-        class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
+        class="w-full aspect-[2/3] object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
       />
 
       <!-- Overlay عند hover -->

@@ -71,7 +71,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative flex flex-wrap justify-center w-full max-w-6xl mx-auto px-4">
+  <div class="w-full max-w-6xl mx-auto px-4">
     <!-- Show a loading message while fetching data -->
     <div v-if="isLoading" class="text-center py-10">
       <p class="text-lg text-gray-500">{{ t('bookList.loading') }}</p>
@@ -86,9 +86,13 @@ onMounted(() => {
       </p>
     </div>
     <!-- Display the list of books -->
-    <template v-else>
-      <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
-      <div class="w-full">
+    <div v-else>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8"
+      >
+        <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
+      </div>
+      <div class="w-full flex justify-center mt-8">
         <Pagination
           v-if="booksStore.pagination"
           :current-page="currentPage"
@@ -97,6 +101,6 @@ onMounted(() => {
           @page-changed="handlePageChange"
         />
       </div>
-    </template>
+    </div>
   </div>
 </template>

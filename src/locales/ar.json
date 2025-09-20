@@ -518,6 +518,7 @@
       }
     },
     "publishingHouses": {
+      "searchPlaceholder":"ابحث عن الناشر...",
       "name": "الاسم",
       "orders": "الطلبات",
       "status": "الحالة",
@@ -742,13 +743,16 @@
             "payment": "الدفع",
             "date": "التاريخ"
         },
-        "emptyHeader": "لم يتم العثور على طلبات"
+            "emptyHeader": "لم يتم العثور على كتب"
     },
+   
     "recentBooks": {
         "title": "الكتب المضافة حديثًا",
         "emptyHeader": "لم يتم العثور على كتب"
     },
     "clients": {
+       "title": "العملاء",
+      "subtitle": "إدارة جميع عملائك",
       "searchPlaceholder": "البحث عن عملاء",
       "export": "تصدير",
       "filter": "تصفية",
@@ -841,6 +845,7 @@
   "sidebar": {
     "title": "تصفية والفئات",
     "clear": "مسح",
+    "close": "إغلاق",
     "popularSections": {
       "title": "الأقسام الشائعة",
       "customerFavorites": "مفضلات العملاء",

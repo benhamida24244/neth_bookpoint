@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import CatigoryItem from './CatigoryItem.vue'
-import { useCategoriesStore } from '@/stores/Categories'
+import CategoryItem from './CategoryItem.vue'
+import type { Category } from '@/types'
 
-const categoriesStore = useCategoriesStore()
-const categories = categoriesStore.categories
+defineProps<{
+  categories: Category[]
+}>()
 </script>
 
 <template>
@@ -14,7 +15,7 @@ const categories = categoriesStore.categories
     <div class="overflow-x-auto pb-4">
       <!-- 🟢 صف أفقي غير قابل للضغط -->
       <div class="inline-flex items-start gap-4 pl-4">
-        <CatigoryItem
+        <CategoryItem
           v-for="category in categories"
           :key="category.id"
           :category="category"

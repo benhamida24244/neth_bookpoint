@@ -48,7 +48,7 @@ const getCustomerEmail = (order) => {
 </script>
 
 <template>
-  <div class="bg-white shadow-md rounded-2xl p-5 overflow-x-auto">
+  <div class="bg-white shadow-md rounded-2xl p-5">
     <h2 class="text-xl font-bold font-BonaRegular text-[var(--color-primary)] mb-4">
       📦 {{ t('dashboard.latestOrders.title') }}
     </h2>
@@ -57,8 +57,9 @@ const getCustomerEmail = (order) => {
       <p>{{ t('loading') }}</p>
     </div>
 
-    <div v-else>
-      <table class="w-full text-left border-collapse">
+    <div v-else class="overflow-x-auto">
+      <!-- On larger screens, display as a table -->
+      <table class="w-full text-left border-collapse hidden md:table">
         <thead>
           <tr class="text-gray-700 border-b">
             <th class="py-3 px-3">{{ t('dashboard.latestOrders.table.orderId') }}</th>
@@ -91,6 +92,33 @@ const getCustomerEmail = (order) => {
         </tbody>
       </table>
 
+      <!-- On smaller screens, display as cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+        <div v-for="order in latestOrders" :key="order.id" class="bg-gray-50 p-4 rounded-lg shadow">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-lg">#{{ order.id }}</span>
+            <span
+              class="text-sm px-3 py-1 rounded-full font-semibold"
+              :class="statusColor[order.status.toLowerCase()]"
+            >
+              {{ order.status }}
+            </span>
+          </div>
+          <div class="mb-2">
+            <p class="text-gray-600">{{ getCustomerName(order) }}</p>
+            <p class="text-sm text-gray-500">{{ getCustomerEmail(order) }}</p>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-lg">{{ parseFloat(order.total_price).toFixed(2) }} {{ settingsStore.currency }}</span>
+            <span class="text-sm text-gray-500">{{ formatDate(order.created_at) }}</span>
+          </div>
+           <div class="mt-2">
+            <p class="text-sm text-gray-600">{{ t('dashboard.latestOrders.table.payment') }}: <span class="font-semibold">{{ order.payment_method || t('dashboard.latestOrders.noPayment') }}</span></p>
+          </div>
+        </div>
+      </div>
+
+
       <!-- Empty State -->
       <div v-if="latestOrders.length === 0" class="p-12 text-center">
         <div class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
@@ -103,3 +131,6 @@ const getCustomerEmail = (order) => {
     </div>
   </div>
 </template>
+<style scoped>
+/* You can add additional styles here if needed */
+</style>

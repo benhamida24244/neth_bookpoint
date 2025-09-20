@@ -17,10 +17,10 @@
       <ul class="space-y-1 text-sm">
         <li v-for="item in popularSections" :key="item">
           <button
-            @click="selectFilter('popular', item)"
+            @click="selectFilter('section', item)"
             :class="[
               'w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition',
-              { 'bg-yellow-100 font-semibold': selectedPopular === item },
+              { 'bg-yellow-100 font-semibold': activeFilters.section === item },
             ]"
           >
             {{ item }}
@@ -33,22 +33,17 @@
     <!-- Subjects -->
     <section class="mb-6">
       <h3 class="text-[var(--color-primary)] font-semibold mb-3">{{ t('sidebar.subjects') }}</h3>
-      <!-- Show a loading message while fetching categories -->
-      <div v-if="isLoading" class="text-sm text-gray-500">
-        {{ t('sidebar.loadingCategories') }}
-      </div>
-      <!-- Show a message if there are no categories -->
+      <div v-if="isLoading" class="text-sm text-gray-500">{{ t('sidebar.loadingCategories') }}</div>
       <div v-else-if="allCategories.length === 0" class="text-sm text-gray-500">
         {{ t('sidebar.noCategories') }}
       </div>
-      <!-- Display the list of categories -->
       <ul v-else class="space-y-1 text-sm">
         <li v-for="category in allCategories" :key="category.id">
           <button
-            @click="selectFilter('category', category.id)"
+            @click="selectFilter('category_id', category.id)"
             :class="[
               'w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition',
-              { 'bg-yellow-100 font-semibold': selectedCategory === category.id },
+              { 'bg-yellow-100 font-semibold': activeFilters.category_id === category.id },
             ]"
           >
             {{ category.name }}
@@ -64,10 +59,14 @@
       <ul class="space-y-1 text-sm">
         <li v-for="price in prices" :key="price.label">
           <button
-            @click="selectFilter('price', price.value)"
+            @click="selectPriceFilter(price.value)"
             :class="[
               'w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition',
-              { 'bg-yellow-100 font-semibold': selectedPrice === price.value },
+              {
+                'bg-yellow-100 font-semibold':
+                  activeFilters.price_min === price.value?.split('-')[0] ||
+                  activeFilters.price_min === price.value?.replace('+', '')
+              },
             ]"
           >
             {{ price.label }}
@@ -83,10 +82,10 @@
       <ul class="space-y-1 text-sm">
         <li v-for="age in ages" :key="age">
           <button
-            @click="selectFilter('age', age.toLowerCase())"
+            @click="selectFilter('age_group', age.toLowerCase())"
             :class="[
               'w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition',
-              { 'bg-yellow-100 font-semibold': selectedAge === age },
+              { 'bg-yellow-100 font-semibold': activeFilters.age_group === age.toLowerCase() },
             ]"
           >
             {{ age }}
@@ -105,7 +104,10 @@
             @click="selectFilter('language', item.trim().slice(0, 2).toLowerCase())"
             :class="[
               'w-full text-left block px-2 py-1 rounded hover:bg-yellow-50 transition',
-              { 'bg-yellow-100 font-semibold': selectedLanguage === item },
+              {
+                'bg-yellow-100 font-semibold':
+                  activeFilters.language === item.trim().slice(0, 2).toLowerCase(),
+              },
             ]"
           >
             {{ item }}
@@ -117,72 +119,61 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useCategoriesStore } from '@/stores/Categories'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const emit = defineEmits(['filters-changed'])
-const categoriesStore = useCategoriesStore()
 
+const props = defineProps<{ activeFilters: Record<string, any> }>()
+const emit = defineEmits(['filters-changed', 'clear-filters', 'close-sidebar'])
+
+const categoriesStore = useCategoriesStore()
 const allCategories = computed(() => categoriesStore.allCategories)
 const isLoading = computed(() => categoriesStore.isLoading)
 
-const selectedCategory = ref<number | null>(null)
-const selectedPrice = ref<string | null>(null)
-const selectedAge = ref<string | null>(null)
-const selectedLanguage = ref<string | null>(null)
-const selectedPopular = ref<string | null>(null)
-
 const hasActiveFilters = computed(() => {
-  return (
-    selectedCategory.value !== null ||
-    selectedPrice.value !== null ||
-    selectedAge.value !== null ||
-    selectedLanguage.value !== null ||
-    selectedPopular.value !== null
-  )
+  return Object.keys(props.activeFilters).length > 0
 })
 
-function selectFilter(type: 'category' | 'price' | 'age' | 'language' | 'popular', value: any) {
-  if (type === 'category')
-    selectedCategory.value = selectedCategory.value === value ? null : value
-  if (type === 'price') selectedPrice.value = selectedPrice.value === value ? null : value
-  if (type === 'age') selectedAge.value = selectedAge.value === value ? null : value
-  if (type === 'language')
-    selectedLanguage.value = selectedLanguage.value === value ? null : value
-  if (type === 'popular') selectedPopular.value = selectedPopular.value === value ? null : value
+const selectFilter = (type: string, value: any) => {
+  const newFilters = { ...props.activeFilters }
+
+  if (newFilters[type] === value) {
+    delete newFilters[type]
+  } else {
+    newFilters[type] = value
+  }
+
+  emit('filters-changed', newFilters)
+  emit('close-sidebar')
 }
 
-function clearFilters() {
-  selectedCategory.value = null
-  selectedPrice.value = null
-  selectedAge.value = null
-  selectedLanguage.value = null
-  selectedPopular.value = null
-}
+const selectPriceFilter = (priceValue: string) => {
+  const newFilters = { ...props.activeFilters }
 
-// 🔥 هنا التعديل: تجهيز القيم حسب الباك اند
-watch([selectedCategory, selectedPrice, selectedAge, selectedLanguage, selectedPopular], () => {
-  let filters: Record<string, any> = {}
+  const [min, max] = priceValue.includes('-') ? priceValue.split('-') : [priceValue.replace('+', ''), null]
 
-  if (selectedCategory.value) filters.category_id = selectedCategory.value
-  if (selectedAge.value) filters.age_group = selectedAge.value
-  if (selectedLanguage.value) filters.language = selectedLanguage.value
-  if (selectedPopular.value) filters.section = selectedPopular.value
-
-  if (selectedPrice.value) {
-    if (selectedPrice.value.includes('-')) {
-      const [min, max] = selectedPrice.value.split('-')
-      filters.price_min = min
-      filters.price_max = max
-    } else if (selectedPrice.value.endsWith('+')) {
-      filters.price_min = selectedPrice.value.replace('+', '')
+  if (newFilters.price_min === min) {
+    delete newFilters.price_min
+    delete newFilters.price_max
+  } else {
+    newFilters.price_min = min
+    if (max) {
+      newFilters.price_max = max
+    } else {
+      delete newFilters.price_max
     }
   }
 
-  emit('filters-changed', filters)
-})
+  emit('filters-changed', newFilters)
+  emit('close-sidebar')
+}
+
+const clearFilters = () => {
+  emit('clear-filters')
+  emit('close-sidebar')
+}
 
 const popularSections = [
   t('sidebar.popularSections.customerFavorites'),

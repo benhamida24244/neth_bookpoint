@@ -1,14 +1,14 @@
 <template>
   <RouterLink
     :to="`/book/${book.id}`"
-    class="relative m-4 flex w-44 cursor-pointer flex-col rounded-lg bg-white p-3 shadow-md transition-shadow duration-300 hover:shadow-xl"
+    class="group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-lg bg-white p-3 shadow-md transition-shadow duration-300 hover:shadow-xl"
   >
     <!-- صورة الكتاب -->
     <div class="relative mb-3 overflow-hidden rounded-md">
       <img
         :src="`${apiBaseUrl}${book.cover}`"
         :alt="book.title"
-        class="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
+        class="w-full aspect-[2/3] object-cover transition-transform duration-300 group-hover:scale-105"
       />
     </div>
 
@@ -41,7 +41,7 @@
       <!-- زر الإضافة إلى السلة -->
       <button
         @click.prevent="addToCart(book)"
-        class="mt-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-primary)]"
+        class="mt-2 flex-shrink-0 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[var(--color-hover)]"
       >
         {{ t('bookdetails.addToCart') }}
       </button>

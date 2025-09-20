@@ -36,6 +36,7 @@ onMounted(async () => {
       console.error('Error fetching cart:', error)
     }
   }
+  window.scrollTo(0 , 0)
 })
 
 watch(

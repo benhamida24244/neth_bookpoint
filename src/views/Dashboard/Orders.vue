@@ -1,32 +1,25 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 p-4 md:p-6">
     <!-- Loading State -->
     <div v-if="ordersStore.loading" class="flex justify-center items-center h-64">
       <LoaderWithText :message="t('loading.orders')" />
     </div>
 
-    <!-- Content when not loading -->
+    <!-- Content -->
     <div v-else>
-    <div class="w-full px-4 md:px-6 py-8">
       <!-- Header -->
-      <div class="mb-8 font-BonaRegular">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-          {{ t('dashboard.orders_dash.title') }}
-        </h1>
+      <div class="mb-8 font-BonaRegular ltr:text-left rtl:text-right">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ t('dashboard.orders_dash.title') }}</h1>
         <p class="text-gray-600 mt-1">{{ t('dashboard.orders_dash.subtitle') }}</p>
       </div>
 
       <!-- Stats Cards -->
       <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 mb-8">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100"
-        >
+        <div v-for="stat in stats" :key="stat.label" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
           <div :class="stat.iconBg" class="p-3 rounded-lg">
             <i :class="stat.icon" class="text-lg"></i>
           </div>
-          <div>
+          <div class="ltr:text-left rtl:text-right">
             <p class="text-sm text-gray-500">{{ stat.label }}</p>
             <p class="text-lg font-semibold text-gray-800">{{ stat.value }}</p>
           </div>
@@ -34,122 +27,57 @@
       </div>
 
       <!-- Filters and Search -->
-      <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
-      >
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div class="flex flex-wrap gap-2">
-          <button
-            v-for="filter in filters"
-            :key="filter.value"
-            @click="activeFilter = filter.value"
-            :class="[
+          <button v-for="filter in filters" :key="filter.value" @click="activeFilter = filter.value" :class="[
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
-              activeFilter === filter.value
-                ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                : 'hover:bg-gray-50'
-            ]"
-          >
+              activeFilter === filter.value ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]' : 'hover:bg-gray-50'
+            ]">
             {{ filter.label }}
           </button>
         </div>
 
         <div class="relative w-full md:w-auto flex gap-2">
-          <input
-            v-model="searchQuery"
-            type="text"
-            :placeholder="t('dashboard.orders.searchPlaceholder')"
-            class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
-          />
-          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-          <button
-            @click="exportData"
-            class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-[var(--color-primary)] text-white hover:bg-[var(--color-hover)]"
-          >
+           <i class="fas fa-search absolute top-3 text-gray-400 ltr:left-3 rtl:right-3"></i>
+          <input v-model="searchQuery" type="text" :placeholder="t('dashboard.orders.searchPlaceholder')" class="w-full md:w-64 ltr:pl-10 ltr:pr-4 rtl:pr-10 rtl:pl-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]" />
+          <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-[var(--color-primary)] text-white hover:bg-[var(--color-hover)]">
             {{ t('dashboard.orders.exportData') }}
           </button>
         </div>
       </div>
 
-      <!-- Orders Table -->
+      <!-- Orders Content -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
+        <!-- Orders Table (for medium screens and up) -->
+        <div class="overflow-x-auto hidden md:block">
           <table class="min-w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.id') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.customer') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.book') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.status') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.price') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.date') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.orders_dash.table.actions') }}
-                </th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.id') }}</th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.customer') }}</th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.book') }}</th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.status') }}</th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.price') }}</th>
+                <th class="px-6 py-3 ltr:text-left rtl:text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.date') }}</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.orders_dash.table.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="order in paginatedOrders"
-                :key="order.id"
-                class="hover:bg-gray-50 transition-colors duration-200"
-              >
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {{ order.id }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ TheCustomer(order.customer_id) }}
-                </td>
+              <tr v-for="order in paginatedOrders" :key="order.id" class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ TheCustomer(order.customer_id) }}</td>
                 <td class="px-6 py-4 text-sm">
-                  <div v-for="item in order.items" :key="item.id" class="mb-1">
-                    {{ item.quantity }} x {{ item.book.title }}
-                  </div>
+                  <div v-for="item in order.items" :key="item.id" class="mb-1 ltr:text-left rtl:text-right">{{ item.quantity }} x {{ item.book.title }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="getStatusClass(order.status)"
-                    class="px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ order.status }}
-                  </span>
+                  <span :class="getStatusClass(order.status)" class="px-3 py-1 rounded-full text-xs font-medium">{{ order.status }}</span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${{ parseFloat(order.total_price).toFixed(2) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatDate(order.created_at) }}
-                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ parseFloat(order.total_price).toFixed(2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(order.created_at) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                  <RouterLink
-                    :to="`/dashboard/orders/${order.id}`"
-                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
-                  >
-                    <i class="far fa-eye"></i> {{ t('dashboard.orders_filter.actions.view') }}
+                  <RouterLink :to="`/dashboard/orders/${order.id}`" class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center justify-center gap-1 text-sm font-medium">
+                    <i class="far fa-eye"></i>
+                    <span>{{ t('dashboard.orders_filter.actions.view') }}</span>
                   </RouterLink>
                 </td>
               </tr>
@@ -157,33 +85,49 @@
           </table>
         </div>
 
+        <!-- Orders Cards (for small screens) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 md:hidden">
+            <div v-for="order in paginatedOrders" :key="order.id" class="bg-gray-50 p-4 rounded-lg shadow-sm border ltr:text-left rtl:text-right">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="font-bold text-lg text-gray-800">#{{ order.id }}</span>
+                    <span :class="getStatusClass(order.status)" class="px-3 py-1 rounded-full text-xs font-medium">{{ order.status }}</span>
+                </div>
+                <div class="mb-3">
+                    <p class="font-semibold text-gray-700">{{ TheCustomer(order.customer_id) }}</p>
+                    <div class="text-sm text-gray-500 mt-1">
+                        <div v-for="item in order.items" :key="item.id">{{ item.quantity }} x {{ item.book.title }}</div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 pt-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-500">{{ t('dashboard.orders_dash.table.price') }}:</span>
+                        <span class="font-semibold text-gray-800">${{ parseFloat(order.total_price).toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-3">
+                        <span>{{ t('dashboard.orders_dash.table.date') }}:</span>
+                        <span>{{ formatDate(order.created_at) }}</span>
+                    </div>
+                    <RouterLink :to="`/dashboard/orders/${order.id}`" class="w-full text-center block bg-[var(--color-primary)] text-white py-2 rounded-lg hover:bg-[var(--color-hover)] transition-colors">
+                        {{ t('dashboard.orders_filter.actions.view') }}
+                    </RouterLink>
+                </div>
+            </div>
+        </div>
+
         <!-- Empty State -->
         <div v-if="filteredOrders.length === 0" class="p-12 text-center">
-          <div
-            class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
-          >
+          <div class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <i class="far fa-file-alt text-gray-400 text-3xl"></i>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-1">
-            {{ t('dashboard.orders_dash.emptyHeader') }}
-          </h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">{{ t('dashboard.orders_dash.emptyHeader') }}</h3>
           <p class="text-gray-500">{{ t('dashboard.orders_dash.emptySubtext') }}</p>
         </div>
 
         <!-- Pagination -->
-        <div
-          v-if="totalPages > 1"
-          class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-center"
-        >
-          <Pagination
-            :current-page="currentPage"
-            :last-page="totalPages"
-            :total-items="filteredOrders.length"
-            @page-changed="handlePageChange"
-          />
+        <div v-if="totalPages > 1" class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-center">
+          <Pagination :current-page="currentPage" :last-page="totalPages" :total-items="filteredOrders.length" @page-changed="handlePageChange" />
         </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -365,6 +309,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Keeping imports for fonts and icons */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 

@@ -517,6 +517,7 @@
       }
     },
     "publishingHouses": {
+      "searchPlaceholder":"Search Publisher...",
       "name": "Name",
       "orders": "Orders",
       "status": "Status",
@@ -741,7 +742,13 @@
         "payment": "Payment",
         "date": "Date"
       },
-      "emptyHeader": "No orders found"
+        "emptyHeader": "No books found"
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "Manage all your clients",
+      "searchPlaceholder": "Search by name, email, phone, or country...",
+      "viewDetails": "View Details"
     },
     "recentBooks": {
       "title": "Recently Added Books",

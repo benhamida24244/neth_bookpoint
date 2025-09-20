@@ -176,6 +176,7 @@ const fetchRelatedData = async () => {
 };
 
 onMounted(async () => {
+  window.scrollTo(0, 0);
   await fetchBookData(Number(route.params.id));
 });
 

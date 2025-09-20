@@ -505,6 +505,7 @@
       }
     },
     "publishingHouses": {
+      "searchPlaceholder":"Rechercher des publisher",
       "name": "Nom",
       "orders": "Commandes",
       "status": "Statut",

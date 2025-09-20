@@ -6,33 +6,19 @@ import Pagination from '@/components/Pagination.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-// Define props to accept filters from the parent
+
 const props = defineProps({
-  filters: {
-    type: Object,
-    default: () => ({}),
-  },
-  author_id: {
-    type: Number,
-    default: null,
-  },
-  category_id: {
-    type: Number,
-    default: null,
-  },
-  publisher_id: {
-    type: Number,
-    default: null,
-  },
+  filters: { type: Object, default: () => ({}) },
+  author_id: { type: Number, default: null },
+  category_id: { type: Number, default: null },
+  publisher_id: { type: Number, default: null },
 })
 
-// Access the books store
 const booksStore = useBooksStore()
 const currentPage = ref(1)
-// Function to fetch books based on props
+
 const fetchFilteredBooks = async (page = 1) => {
   const params = { ...props.filters, page }
-
   if (props.author_id) {
     await booksStore.fetchBooksByAuthor(props.author_id, page)
   } else if (props.category_id) {
@@ -44,54 +30,52 @@ const fetchFilteredBooks = async (page = 1) => {
   }
 }
 
-// Watch for changes in props and refetch books when they change
 watch(
   () => [props.filters, props.author_id, props.category_id, props.publisher_id],
-  fetchFilteredBooks,
+  () => fetchFilteredBooks(), // Call without page to reset to 1
   { immediate: true, deep: true }
 )
 
-// Get all books from the store using the allBooks getter
 const allBooks = computed(() => booksStore.allBooks)
-
-// Get the loading state from the store
 const isLoading = computed(() => booksStore.isLoading)
 
-// Check if any filters are active to show a more specific message
 const hasActiveFilters = computed(() => {
-  return Object.values(props.filters).some((value) => value !== null && value !== undefined && value !== '')
+  return Object.values(props.filters).some((value) => !!value)
 })
 
 const handlePageChange = (page) => {
   currentPage.value = page
   fetchFilteredBooks(page)
 }
+
 onMounted(() => {
-  fetchFilteredBooks()
+  fetchFilteredBooks(currentPage.value)
 })
 </script>
 
 <template>
-  <div class="relative flex flex-wrap justify-center w-full max-w-6xl mx-auto px-4">
-    <!-- Show a loading message while fetching data -->
+  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div v-if="isLoading" class="text-center py-10">
       <p class="text-lg text-gray-500">{{ t('bookList.loading') }}</p>
     </div>
-    <!-- Show a message if there are no books -->
-    <div v-else-if="allBooks.length === 0" class="text-center py-10">
-      <p v-if="hasActiveFilters" class="text-lg text-gray-500">
-        {{ t('bookList.noMatch') }}
-      </p>
-      <p v-else class="text-lg text-gray-500">
-        {{ t('bookList.noBooks') }}
-      </p>
+    
+    <div v-else-if="allBooks.length === 0" class="text-center py-10 bg-white rounded-lg shadow-sm">
+        <i class="fas fa-book-open text-4xl text-gray-300 mb-4"></i>
+        <p v-if="hasActiveFilters" class="text-lg text-gray-500">
+            {{ t('bookList.noMatch') }}
+        </p>
+        <p v-else class="text-lg text-gray-500">
+            {{ t('bookList.noBooks') }}
+        </p>
     </div>
-    <!-- Display the list of books -->
+
     <template v-else>
-      <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
-      <div class="w-full">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        <BookItems v-for="book in allBooks" :book="book" :key="book.id" />
+      </div>
+      <div class="w-full mt-8">
         <Pagination
-          v-if="booksStore.pagination"
+          v-if="booksStore.pagination && booksStore.pagination.last_page > 1"
           :current-page="currentPage"
           :last-page="booksStore.pagination.last_page"
           :total-items="booksStore.pagination.total"

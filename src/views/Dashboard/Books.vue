@@ -235,13 +235,11 @@ watch([activeFilter, searchQuery], () => {
 const getStatusClass = (status) => {
   const numericStatus = Number(status)
   if (numericStatus === 1) {
-    return 'bg-green-50 text-green-700' // Published
-  } else if (numericStatus === 2) {
-    return 'bg-yellow-50 text-yellow-700' // Pending
-  } else if (numericStatus === 3) {
-    return 'bg-red-50 text-red-700' // Draft
+    return 'bg-green-100 text-green-800' // Published
+  } else if (numericStatus === 0) {
+    return 'bg-yellow-100 text-yellow-800' // Draft
   } else {
-    return 'bg-gray-50 text-gray-700' // Default
+    return 'bg-gray-100 text-gray-800' // Default
   }
 }
 
@@ -249,9 +247,7 @@ const getStatusItem = (status) => {
   const numericStatus = Number(status)
   if (numericStatus === 1) {
     return t('dashboard.books.status.published')
-  } else if (numericStatus === 2) {
-    return t('dashboard.books.status.pending')
-  } else if (numericStatus === 3) {
+  } else if (numericStatus === 0) {
     return t('dashboard.books.status.draft')
   } else {
     return t('dashboard.books.status.unknown')
@@ -290,253 +286,136 @@ const handlePageChange = (page) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 p-4 md:p-6">
     <!-- Loading State -->
     <div v-if="bookStore.isLoading" class="flex justify-center items-center h-64">
       <LoaderWithText :message="t('loading.books')" />
     </div>
 
-    <!-- Content when not loading -->
+    <!-- Content -->
     <div v-else>
-    <AddBookModal :show="showAddBookModal" @close="showAddBookModal = false" @save="handleSaveBook" />
-    <EditBookModal
-      :show="showEditBookModal"
-      :book="selectedBook"
-      @close="showEditBookModal = false"
-      @save="handleUpdateBook"
-    />
-    <div class="w-full px-4 md:px-6 py-8">
-      <div class="max-w-7xl mx-auto mb-8 font-BonaRegular">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-          {{ t('dashboard.books.title') }}
-        </h1>
+      <AddBookModal :show="showAddBookModal" @close="showAddBookModal = false" @save="handleSaveBook" />
+      <EditBookModal :show="showEditBookModal" :book="selectedBook" @close="showEditBookModal = false" @save="handleUpdateBook" />
+      
+      <!-- Header -->
+      <div class="mb-8 font-BonaRegular ltr:text-left rtl:text-right">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ t('dashboard.books.title') }}</h1>
         <p class="text-gray-600 mt-1">{{ t('dashboard.books.subtitle') }}</p>
       </div>
 
       <!-- Stats Cards -->
       <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100"
-        >
+        <div v-for="stat in stats" :key="stat.label" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
           <div :class="stat.iconBg" class="p-3 rounded-lg">
             <i :class="stat.icon" class="text-lg"></i>
           </div>
-          <div>
+          <div class="ltr:text-left rtl:text-right">
             <p class="text-sm text-gray-500">{{ stat.label }}</p>
             <p class="text-lg font-semibold text-gray-800">{{ stat.value }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Filters and Search -->
-      <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
-      >
+      <!-- Filters and Actions -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div class="flex flex-wrap gap-2">
-          <button
-            v-for="filter in filters"
-            :key="filter.value"
-            @click="activeFilter = filter.value"
-            :class="[
+          <button v-for="filter in filters" :key="filter.value" @click="activeFilter = filter.value" :class="[
               'px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200',
-              activeFilter === filter.value
-                ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                : 'hover:bg-gray-50',
-            ]"
-          >
+              activeFilter === filter.value ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]' : 'hover:bg-gray-50',
+            ]">
             {{ filter.label }}
           </button>
         </div>
 
-        <div class="flex items-center gap-4">
-          <div class="relative w-full md:w-auto">
-            <input
-              v-model="searchQuery"
-              type="text"
-              :placeholder="t('dashboard.books.searchPlaceholder')"
-              class="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)] focus:border-[var(--color-light)]"
-            />
-            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <div class="relative flex-grow">
+            <i class="fas fa-search absolute top-1/2 -translate-y-1/2 text-gray-400 ltr:left-3 rtl:right-3"></i>
+            <input v-model="searchQuery" type="text" :placeholder="t('dashboard.books.searchPlaceholder')" class="w-full ltr:pl-10 rtl:pr-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--color-light)]"/>
           </div>
-          <button
-            @click="showAddBookModal = true"
-            class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
-          >
+          <button @click="showAddBookModal = true" class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200 whitespace-nowrap">
             {{ t('dashboard.books.addNew') }}
-          </button>
-          <button
-            @click="exportData"
-            class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600"
-          >
-            {{ t('dashboard.books.exportData') }}
-          </button>
-          <input
-            type="file"
-            id="import-input"
-            @change="importData"
-            accept=".xlsx, .xls"
-            style="display: none"
-          />
-          <button
-            @click="triggerImport"
-            class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600"
-          >
-            {{ t('dashboard.books.importData') }}
           </button>
         </div>
       </div>
+      
+      <!-- Import/Export Buttons -->
+      <div class="flex justify-end gap-2 mb-6">
+        <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" class="hidden"/>
+        <button @click="triggerImport" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
+          {{ t('dashboard.books.importData') }}
+        </button>
+        <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
+          {{ t('dashboard.books.exportData') }}
+        </button>
+      </div>
 
-      <!-- Books Table -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Books Table (Desktop) -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hidden md:block">
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.id') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.cover') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.title') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.category') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.author') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.publisher') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.status') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.price') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.date') }}
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {{ t('dashboard.books.table.action') }}
-                </th>
+              <tr class="ltr:text-left rtl:text-right">
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.cover') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.title') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.author') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.category') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.price') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('dashboard.books.table.status') }}</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">{{ t('dashboard.books.table.action') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="book in filteredBooks"
-                :key="book.id"
-                class="hover:bg-gray-50 transition-colors duration-200"
-              >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.id }}</td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <img
-                    :src="`${apiBaseUrl}${book.cover}`"
-                    alt="cover"
-                    class="w-10 h-14 rounded shadow"
-                  />
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ book.title }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  <RouterLink :to="`/dashboard/categories/${book.category.id}`">
-                    {{ book.category.name }}
-                  </RouterLink>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  <RouterLink :to="`/dashboard/authors/${book.author.id}`">
-                    {{ book.author.name }}
-                  </RouterLink>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  <RouterLink :to="`/dashboard/publishing-house/${book.publisher.id}`">
-                    {{ book.publisher.name }}
-                  </RouterLink>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="getStatusClass(book.status)"
-                    class="px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ getStatusItem(book.status) }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.price + settingStore.currency }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {{ book.publisherDate }}
-                </td>
-                <td class="mt-3 px-6 py-4 whitespace-nowrap text-center text-sm flex gap-3">
-                  <RouterLink
-                    :to="`/dashboard/books/${book.id}`"
-                    class="text-[var(--color-primary)] hover:text-[var(--color-primary)] flex items-center gap-1 text-sm font-medium"
-                  >
-                    <i class="far fa-eye"></i> {{ t('dashboard.books.actions.view') }}
-                  </RouterLink>
-                  <button
-                    @click="openEditModal(book)"
-                    class="text-indigo-600 hover:text-indigo-900"
-                  >
-                    {{ t('dashboard.books.actions.edit') }}
-                  </button>
-                  <button @click="Deletebook(book)" class="text-red-600 hover:text-red-900">
-                    {{ t('dashboard.books.actions.delete') }}
-                  </button>
+              <tr v-for="book in filteredBooks" :key="book.id" class="hover:bg-gray-50 transition-colors duration-200 ltr:text-left rtl:text-right">
+                <td class="p-4 whitespace-nowrap"><img :src="`${apiBaseUrl}${book.cover}`" alt="cover" class="w-12 h-16 object-cover rounded shadow"/></td>
+                <td class="p-4 whitespace-nowrap font-semibold text-gray-800">{{ book.title }}</td>
+                <td class="p-4 whitespace-nowrap text-sm text-gray-600"><RouterLink :to="`/dashboard/authors/${book.author.id}`">{{ book.author.name }}</RouterLink></td>
+                <td class="p-4 whitespace-nowrap text-sm text-gray-600"><RouterLink :to="`/dashboard/categories/${book.category.id}`">{{ book.category.name }}</RouterLink></td>
+                <td class="p-4 whitespace-nowrap text-sm text-gray-600">{{ book.price + ' ' + settingStore.currency }}</td>
+                <td class="p-4 whitespace-nowrap"><span :class="getStatusClass(book.status)" class="px-3 py-1 rounded-full text-xs font-medium">{{ getStatusItem(book.status) }}</span></td>
+                <td class="p-4 whitespace-nowrap text-center text-sm">
+                  <div class="flex justify-center items-center gap-4">
+                    <RouterLink :to="`/dashboard/books/${book.id}`" class="text-gray-500 hover:text-[var(--color-primary)]"><i class="far fa-eye"></i></RouterLink>
+                    <button @click="openEditModal(book)" class="text-gray-500 hover:text-indigo-600"><i class="fas fa-pen"></i></button>
+                    <button @click="Deletebook(book)" class="text-gray-500 hover:text-red-600"><i class="fas fa-trash"></i></button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
 
-        <!-- Empty State -->
-        <div v-if="filteredBooks.length === 0" class="p-12 text-center">
-          <div
-            class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"
-          >
-            <i class="far fa-file-alt text-gray-400 text-3xl"></i>
+      <!-- Books Grid (Mobile/Tablet) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:hidden">
+        <div v-for="book in filteredBooks" :key="book.id" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+          <div class="relative">
+            <img :src="`${apiBaseUrl}${book.cover}`" alt="cover" class="w-full h-56 object-cover"/>
+            <span :class="getStatusClass(book.status)" class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-medium">{{ getStatusItem(book.status) }}</span>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-1">
-            {{ t('dashboard.books.emptyHeader') }}
-          </h3>
-          <p class="text-gray-500">
-            {{ t('dashboard.books.emptySubtext') }}
-          </p>
+          <div class="p-4 flex flex-col flex-grow ltr:text-left rtl:text-right">
+            <h3 class="font-bold text-lg text-gray-800 truncate">{{ book.title }}</h3>
+            <p class="text-sm text-gray-500 mt-1">{{ book.author.name }}</p>
+            <div class="mt-4 flex-grow">
+              <p class="font-semibold text-lg text-[var(--color-primary)]">{{ book.price + ' ' + settingStore.currency }}</p>
+            </div>
+            <div class="border-t border-gray-100 mt-4 pt-3 flex justify-end gap-3">
+                <RouterLink :to="`/dashboard/books/${book.id}`" class="text-gray-500 hover:text-[var(--color-primary)] p-2 rounded-full hover:bg-gray-100"><i class="far fa-eye"></i></RouterLink>
+                <button @click="openEditModal(book)" class="text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100"><i class="fas fa-pen"></i></button>
+                <button @click="Deletebook(book)" class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-gray-100"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- pagination -->
-      <Pagination
-        v-if="bookStore.pagination"
-        :current-page="currentPage"
-        :last-page="bookStore.pagination.last_page"
-        :total-items="bookStore.pagination.total"
-        @page-changed="handlePageChange"
-      />
-    </div>
+
+      <!-- Empty State -->
+      <div v-if="filteredBooks.length === 0" class="p-12 text-center bg-white rounded-xl mt-6">
+        <div class="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4"><i class="fas fa-book-open text-gray-400 text-3xl"></i></div>
+        <h3 class="text-lg font-medium text-gray-900 mb-1">{{ t('dashboard.books.emptyHeader') }}</h3>
+        <p class="text-gray-500">{{ t('dashboard.books.emptySubtext') }}</p>
+      </div>
+
+      <!-- Pagination -->
+      <Pagination v-if="bookStore.pagination && bookStore.pagination.last_page > 1" :current-page="currentPage" :last-page="bookStore.pagination.last_page" :total-items="bookStore.pagination.total" @page-changed="handlePageChange" class="mt-6"/>
     </div>
   </div>
 </template>

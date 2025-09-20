@@ -1,13 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue'
 import { RouterLink } from 'vue-router';
+import type { Category } from '@/types'
 
-defineProps({
-  category: {
-    type: Object,
-    required: true
-  }
-})
+defineProps<{
+  category: Category
+}>()
 
 </script>
 

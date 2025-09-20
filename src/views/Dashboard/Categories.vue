@@ -14,7 +14,6 @@ onMounted(async () => {
   await categoriesStore.fetchCategories()
 })
 
-// Make categories reactive by using computed
 const categories = computed(() => categoriesStore.categories)
 const showAddCategoryModal = ref(false)
 
@@ -37,13 +36,12 @@ const cartsCategories = computed(() => [
     id: 3,
     name: t('dashboard.categories.newThisMonth'),
     icon: 'fas fa-star text-white',
-    value: '0', // The getNew getter was removed, setting to static value.
+    value: '0',
     color: 'bg-[var(--color-light)]'
   }
 ])
 
 const handleCategoryAdded = () => {
-  // The store action now handles refetching, so we just need to close the modal.
   showAddCategoryModal.value = false
 }
 
@@ -77,7 +75,6 @@ const importData = (event) => {
         })
       }
       alert('Data imported successfully!')
-      // Optionally, reset the file input
       event.target.value = ''
     } catch (error) {
       console.error('Error during data import:', error)
@@ -93,61 +90,50 @@ const triggerImport = () => {
 </script>
 
 <template>
-  <div class="p-8">
+  <div class="p-4 md:p-8">
     <!-- Loading State -->
     <div v-if="categoriesStore.isLoading" class="flex justify-center items-center h-64">
       <LoaderWithText :message="t('loading.categories')" />
     </div>
 
-    <!-- Content when not loading -->
+    <!-- Content -->
     <div v-else>
-    <AddCategoryModal
-      :show="showAddCategoryModal"
-      @close="showAddCategoryModal = false"
-      @save="handleCategoryAdded"
-    />
-    <!-- Title -->
-    <header class="font-BonaRegular mb-8 flex justify-between items-center">
-      <div>
-        <h1 class="font-bold text-3xl text-gray-800">
-          {{ t('dashboard.categories.title') }}
-        </h1>
-        <p class="text-gray-500 text-base">{{ t('dashboard.categories.subtitle') }}</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <button
-          @click="showAddCategoryModal = true"
-          class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200"
-        >
-          Add New Category
-        </button>
+      <AddCategoryModal :show="showAddCategoryModal" @close="showAddCategoryModal = false" @save="handleCategoryAdded" />
+
+      <!-- Header -->
+      <header class="font-BonaRegular mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
+        <div class="ltr:text-left rtl:text-right">
+          <h1 class="font-bold text-3xl text-gray-800">{{ t('dashboard.categories.title') }}</h1>
+          <p class="text-gray-500 text-base">{{ t('dashboard.categories.subtitle') }}</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button @click="showAddCategoryModal = true" class="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-hover)] transition-colors duration-200 whitespace-nowrap">
+            {{ t('dashboard.categories.addNew') }}
+          </button>
         <button @click="exportData" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600">
           Export Data
-        </button>
+          </button>
         <input type="file" id="import-input" @change="importData" accept=".xlsx, .xls" style="display: none" />
         <button @click="triggerImport" class="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600">
           Import Data
-        </button>
-      </div>
-    </header>
+          </button>
+        </div>
+      </header>
 
-    <!-- Stats Cards -->
-    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-      <div
-        v-for="{ id, name, icon, value, color } in cartsCategories"
-        :key="id"
-        class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100"
-      >
-        <div :class="['w-10 h-10 rounded-full flex items-center justify-center', color]">
-          <i :class="icon"></i>
-        </div>
-        <div>
-          <h3 class="text-gray-500 text-sm font-medium">{{ name }}</h3>
-          <p class="text-gray-800 text-2xl font-bold">{{ value }}</p>
+      <!-- Stats Cards -->
+      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+        <div v-for="{ id, name, icon, value, color } in cartsCategories" :key="id" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+          <div :class="['w-12 h-12 rounded-full flex items-center justify-center', color]">
+            <i :class="[icon, 'text-xl']"></i>
+          </div>
+          <div class="ltr:text-left rtl:text-right">
+            <h3 class="text-gray-500 text-sm font-medium">{{ name }}</h3>
+            <p class="text-gray-800 text-2xl font-bold">{{ value }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- Categories Table -->
+
+      <!-- Categories Table -->
       <AdminCategoriesTable/>
     </div>
   </div>
