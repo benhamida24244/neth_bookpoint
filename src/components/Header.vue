@@ -240,11 +240,11 @@
           </div>
 
           <!-- Enhanced Mobile User Info -->
-          <div v-if="isLoggedIn" class="mobile-user p-4 border-t border-gray-700 border-opacity-50">
+          <div v-if="isLoggedIn" class="mobile-user p-4 border-t border-gray-700 border-opacity-50 bg-black">
             <RouterLink
               to="/profile"
               @click="handleLinkClick"
-              class="flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300 group"
+              class="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--color-hover)] hover:bg-opacity-10 transition-all duration-300 group"
             >
               <img
                 src="https://randomuser.me/api/portraits/men/75.jpg"
