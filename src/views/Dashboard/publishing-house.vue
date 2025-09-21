@@ -91,6 +91,49 @@ const exportData = () => {
   XLSX.writeFile(wb, 'publishing_houses.xlsx');
 };
 
+const importData = async (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      
+      for (const publisher of json) {
+        const formData = new FormData();
+        formData.append('name', publisher.name);
+        if (publisher.Description) {
+          formData.append('description', publisher.Description);
+        }
+        if (publisher.img) {
+          try {
+            const response = await fetch(publisher.img);
+            const blob = await response.blob();
+            const fileName = publisher.name.replace(/\s+/g, "_") + ".jpg";
+            const fileImg = new File([blob], fileName, { type: blob.type });
+            formData.append('img', fileImg);
+          } catch (err) {
+            console.warn(`⚠️ فشل تحميل صورة للناشر ${publisher.name}:`, err);
+          }
+        }
+        if (publisher.Registration_date) {
+          formData.append('Registration_date', publisher.Registration_date);
+        }
+        await publishingHousesStore.addPublisher(formData);
+      }
+      alert(t('dashboard.publishingHouses.importSuccess'));
+      event.target.value = '';
+    } catch (error) {
+      console.error('Error during data import:', error);
+      alert(t('dashboard.publishingHouses.importFailed'));
+    }
+  };
+  reader.readAsArrayBuffer(file);
+};
+
 const triggerImport = () => document.getElementById('import-input').click();
 
 const openEditModal = (publisher) => publisherModal.value.openModal(publisher);

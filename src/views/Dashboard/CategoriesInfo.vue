@@ -86,7 +86,7 @@ const formattedStatistics = computed(() => [
     </div>
     <div v-else-if="currentCategory" class="max-w-7xl mx-auto">
       <!-- Header Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 ltr:text-left rtl:text-right">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-4 ltr:text-left rtl:text-right">
         <!-- Icon -->
         <div class="flex justify-center lg:justify-start lg:rtl:justify-end">
           <div class="relative">

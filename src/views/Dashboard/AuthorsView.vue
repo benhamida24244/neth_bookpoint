@@ -88,6 +88,56 @@ const exportData = () => {
 
 const triggerImport = () => document.getElementById('import-input').click()
 
+const importData = async (event) => {
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onload = async (e) => {
+    try {
+      const data = new Uint8Array(e.target.result)
+      const workbook = XLSX.read(data, { type: 'array' })
+      const sheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[sheetName]
+      const json = XLSX.utils.sheet_to_json(worksheet)
+      
+      for (const author of json) {
+        const formData = new FormData()
+        formData.append('name', author.name)
+        formData.append('Country', author.Country)
+        
+        if (author.descriptionKey) {
+          formData.append('descriptionKey', author.descriptionKey)
+        }
+        
+        if (author.img) {
+          try {
+            const response = await fetch(author.img)
+            const blob = await response.blob()
+            // تحويل blob إلى ملف
+            const fileName = author.name.replace(/\s+/g, '_') + '.jpg'
+            const fileImg = new File([blob], fileName, { type: blob.type })
+            formData.append('img', fileImg)
+          } catch (err) {
+            console.warn(`⚠️ فشل تحميل صورة للكاتب ${author.name}:`, err)
+          }
+        }
+        
+        if (author.Registration_date) {
+          formData.append('Registration_date', author.Registration_date)
+        }
+        
+        await authorsStore.addAuthor(formData)
+      }
+      
+      alert(t('dashboard.authors.importSuccess'))
+      event.target.value = ''
+    } catch (error) {
+      console.error('Error during data import:', error)
+      alert(t('dashboard.authors.importFailed'))
+    }
+  }
+  reader.readAsArrayBuffer(file)
+}
+
 const deleteAuthor = (authorId) => {
   if (window.confirm(t('dashboard.authors.deleteConfirm'))) {
     authorsStore.deleteAuthor(authorId)

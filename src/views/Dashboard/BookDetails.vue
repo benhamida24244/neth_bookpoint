@@ -443,7 +443,7 @@ watch(bookId, (newId, oldId) => {
           {{ t('dashboard.bookDetails.deleteConfirmTitle') }}
         </h3>
         <p class="text-gray-700 mb-6">
-          {{ t('dashboard.bookDetails.deleteConfirm', { title: selectedBook?.title }) }}
+          {{ t(`dashboard.bookDetails.deleteConfirm`).replace('title', selectedBook?.title) }}
         </p>
         <div class="flex justify-end space-x-3">
           <button
