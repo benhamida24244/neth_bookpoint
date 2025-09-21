@@ -151,16 +151,30 @@ const selectSuggestion = (suggestion) => {
 }
 
 const sendMessage = () => {
-  if (userMessage.value.trim() === '') return;
+  const messageText = userMessage.value.trim();
+  if (messageText === '') return;
 
   messages.value.push({
     id: Date.now(),
-    text: userMessage.value,
+    text: messageText,
     sender: 'user',
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
 
-  const botResponse = `حسنًا، سأساعدك في "${userMessage.value}". ما هي تفضيلاتك؟`;
+  let botResponse = 'شكرًا لرسالتك. كيف يمكنني المساعدة؟';
+
+  switch (messageText) {
+    case 'اقترح علي كتاب':
+      botResponse = 'بالتأكيد! لمساعدتي في اقتراح كتاب يعجبك، هل يمكنك إخباري عن نوع الكتب التي تفضلها عادةً؟ (مثلًا: خيال علمي، تاريخ، روايات رومانسية)';
+      break;
+    case 'ساعدني في ايجاد كتاب':
+      botResponse = 'يسعدني مساعدتك. هل تعرف اسم الكتاب أو المؤلف؟ أو هل لديك أي تفاصيل أخرى مثل دار النشر أو سنة الإصدار؟';
+      break;
+    case 'اريد كتاب مشابه':
+      botResponse = 'فكرة رائعة! ما هو الكتاب الذي قرأته وأعجبك وتريد كتابًا آخر يشبهه؟';
+      break;
+  }
+  
   userMessage.value = '';
 
   setTimeout(() => {
