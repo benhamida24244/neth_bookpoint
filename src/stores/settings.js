@@ -77,14 +77,37 @@ export const useSettingsStore = defineStore('settings', () => {
     applyColorToDOM(newColor);
   }, { deep: true, immediate: true });
 
-  function applyLanguage(lang) {
-    i18n.global.locale.value = lang;
+  async function applyLanguage(lang) {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    // If the language messages are already loaded
+    if (i18n.global.availableLocales.includes(lang)) {
+      i18n.global.locale.value = lang;
+      return;
+    }
+
+    // If the language hasn't been loaded yet, fetch it from the public folder
+    try {
+      // The path is relative to the root of the domain, which corresponds to the 'public' directory
+      const response = await fetch(`/locales/${lang}.json`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const messages = await response.json();
+      
+      i18n.global.setLocaleMessage(lang, messages);
+      i18n.global.locale.value = lang;
+    } catch (error) {
+      console.error('Failed to load language:', lang, error);
+      toast.error(`Failed to load language: ${lang}`);
+    }
   }
 
   watch(language, (newLang) => {
+    if (newLang) {
       applyLanguage(newLang);
+    }
   }, { immediate: true });
 
 
