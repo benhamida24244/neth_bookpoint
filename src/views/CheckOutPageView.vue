@@ -1,180 +1,264 @@
 <script setup>
 import { InfoIcon, CreditCard, Truck, Package } from 'lucide-vue-next';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useCartStore } from '@/stores/Cart';
 import { useCheckoutStore } from '@/stores/Checkout';
-import { useUserStore } from '@/stores/Users';
-import { useOrdersStore } from '@/stores/Orders';
+import { useCustomerAuthStore } from '@/stores/customerAuth';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import { useLanguageStore } from '@/stores/language';
+import { useI18n } from 'vue-i18n';
+import { loadStripe } from '@stripe/stripe-js';
 
-
+const { t } = useI18n();
 const icons = {
   Truck,
   Package,
 };
 
 const isLoading = ref(false);
-const selectedShipping = ref('delivery'); // 'delivery' or 'pickup'
-const selectedPayment = ref('paypal'); // 'paypal', or 'visa'
-
-const languageStore = useLanguageStore()
-const { translations } = storeToRefs(languageStore)
+const selectedShipping = ref('delivery');
+const selectedPayment = ref('cod'); // Default to 'cod'
 
 const cartStore = useCartStore();
-const { cart: orderItems } = storeToRefs(cartStore);
+const { cart: orderItems, cartTotal } = storeToRefs(cartStore);
 
 const checkoutStore = useCheckoutStore();
-const { shippingOptions, paymentOptions } = storeToRefs(checkoutStore);
+const { shippingOptions, paymentOptions, client_secret, error: checkoutError } = storeToRefs(checkoutStore);
 
-const userStore = useUserStore();
+const userStore = useCustomerAuthStore();
 const { user } = storeToRefs(userStore);
 
-const ordersStore = useOrdersStore();
 const router = useRouter();
 
-const visaCardDetails = ref({
-  cardholderName: '',
-  cardNumber: '',
-  expirationDate: '',
-  cvv: ''
+// Stripe specific refs
+const stripe = ref(null);
+const cardElement = ref(null);
+const stripeError = ref(null);
+
+const normalizedOrderItems = computed(() => {
+  if (user.value) {
+    if (orderItems.value && Array.isArray(orderItems.value.items)) {
+      return orderItems.value.items;
+    }
+  } else {
+    return cartStore.localCart;
+  }
+  return [];
 });
 
-onMounted(() => {
-  checkoutStore.fetchCheckoutData();
+onMounted(async () => {
+  await checkoutStore.fetchCheckoutData();
+  if (userStore.isAuthenticated) {
+    await cartStore.fetchCart();
+  }
+
+  // Initialize Stripe
+  const stripeKey = import.meta.env.VITE_STRIPE_KEY;
+  if (!stripeKey) {
+    console.error('Stripe public key is not set in .env file');
+    return;
+  }
+
+  stripe.value = await loadStripe(stripeKey);
+  const elements = stripe.value.elements();
+  cardElement.value = elements.create('card', {
+    style: {
+      base: {
+        color: '#fff',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    }
+  });
+
+  // Wait for the next tick to ensure the element is in the DOM
+  await nextTick();
+  if(document.getElementById('card-element')) {
+    cardElement.value.mount('#card-element');
+  }
 });
 
-// Form data structure
 const formData = ref({
-  receiverName: user.value.name,
-  email: user.value.email,
-  phone: '',
-  address: user.value.address,
+  receiverName: user.value?.name || '',
+  email: user.value?.email || '',
+  phone: user.value?.phone_number || '',
+  address: user.value?.address || '',
   city: '',
+  country: user.value?.country || '',
   postalCode: ''
 });
 
-// Form field configuration
 const formFields = computed(() =>
   [
-    { key: 'receiverName', placeholder: translations.value.receiverName, type: 'text', required: true },
-    { key: 'email', placeholder: translations.value.email, type: 'email', required: true },
-    { key: 'phone', placeholder: translations.value.phone, type: 'tel', required: true },
-    { key: 'address', placeholder: translations.value.address, type: 'text', required: selectedShipping.value === 'delivery' },
-    { key: 'city', placeholder: translations.value.city, type: 'text', required: true },
-    { key: 'postalCode', placeholder: translations.value.postalCode, type: 'text', required: false }
+    { key: 'receiverName', placeholder: t('receiverName'), type: 'text', required: true },
+    { key: 'email', placeholder: t('email'), type: 'email', required: true },
+    { key: 'phone', placeholder: t('phone'), type: 'tel', required: true },
+    { key: 'address', placeholder: t('address'), type: 'text', required: selectedShipping.value === 'delivery' },
+    { key: 'city', placeholder: t('city'), type: 'text', required: true },
+    { key: 'postalCode', placeholder: t('postalCode'), type: 'text', required: false }
   ]
 );
 
-// Computed values
-const subtotal = computed(() =>
-  orderItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-);
+const subtotal = computed(() => cartTotal.value);
 
 const shippingCost = computed(() => {
   const option = shippingOptions.value.find(opt => opt.id === selectedShipping.value);
-  return option ? option.price : 0;
+  return option ? Number(option.price || 0) : 0;
 });
 
-const vatAmount = computed(() => {
-  const total = subtotal.value + shippingCost.value;
-  return total * 0.15; // 15% VAT
-});
+const vatAmount = computed(() => (subtotal.value + shippingCost.value) * 0.15);
 
-const grandTotal = computed(() =>
-  subtotal.value + shippingCost.value + vatAmount.value
-);
+const grandTotal = computed(() => subtotal.value + shippingCost.value + vatAmount.value);
 
 const freeShippingThreshold = 299.00;
-const amountNeededForFreeShipping = computed(() =>
-  Math.max(0, freeShippingThreshold - subtotal.value)
-);
+const amountNeededForFreeShipping = computed(() => Math.max(0, freeShippingThreshold - subtotal.value));
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (isLoading.value) return;
-
   isLoading.value = true;
+  stripeError.value = null;
 
-  const orderData = {
-    items: orderItems.value,
-    shipping: selectedShipping.value,
-    payment: selectedPayment.value,
-    customer: formData.value,
-    totals: {
-      subtotal: subtotal.value,
-      shipping: shippingCost.value,
-      vat: vatAmount.value,
-      total: grandTotal.value
+  try {
+    if (selectedPayment.value === 'stripe') {
+      await handleStripePayment();
+    } else if (selectedPayment.value === 'cod') {
+      await handleCodPayment();
+    } else if (selectedPayment.value === 'paypal') {
+      await handlePaypalPayment();
+    } else {
+      throw new Error('Invalid payment method selected');
     }
-  };
+  } catch (error) {
+    console.error('Failed to process order:', error);
+    stripeError.value = error.message || 'An unexpected error occurred.';
+  } finally {
+    isLoading.value = false;
+  }
+};
 
-  if (selectedPayment.value === 'visa') {
-    orderData.visaCard = visaCardDetails.value;
+const handleStripePayment = async () => {
+  // 1. Create order on backend to get client_secret
+  await checkoutStore.createOrder('stripe');
+  if (checkoutError.value || !client_secret.value) {
+    throw new Error(checkoutError.value || 'Could not initialize Stripe payment.');
   }
 
-  console.log('Order submitted:', orderData);
+  // 2. Confirm the card payment with Stripe
+  const { error, paymentIntent } = await stripe.value.confirmCardPayment(
+    client_secret.value,
+    {
+      payment_method: {
+        card: cardElement.value,
+        billing_details: {
+          name: formData.value.receiverName,
+          email: formData.value.email,
+        },
+      },
+    }
+  );
 
-  // Simulate API call
-  setTimeout(() => {
-    ordersStore.addOrder(orderData);
-    cartStore.clearCart();
-    isLoading.value = false;
-    router.push('/payment-success');
-  }, 1000);
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // 3. Confirm the order on the backend
+  await checkoutStore.confirmStripeOrder(paymentIntent.id);
+  if (checkoutError.value) {
+    throw new Error(checkoutError.value);
+  }
+
+  router.push('/stripe/success');
 };
-</script>
 
+const handleCodPayment = async () => {
+  await checkoutStore.createOrder('cod');
+  if (checkoutError.value) {
+    throw new Error(checkoutError.value);
+  }
+  router.push('/cod/success');
+};
+
+const handlePaypalPayment = async () => {
+  await checkoutStore.createOrder('paypal');
+  if (checkoutError.value || !checkoutStore.approval_link) {
+    throw new Error(checkoutError.value || 'Could not initialize PayPal payment.');
+  }
+  // حفظ رابط الإرجاع في التخزين المؤقت
+  sessionStorage.setItem('paypal_return_url', window.location.origin + '/paypal/return');
+  // التوجيه إلى PayPal
+  window.location.href = checkoutStore.approval_link;
+};
+
+</script>
 
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 font-BonaRegular">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
         <!-- Order Summary Sidebar -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">{{ translations.orderSummary }}</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+              {{ t('orderSummary') }}
+            </h2>
 
             <!-- Order Items -->
             <div class="space-y-4 mb-6">
               <div
-                v-for="item in orderItems"
-                :key="item.name"
+                v-for="(item, index) in normalizedOrderItems"
+                :key="item.id || index"
                 class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
-                  <p class="font-medium text-gray-800 text-sm">{{ item.name }}</p>
-                  <p class="text-gray-600 text-xs">Quantity: {{ item.quantity }}</p>
+                  <p class="font-medium text-gray-800 text-sm">
+                    {{ item.title || (item.book && item.book.title) || t('checkoutPage.product') + (index + 1) }}
+                  </p>
+                  <p class="text-gray-600 text-xs">Quantity: {{ item.quantity || 0 }}</p>
                 </div>
-                <span class="font-bold text-[var(--color-primary)]">${{ item.price.toFixed(2) }}</span>
+                <span class="font-bold text-[var(--color-primary)]"
+                  >${{ Number(item.price || 0).toFixed(2) }}</span
+                >
               </div>
             </div>
 
             <!-- Totals -->
             <div class="border-t pt-4 space-y-2">
               <div class="flex justify-between text-gray-600">
-                <span>{{ translations.subtotal }}</span>
+                <span>{{ t('subtotal') }}</span>
                 <span>${{ subtotal.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
-                <span>{{ translations.shipping }}</span>
+                <span>{{ t('shipping') }}</span>
                 <span>${{ shippingCost.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 text-sm">
-                <span>{{ translations.vat }} (15%)</span>
+                <span>{{ t('vat') }} (15%)</span>
                 <span>${{ vatAmount.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold text-gray-800 border-t pt-2">
-                <span>{{ translations.total }}</span>
-                <span class="text-[var(--color-primary)]">${{ grandTotal.toFixed(2) }}</span>
+                <span>{{ t('total') }}</span>
+                <span class="text-[var(--color-primary)]"
+                  >${{ grandTotal.toFixed(2) }}</span
+                >
               </div>
             </div>
 
             <!-- Free Shipping Notice -->
-            <div v-if="amountNeededForFreeShipping > 0" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div
+              v-if="amountNeededForFreeShipping > 0"
+              class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+            >
               <p class="text-[var(--color-hover)] text-sm text-center">
-                Add ${{ amountNeededForFreeShipping.toFixed(2) }} {{ translations.freeShippingNotice }}
+                Add ${{ amountNeededForFreeShipping.toFixed(2) }}
+                {{ t('freeShippingNotice') }}
               </p>
             </div>
           </div>
@@ -185,24 +269,19 @@ const handleSubmit = () => {
           <div class="bg-black rounded-2xl shadow-2xl overflow-hidden">
             <div class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] p-6">
               <h1 class="text-black text-3xl font-bold text-center">
-                Payment & Shipping Details
+                {{ t('checkoutPage.paymentAndShipping') }}
               </h1>
             </div>
 
             <form @submit.prevent="handleSubmit" class="p-8">
-
               <!-- Customer Information -->
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <InfoIcon class="w-5 h-5 mr-2" />
-                 {{translations.customerInformation}}
+                  {{ t('customerInformation') }}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    v-for="field in formFields"
-                    :key="field.key"
-                    class="relative"
-                  >
+                  <div v-for="field in formFields" :key="field.key" class="relative">
                     <label
                       :for="field.key"
                       class="block text-[var(--color-primary)] text-sm font-medium mb-2"
@@ -227,14 +306,10 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <Truck class="w-5 h-5 mr-2" />
-                  {{translations.shippingOptions}}
+                  {{ t('shippingOptions') }}
                 </h3>
                 <div class="space-y-3">
-                  <div
-                    v-for="option in shippingOptions"
-                    :key="option.id"
-                    class="relative"
-                  >
+                  <div v-for="option in shippingOptions" :key="option.id" class="relative">
                     <input
                       :id="option.id"
                       v-model="selectedShipping"
@@ -246,13 +321,21 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="flex items-center justify-between p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedShipping === option.id }"
+                      :class="{
+                        'ring-2 ring-[var(--color-primary)] bg-gray-700':
+                          selectedShipping === option.id,
+                      }"
                     >
                       <div class="flex items-center">
-                        <component :is="icons[option.icon]" class="w-5 h-5 text-[var(--color-primary)] mr-3" />
+                        <component
+                          :is="icons[option.icon]"
+                          class="w-5 h-5 text-[var(--color-primary)] mr-3"
+                        />
                         <span class="text-white font-medium">{{ option.name }}</span>
                       </div>
-                      <span class="text-[var(--color-primary)] font-bold">${{ option.price.toFixed(2) }}</span>
+                      <span class="text-[var(--color-primary)] font-bold"
+                        >${{ option.price.toFixed(2) }}</span
+                      >
                     </label>
                   </div>
                 </div>
@@ -262,14 +345,10 @@ const handleSubmit = () => {
               <div class="mb-8">
                 <h3 class="text-[var(--color-primary)] text-xl font-bold mb-4 flex items-center">
                   <CreditCard class="w-5 h-5 mr-2" />
-                  {{translations.paymentMethods}}
+                  {{ t('paymentMethods') }}
                 </h3>
                 <div class="space-y-3">
-                  <div
-                    v-for="option in paymentOptions"
-                    :key="option.id"
-                    class="relative"
-                  >
+                  <div v-for="option in paymentOptions" :key="option.id" class="relative">
                     <input
                       :id="option.id"
                       v-model="selectedPayment"
@@ -281,49 +360,43 @@ const handleSubmit = () => {
                     <label
                       :for="option.id"
                       class="block p-4 bg-gray-800 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700"
-                      :class="{ 'ring-2 ring-[var(--color-primary)] bg-gray-700': selectedPayment === option.id }"
+                      :class="{
+                        'ring-2 ring-[var(--color-primary)] bg-gray-700':
+                          selectedPayment === option.id,
+                      }"
                     >
                       <div class="flex items-center justify-between">
                         <div>
                           <div class="text-white font-medium">{{ option.name }}</div>
                           <div class="text-gray-400 text-sm mt-1">{{ option.subtitle }}</div>
                         </div>
-                        <div class="w-4 h-4 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center">
-                          <div v-if="selectedPayment === option.id" class="w-2 h-2 bg-[var(--color-primary)] rounded-full"></div>
+                        <div
+                          class="w-4 h-4 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center"
+                        >
+                          <div
+                            v-if="selectedPayment === option.id"
+                            class="w-2 h-2 bg-[var(--color-primary)] rounded-full"
+                          ></div>
                         </div>
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <!-- PayPal Button -->
-                <div v-if="selectedPayment === 'paypal'" class="mt-6">
-                  <button type="button" class="w-full bg-[#0070BA] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#005ea6]">
-                    <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" alt="PayPal" class="h-6 mr-2">
-                    <span>Pay with PayPal</span>
-                  </button>
+                <!-- Stripe Card Element -->
+                <div v-show="selectedPayment === 'stripe'" class="mt-6">
+                    <label class="block text-[var(--color-primary)] text-sm font-medium mb-2">Card Details</label>
+                    <div id="card-element" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600"></div>
+                    <div v-if="stripeError" class="text-red-400 text-sm mt-2">{{ stripeError }}</div>
                 </div>
 
-                <!-- Visa Card Form -->
-                <div v-if="selectedPayment === 'visa'" class="mt-6 space-y-4">
-                  <div>
-                    <label for="cardholderName" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Cardholder Name</label>
-                    <input id="cardholderName" type="text" v-model="visaCardDetails.cardholderName" placeholder="John Doe" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
-                  </div>
-                  <div>
-                    <label for="cardNumber" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Card Number</label>
-                    <input id="cardNumber" type="text" v-model="visaCardDetails.cardNumber" placeholder="**** **** **** ****" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
-                  </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label for="expirationDate" class="block text-[var(--color-primary)] text-sm font-medium mb-2">Expiration Date (MM/YY)</label>
-                      <input id="expirationDate" type="text" v-model="visaCardDetails.expirationDate" placeholder="MM/YY" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+                <!-- PayPal Information -->
+                <div v-show="selectedPayment === 'paypal'" class="mt-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <p class="text-blue-800 text-sm">
+                            سيتم توجيهك إلى صفحة باي بال لإتمام عملية الدفع بشكل آمن.
+                        </p>
                     </div>
-                    <div>
-                      <label for="cvv" class="block text-[var(--color-primary)] text-sm font-medium mb-2">CVV</label>
-                      <input id="cvv" type="text" v-model="visaCardDetails.cvv" placeholder="***" class="w-full bg-gray-800 text-white rounded-xl p-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -334,20 +407,36 @@ const handleSubmit = () => {
                   :disabled="isLoading"
                   class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-light)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-black font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  <span v-if="!isLoading">{{translations.placeOrder}}</span>
+                  <span v-if="!isLoading">{{ t('placeOrder') }}</span>
                   <span v-else class="flex items-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      class="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
-                    {{translations.processing}}
+                    {{ t('processing') }}
                   </span>
                 </button>
                 <RouterLink
                   to="/cart"
                   class="bg-transparent hover:bg-[var(--color-primary)] hover:text-black text-white border-2 border-[var(--color-primary)] font-bold py-4 px-8 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center"
                 >
-                 {{translations.backToCart}}
+                  {{ t('backToCart') }}
                 </RouterLink>
               </div>
             </form>

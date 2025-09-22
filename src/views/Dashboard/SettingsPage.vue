@@ -1,18 +1,29 @@
 <template>
   <div class="p-6 max-w-xl mx-auto space-y-8">
-    <h1 class="text-2xl font-bold">Settings</h1>
+    <!-- Loading State -->
+    <div v-if="settingsStore.loading" class="flex justify-center items-center h-64">
+      <LoaderWithText :message="t('dashboard.settings.loading')" />
+    </div>
+    
+    <!-- Content when not loading -->
+    <div v-else>
+    <h1 class="text-2xl font-bold">{{ t('dashboard.settings.title') }}</h1>
 
     <!-- Primary Color Selection -->
     <div class="space-y-4">
-      <h2 class="text-xl font-semibold">Primary Color</h2>
-      <p class="text-gray-600">Choose a primary color for the application theme. The change will be applied instantly.</p>
+      <h2 class="text-xl font-semibold">{{ t('dashboard.settings.primaryColor') }}</h2>
+      <p class="text-gray-600">{{ t('dashboard.settings.primaryColorSubtext') }}</p>
       <div class="flex items-center space-x-4">
         <button
-          v-for="color in primaryColors"
+          v-for="color in settingsStore.primaryColors"
           :key="color.name"
-          @click="settingsStore.setPrimaryColor(color.hex)"
+          @click="settingsStore.setPrimaryColor(color.name)"
           class="flex items-center p-2 border-2 rounded-lg transition-all duration-200"
-          :class="{ 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]': settingsStore.primaryColor.primary === color.hex.primary, 'border-transparent': settingsStore.primaryColor.primary !== color.hex.primary }"
+          :class="{
+            'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]':
+              settingsStore.primaryColor.primary === color.hex.primary,
+            'border-transparent': settingsStore.primaryColor.primary !== color.hex.primary
+          }"
         >
           <span class="w-6 h-6 rounded-md" :style="{ backgroundColor: color.hex.primary }"></span>
           <span class="ml-2 font-medium">{{ color.name }}</span>
@@ -22,65 +33,56 @@
 
     <!-- Live Preview -->
     <div class="space-y-4">
-      <h2 class="text-xl font-semibold">Live Preview</h2>
+      <h2 class="text-xl font-semibold">{{ t('dashboard.settings.livePreview') }}</h2>
       <ExampleComponent />
     </div>
 
     <!-- Localization -->
     <div class="space-y-4">
-      <h2 class="text-xl font-semibold">Localization</h2>
+      <h2 class="text-xl font-semibold">{{ t('dashboard.settings.localization') }}</h2>
 
       <!-- Currency -->
-      <label class="block font-medium">Currency</label>
-      <select v-model="settingsStore.currency" class="w-full p-2 border rounded">
-        <option value="$">💵 USD</option>
-        <option value="€">💶 EUR</option>
-        <option value="DA">🇩🇿 DZD</option>
+      <label class="block font-medium">{{ t('dashboard.settings.currency') }}</label>
+      <select
+        :value="settingsStore.currency"
+        @change="handleCurrencyChange"
+        class="w-full p-2 border rounded"
+      >
+        <option value="$">{{ t('dashboard.settings.currencies.usd') }}</option>
+        <option value="€">{{ t('dashboard.settings.currencies.eur') }}</option>
+        <option value="DA">{{ t('dashboard.settings.currencies.dzd') }}</option>
       </select>
 
       <!-- Language -->
-      <label class="block font-medium">Language</label>
-      <select v-model="settingsStore.language" class="w-full p-2 border rounded">
-        <option value="en">🇺🇸 English</option>
-        <option value="fr">🇫🇷 French</option>
-        <option value="ar">🇩🇿 Arabic</option>
+      <label class="block font-medium">{{ t('dashboard.settings.language') }}</label>
+      <select
+        :value="settingsStore.language"
+        @change="handleLanguageChange"
+        class="w-full p-2 border rounded"
+      >
+        <option value="en">{{ t('dashboard.settings.languages.en') }}</option>
+        <option value="fr">{{ t('dashboard.settings.languages.fr') }}</option>
+        <option value="ar">{{ t('dashboard.settings.languages.ar') }}</option>
       </select>
+    </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settings'
 import ExampleComponent from '@/components/Theme/ExampleComponent.vue'
-import { ref } from 'vue'
-import walpapper from '@/assets/HomeIcon/Header/walpapper.png'
-import walpappergreen from '@/assets/HomeIcon/Header/walpappergreen.png'
-import walpapperRed from '@/assets/HomeIcon/Header/walpapperRed.png'
-import HeroCover from '@/assets/HomeIcon/Hero/HeroCover.png'
-import HeroCoverGreen from '@/assets/HomeIcon/Hero/HeroCoverGreen.png'
-import HeroCoverRed from '@/assets/HomeIcon/Hero/HeroCoverRed.png'
-const primaryColors = ref([
-  { name: 'Yellow', hex: {
-    primary: '#c67913',
-    light: '#F0B100',
-    hover: '#A65F00',
-    headerWallpaper: walpapper,
-    heroWallpaper: HeroCover
-  }},
-  { name: 'Green', hex: {
-    primary: '#16A34A',
-    light: '#4ADE80',
-    hover: '#15803D',
-    headerWallpaper: walpappergreen,
-    heroWallpaper: HeroCoverGreen
-  }},
-  { name: 'Red', hex: {
-    primary: '#DC2626',
-    light: '#FCA5A5',
-    hover: '#B91C1C',
-    headerWallpaper: walpapperRed,
-    heroWallpaper: HeroCoverRed
-  }}
-])
+import LoaderWithText from '@/components/LoaderWithText.vue'
+
+const { t } = useI18n()
 const settingsStore = useSettingsStore()
+
+const handleCurrencyChange = (event) => {
+  settingsStore.setCurrency(event.target.value)
+}
+
+const handleLanguageChange = (event) => {
+  settingsStore.setLanguage(event.target.value)
+}
 </script>

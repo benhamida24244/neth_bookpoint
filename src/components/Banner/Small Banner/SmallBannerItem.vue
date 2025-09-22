@@ -15,7 +15,7 @@ defineProps({
       <img
         :src="banner.img"
         alt=""
-        class="w-full h-auto rounded-lg object-cover shadow-md"
+        class="w-full rounded-lg object-cover shadow-md aspect-[4/3]"
       />
     </a>
   </div>

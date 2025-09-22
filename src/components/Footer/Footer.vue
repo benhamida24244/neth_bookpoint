@@ -1,16 +1,14 @@
 <script setup>
 import FooterBook from '@/assets/HomeIcon/Footer/FooterBook.png'
-import { useLanguageStore } from '@/stores/language'
-import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
-const languageStore = useLanguageStore()
-const { translations } = storeToRefs(languageStore)
+const { t } = useI18n()
 
 const stats = computed(() => [
-  { id: 1, Number:'800+', text: translations.value.footer?.stat1 || 'book listings' },
-  { id: 2,Number:'1000+', text: translations.value.footer?.stat2 || 'registered members' },
-  { id: 3,Number:'50+', text: translations.value.footer?.stat3 || 'Branch Count' }
+  { id: 1, Number:'800+', text: t('footer.stat1') },
+  { id: 2,Number:'1000+', text: t('footer.stat2') },
+  { id: 3,Number:'50+', text: t('footer.stat3') }
 ])
 </script>
 
@@ -25,10 +23,10 @@ const stats = computed(() => [
       <!-- Content Section -->
       <div class="flex flex-col justify-center items-center md:items-start text-center md:text-left">
         <h2 class="text-4xl lg:text-5xl font-bona mb-6">
-          {{ translations.footer?.promoTitle1 || 'Your Favorite' }} <span class="text-[var(--color-primary)]">{{ translations.footer?.promoTitle2 || 'Reads Are Here!' }}</span>
+          {{ t('footer.promoTitle1') }} <span class="text-[var(--color-primary)]">{{ t('footer.promoTitle2') }}</span>
         </h2>
         <p class="text-white/90 mb-8 max-w-lg font-BonaRegular">
-          {{ translations.footer?.promoDescription || 'Buy your favorite books online with ease! Enjoy exclusive offers and discounts on selected titles. Dive into our collection and find special deals that make reading more affordable. Shop now and unlock more savings with every purchase!' }}
+          {{ t('footer.promoDescription') }}
         </p>
 
         <!-- Stats Section -->
@@ -42,7 +40,7 @@ const stats = computed(() => [
 
         <!-- Action Button -->
         <a href="/shop" class="border border-[var(--color-primary)] text-white font-bona py-3 px-8 rounded-md uppercase text-sm tracking-wider hover:bg-[var(--color-light)] hover:text-black transition-colors duration-300">
-          {{ translations.footer?.explore || 'Explore More' }}
+          {{ t('footer.explore') }}
         </a>
       </div>
     </div>

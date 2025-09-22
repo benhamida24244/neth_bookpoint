@@ -1,88 +1,97 @@
 import { defineStore } from "pinia";
 import apiService from "@/services/api.js";
+import { ref } from "vue";
 
-export const useAuthorStore = defineStore("authors", {
-  state: () => ({
-    authors: [],
-    loading: false,
-    error: null,
-  }),
-  actions: {
-      async fetchAuthors() {
-      this.loading = true; // Fixed from isLoading
-      try {
-        const response = await apiService.publicResources.authors.all();
-        this.authors = response.data.data;
-        console.log(this.authors);
-        this.loading = false;
-        return this.authors;
-      } catch (error) {
-        console.error('Failed to fetch publishing Houses:', error);
-        this.loading = false;
-        return [];
-      }
-    },
+export const useAuthorStore = defineStore("authors", () => {
+  const authors = ref([]);
+  const isLoading = ref(false);
+  const error = ref(null);
 
-    // --- الدالة الجديدة المضافة ---
-    async getAuthorById(AuthorId) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.publicResources.authors.get(AuthorId);
-        return response.data.data; // إرجاع بيانات الناشر المحدد مباشرة
-      } catch (error) {
-        this.error = "Failed to fetch Author by ID.";
-        console.error(error);
-        throw error; // إرسال الخطأ للمعالجة في المكون
-      } finally {
-        this.loading = false;
-      }
-    },
-    // ----------------------------
+  async function fetchAuthors() {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await apiService.publicResources.authors.all();
+      authors.value = response.data.data;
+      return authors.value;
+    } catch (e) {
+      error.value = "Failed to fetch authors.";
+      console.error(e);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-    async addAuthor(Author) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const response = await apiService.admin.authors.add(Author)
-        this.fetchAuthors(); // Refresh the list after adding
-        return response;
-      } catch (error) {
-        this.error = "Failed to add Author.";
-        console.error(error);
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
-    async updateAuthor(AuthorId, AuthorData) {
-      this.loading = true;
-      this.error = null;
-      try {
-        await apiService.admin.authors.update(AuthorId, AuthorData);
-        await this.fetchAuthors(); // Refresh the list after updating
-      } catch (error) {
-        this.error = "Failed to update Author.";
-        console.error(error);
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
+  async function getAuthorById(authorId) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await apiService.publicResources.authors.get(authorId);
+      return response.data.data;
+    } catch (e) {
+      error.value = "Failed to fetch author by ID.";
+      console.error(e);
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-    async deleteAuthor(AuthorId) {
-      this.loading = true;
-      this.error = null;
-      try {
-        await apiService.admin.authors.delete(AuthorId);
-        this.authors = this.authors.filter((Author) => Author.id !== AuthorId);
-      } catch (error) {
-        this.error = "Failed to delete Author.";
-        console.error(error);
-        throw error; // Added for consistency
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+  async function addAuthor(authorData) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await apiService.admin.authors.add(authorData);
+      await fetchAuthors(); // Refresh the list
+      return response;
+    } catch (e) {
+      error.value = "Failed to add author.";
+      console.error(e);
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function updateAuthor(authorId, authorData) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      await apiService.admin.authors.update(authorId, authorData);
+      await fetchAuthors(); // Refresh the list
+    } catch (e) {
+      error.value = "Failed to update author.";
+      console.error(e);
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function deleteAuthor(authorId) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      await apiService.admin.authors.delete(authorId);
+      authors.value = authors.value.filter((author) => author.id !== authorId);
+    } catch (e) {
+      error.value = "Failed to delete author.";
+      console.error(e);
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  return {
+    authors,
+    isLoading,
+    error,
+    fetchAuthors,
+    getAuthorById,
+    addAuthor,
+    updateAuthor,
+    deleteAuthor,
+  };
 });

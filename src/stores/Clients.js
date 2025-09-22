@@ -2,31 +2,33 @@ import { defineStore } from "pinia";
 import apiService from "@/services/api.js";
 export const useClientsStore = defineStore("clients", {
   state: () => ({
-    clients: []
+    clients: [],
+    loaded: false
   }),
 
   actions: {
        async fetchClients() {
       this.loading = true; // Fixed from isLoading
       try {
-        const response = await apiService.admin.profile.all();
+        const response = await apiService.admin.customers.all();
         this.clients = response.data.data;
         console.log(this.clients);
+        this.loaded = true;
         this.loading = false;
         return this.clients;
       } catch (error) {
-        console.error('Failed to fetch publishing Houses:', error);
+        console.error('Failed to fetch customers:', error);
         this.loading = false;
         return [];
       }
     },
 
-    // --- الدالة الجديدة المضافة ---
-    async getClientById(ClientId) {
+    async fetchClientById(ClientId) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await apiService.admin.clients.get(ClientId);
+        const response = await apiService.admin.customers.get(ClientId);
+        console.log(response.data.data);
         return response.data.data; // إرجاع بيانات الناشر المحدد مباشرة
       } catch (error) {
         this.error = "Failed to fetch Client by ID.";
@@ -36,7 +38,35 @@ export const useClientsStore = defineStore("clients", {
         this.loading = false;
       }
     },
-    // ----------------------------
+
+    async updateClientStatus(clientId, status) {
+      this.loading = true;
+      this.error = null;
+      try {
+        if(status === 'active')
+        {
+          await apiService.admin.customers.activate(clientId, { status });
+        const index = this.clients.findIndex(c => c.id === clientId);
+        if (index !== -1) {
+          this.clients[index].status = status;
+        }
+        }
+        else if (status === 'inactive')
+        {
+          await apiService.admin.customers.deactivate(clientId, { status });
+        const index = this.clients.findIndex(c => c.id === clientId);
+        if (index !== -1) {
+          this.clients[index].status = status;
+        }
+        }
+      } catch (error) {
+        this.error = "Failed to update client status.";
+        console.error(error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
     async deleteClient(ClientId) {
       this.loading = true;
@@ -52,5 +82,10 @@ export const useClientsStore = defineStore("clients", {
         this.loading = false;
       }
     },
+  },
+  getters: {
+    getClientById: (state) => (id) => {
+      return state.clients.find(client => client.id === id);
+    }
   },
 });

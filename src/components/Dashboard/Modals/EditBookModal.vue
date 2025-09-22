@@ -3,6 +3,9 @@ import { ref, computed, watch } from 'vue'
 import { useAuthorStore } from '@/stores/Authors'
 import { usePublishingHouseStore } from '@/stores/PublishingHouses'
 import AddAttributeModal from './AddAttributeModal.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   show: Boolean,
@@ -42,7 +45,7 @@ function saveBook() {
   if (!editedBook.value) return
   // Basic validation
   if (!editedBook.value.title || !editedBook.value.author || !editedBook.value.publishingHouse) {
-    alert('Please fill in all required fields.')
+    alert(t('dashboard.editBookModal.requiredFields'))
     return
   }
   emit('save', editedBook.value)
@@ -73,20 +76,22 @@ const handleSaveAttribute = (name) => {
   >
     <AddAttributeModal
       :show="showAddAttributeModal"
-      :title="'Add New ' + attributeType"
-      :label="attributeType + ' Name'"
+      :title="t('dashboard.editBookModal.addNew') + attributeType"
+      :label="attributeType + t('dashboard.editBookModal.name')"
       @close="showAddAttributeModal = false"
       @save="handleSaveAttribute"
     />
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
       <div class="p-6 border-b">
-        <h3 class="text-xl font-semibold">Edit Book</h3>
+        <h3 class="text-xl font-semibold">{{ t('dashboard.editBookModal.title') }}</h3>
       </div>
       <div v-if="editedBook" class="p-6">
         <form @submit.prevent="saveBook">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+              <label for="title" class="block text-sm font-medium text-gray-700">{{
+                t('dashboard.editBookModal.labels.title')
+              }}</label>
               <input
                 v-model="editedBook.title"
                 type="text"
@@ -96,19 +101,21 @@ const handleSaveAttribute = (name) => {
               />
             </div>
             <div>
-              <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+              <label for="price" class="block text-sm font-medium text-gray-700">{{
+                t('dashboard.editBookModal.labels.price')
+              }}</label>
               <input
                 v-model.number="editedBook.price"
                 type="number"
                 id="price"
-                class="mt-2 p-2  block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
             </div>
             <div class="md:col-span-2">
-              <label for="description" class="block text-sm font-medium text-gray-700"
-                >Description</label
-              >
+              <label for="description" class="block text-sm font-medium text-gray-700">{{
+                t('dashboard.editBookModal.labels.description')
+              }}</label>
               <textarea
                 v-model="editedBook.description"
                 id="description"
@@ -117,7 +124,9 @@ const handleSaveAttribute = (name) => {
               ></textarea>
             </div>
             <div>
-              <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
+              <label for="author" class="block text-sm font-medium text-gray-700">{{
+                t('dashboard.editBookModal.labels.author')
+              }}</label>
               <div class="flex items-center gap-2">
                 <select
                   v-model="editedBook.author"
@@ -125,7 +134,9 @@ const handleSaveAttribute = (name) => {
                   class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
-                  <option disabled value="">Select an author</option>
+                  <option disabled value="">
+                    {{ t('dashboard.editBookModal.selectAuthor') }}
+                  </option>
                   <option v-for="author in authors" :key="author.id" :value="author.name">
                     {{ author.name }}
                   </option>
@@ -135,14 +146,14 @@ const handleSaveAttribute = (name) => {
                   type="button"
                   class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
-                  New
+                  {{ t('dashboard.editBookModal.new') }}
                 </button>
               </div>
             </div>
             <div>
-              <label for="publisher" class="block text-sm font-medium text-gray-700"
-                >Publisher</label
-              >
+              <label for="publisher" class="block text-sm font-medium text-gray-700">{{
+                t('dashboard.editBookModal.labels.publisher')
+              }}</label>
               <div class="flex items-center gap-2">
                 <select
                   v-model="editedBook.publishingHouse"
@@ -150,7 +161,9 @@ const handleSaveAttribute = (name) => {
                   class="mt-2 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
-                  <option disabled value="">Select a publisher</option>
+                  <option disabled value="">
+                    {{ t('dashboard.editBookModal.selectPublisher') }}
+                  </option>
                   <option
                     v-for="publisher in publishers"
                     :key="publisher.id"
@@ -164,7 +177,7 @@ const handleSaveAttribute = (name) => {
                   type="button"
                   class="mt-2 px-3 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
                 >
-                  New
+                  {{ t('dashboard.editBookModal.new') }}
                 </button>
               </div>
             </div>
@@ -176,13 +189,13 @@ const handleSaveAttribute = (name) => {
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         >
-          Cancel
+          {{ t('dashboard.editBookModal.cancel') }}
         </button>
         <button
           @click="saveBook"
           class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
         >
-          Save Changes
+          {{ t('dashboard.editBookModal.save') }}
         </button>
       </div>
     </div>

@@ -1,0 +1,185 @@
+<script setup>
+import { Pie } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
+import { useOrdersStore } from '@/stores/Orders'
+import { useClientsStore } from '@/stores/Clients'
+import { useI18n } from 'vue-i18n'
+import { onMounted, ref, computed, watch } from 'vue'
+
+const { t } = useI18n()
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement)
+const orderStore = useOrdersStore()
+const clientStore = useClientsStore()
+const isLoading = ref(true)
+const hasError = ref(false)
+
+// جلب البيانات عند تحميل المكون
+const fetchData = async () => {
+  isLoading.value = true
+  hasError.value = false
+
+  try {
+    await orderStore.fetchOrders()
+
+    // التحقق من دور المستخدم قبل جلب العملاء
+    if (orderStore.role === 'admin') {
+      await clientStore.fetchClients()
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    hasError.value = true
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// تحميل البيانات عند تهيئة المكون
+onMounted(() => {
+  fetchData()
+})
+
+// مراقبة تغيير دور المستخدم وإعادة تحميل البيانات عند الحاجة
+watch(() => orderStore.role, (newRole) => {
+  if (newRole) {
+    fetchData()
+  }
+})
+
+const getCountryName = (customerId) => {
+  if (!customerId) return t('ordersByCountryChart.unknown')
+
+  const client = clientStore.getClientById(customerId)
+  return client && client.country ? client.country : t('ordersByCountryChart.unknown')
+}
+
+// حساب بيانات الرسم البياني
+const chartData = computed(() => {
+  // التحقق من وجود بيانات
+  if (!orderStore.orders || orderStore.orders.length === 0) {
+    return {
+      labels: [t('ordersByCountryChart.noData')],
+      datasets: [{
+        data: [1],
+        backgroundColor: ['#e5e7eb'],
+        borderColor: '#fff',
+        borderWidth: 2,
+      }]
+    }
+  }
+
+  // تجميع الطلبات حسب البلد
+  const countryData = {}
+
+  orderStore.orders.forEach(order => {
+    // التأكد من وجود معرف العميل
+    if (!order.customer_id) return
+
+    const country = getCountryName(order.customer_id)
+    if (!countryData[country]) {
+      countryData[country] = 0
+    }
+
+    // استخدام عدد الكتب إذا كان موجودًا، أو استخدام 1 كقيمة افتراضية
+    countryData[country] += order.bookCount || 1
+  })
+
+  // التحقق من وجود بيانات بعد التجميع
+  if (Object.keys(countryData).length === 0) {
+    return {
+      labels: [t('ordersByCountryChart.noData')],
+      datasets: [{
+        data: [1],
+        backgroundColor: ['#e5e7eb'],
+        borderColor: '#fff',
+        borderWidth: 2,
+      }]
+    }
+  }
+
+  return {
+    labels: Object.keys(countryData),
+    datasets: [
+      {
+        label: t('ordersByCountryChart.label'),
+        data: Object.values(countryData),
+        backgroundColor: [
+          '#facc15', // Yellow
+          '#60a5fa', // Blue
+          '#f472b6', // Pink
+          '#34d399', // Green
+          '#a78bfa', // Violet
+          '#f87171', // Red
+          '#fb923c', // Orange
+          '#8b5cf6', // Purple
+        ],
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+  }
+})
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        color: '#000',
+        padding: 15,
+        font: {
+          size: 12
+        }
+      },
+    },
+    title: {
+      display: true,
+      text: t('ordersByCountryChart.title'),
+      color: '#000',
+      font: {
+        size: 16,
+        weight: 'bold'
+      },
+      padding: {
+        top: 10,
+        bottom: 20
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          const label = context.label || '';
+          const value = context.raw || 0;
+          return `${label}: ${value} ${t('ordersByCountryChart.orders')}`;
+        }
+      }
+    }
+  },
+}
+</script>
+
+<template>
+  <div class="w-full h-[300px] flex items-center justify-center bg-white rounded-lg shadow p-4">
+    <!-- عرض مؤشر التحميل -->
+    <div v-if="isLoading" class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+      <p class="mt-2 text-gray-600">{{ t('general.loading') }}</p>
+    </div>
+
+    <!-- عرض رسالة الخطأ -->
+    <div v-else-if="hasError" class="text-center">
+      <p>{{ t('general.error') }}</p>
+      <button 
+        @click="fetchData" 
+        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+      >
+        {{ t('general.retry') }}
+      </button>
+    </div>
+
+    <!-- عرض الرسم البياني -->
+    <Pie v-else :data="chartData" :options="chartOptions" />
+  </div>
+</template>

@@ -1,174 +1,75 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { CheckCircleIcon, ClockIcon, XCircleIcon, TruckIcon, UserIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/vue/24/outline'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useOrdersStore } from '@/stores/Orders'
+import LoaderWithText from '@/components/LoaderWithText.vue'
+import { storeToRefs } from 'pinia'
+import { XCircleIcon, CheckCircleIcon, UserIcon, EnvelopeIcon, MapPinIcon, ClockIcon, TruckIcon, DocumentDuplicateIcon, EyeIcon, ArrowPathIcon, InformationCircleIcon, CurrencyDollarIcon, CalendarDaysIcon, TagIcon } from '@heroicons/vue/24/outline'
 
-// Types and Interfaces (in a real project, these would be in separate files)
-const ORDER_STATUS = {
-  PENDING: 'Pending',
-  COMPLETED: 'Completed',
-  RETURNED: 'Returned',
-  PROCESSING: 'Processing',
-  SHIPPED: 'Shipped'
-}
-
-const STATUS_CONFIG = {
-  [ORDER_STATUS.COMPLETED]: {
-    color: 'text-green-700 bg-green-100',
-    icon: CheckCircleIcon,
-    label: 'Completed'
-  },
-  [ORDER_STATUS.PENDING]: {
-    color: 'text-[var(--color-primary)] bg-yellow-100',
-    icon: ClockIcon,
-    label: 'Pending'
-  },
-  [ORDER_STATUS.RETURNED]: {
-    color: 'text-red-700 bg-red-100',
-    icon: XCircleIcon,
-    label: 'Returned'
-  },
-  [ORDER_STATUS.PROCESSING]: {
-    color: 'text-blue-700 bg-blue-100',
-    icon: TruckIcon,
-    label: 'Processing'
-  },
-  [ORDER_STATUS.SHIPPED]: {
-    color: 'text-purple-700 bg-purple-100',
-    icon: TruckIcon,
-    label: 'Shipped'
-  }
-}
-
-// Props and Emits
 const props = defineProps({
   orderId: {
-    type: [String, Number],
+    type: Number,
     required: false
   }
 })
 
-const emit = defineEmits(['orderUpdated', 'statusChanged'])
+const emit = defineEmits(['statusChanged', 'orderUpdated'])
 
-// Composables
 const route = useRoute()
-const router = useRouter()
+const { t } = useI18n()
+const ordersStore = useOrdersStore()
+const { loading: isLoading } = storeToRefs(ordersStore)
 
-// State Management
-const isLoading = ref(true)
+// تعريف ثابت الحالات داخل نفس الملف
+const ORDER_STATUS = {
+  PENDING: 'pending',
+  SHIPPED: 'shipped',
+  COMPLETED: 'completed',
+  CANCELLED: 'canceled'
+}
+
 const isUpdating = ref(false)
 const error = ref(null)
 const showSuccessMessage = ref(false)
 
-// Mock data - في التطبيق الحقيقي سيتم جلبها من API
-const orders = ref([
-  {
-    id: 1,
-    customer: {
-      name: 'Ali Ahmed',
-      email: 'ali@example.com',
-      phone: '+966 50 123 4567',
-      address: {
-        street: '123 King Fahd Road',
-        city: 'Riyadh',
-        country: 'Saudi Arabia',
-        postalCode: '11564'
-      }
-    },
-    book: {
-      title: '1984',
-      author: 'George Orwell',
-      isbn: '978-0-452-28423-4',
-      coverImage: 'https://via.placeholder.com/150x200'
-    },
-    status: ORDER_STATUS.COMPLETED,
-    pricing: {
-      basePrice: 29.99,
-      shipping: 5.00,
-      tax: 2.10,
-      discount: 0
-    },
-    dates: {
-      ordered: '2025-07-12T10:30:00Z',
-      shipped: '2025-07-13T14:20:00Z',
-      delivered: '2025-07-15T16:45:00Z'
-    },
-    quantity: 1,
-    tracking: {
-      number: 'TRK123456789',
-      carrier: 'DHL Express'
-    }
-  },
-  {
-    id: 2,
-    customer: {
-      name: 'Sara Belkacem',
-      email: 'sara@example.com',
-      phone: '+966 55 987 6543',
-      address: {
-        street: '456 Prince Mohammed Bin Abdulaziz Road',
-        city: 'Jeddah',
-        country: 'Saudi Arabia',
-        postalCode: '21589'
-      }
-    },
-    book: {
-      title: 'Kafka on the Shore',
-      author: 'Haruki Murakami',
-      isbn: '978-1-4000-7927-6',
-      coverImage: 'https://via.placeholder.com/150x200'
-    },
-    status: ORDER_STATUS.PENDING,
-    pricing: {
-      basePrice: 35.00,
-      shipping: 5.00,
-      tax: 2.80,
-      discount: 5.00
-    },
-    dates: {
-      ordered: '2025-07-14T09:15:00Z'
-    },
-    quantity: 1,
-    tracking: null
-  }
-])
-
-// Computed Properties
 const orderId = computed(() => {
   return props.orderId || parseInt(route.params.id)
 })
 
 const selectedOrder = computed(() => {
-  return orders.value.find(order => order.id === orderId.value)
+  return ordersStore.orders.find(order => order.id === orderId.value)
 })
 
-const orderTotal = computed(() => {
-  if (!selectedOrder.value) return 0
-  const { basePrice, shipping, tax, discount } = selectedOrder.value.pricing
-  return basePrice + shipping + tax - discount
-})
+const updateOrderStatus = async (newStatus) => {
+  if (!selectedOrder.value || isUpdating.value) return
 
-const subtotal = computed(() => {
-  if (!selectedOrder.value) return 0
-  return selectedOrder.value.pricing.basePrice * selectedOrder.value.quantity
-})
+  try {
+    isUpdating.value = true
+    error.value = null
 
-const statusConfig = computed(() => {
-  if (!selectedOrder.value) return null
-  return STATUS_CONFIG[selectedOrder.value.status]
-})
+    const oldStatus = selectedOrder.value.status
+    await ordersStore.updateOrder(orderId.value, { status: newStatus })
 
-const statusOptions = computed(() => {
-  return Object.values(ORDER_STATUS).map(status => ({
-    value: status,
-    label: STATUS_CONFIG[status].label,
-    disabled: false // يمكن تخصيص هذا بناءً على منطق العمل
-  }))
-})
+    showSuccessMessage.value = true
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 3000)
 
+    emit('statusChanged', { orderId: orderId.value, oldStatus, newStatus })
+    emit('orderUpdated', selectedOrder.value)
+  } catch (err) {
+    error.value = 'حدث خطأ أثناء تحديث حالة الطلب'
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+// Computed properties
 const formattedOrderDate = computed(() => {
-  if (!selectedOrder.value?.dates.ordered) return ''
-  return new Date(selectedOrder.value.dates.ordered).toLocaleDateString('ar-SA', {
+  if (!selectedOrder.value || !selectedOrder.value.createdAt) return ''
+  const date = new Date(selectedOrder.value.createdAt)
+  return date.toLocaleDateString('ar-EG', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -177,51 +78,82 @@ const formattedOrderDate = computed(() => {
   })
 })
 
-// Methods
-const updateOrderStatus = async (newStatus) => {
-  if (!selectedOrder.value || isUpdating.value) return
+const statusConfig = computed(() => {
+  if (!selectedOrder.value) return {}
 
-  try {
-    isUpdating.value = true
-    error.value = null
-
-    // في التطبيق الحقيقي، سيتم استدعاء API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    const oldStatus = selectedOrder.value.status
-    selectedOrder.value.status = newStatus
-
-    // إضافة تاريخ الحالة الجديدة
-    if (newStatus === ORDER_STATUS.SHIPPED && !selectedOrder.value.dates.shipped) {
-      selectedOrder.value.dates.shipped = new Date().toISOString()
-    }
-    if (newStatus === ORDER_STATUS.COMPLETED && !selectedOrder.value.dates.delivered) {
-      selectedOrder.value.dates.delivered = new Date().toISOString()
-    }
-
-    showSuccessMessage.value = true
-    setTimeout(() => {
-      showSuccessMessage.value = false
-    }, 3000)
-
-    emit('statusChanged', {
-      orderId: selectedOrder.value.id,
-      oldStatus,
-      newStatus
-    })
-
-    emit('orderUpdated', selectedOrder.value)
-
-  } catch (err) {
-    error.value = 'There was an error updating the order status. Please try again.'
-    console.error('Error updating order status:', err)
-  } finally {
-    isUpdating.value = false
+  const statusMap = {
+  'pending': {
+    icon: ClockIcon,
+    label: t('orderDetails.statusPending'),
+    color: 'bg-amber-100 text-amber-800 border-amber-200',
+    bgColor: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    progress: 25
+  },
+  'paid': {
+    icon: ClockIcon,
+    label: t('orderDetails.statusPaid'),
+    color: 'bg-green-100 text-green-800 border-green-200',
+    bgColor: 'bg-green-50',
+    iconColor: 'text-green-600',
+    progress: 50
+  },
+  'shipped': {
+    icon: TruckIcon,
+    label: t('orderDetails.statusShipped'),
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    bgColor: 'bg-blue-50',
+    iconColor: 'text-[var(--color-primary)]',
+    progress: 75
+  },
+  'completed': { // ✅ بدلنا paid إلى completed
+    icon: CheckCircleIcon,
+    label: t('orderDetails.statusCompleted'),
+    color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    bgColor: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    progress: 100
+  },
+  'canceled': {
+    icon: XCircleIcon,
+    label: t('orderDetails.statusCancelled'),
+    color: 'bg-red-100 text-red-800 border-red-200',
+    bgColor: 'bg-red-50',
+    iconColor: 'text-red-600',
+    progress: 2
   }
 }
 
+
+  return statusMap[selectedOrder.value.status] || statusMap['pending']
+})
+
+const statusOptions = computed(() => {
+  return [
+    { value: 'pending', label: t('orderDetails.statusPending'), icon: ClockIcon },
+    { value: 'shipped', label: t('orderDetails.statusShipped'), icon: TruckIcon },
+    { value: 'completed', label: t('orderDetails.statusCompleted'), icon: CheckCircleIcon },
+    { value: 'canceled', label: t('orderDetails.statusCancelled'), icon: XCircleIcon }
+  ]
+})
+
+
+const subtotal = computed(() => {
+  if (!selectedOrder.value || !selectedOrder.value.items) return 0
+  return selectedOrder.value.items.reduce((total, item) => {
+    return total + (parseFloat(item.price) * item.quantity)
+  }, 0)
+})
+
+const orderTotal = computed(() => {
+  if (!selectedOrder.value) return 0
+  // Use the total_price from the API response
+  return parseFloat(selectedOrder.value.total_price || '0')
+})
+
+// Helper functions
 const goBack = () => {
-  router.go(-1)
+  window.history.back()
 }
 
 const printOrder = () => {
@@ -229,324 +161,527 @@ const printOrder = () => {
 }
 
 const downloadInvoice = () => {
-  // منطق تحميل الفاتورة
-  console.log('Downloading invoice for order:', orderId.value)
+  // Implement invoice download functionality
+  console.log('Downloading invoice...')
 }
 
-// Lifecycle
+const copyOrderId = () => {
+  navigator.clipboard.writeText(selectedOrder.value.id.toString())
+  showSuccessMessage.value = true
+  setTimeout(() => {
+    showSuccessMessage.value = false
+  }, 2000)
+}
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+
+// Helper functions to access book data from items array
+const getFirstBookCover = () => {
+  if (selectedOrder.value && selectedOrder.value.items && selectedOrder.value.items.length > 0) {
+    const firstItem = selectedOrder.value.items[0]
+    if (firstItem.book && firstItem.book.cover) {
+      return `${apiBaseUrl}${firstItem.book.cover}`
+    }
+  }
+  // Return a default placeholder image if book data is not available
+  return 'https://via.placeholder.com/200x280?text=Book+Cover'
+}
+
+const getFirstBookTitle = () => {
+  if (selectedOrder.value && selectedOrder.value.items && selectedOrder.value.items.length > 0) {
+    const firstItem = selectedOrder.value.items[0]
+    if (firstItem.book && firstItem.book.title) {
+      return firstItem.book.title
+    }
+  }
+  return t('orderDetails.bookTitleNotAvailable')
+}
+
+const getFirstBookAuthor = () => {
+  // In the provided data, there is no author field, so we return a placeholder
+  if (selectedOrder.value && selectedOrder.value.items && selectedOrder.value.items.length > 0) {
+    const firstItem = selectedOrder.value.items[0]
+    if (firstItem.book && firstItem.book.author) {
+      return firstItem.book.author.name
+    }
+    return t('orderDetails.unknownAuthor')
+  }
+  return t('orderDetails.authorNotAvailable')
+}
+
+const getFirstBookIsbn = () => {
+  // In the provided data, there is no ISBN field, so we return a placeholder
+  if (selectedOrder.value && selectedOrder.value.items && selectedOrder.value.items.length > 0) {
+    const firstItem = selectedOrder.value.items[0]
+    if (firstItem.book && firstItem.book.isbn) {
+      return firstItem.book.isbn
+    }
+  }
+  return t('orderDetails.isbnNotAvailable')
+}
+
 onMounted(async () => {
   try {
-    isLoading.value = true
     error.value = null
 
-    // في التطبيق الحقيقي، سيتم جلب البيانات من API
-    await new Promise(resolve => setTimeout(resolve, 500))
-
-    if (!selectedOrder.value) {
-      error.value = 'لم يتم العثور على الطلب المطلوب'
+    if (ordersStore.orders.length === 0) {
+      await ordersStore.fetchOrders()
     }
-
   } catch (err) {
-    error.value = 'حدث خطأ في تحميل بيانات الطلب'
-    console.error('Error loading order:', err)
-  } finally {
-    isLoading.value = false
+    error.value = t('orderDetails.errorLoading')
   }
 })
 
-// Watchers
-watch(() => route.params.id, (newId) => {
-  if (newId) {
-    // إعادة تحميل البيانات عند تغيير معرف الطلب
-    onMounted()
+watch(isLoading, (newLoading) => {
+  if (newLoading === false && !selectedOrder.value) {
+    error.value = t('orderDetails.errorNotFound')
   }
 })
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Loading State -->
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <!-- Loading State with enhanced animation -->
     <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      <span class="ml-3 text-gray-600">Loading order data...</span>
+      <LoaderWithText :message="t('orderDetails.loading')" />
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="error" class="flex items-center justify-center min-h-screen">
-      <div class="text-center p-8 bg-white rounded-xl shadow-sm border max-w-md">
-        <XCircleIcon class="h-16 w-16 text-red-500 mx-auto mb-4" />
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">An error occurred</h3>
-        <p class="text-gray-600 mb-4">{{ error }}</p>
+    <!-- Error State with enhanced design -->
+    <div v-else-if="error" class="flex items-center justify-center min-h-screen px-4">
+      <div class="text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-200 max-w-md">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
+          <XCircleIcon class="h-8 w-8 text-red-600" />
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ t('orderDetails.errorOccurred') }}</h3>
+        <p class="text-gray-600 mb-6">{{ error }}</p>
         <button
           @click="goBack"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-[var(--color-primary)] hover:bg-[var(--color-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 hover:shadow-lg"
         >
-          Go Back
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          {{ t('orderDetails.goBack') }}
         </button>
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div v-else-if="selectedOrder" class="max-w-4xl mx-auto px-4 md:px-6 py-8">
-      <!-- Success Message -->
+    <!-- Main Content with enhanced design -->
+    <div v-else-if="selectedOrder" class="max-w-6xl mx-auto px-4 md:px-6 py-8">
+      <!-- Success Message with better animation -->
       <Transition
-        enter-active-class="transition ease-out duration-300"
-        enter-from-class="transform opacity-0 translate-y-2"
-        enter-to-class="transform opacity-100 translate-y-0"
-        leave-active-class="transition ease-in duration-200"
-        leave-from-class="transform opacity-100 translate-y-0"
-        leave-to-class="transform opacity-0 translate-y-2"
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="transform scale-95 opacity-0"
+        enter-to-class="transform scale-100 opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="transform scale-100 opacity-100"
+        leave-to-class="transform scale-95 opacity-0"
       >
         <div v-if="showSuccessMessage" class="mb-6">
-          <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
-            <CheckCircleIcon class="h-5 w-5 text-green-600 ml-3" />
-            <span class="text-green-800 font-medium">Order status updated successfully</span>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center shadow-sm">
+            <div class="flex-shrink-0">
+              <CheckCircleIcon class="h-6 w-6 text-emerald-600" />
+            </div>
+            <div class="ml-3">
+              <p class="text-emerald-800 font-medium">{{ t('orderDetails.updateSuccess') }}</p>
+            </div>
           </div>
         </div>
       </Transition>
 
-      <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
-        <div class="mb-4 md:mb-0">
-          <div class="flex items-center mb-2">
-            <button
-              @click="goBack"
-              class="ml-3 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                ></path>
-              </svg>
-            </button>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
-              Order Details #{{ selectedOrder.id }}
-            </h1>
-          </div>
-          <p class="text-gray-600">{{ formattedOrderDate }}</p>
-        </div>
+      <!-- Enhanced Header with gradient background -->
+      <div class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] rounded-2xl shadow-xl mb-8 overflow-hidden">
+        <div class="px-6 py-8 text-white">
+          <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div class="mb-6 md:mb-0">
+              <div class="flex items-center mb-4">
+                <button
+                  @click="goBack"
+                  class="mr-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                  </svg>
+                </button>
+                <div>
+                  <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                    {{ t('orderDetails.title') }}{{ selectedOrder.id }}
+                  </h1>
+                  <div class="flex items-center space-x-4 text-white/80">
+                    <div class="flex items-center">
+                      <CalendarDaysIcon class="h-4 w-4 mr-2" />
+                      <span>{{ formattedOrderDate }}</span>
+                    </div>
+                    <button
+                      @click="copyOrderId"
+                      class="flex items-center hover:text-white transition-colors"
+                    >
+                      <DocumentDuplicateIcon class="h-4 w-4 mr-1" />
+                      <span class="text-sm">Copy ID</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <div class="flex flex-col sm:flex-row gap-3">
-          <button
-            @click="printOrder"
-            class="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              ></path>
-            </svg>
-            Print
-          </button>
-          <button
-            @click="downloadInvoice"
-            class="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              ></path>
-            </svg>
-            Download Invoice
-          </button>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button
+                @click="printOrder"
+                class="flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-105"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
+                طباعة
+              </button>
+              <button
+                @click="downloadInvoice"
+                class="flex items-center justify-center px-6 py-3 bg-white text-[var(--color-primary)] rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-105 font-medium shadow-lg"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                تحميل الفاتورة
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-          <!-- Order Status Card -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 class="text-lg font-semibold text-gray-900">Order Status</h2>
-            </div>
-            <div class="p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
-                  <component
-                    :is="statusConfig.icon"
-                    class="h-6 w-6 ml-3"
-                    :class="statusConfig.color.split(' ')[0]"
-                  />
-                  <span
-                    class="px-3 py-1 rounded-full text-sm font-medium"
-                    :class="statusConfig.color"
-                  >
-                    {{ statusConfig.label }}
-                  </span>
+        <div class="xl:col-span-2 space-y-8">
+          <!-- Enhanced Order Status Card -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 mr-4">
+                  <component :is="statusConfig.icon" class="h-5 w-5 text-[var(--color-primary)]" />
                 </div>
-                <span class="text-sm text-gray-500">{{ formattedOrderDate }}</span>
+                <h2 class="text-xl font-bold text-gray-900">{{ t('orderDetails.statusTitle') }}</h2>
+              </div>
+            </div>
+            <div class="p-8">
+              <!-- Status Progress Bar -->
+              <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-2xl" :class="statusConfig.bgColor">
+                      <component :is="statusConfig.icon" class="h-6 w-6" :class="statusConfig.iconColor" />
+                    </div>
+                    <div>
+                      <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold border" :class="statusConfig.color">
+                        {{ statusConfig.label }}
+                      </span>
+                      <p class="text-sm text-gray-500 mt-1">{{ formattedOrderDate }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                  <div
+                    class="h-3 rounded-full transition-all duration-1000 ease-out"
+                    :class="statusConfig.progress === 100 ? 'bg-emerald-500' : statusConfig.progress >= 75 ? 'bg-blue-500' : statusConfig.progress >= 25 ? 'bg-amber-500' : 'bg-gray-400'"
+                    :style="`width: ${statusConfig.progress}%`"
+                  ></div>
+                </div>
               </div>
 
-              <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Update Order Status
+              <div class="space-y-4">
+                <label class="block text-sm font-bold text-gray-700">
+                  {{ t('orderDetails.updateStatus') }}
                 </label>
-                <div class="flex items-center gap-3">
-                  <select
-                    :value="selectedOrder.status"
-                    @change="updateOrderStatus($event.target.value)"
-                    :disabled="isUpdating"
-                    class="flex-1 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option
-                      v-for="option in statusOptions"
-                      :key="option.value"
-                      :value="option.value"
-                      :disabled="option.disabled"
+                <div class="flex items-center gap-4">
+                  <div class="flex-1 relative">
+                    <select
+                      :value="selectedOrder.status"
+                      @change="updateOrderStatus($event.target.value)"
+                      :disabled="isUpdating"
+                      class="w-full appearance-none border-2 border-gray-200 rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed font-medium transition-all duration-200"
                     >
-                      {{ option.label }}
-                    </option>
-                  </select>
-                  <div v-if="isUpdating" class="flex items-center">
-                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <option
+                        v-for="option in statusOptions"
+                        :key="option.value"
+                        :value="option.value"
+                      >
+                        {{ option.label }}
+                      </option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+                      <ArrowPathIcon v-if="isUpdating" class="h-4 w-4 animate-spin" />
+                      <svg v-else class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Order Items -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 class="text-lg font-semibold text-gray-900">Order Items</h2>
+          <!-- Enhanced Order Items -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 mr-4">
+                  <TagIcon class="h-5 w-5 text-emerald-600" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ t('orderDetails.itemsTitle') }}</h2>
+              </div>
             </div>
-            <div class="p-6">
-              <div class="flex items-center space-x-4 space-x-reverse">
-                <img
-                  :src="selectedOrder.book.coverImage"
-                  :alt="selectedOrder.book.title"
-                  class="w-20 h-28 object-cover rounded-lg border border-gray-200"
-                />
+            <div class="p-8">
+              <div class="flex items-start space-x-6">
+                <div class="relative group">
+                  <img
+                    :src="getFirstBookCover()"
+                    :alt="getFirstBookTitle()"
+                    class="w-24 h-32 object-cover rounded-2xl border-2 border-gray-200 group-hover:shadow-2xl transition-all duration-300 group-hover:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-2xl transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <EyeIcon class="h-6 w-6 text-white" />
+                  </div>
+                </div>
                 <div class="flex-1">
-                  <h3 class="font-semibold text-gray-900 text-lg">
-                    {{ selectedOrder.book.title }}
-                  </h3>
-                  <p class="text-gray-600 mb-1">{{ selectedOrder.book.author }}</p>
-                  <p class="text-sm text-gray-500 mb-2">ISBN: {{ selectedOrder.book.isbn }}</p>
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Qty: {{ selectedOrder.quantity }}</span>
-                    <span class="font-semibold text-gray-900"
-                      >${{ selectedOrder.pricing.basePrice.toFixed(2) }}</span
-                    >
+                  <div class="mb-4">
+                    <h3 class="font-bold text-gray-900 text-xl mb-2">
+                      {{ getFirstBookTitle() }}
+                    </h3>
+                    <p class="text-gray-600 mb-2">{{ getFirstBookAuthor() }}</p>
+                    <p class="text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-lg inline-block">
+                      {{ t('bookdetails.isbn') }}: {{ getFirstBookIsbn() }}
+                    </p>
+                  </div>
+                  <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4">
+                    <div class="text-center">
+                      <p class="text-sm text-gray-500 font-medium">الكمية</p>
+                      <p class="text-lg font-bold text-gray-900">{{ selectedOrder.items && selectedOrder.items[0] ? selectedOrder.items[0].quantity : 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-sm text-gray-500 font-medium">السعر</p>
+                      <p class="text-lg font-bold text-[var(--color-primary)]">${{ selectedOrder.items && selectedOrder.items[0] ? selectedOrder.items[0].price : '0.00' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Display additional items if there are more than one -->
+              <div v-if="selectedOrder.items && selectedOrder.items.length > 1" class="mt-8 pt-6 border-t-2 border-gray-100">
+                <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                  <InformationCircleIcon class="h-5 w-5 mr-2 text-blue-500" />
+                  {{ t('orderDetails.additionalItems', { count: selectedOrder.items.length - 1 }) }}
+                </h4>
+                <div class="space-y-3">
+                  <div v-for="(item, index) in selectedOrder.items.slice(1)" :key="index"
+                       class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div class="flex-1">
+                      <p class="font-bold text-gray-900">{{ item.book?.title || 'Book Title' }}</p>
+                      <p class="text-sm text-gray-600">الكمية: {{ item.quantity }}</p>
+                    </div>
+                    <span class="font-bold text-[var(--color-primary)] text-lg">${{ item.price }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Tracking Information -->
+          <!-- Enhanced Tracking Information -->
           <div
             v-if="selectedOrder.tracking"
-            class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+            class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
           >
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 class="text-lg font-semibold text-gray-900">Tracking Information</h2>
-            </div>
-            <div class="p-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p class="text-sm text-gray-600 font-medium">Tracking Number</p>
-                  <p class="font-mono text-lg">{{ selectedOrder.tracking.number }}</p>
+            <div class="px-8 py-6 bg-gradient-to-r from-blue-50 to-indigo-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 mr-4">
+                  <TruckIcon class="h-5 w-5 text-[var(--color-primary)]" />
                 </div>
-                <div>
-                  <p class="text-sm text-gray-600 font-medium">Shipping Carrier</p>
-                  <p class="text-lg">{{ selectedOrder.tracking.carrier }}</p>
+                <h2 class="text-xl font-bold text-gray-900">{{ t('order.tracking') }}</h2>
+              </div>
+            </div>
+            <div class="p-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6">
+                  <p class="text-sm text-[var(--color-hover)] font-bold mb-2">{{ t('order.trackingNumber') }}</p>
+                  <p class="font-mono text-xl text-blue-900 font-bold">{{ selectedOrder.tracking.number }}</p>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-100 rounded-xl p-6">
+                  <p class="text-sm text-green-700 font-bold mb-2">{{ t('order.shippingCarrier') }}</p>
+                  <p class="text-xl text-green-900 font-bold">{{ selectedOrder.tracking.carrier }}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-          <!-- Customer Information -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 class="text-lg font-semibold text-gray-900">Customer Information</h2>
+        <!-- Enhanced Sidebar -->
+        <div class="space-y-8">
+          <!-- Enhanced Customer Information -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-purple-50 to-pink-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 mr-3">
+                  <UserIcon class="h-4 w-4 text-purple-600" />
+                </div>
+                <h2 class="text-lg font-bold text-gray-900">{{ t('orderDetails.customerInfo') }}</h2>
+              </div>
             </div>
             <div class="p-6 space-y-4">
-              <div class="flex items-center">
-                <UserIcon class="h-5 w-5 text-gray-400 ml-3" />
-                <span class="font-medium">{{ selectedOrder.customer.name }}</span>
+              <div class="flex items-center bg-purple-50 rounded-xl p-4">
+                <UserIcon class="h-5 w-5 text-purple-500 mr-3" />
+                <span class="font-bold">{{ t('orderDetails.customerId') }} {{ selectedOrder.customer_id }}</span>
               </div>
-              <div class="flex items-center">
-                <EnvelopeIcon class="h-5 w-5 text-gray-400 ml-3" />
-                <a
-                  :href="`mailto:${selectedOrder.customer.email}`"
-                  class="text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  {{ selectedOrder.customer.email }}
-                </a>
-              </div>
-              <div class="flex items-center">
-                <svg
-                  class="h-5 w-5 text-gray-400 ml-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  ></path>
-                </svg>
-                <span>{{ selectedOrder.customer.phone }}</span>
-              </div>
-              <div class="flex items-start">
-                <MapPinIcon class="h-5 w-5 text-gray-400 ml-3 mt-0.5" />
-                <div class="text-sm leading-relaxed">
-                  <p>{{ selectedOrder.customer.address.street }}</p>
-                  <p>
-                    {{ selectedOrder.customer.address.city }},
-                    {{ selectedOrder.customer.address.postalCode }}
-                  </p>
-                  <p>{{ selectedOrder.customer.address.country }}</p>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">{{ t('orderDetails.orderId') }}</span>
+                  <span class="font-bold text-gray-900">{{ selectedOrder.id }}</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">{{ t('orderDetails.status') }}</span>
+                  <span class="font-bold" :class="statusConfig.iconColor">{{ selectedOrder.status }}</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">{{ t('orderDetails.created') }}</span>
+                  <span class="font-bold text-gray-900">{{ new Date(selectedOrder.created_at).toLocaleDateString() }}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Order Summary -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
+          <!-- Enhanced Order Summary -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-green-50 to-emerald-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-green-100 mr-3">
+                  <CurrencyDollarIcon class="h-4 w-4 text-green-600" />
+                </div>
+                <h2 class="text-lg font-bold text-gray-900">{{ t('orderDetails.summaryTitle') }}</h2>
+              </div>
             </div>
-            <div class="p-6 space-y-3">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Subtotal</span>
-                <span class="font-medium">${{ subtotal.toFixed(2) }}</span>
+            <div class="p-6 space-y-4">
+              <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                <span class="text-gray-600 font-medium">{{ t('orderDetails.subtotal') }}</span>
+                <span class="font-bold text-gray-900 text-lg">${{ subtotal.toFixed(2) }}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Shipping</span>
-                <span class="font-medium">${{ selectedOrder.pricing.shipping.toFixed(2) }}</span>
+              <div class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200">
+                <span class="text-[var(--color-hover)] font-bold">{{ t('orderDetails.total') }}</span>
+                <span class="font-bold text-blue-900 text-xl">${{ orderTotal.toFixed(2) }}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Tax</span>
-                <span class="font-medium">${{ selectedOrder.pricing.tax.toFixed(2) }}</span>
+
+              <!-- Enhanced Order Details Grid -->
+              <div class="mt-6 space-y-3">
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
+                  <div class="grid grid-cols-1 gap-3 text-sm">
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600 font-medium flex items-center">
+                        <TagIcon class="h-4 w-4 mr-2" />
+                        {{ t('orderDetails.numItems') }}
+                      </span>
+                      <span class="font-bold text-gray-900">{{ selectedOrder.items?.length || 0 }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600 font-medium flex items-center">
+                        <CalendarDaysIcon class="h-4 w-4 mr-2" />
+                        {{ t('orderDetails.orderDate') }}
+                      </span>
+                      <span class="font-bold text-gray-900">{{ new Date(selectedOrder.created_at).toLocaleDateString() }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600 font-medium flex items-center">
+                        <ClockIcon class="h-4 w-4 mr-2" />
+                        {{ t('orderDetails.lastUpdated') }}
+                      </span>
+                      <span class="font-bold text-gray-900">{{ new Date(selectedOrder.updated_at).toLocaleDateString() }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div
-                v-if="selectedOrder.pricing.discount > 0"
-                class="flex justify-between text-green-600"
-              >
-                <span>Discount</span>
-                <span>-${{ selectedOrder.pricing.discount.toFixed(2) }}</span>
+
+              <!-- Quick Actions -->
+              <div class="mt-6 pt-4 border-t-2 border-gray-100">
+                <h3 class="text-sm font-bold text-gray-700 mb-3">إجراءات سريعة</h3>
+                <div class="grid grid-cols-2 gap-3">
+                  <button
+                    @click="printOrder"
+                    class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:scale-105 group"
+                  >
+                    <svg class="w-6 h-6 text-gray-600 group-hover:text-gray-800 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    <span class="text-xs font-medium text-gray-700 group-hover:text-gray-900">طباعة</span>
+                  </button>
+                  <button
+                    @click="copyOrderId"
+                    class="flex flex-col items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all duration-200 hover:scale-105 group"
+                  >
+                    <DocumentDuplicateIcon class="w-6 h-6 text-[var(--color-primary)] group-hover:text-blue-800 mb-2" />
+                    <span class="text-xs font-medium text-[var(--color-hover)] group-hover:text-blue-900">نسخ الرقم</span>
+                  </button>
+                </div>
               </div>
-              <hr class="my-4" />
-              <div class="flex justify-between text-lg font-semibold">
-                <span>Total</span>
-                <span>${{ orderTotal.toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <!-- Order Timeline Card -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-100 border-b border-gray-200">
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 mr-3">
+                  <ClockIcon class="h-4 w-4 text-indigo-600" />
+                </div>
+                <h2 class="text-lg font-bold text-gray-900">تتبع الطلب</h2>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="space-y-4">
+                <!-- Timeline items -->
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 border-4 border-green-200">
+                      <CheckCircleIcon class="w-5 h-5 text-green-600" />
+                    </div>
+                  </div>
+                  <div class="mr-4 min-w-0 flex-1">
+                    <div class="text-sm font-bold text-gray-900">تم إنشاء الطلب</div>
+                    <div class="text-sm text-gray-500">{{ new Date(selectedOrder.created_at).toLocaleString('ar-EG') }}</div>
+                  </div>
+                </div>
+
+                <div class="flex items-start" v-if="selectedOrder.status !== 'pending'">
+                  <div class="flex-shrink-0">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full"
+                         :class="selectedOrder.status === 'shipped' || selectedOrder.status === 'paid' ? 'bg-blue-100 border-4 border-blue-200' : 'bg-gray-100 border-4 border-gray-200'">
+                      <TruckIcon class="w-5 h-5" :class="selectedOrder.status === 'shipped' || selectedOrder.status === 'paid' ? 'text-[var(--color-primary)]' : 'text-gray-400'" />
+                    </div>
+                  </div>
+                  <div class="mr-4 min-w-0 flex-1">
+                    <div class="text-sm font-bold text-gray-900">تم شحن الطلب</div>
+                    <div class="text-sm text-gray-500">{{ new Date(selectedOrder.updated_at).toLocaleString('ar-EG') }}</div>
+                  </div>
+                </div>
+
+                <div class="flex items-start" v-if="selectedOrder.status === 'paid'">
+                  <div class="flex-shrink-0">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 border-4 border-emerald-200">
+                      <CheckCircleIcon class="w-5 h-5 text-emerald-600" />
+                    </div>
+                  </div>
+                  <div class="mr-4 min-w-0 flex-1">
+                    <div class="text-sm font-bold text-gray-900">تم إكمال الطلب</div>
+                    <div class="text-sm text-gray-500">{{ new Date(selectedOrder.updated_at).toLocaleString('ar-EG') }}</div>
+                  </div>
+                </div>
+
+                <div class="flex items-start" v-if="selectedOrder.status === 'canceled'">
+                  <div class="flex-shrink-0">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border-4 border-red-200">
+                      <XCircleIcon class="w-5 h-5 text-red-600" />
+                    </div>
+                  </div>
+                  <div class="mr-4 min-w-0 flex-1">
+                    <div class="text-sm font-bold text-gray-900">تم إلغاء الطلب</div>
+                    <div class="text-sm text-gray-500">{{ new Date(selectedOrder.updated_at).toLocaleString('ar-EG') }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -556,11 +691,60 @@ watch(() => route.params.id, (newId) => {
   </div>
 </template>
 
-
 <style scoped>
+/* Custom animations and transitions */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Print styles */
 @media print {
   .no-print {
     display: none !important;
   }
+
+  .print-optimize {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 </style>

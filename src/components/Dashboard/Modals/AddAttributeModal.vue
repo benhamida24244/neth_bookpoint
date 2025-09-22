@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   show: Boolean,
@@ -16,7 +19,7 @@ function closeModal() {
 
 function save() {
   if (!name.value) {
-    alert('Please enter a name.')
+    alert(t('addAttributeModal.enterName'))
     return
   }
   emit('save', name.value)
@@ -54,13 +57,13 @@ function save() {
           @click="closeModal"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         >
-          Cancel
+          {{ t('addAttributeModal.cancel') }}
         </button>
         <button
           @click="save"
           class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-light)] border border-transparent rounded-md shadow-sm hover:bg-[var(--color-primary)]"
         >
-          Save
+          {{ t('addAttributeModal.save') }}
         </button>
       </div>
     </div>

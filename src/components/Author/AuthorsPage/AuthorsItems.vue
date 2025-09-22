@@ -1,12 +1,17 @@
 <script setup>
 import { defineProps } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps({
   author: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 </script>
 
 <template>
@@ -16,7 +21,7 @@ defineProps({
   >
     <div class="relative w-28 h-28 sm:w-32 sm:h-32 mb-3">
       <img
-        :src="author.img"
+        :src="`${apiBaseUrl}${author.img}`"
         :alt="author.name"
         class="rounded-full w-full h-full object-cover border-4 border-[var(--color-primary)] group-hover:scale-105 transition-transform duration-300"
       />
@@ -24,7 +29,7 @@ defineProps({
     <p class="text-base font-semibold font-BonaRegular">{{ author.name }}</p>
 
     <span class="mt-1 px-3 py-1 text-xs rounded-full bg-[var(--color-primary)] text-black font-semibold">
-      {{ author.nmbBook }} Book{{ author.nmbBook > 1 ? 's' : '' }}
+      {{ author.nmbBook }} {{ author.nmbBook > 1 ? t('authorsItems.books') : t('authorsItems.book') }}
     </span>
   </router-link>
 </template>

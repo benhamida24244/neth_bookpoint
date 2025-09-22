@@ -2,10 +2,13 @@
 import { usePublishingHouseStore } from '@/stores/PublishingHouses';
 import { onMounted, ref, computed } from 'vue'; // <-- Import computed
 import { useRoute } from 'vue-router';
-
+import { useI18n } from 'vue-i18n';
+import DashboardBooks from '@/components/Dashboard/DashboardBooks.vue';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 // Initialize store and router
 const publishingHouseStore = usePublishingHouseStore();
 const route = useRoute();
+const { t } = useI18n();
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Component's local state
@@ -68,12 +71,39 @@ function openEditModal() {
   }
 }
 
+function handleFileUpload(event) {
+const file = event.target.files[0];
+  if (file) {
+    editForm.value.img = file;
+  }
+}
+
 async function savePublishingHouse() {
   if (!editForm.value || !editForm.value.id) return;
 
   try {
-    await publishingHouseStore.updatePublisher(editForm.value.id, editForm.value);
-    currentPublishingHouse.value = { ...editForm.value };
+    // Create FormData for the API call
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append("name", editForm.value.name);
+    formData.append("description", editForm.value.description);
+    formData.append("country", editForm.value.country);
+
+    // Add image if a new one was selected
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput && fileInput.files.length > 0) {
+      formData.append("img", fileInput.files[0]);
+    } else {
+      // If no new image, keep the existing one
+      formData.append("img", editForm.value.img || "");
+    }
+
+    // Call the API with FormData
+    await publishingHouseStore.updatePublisher(editForm.value.id, formData);
+
+    // Refresh the data
+    await fetchPublisherById();
     showEditModal.value = false;
   } catch (err) {
     console.error("Failed to save publishing house:", err);
@@ -86,7 +116,7 @@ async function savePublishingHouse() {
   <div class="min-h-screen bg-gray-100 font-sans text-gray-800 p-4 sm:p-6 lg:p-8">
 
     <div v-if="loading" class="flex justify-center items-center h-screen">
-      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--color-primary)]"></div>
+      <LoaderWithText :message="t('phouseDetails.loading')" />
     </div>
 
     <div v-else-if="error" class="flex justify-center items-center min-h-screen">
@@ -105,13 +135,13 @@ async function savePublishingHouse() {
         <div class="p-8 flex-grow relative">
           <button
             @click="openEditModal"
-            class="absolute right-6 top-6 bg-[var(--color-primary)] px-4 py-2 rounded-lg text-white font-semibold hover:bg-[var(--color-hover)] transition flex items-center gap-2"
+            class="absolute top-6 bg-[var(--color-primary)] px-4 py-2 rounded-lg text-white font-semibold hover:bg-[var(--color-hover)] transition flex items-center gap-2" :class="{ 'right-6': $i18n.locale !== 'ar', 'left-6': $i18n.locale === 'ar' }"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
               <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
             </svg>
-            <span>Edit</span>
+            <span>{{ t('phouseDetails.edit') }}</span>
           </button>
 
           <div class="mb-4">
@@ -123,14 +153,14 @@ async function savePublishingHouse() {
           <p class="mt-2 text-gray-600 leading-relaxed">{{ currentPublishingHouse.description }}</p>
 
           <div class="mt-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Statistics</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ t('phouseDetails.statistics') }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div class="p-4 bg-gray-50 rounded-lg border flex items-center gap-4">
                 <div class="bg-blue-100 p-3 rounded-full text-blue-600">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18" /></svg>
                 </div>
                 <div>
-                  <p class="text-base font-medium text-gray-600">Books Published</p>
+                  <p class="text-base font-medium text-gray-600">{{ t('phouseDetails.booksPublished') }}</p>
                   <p class="text-2xl font-bold text-gray-900">{{ currentPublishingHouse.nmBook }}</p>
                 </div>
               </div>
@@ -139,14 +169,14 @@ async function savePublishingHouse() {
                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                  </div>
                 <div>
-                  <p class="text-base font-medium text-gray-600">Total Orders</p>
+                  <p class="text-base font-medium text-gray-600">{{ t('phouseDetails.totalOrders') }}</p>
                   <p class="text-2xl font-bold text-gray-900">{{ currentPublishingHouse.orders.toLocaleString() }}</p>
                 </div>
               </div>
               <div class="p-4 bg-gray-50 rounded-lg border flex items-center gap-4">
 
                 <div>
-                  <p class="text-base font-medium text-gray-600">Status</p>
+                  <p class="text-base font-medium text-gray-600">{{ t('phouseDetails.status') }}</p>
                   <p :class="(currentPublishingHouse.status === 1)? '':''" class="text-2xl font-bold text-gray-900">{{ (currentPublishingHouse.status === 1)? 'Active':'Draft' }}</p>
                 </div>
               </div>
@@ -168,7 +198,7 @@ async function savePublishingHouse() {
         <label class="block mb-2 font-medium">Description</label>
         <textarea v-model="editForm.description" rows="4" class="w-full border rounded-lg px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
         <label class="block mb-2 font-medium">Image Path</label>
-        <input type="file"
+        <input type="file" @change="handleFileUpload"
           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--color-primary)] hover:file:bg-blue-100">
 
         <div class="flex justify-end gap-3 mt-4">
@@ -177,6 +207,11 @@ async function savePublishingHouse() {
         </div>
       </div>
     </div>
-
+ <div v-if="currentPublishingHouse?.nmBook > 1" class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden mt-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 p-8 text-center">Books by {{ currentPublishingHouse?.name }}</h2>
+      <div class="w-full px-4 pb-8">
+        <DashboardBooks :publisher_id="currentPublishingHouse?.id" />
+      </div>
+    </div>
   </div>
 </template>

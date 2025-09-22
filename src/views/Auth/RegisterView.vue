@@ -1,16 +1,150 @@
 <script setup>
 import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة إذا أردت
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCustomerAuthStore } from '@/stores/customerAuth.js'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+const router = useRouter()
+const CustomerAuth = useCustomerAuthStore()
+const emit = defineEmits(['close', 'openLogin'])
+
+const formData = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+})
+
+const errors = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+})
+
+const isLoading = ref(false)
+
+const validateForm = () => {
+  let isValid = true
+
+  // Reset errors
+  Object.keys(errors).forEach((key) => {
+    errors[key] = ''
+  })
+
+  // Name validation
+  if (!formData.name.trim()) {
+    errors.name = t('register.nameRequired')
+    isValid = false
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!formData.email) {
+    errors.email = t('register.emailRequired')
+    isValid = false
+  } else if (!emailRegex.test(formData.email)) {
+    errors.email = t('register.emailInvalid')
+    isValid = false
+  }
+
+  // Password validation
+  if (!formData.password) {
+    errors.password = t('register.passwordRequired')
+    isValid = false
+  } else if (formData.password.length < 6) {
+    errors.password = t('register.passwordLength')
+    isValid = false
+  }
+
+  // Confirm password validation
+  if (!formData.password_confirmation) {
+    errors.password_confirmation = t('register.confirmPasswordRequired')
+    isValid = false
+  } else if (formData.password !== formData.password_confirmation) {
+    errors.password_confirmation = t('register.passwordsMismatch')
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleRegister = async () => {
+  if (!validateForm()) return
+
+  isLoading.value = true
+
+  // Reset all errors
+  Object.keys(errors).forEach((key) => {
+    errors[key] = ''
+  })
+
+  try {
+    // 1. محاولة تسجيل المستخدم
+    await CustomerAuth.register({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      password_confirmation: formData.password_confirmation,
+    })
+
+    // 2. إذا نجح التسجيل، قم بتسجيل الدخول تلقائيًا
+    const loginSuccess = await CustomerAuth.login({
+      email: formData.email,
+      password: formData.password,
+    })
+
+    if (loginSuccess) {
+      // عند النجاح، أغلق النافذة. سيبقى المستخدم في الصفحة الحالية.
+      emit('close')
+    } else {
+      // إذا فشل تسجيل الدخول التلقائي، أظهر نافذة تسجيل الدخول للمحاولة اليدوية.
+      emit('openLogin')
+    }
+  } catch (error) {
+    // Handle registration error
+    console.error('Registration failed:', error)
+
+    // Display server validation errors if available
+    if (error.response && error.response.data && error.response.data.errors) {
+      const serverErrors = error.response.data.errors
+
+      // Map server errors to our form errors
+      Object.keys(serverErrors).forEach((key) => {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = serverErrors[key][0] // Take the first error message
+        }
+      })
+
+      // If there's a general error message, show it
+      if (error.response.data.message) {
+        alert(error.response.data.message)
+      }
+    } else {
+      // Generic error message
+      alert(t('register.registrationFailed'))
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+const handleGoogleRegister = () => {
+  const googleAuthUrl = import.meta.env.VITE_API_BASE_URL + '/api/customer/auth/google/redirect'
+  window.location.href = googleAuthUrl
+}
 </script>
 
 <template>
   <div
     id="register-popup"
     tabindex="-1"
-    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10"
-    @click.self="$emit('close')"
+    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
+    @click.self="emit('close')"
   >
     <div
-      class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl w-full flex flex-col md:flex-row font-BonaRegular"
+      class="bg-white rounded-xl shadow-lg overflow-hidden max-h-[90vh] max-w-3xl w-full flex flex-col md:flex-row font-BonaRelative m-2 sm:m-0"
     >
       <!-- صورة جانبية -->
       <div class="hidden md:block w-1/2 bg-[var(--color-primary)]">
@@ -18,15 +152,15 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
       </div>
 
       <!-- محتوى التسجيل -->
-      <div class="w-full md:w-1/2 p-6 md:p-10 text-black relative">
+      <div class="w-full md:w-1/2 p-6 md:p-10 sm:p-8 text-black relative overflow-y-auto max-h-[85vh]">
         <!-- زر إغلاق -->
         <button
           type="button"
-          @click="$emit('close')"
+          @click="emit('close')"
           class="absolute top-4 right-4 text-gray-500 hover:text-black transition"
         >
           <svg
-            class="w-6 h-6"
+            class="w-5 h-5 sm:w-6 sm:h-6"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -38,78 +172,105 @@ import coverAspect from '@/assets/Auth/RegisterImg.png' // غيّر الصورة
 
         <!-- العنوان -->
         <div class="mb-6 text-center">
-          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">Create Your Account</h2>
+          <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2">
+            {{ t('register.title') }}
+          </h2>
           <p class="text-sm text-gray-600 italic">
-            Join the Neth BookPoint community and enjoy a personalized book experience.
+            {{ t('register.subtitle') }}
           </p>
         </div>
 
         <!-- نموذج التسجيل -->
-        <form class="space-y-4">
-          <input
-            name="name"
-            type="text"
-            required
-            placeholder="Full Name"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+        <form @submit.prevent="handleRegister" class="space-y-4">
+          <div>
+            <input
+              v-model="formData.name"
+              name="name"
+              type="text"
+              required
+              :placeholder="t('register.fullNamePlaceholder')"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
+            />
+            <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
+          </div>
 
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="Email Address"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.email"
+              name="email"
+              type="email"
+              required
+              :placeholder="t('register.emailPlaceholder')"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+          </div>
 
-          <input
-            name="password"
-            type="password"
-            required
-            placeholder="Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.password"
+              name="password"
+              type="password"
+              required
+              autocomplete="new-password"
+              :placeholder="t('register.passwordPlaceholder')"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
+            />
+            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+          </div>
 
-          <input
-            name="confirm_password"
-            type="password"
-            required
-            placeholder="Confirm Password"
-            class="w-full px-4 py-3 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-          />
+          <div>
+            <input
+              v-model="formData.password_confirmation"
+              name="password_confirmation"
+              type="password"
+              required
+              autocomplete="new-password"
+              :placeholder="t('register.confirmPasswordPlaceholder')"
+              class="w-full px-4 py-3 sm:px-5 rounded-md border border-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"
+            />
+            <p v-if="errors.password_confirmation" class="text-red-500 text-sm mt-1">
+              {{ errors.password_confirmation }}
+            </p>
+          </div>
 
           <button
             type="submit"
-            class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-900 transition"
+            :disabled="isLoading"
+            class="w-full bg-black text-white py-3 sm:py-4 rounded-md font-semibold hover:bg-gray-900 transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Create Account
+            <span v-if="isLoading">{{ t('register.creatingAccount') }}</span>
+            <span v-else>{{ t('register.createAccount') }}</span>
           </button>
         </form>
 
         <!-- فاصل -->
         <div class="flex items-center gap-2 my-6 text-sm text-gray-400">
           <div class="flex-grow h-px bg-gray-200"></div>
-          OR
+          {{ t('register.or') }}
           <div class="flex-grow h-px bg-gray-200"></div>
         </div>
 
         <!-- التسجيل عبر Google -->
         <button
-          class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition"
+          class="flex items-center justify-center gap-3 w-full border border-gray-300 py-2.5 sm:py-3 rounded-md hover:bg-gray-100 transition duration-300"
+          @click="handleGoogleRegister"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
-            class="h-5 w-5"
+            class="h-4 w-4 sm:h-5 sm:w-5"
           />
-          <span class="text-sm font-medium text-black">Sign up with Google</span>
+          <span class="text-sm font-medium text-black">{{ t('register.googleSignUp') }}</span>
         </button>
 
         <!-- تحويل لتسجيل الدخول -->
-        <p class="mt-6 text-center text-sm text-gray-600">
-          Already have an account?
-          <span @click="$emit('openLogin')" class="text-[var(--color-primary)] font-semibold hover:underline"
-            >Login</span
+        <p class="mt-6 text-center text-sm sm:text-base text-gray-600">
+          {{ t('register.alreadyAccount') }}
+          <span
+            @click="emit('openLogin')"
+            class="text-[var(--color-primary)] font-semibold hover:underline cursor-pointer transition-colors duration-300"
+            >{{ t('register.login') }}</span
           >
         </p>
       </div>

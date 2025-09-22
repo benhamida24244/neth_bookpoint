@@ -1,0 +1,381 @@
+/* Responsive Sidebar Styles */
+
+/* متغيرات لعرض الـ sidebar */
+:root {
+  --sidebar-width-mobile: 280px;
+  --sidebar-width-tablet: 260px;
+  --sidebar-width-desktop: 280px;
+  --sidebar-width-large: 300px;
+  --sidebar-width-xl: 320px;
+}
+
+/* الشاشات الصغيرة جداً (أقل من 320px) */
+@media (max-width: 319px) {
+  :root {
+    --sidebar-width-mobile: 260px;
+  }
+
+  .sidebar-mobile {
+    width: 260px !important;
+    max-width: 90vw;
+  }
+
+  .sidebar-text {
+    font-size: 0.75rem;
+  }
+
+  .sidebar-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .sidebar-avatar {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* الهواتف المحمولة (320px - 767px) */
+@media (min-width: 320px) and (max-width: 767px) {
+  .sidebar-mobile {
+    width: var(--sidebar-width-mobile);
+    max-width: 85vw;
+  }
+
+  .sidebar-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+  }
+
+  .main-content-mobile {
+    padding-top: 4rem; /* مساحة لزر القائمة */
+  }
+
+  .menu-button {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .menu-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* الأجهزة اللوحية (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar-tablet {
+    width: var(--sidebar-width-tablet);
+  }
+
+  .main-content-tablet {
+    padding-top: 2rem;
+  }
+
+  /* تحسين النصوص للتابلت */
+  .sidebar-text {
+    font-size: 0.875rem;
+  }
+
+  .sidebar-title {
+    font-size: 1rem;
+  }
+}
+
+/* أجهزة الكمبيوتر المكتبي (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .sidebar-desktop {
+    width: var(--sidebar-width-desktop);
+  }
+
+  .main-content-desktop {
+    margin-left: var(--sidebar-width-desktop);
+  }
+
+  .main-content-desktop.rtl {
+    margin-left: 0;
+    margin-right: var(--sidebar-width-desktop);
+  }
+}
+
+/* الشاشات الكبيرة (1280px - 1919px) */
+@media (min-width: 1280px) and (max-width: 1919px) {
+  .sidebar-large {
+    width: var(--sidebar-width-large);
+  }
+
+  .main-content-large {
+    margin-left: var(--sidebar-width-large);
+  }
+
+  .main-content-large.rtl {
+    margin-left: 0;
+    margin-right: var(--sidebar-width-large);
+  }
+
+  .sidebar-text {
+    font-size: 1rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* الشاشات الكبيرة جداً (1920px فما فوق) */
+@media (min-width: 1920px) {
+  .sidebar-xl {
+    width: var(--sidebar-width-xl);
+  }
+
+  .main-content-xl {
+    margin-left: var(--sidebar-width-xl);
+  }
+
+  .main-content-xl.rtl {
+    margin-left: 0;
+    margin-right: var(--sidebar-width-xl);
+  }
+
+  .sidebar-text {
+    font-size: 1.125rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.25rem;
+  }
+
+  .sidebar-padding {
+    padding: 1.5rem;
+  }
+}
+
+/* تحسينات عامة للاستجابة */
+.sidebar-responsive {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: var(--color-primary, #f59e0b);
+  border-radius: 2px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
+
+/* تحسين النصوص للقراءة */
+.sidebar-text-responsive {
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* تحسين الأزرار للمس */
+@media (pointer: coarse) {
+  .sidebar-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .sidebar-nav-item {
+    min-height: 48px;
+  }
+}
+
+/* تحسين للمناطق الآمنة في الأجهزة الحديثة */
+@supports (padding: max(0px)) {
+  .sidebar-safe-area {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* تحسين الحركة والانتقالات */
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar-animate {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                visibility 0.3s ease;
+  }
+
+  .sidebar-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-animate,
+  .sidebar-hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* تحسين للوضع المظلم */
+@media (prefers-color-scheme: dark) {
+  .sidebar-dark {
+    background-color: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
+  }
+
+  .sidebar-dark .sidebar-nav-item:hover {
+    background-color: #374151;
+  }
+
+  .sidebar-dark .sidebar-text {
+    color: #d1d5db;
+  }
+
+  .sidebar-dark .sidebar-border {
+    border-color: #4b5563;
+  }
+}
+
+/* تحسين للتركيز والوصولية */
+.sidebar-focus:focus {
+  outline: 2px solid var(--color-primary, #f59e0b);
+  outline-offset: 2px;
+}
+
+.sidebar-focus:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* تحسين للطباعة */
+@media print {
+  .sidebar-responsive {
+    display: none !important;
+  }
+
+  .main-content-desktop,
+  .main-content-large,
+  .main-content-xl {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* تحسينات للأداء */
+.sidebar-gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* تحسين التمرير على iOS */
+.sidebar-ios-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* تحسين للشاشات عالية الكثافة */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .sidebar-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Utilities للتحكم في العرض */
+.w-sidebar-mobile { width: var(--sidebar-width-mobile); }
+.w-sidebar-tablet { width: var(--sidebar-width-tablet); }
+.w-sidebar-desktop { width: var(--sidebar-width-desktop); }
+.w-sidebar-large { width: var(--sidebar-width-large); }
+.w-sidebar-xl { width: var(--sidebar-width-xl); }
+
+/* Utilities للهوامش */
+.ml-sidebar-desktop { margin-left: var(--sidebar-width-desktop); }
+.ml-sidebar-large { margin-left: var(--sidebar-width-large); }
+.ml-sidebar-xl { margin-left: var(--sidebar-width-xl); }
+
+.mr-sidebar-desktop { margin-right: var(--sidebar-width-desktop); }
+.mr-sidebar-large { margin-right: var(--sidebar-width-large); }
+.mr-sidebar-xl { margin-right: var(--sidebar-width-xl); }
+
+/* تحسينات للاتجاه من اليمين لليسار (RTL) */
+.rtl .sidebar-rtl {
+  right: 0;
+  left: auto;
+}
+
+.rtl .sidebar-rtl.sidebar-closed {
+  transform: translateX(100%);
+}
+
+.rtl .main-content-rtl {
+  margin-right: var(--sidebar-width-desktop);
+  margin-left: 0;
+}
+
+/* تحسين للحالات الخاصة */
+.sidebar-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.sidebar-error {
+  border-left: 4px solid #ef4444;
+}
+
+.rtl .sidebar-error {
+  border-left: none;
+  border-right: 4px solid #ef4444;
+}
+
+/* تحسين للتنبيهات والإشعارات */
+.sidebar-notification {
+  position: relative;
+}
+
+.sidebar-notification::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.rtl .sidebar-notification::after {
+  right: auto;
+  left: 8px;
+}
+
+/* تحسين للحالات التفاعلية */
+.sidebar-item-active {
+  position: relative;
+}
+
+.sidebar-item-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--color-primary, #f59e0b);
+  border-radius: 0 4px 4px 0;
+}
+
+.rtl .sidebar-item-active::before {
+  left: auto;
+  right: 0;
+  border-radius: 4px 0 0 4px;
+}

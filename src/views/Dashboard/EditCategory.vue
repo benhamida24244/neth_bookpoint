@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useCategoriesStore } from '@/stores/Categories';
+import LoaderWithText from '@/components/LoaderWithText.vue';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const categoriesStore = useCategoriesStore();
@@ -36,11 +39,11 @@ const handleUpdateCategory = async () => {
   try {
     // The entire categoryData object (including icon and status) will be sent
     await categoriesStore.updateCategory(categoryId, categoryData.value);
-    alert('Category updated successfully!');
+    alert(t('dashboard.editCategory.successMessage'));
     router.push('/dashboard/categories');
   } catch (error) {
     console.error('Failed to update category:', error);
-    alert('An error occurred while updating the category. Please try again.');
+    alert(t('dashboard.editCategory.errorMessage'));
   }
 };
 
@@ -52,12 +55,12 @@ const cancelEdit = () => {
 <template>
   <div class="p-8 bg-gray-50 min-h-screen">
     <header class="font-BonaRegular mb-8">
-      <h1 class="font-bold text-3xl text-gray-800">Edit Category</h1>
-      <p class="text-gray-500 text-base">Update the details for the category.</p>
+      <h1 class="font-bold text-3xl text-gray-800">{{ t('dashboard.editCategory.title') }}</h1>
+      <p class="text-gray-500 text-base">{{ t('dashboard.editCategory.subtitle') }}</p>
     </header>
 
     <div v-if="categoriesStore.isLoading" class="text-center">
-      <p>Loading category data...</p>
+      <LoaderWithText :message="t('dashboard.editCategory.loading')" />
     </div>
 
     <div v-else-if="categoriesStore.error" class="text-center text-red-500">
@@ -69,7 +72,7 @@ const cancelEdit = () => {
         <div class="space-y-6">
           <div>
             <label for="category-name" class="block text-sm font-medium text-gray-700">
-              Category Name
+              {{ t('dashboard.editCategory.labels.name') }}
             </label>
             <input
               v-model="categoryData.name"
@@ -81,7 +84,7 @@ const cancelEdit = () => {
           </div>
           <div>
             <label for="category-description" class="block text-sm font-medium text-gray-700">
-              Description
+              {{ t('dashboard.editCategory.labels.description') }}
             </label>
             <textarea
               v-model="categoryData.description"
@@ -93,20 +96,20 @@ const cancelEdit = () => {
 
           <div>
             <label for="category-icon" class="block text-sm font-medium text-gray-700">
-              Icon (e.g., Font Awesome class `fas fa-book`)
+              {{ t('dashboard.editCategory.labels.icon') }}
             </label>
             <input
               v-model="categoryData.icon"
               type="text"
               id="category-icon"
-              placeholder="fas fa-book"
+              :placeholder="t('dashboard.editCategory.labels.iconPlaceholder')"
               class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
             />
           </div>
 
           <div>
             <label for="category-status" class="block text-sm font-medium text-gray-700">
-              Status
+              {{ t('dashboard.editCategory.labels.status') }}
             </label>
             <select
               v-model="categoryData.status"
@@ -114,9 +117,9 @@ const cancelEdit = () => {
               class="mt-2 p-3 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
               required
             >
-              <option disabled value="">Please select one</option>
-              <option value="1">Active</option>
-              <option value="0">Inactive</option>
+              <option disabled value="">{{ t('dashboard.editCategory.selectDefault') }}</option>
+              <option value="1">{{ t('dashboard.editCategory.statusActive') }}</option>
+              <option value="0">{{ t('dashboard.editCategory.statusInactive') }}</option>
             </select>
           </div>
           </div>
@@ -126,14 +129,14 @@ const cancelEdit = () => {
             @click="cancelEdit"
             class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
-            Cancel
+            {{ t('dashboard.editCategory.cancel') }}
           </button>
           <button
             type="submit"
             class="px-6 py-2 text-sm font-medium text-white bg-[var(--color-primary)] border border-transparent rounded-lg shadow-sm hover:bg-[var(--color-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
             :disabled="categoriesStore.isLoading"
           >
-            {{ categoriesStore.isLoading ? 'Saving...' : 'Save Changes' }}
+            {{ categoriesStore.isLoading ? t('dashboard.editCategory.loading') : t('dashboard.editCategory.save') }}
           </button>
         </div>
       </form>

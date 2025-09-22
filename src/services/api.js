@@ -14,10 +14,33 @@ const api = axios.create({
 // 🔑 Interceptor لإضافة التوكن
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const url = config.url;
+    const adminToken = localStorage.getItem('token');
+    const customerToken = localStorage.getItem('customer_token');
+    let tokenToSend = null;
+
+    // Admin routes
+    if (url.startsWith('/admin/')) {
+    tokenToSend = adminToken;
+}
+// Include admin token for public books routes if admin is logged in
+else if (url.startsWith('/books') || url.startsWith('/categories') || url.startsWith('/publishers') || url.startsWith('/authors')) {
+    tokenToSend = adminToken;
+}
+else if (url.startsWith('/customer/') || url.startsWith('/cart') || url.startsWith('/orders')) {
+    tokenToSend = customerToken;
+}
+
+    // Other specific admin routes that are not prefixed
+    else if (url === '/logout' || url === '/profile' || url === '/user/avatar') {
+        tokenToSend = adminToken;
     }
+    // For public routes, no token is attached.
+
+    if (tokenToSend) {
+        config.headers.Authorization = `Bearer ${tokenToSend}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -41,7 +64,7 @@ const uploadFile = (url, formData) =>
   });
 
 // ================================================================
-// 🔑 Authentication & User
+// 🔑 Admin Authentication & User
 // ================================================================
 const auth = {
   register: (userData) => api.post("/register", userData),
@@ -49,8 +72,65 @@ const auth = {
   logout: () => api.post("/logout"),
   getProfile: () => api.get("/profile"),
   updateProfile: (data) => api.put("/profile", data),
-  uploadAvatar: (formData) => uploadFile("/user/avatar", formData),
+  uploadAvatar: (formData) => createFile("/user/avatar", formData),
 };
+
+const customerAuth = {
+  register: (userData) => api.post("/customer/register", userData),
+  login: (credentials) => api.post("/customer/login", credentials),
+  logout: () => api.post("/customer/logout"),
+  getProfile: () => api.get("/customer/profile"),
+  updateProfile: (data) => api.put("/customer/profile", data),
+};
+
+// ================================================================
+// 📦 Customer Orders
+// ================================================================
+const customerOrders = {
+  all: () => api.get("/orders"),
+  create: (data) => api.post("/orders", data),
+  get: (id) => api.get(`/orders/${id}`),
+  createPaymentIntent: (data) => api.post("/orders", { ...data, action: 'create_payment_intent' }),
+  confirmStripePayment: (data) => api.post("/orders/confirm-stripe", data),
+  async getByPaypalToken(customerId, paymentToken) {
+    return await api.get(`/orders/paypal/${customerId}/${paymentToken}`)
+  },
+  // ✅ PayPal
+  paypalSuccess: (data) => api.get("/paypal/success", { params: data }),
+  createPayPal: (data) => api.post("/orders/create-paypal", data),
+  capturePayPal: (data) => api.post("/orders/capture-paypal", data),
+};
+
+// ================================================================
+// 📦 Admin Orders
+// ================================================================
+const adminOrders = {
+  all: () => api.get("/admin/orders"),
+  get: (id) => api.get(`/admin/orders/${id}`),
+  update: (id, data) => api.put(`/admin/orders/${id}`, data),
+  delete: (id) => api.delete(`/admin/orders/${id}`),
+};
+
+
+// ================================================================
+// 👤 Customer Authentication & Profile
+// ================================================================
+const customer = {
+  register: (userData) => api.post('/customer/register', userData),
+  login: (credentials) => api.post('/customer/login', credentials),
+  logout: () => api.post('/customer/logout'),
+  getProfile: () => api.get('/customer/profile'),
+  updateProfile: (data) => api.put('/customer/profile', data),
+};
+
+// ================================================================
+// 🔑 Google OAuth (Customer)
+// ================================================================
+const googleAuth = {
+  redirect: () => api.get("/customer/auth/google/redirect"), // يرجع URL للتحويل
+  callback: (query) => api.get(`/customer/auth/google/callback${query}`), // يستقبل الكود بعد العودة
+};
+
 
 // ================================================================
 // 📚 Public Resources
@@ -88,10 +168,10 @@ const cart = {
 // ================================================================
 // 📦 User Orders
 // ================================================================
-const orders = {
-  all: () => api.get("/orders"),
-  create: (data) => api.post("/orders", data),
-};
+// const orders = {
+//   all: () => api.get("/orders"),
+//   create: (data) => api.post("/orders", data),
+// };
 
 // ================================================================
 // ⚙️ Admin Panel
@@ -104,16 +184,27 @@ const admin = {
     get: (id) => api.get(`/admin/profile/${id}`),
     update: (id, data) => api.put(`/admin/profile/${id}`, data),
   },
+
+  customers: {
+    all: () => api.get("/admin/customers"),
+    get: (id) => api.get(`/admin/customers/${id}`),
+    activate: (id, data) => api.put(`/admin/customers/${id}/activate`, data),
+    deactivate: (id, data) => api.put(`/admin/customers/${id}/deactivate`, data),
+    delete: (id) => api.delete(`/admin/customers/${id}`),
+  },
   orders: {
     all: () => api.get("/admin/orders"),
     get: (id) => api.get(`/admin/orders/${id}`),
     update: (id, data) => api.put(`/admin/orders/${id}`, data),
+    stats: () => api.get("/admin/dashboard/orders-stats"),
+
   },
 
   books: {
     add: (data) => uploadFile("/admin/books", data),
     update: (id, data) => uploadFile(`/admin/books/${id}`, data),
     delete: (id) => api.delete(`/admin/books/${id}`),
+    stats: () => api.get("/admin/dashboard/books-stats"),
   },
 
   categories: {
@@ -122,11 +213,17 @@ const admin = {
     delete: (id) => api.delete(`/admin/categories/${id}`),
   },
 
-  publishers: {
-    add: (data) => uploadFile("/admin/publishers", data),
-    update: (id, data) => uploadFile(`/admin/publishers/${id}`, data),
-    delete: (id) => api.delete(`/admin/publishers/${id}`),
-  },
+ publishers: {
+  add: (data) => uploadFile("/admin/publishers", data),
+
+  update: (id, data) =>
+    api.post(`/admin/publishers/${id}`, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+      params: { _method: "PUT" }, // trick: Laravel هيفهم إنها PUT
+    }),
+
+  delete: (id) => api.delete(`/admin/publishers/${id}`),
+},
 
   authors: {
     add: (data) => uploadFile("/admin/authors", data),
@@ -135,7 +232,8 @@ const admin = {
   },
 
   settings: {
-    update: (data) => uploadFile("/admin/settings", data),
+    get: () => publicResources.settings(),
+    update: (data) => api.post("/admin/settings", data),
   },
 };
 
@@ -144,10 +242,15 @@ const admin = {
 // ================================================================
 const apiService = {
   auth,
+  customerAuth,
+  googleAuth,
+  customer,
   publicResources,
   cart,
-  orders,
+  customerOrders,
+  adminOrders,
   admin,
 };
+
 
 export default apiService;

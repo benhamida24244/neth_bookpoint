@@ -1,26 +1,23 @@
 <script setup>
 import LogoFooter from '@/assets/HomeIcon/Footer/LogoFooter.png'
-import { useLanguageStore } from '@/stores/language'
-import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
-const languageStore = useLanguageStore()
-const { translations } = storeToRefs(languageStore)
+const { t } = useI18n()
 
 const quickLinks = computed(() => [
-  { name: translations.value.header?.home || 'Home', href: '/' },
-  { name: translations.value.header?.about || 'About Us', href: '/about' },
-  { name: translations.value.header?.shop || 'Books', href: '/shop' },
-  { name: translations.value.header?.contact || 'Contact', href: '/contact' },
+  { name: t('header.home'), href: '/' },
+  { name: t('header.about'), href: '/about' },
+  { name: t('header.shop'), href: '/shop' },
+  { name: t('header.contact'), href: '/contact' },
 ]);
 
 const branches = computed(() => {
-  const branchTranslations = translations.value.footer?.branchList || {};
   return [
-    branchTranslations.galle || 'Galle',
-    branchTranslations.kurunegala || 'Kurunegala',
-    branchTranslations.kandy || 'Kandy',
-    branchTranslations.colombo || 'Colombo'
+    t('footer.branchList.galle'),
+    t('footer.branchList.kurunegala'),
+    t('footer.branchList.kandy'),
+    t('footer.branchList.colombo')
   ];
 });
 
@@ -34,13 +31,13 @@ const branches = computed(() => {
         <div class="col-span-1 lg:col-span-1">
           <img :src="LogoFooter" alt="Neth BookPoint Logo" class="h-20 mb-4">
           <p class="text-sm">
-            {{ translations.footer?.about || 'Visit our branches and register for our online platform to enjoy maximum benefits!' }}
+            {{ t('footer.about') }}
           </p>
         </div>
 
         <!-- Quick Links -->
         <div>
-          <h3 class="text-lg font-semibold text-white mb-4">{{ translations.footer?.quickLinks || 'Quick Links' }}</h3>
+          <h3 class="text-lg font-semibold text-white mb-4">{{ t('footer.quickLinks') }}</h3>
           <ul>
             <li v-for="link in quickLinks" :key="link.name" class="mb-2">
               <router-link :to="link.href" class="hover:text-white transition-colors duration-300">{{ link.name }}</router-link>
@@ -50,7 +47,7 @@ const branches = computed(() => {
 
         <!-- Branches -->
         <div>
-          <h3 class="text-lg font-semibold text-white mb-4">{{ translations.footer?.branches || 'Our Branches' }}</h3>
+          <h3 class="text-lg font-semibold text-white mb-4">{{ t('footer.branches') }}</h3>
           <ul>
             <li v-for="branch in branches" :key="branch" class="mb-2">
               {{ branch }}
@@ -60,7 +57,7 @@ const branches = computed(() => {
 
         <!-- Social Media -->
         <div>
-          <h3 class="text-lg font-semibold text-white mb-4">{{ translations.footer?.followUs || 'Follow Us' }}</h3>
+          <h3 class="text-lg font-semibold text-white mb-4">{{ t('footer.followUs') }}</h3>
           <div class="flex space-x-4">
             <a href="#" aria-label="LinkedIn" class="text-gray-400 hover:text-white transition-colors duration-300">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
@@ -74,7 +71,7 @@ const branches = computed(() => {
 
       <!-- Bottom Bar -->
       <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm">
-        <p>{{ translations.footer?.copyright || '© 2025 | Neth BookPoint. All Rights Reserved.' }}</p>
+        <p>{{ t('footer.copyright') }}</p>
       </div>
     </div>
   </footer>

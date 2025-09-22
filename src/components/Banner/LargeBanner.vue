@@ -4,9 +4,7 @@
        <img
       :src="banner.img"
       alt="Rose In Chains - Banner"
-      class="w-full rounded-lg shadow-md object-cover object-center
-               min-h-[200px] sm:min-h-[300px]
-               aspect-[3/1] sm:aspect-auto"
+      class="w-full h-full rounded-lg shadow-md object-cover object-center aspect-[3/1]"
     />
     </a>
   </div>
