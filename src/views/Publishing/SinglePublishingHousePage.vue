@@ -20,14 +20,14 @@ const imageUrl = computed(() => {
     return 'https://via.placeholder.com/300x450.png?text=No+Image'
   }
   const imgPath = currentPublishingHouse.value.img
-  return imgPath.startsWith('http') ? imgPath : `${apiBaseUrl.replace(///$/, '')}/${imgPath.replace(/^\//, '')}`
+  return imgPath.startsWith('http') ? imgPath : `${apiBaseUrl.replace(/\/$/, '')}/${imgPath.replace(/^\//, '')}`
 })
 
 async function fetchPublisherById() {
   try {
     const publisherId = Number(route.params.id)
     if (isNaN(publisherId)) throw new Error(t('singlePublishingHousePage.invalidId'))
-    
+
     const publisherData = await publishingHouseStore.getPublisherById(publisherId)
     if (!publisherData) {
         throw new Error(t('singlePublishingHousePage.notFound', { id: publisherId }))
