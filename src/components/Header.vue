@@ -180,7 +180,7 @@
       >
         <div
           v-if="isMenuOpen"
-          class="mobile-menu-panel fixed top-0 h-screen w-80 max-w-xs sm:max-w-sm z-50 lg:hidden overflow-hidden shadow-2xl"
+          class="mobile-menu-panel fixed top-0 h-full w-80 max-w-xs sm:max-w-sm z-50 lg:hidden overflow-hidden shadow-2xl"
           :class="[
             isRtl ? 'left-0' : 'right-0',
             'flex flex-col backdrop-blur-lg'
