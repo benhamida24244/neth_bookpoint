@@ -2,7 +2,7 @@
   <header
     id="header"
     :style="{ background: headerBackground }"
-    class="sticky top-0 z-50 w-full shadow-lg backdrop-blur-sm transition-all duration-500 ease-in-out"
+    class="sticky top-0 z-[1000] w-full shadow-lg backdrop-blur-sm transition-all duration-500 ease-in-out"
     :class="[
       'header-container',
       isRtl ? 'font-arabic' : 'font-latin',

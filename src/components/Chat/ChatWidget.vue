@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-6 right-6 z-[1000]">
+  <div class="fixed bottom-6 right-6 z-[999]">
     <!-- Chat Window -->
     <Transition name="chat-window">
       <div v-if="isOpen" class="w-[320px] h-[450px] bg-white rounded-xl shadow-xl border border-gray-100 flex flex-col overflow-hidden absolute bottom-[70px] right-0 backdrop-blur-sm">
