@@ -2,8 +2,7 @@
   <header
     id="header"
     :style="{ background: headerBackground }"
-    class="sticky top-0 z-[1000] w-full shadow-lg backdrop-blur-sm transition-all duration-500 ease-in-out"
-    :class="[
+    class="sticky top-0 z-70
       'header-container',
       isRtl ? 'font-arabic' : 'font-latin',
       { 'header-scrolled': isScrolled }

@@ -140,7 +140,7 @@ const handleGoogleRegister = () => {
   <div
     id="register-popup"
     tabindex="-1"
-    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
+    class="fixed inset-0 z-75 bg-black/60 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
     @click.self="emit('close')"
   >
     <div
