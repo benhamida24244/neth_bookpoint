@@ -1,13 +1,14 @@
 <template>
   <header
-    id="header"
-    :style="{ background: headerBackground }"
-    class="sticky top-0 z-70
-      'header-container',
-      isRtl ? 'font-arabic' : 'font-latin',
-      { 'header-scrolled': isScrolled }
-    ]"
-  >
+  id="header"
+  :style="{ background: headerBackground }"
+  :class="[
+    'sticky top-0 z-70 header-container',
+    isRtl ? 'font-arabic' : 'font-latin',
+    { 'header-scrolled': isScrolled }
+  ]"
+>
+
     <!-- Desktop Header -->
     <div class="hidden lg:flex items-center justify-between px-4 xl:px-8 py-4 transition-all duration-300">
       <!-- Logo Section -->
