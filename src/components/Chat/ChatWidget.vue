@@ -1,75 +1,126 @@
 <template>
-  <div class="fixed bottom-6 right-6 z-50">
+  <div class="fixed bottom-6 right-6 z-75">
     <!-- Chat Window -->
     <Transition name="chat-window">
       <div v-if="isOpen" class="w-[320px] h-[450px] bg-white rounded-xl shadow-xl border border-gray-100 flex flex-col overflow-hidden absolute bottom-[70px] right-0 backdrop-blur-sm">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-3 flex justify-between items-center relative overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-3 flex flex-col relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)]"></div>
-          <div class="flex items-center gap-3 relative z-10">
-            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
+          <div class="flex justify-between items-center relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <i v-if="chatMode === 'smart'" class="fas fa-robot text-white"></i>
+                <i v-else class="fas fa-user text-white"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold">{{ chatMode === 'smart' ? 'المساعد الذكي' : 'المساعد البشري' }}</h3>
+                <span class="text-xs text-blue-100">متاح الآن</span>
+              </div>
+            </div>
+            <button @click="toggleChat" class="hover:bg-white/10 p-1.5 rounded-lg transition-all duration-200 relative z-10">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </div>
-            <div>
-              <h3 class="text-sm font-semibold">Neth Bookpoint</h3>
-              <span class="text-xs text-blue-100">متاح الآن</span>
-            </div>
+            </button>
           </div>
-          <button @click="toggleChat" class="hover:bg-white/10 p-1.5 rounded-lg transition-all duration-200 relative z-10">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div class="flex mt-2 relative z-10 rounded-md bg-black/20 p-1 text-sm">
+            <button @click="chatMode = 'smart'" :class="['flex-1 text-center px-2 py-1 rounded-md transition-all', { 'bg-white/20 text-white': chatMode === 'smart' }]">
+              المساعد الذكي
+            </button>
+            <button @click="chatMode = 'human'" :class="['flex-1 text-center px-2 py-1 rounded-md transition-all', { 'bg-white/20 text-white': chatMode === 'human' }]">
+              المساعد البشري
+            </button>
+          </div>
         </div>
 
         <!-- Messages Area -->
         <div class="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white space-y-3">
-          <!-- Welcome Message -->
-          <div class="flex items-start gap-2 opacity-0 animate-fade-in">
-            <div class="w-7 h-7 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)]  rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"/>
-              </svg>
-            </div>
-            <div class="bg-white p-3 rounded-2xl rounded-tl-md shadow-sm border border-gray-100 max-w-[85%]">
-              <p class="text-sm text-gray-700 leading-relaxed">مرحباً! كيف يمكنني مساعدتك اليوم؟</p>
-              <span class="text-xs text-gray-400 mt-1 block">الآن</span>
-            </div>
-          </div>
-
           <!-- Messages -->
-          <template v-for="message in messages" :key="message.id">
+         <template v-for="message in messages" :key="message.id">
             <!-- Bot Message -->
-            <div v-if="message.sender === 'bot'" class="flex items-start gap-2">
+            <div v-if="message.sender === 'bot'" class="flex flex-col gap-3">
+                <!-- لو فيه كتب -->
+                <div v-if="message.books" class="animate-fade-in">
+                <!-- رسالة البوت -->
+                <div class="flex items-start gap-2">
+                    <div class="w-7 h-7 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i v-if="chatMode === 'smart'" class="fas fa-robot text-white"></i>
+                      <i v-else class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-md shadow-sm border border-gray-100 max-w-[85%]">
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ message.text }}</p>
+                    </div>
+                </div>
+
+                <!-- عرض الكتب -->
+                <div class="mt-2">
+                    <div class="grid grid-cols-1 gap-3">
+                    <div v-for="(book, index) in message.books" :key="book.id" class="flex gap-3 p-3 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                        <img :src="`${apiBaseUrl}${book.cover}`" alt="cover" class="w-16 h-24 object-cover rounded-md shadow" />
+                        <div class="flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-800 line-clamp-2">{{ book.title }}</h4>
+                            <div class="mt-2 flex gap-2">
+                            <a :href="book.link"  target="_blank" rel="noopener noreferrer" class="inline-block px-3 py-1 text-xs bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white rounded-md hover:scale-105 transition transform">
+                                عرض الكتاب
+                            </a>
+                            <button @click="selectSuggestion(`أريد كتاباً مشابهاً لكتاب ${book.title}`)" class="inline-block px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">
+                                مشابه
+                            </button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <!-- لو مافيه كتب -->
+                <div v-else class="flex items-start gap-2">
                 <div class="w-7 h-7 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"/></svg>
+                    <i v-if="chatMode === 'smart'" class="fas fa-robot text-white"></i>
+                    <i v-else class="fas fa-user text-white"></i>
                 </div>
                 <div class="bg-white p-3 rounded-2xl rounded-tl-md shadow-sm border border-gray-100 max-w-[85%]">
                     <p class="text-sm text-gray-700 leading-relaxed">{{ message.text }}</p>
                     <span class="text-xs text-gray-400 mt-1 block">{{ message.timestamp }}</span>
                 </div>
+                </div>
             </div>
+
             <!-- User Message -->
             <div v-else class="flex items-start gap-2 justify-end">
                 <div class="bg-[var(--color-primary)] text-white p-3 rounded-2xl rounded-br-md shadow-sm max-w-[85%]">
-                    <p class="text-sm leading-relaxed">{{ message.text }}</p>
-                    <span class="text-xs text-blue-100 mt-1 block">{{ message.timestamp }}</span>
+                <p class="text-sm leading-relaxed">{{ message.text }}</p>
+                <span class="text-xs text-blue-100 mt-1 block">{{ message.timestamp }}</span>
                 </div>
             </div>
-          </template>
+            </template>
+
+            <!-- Typing Indicator -->
+            <div v-if="isTyping" class="flex items-start gap-2 animate-fade-in">
+                <div class="w-7 h-7 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-hover)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i v-if="chatMode === 'smart'" class="fas fa-robot text-white"></i>
+                    <i v-else class="fas fa-user text-white"></i>
+                </div>
+                <div class="bg-white p-3 rounded-2xl rounded-tl-md shadow-sm border border-gray-100">
+                    <div class="flex items-center space-x-1">
+                        <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse" style="animation-delay: 0s;"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse" style="animation-delay: 0.2s;"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse" style="animation-delay: 0.4s;"></span>
+                    </div>
+                </div>
+            </div>
 
 
             <!-- Suggestion Buttons -->
             <div v-if="messages.length === 0" class="flex flex-wrap justify-center gap-2 pt-2 animate-fade-in" style="animation-delay: 0.5s">
-                <button @click="selectSuggestion('اقترح علي كتاب')" class="suggestion-btn">
+                <button @click="handleInitialSuggestion('اقترح علي كتاب')" class="suggestion-btn">
                 اقترح علي كتاب
                 </button>
-                <button @click="selectSuggestion('ساعدني في ايجاد كتاب')" class="suggestion-btn">
+                <button @click="handleInitialSuggestion('ساعدني في ايجاد كتاب')" class="suggestion-btn">
                 ساعدني في ايجاد كتاب
                 </button>
-                <button @click="selectSuggestion('اريد كتاب مشابه')" class="suggestion-btn">
+                <button @click="handleInitialSuggestion('اريد كتاب مشابه')" class="suggestion-btn">
                 اريد كتاب مشابه
                 </button>
             </div>
@@ -132,17 +183,25 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
+import apiService from '../../services/api.js'
 
 const isOpen = ref(false)
 const userMessage = ref('')
 const messages = ref([])
-
+const conversationId = ref(null)
+const isTyping = ref(false)
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const chatMode = ref('smart') // 'smart' or 'human'
 
 const toggleChat = () => {
   isOpen.value = !isOpen.value
+}
+
+const handleInitialSuggestion = (suggestion) => {
+  userMessage.value = suggestion;
+  sendMessage();
 }
 
 const selectSuggestion = (suggestion) => {
@@ -150,9 +209,9 @@ const selectSuggestion = (suggestion) => {
   sendMessage();
 }
 
-const sendMessage = () => {
+const sendMessage = async () => {
   const messageText = userMessage.value.trim();
-  if (messageText === '') return;
+  if (!messageText) return;
 
   messages.value.push({
     id: Date.now(),
@@ -161,32 +220,77 @@ const sendMessage = () => {
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
 
-  let botResponse = 'شكرًا لرسالتك. كيف يمكنني المساعدة؟';
-
-  switch (messageText) {
-    case 'اقترح علي كتاب':
-      botResponse = 'بالتأكيد! لمساعدتي في اقتراح كتاب يعجبك، هل يمكنك إخباري عن نوع الكتب التي تفضلها عادةً؟ (مثلًا: خيال علمي، تاريخ، روايات رومانسية)';
-      break;
-    case 'ساعدني في ايجاد كتاب':
-      botResponse = 'يسعدني مساعدتك. هل تعرف اسم الكتاب أو المؤلف؟ أو هل لديك أي تفاصيل أخرى مثل دار النشر أو سنة الإصدار؟';
-      break;
-    case 'اريد كتاب مشابه':
-      botResponse = 'فكرة رائعة! ما هو الكتاب الذي قرأته وأعجبك وتريد كتابًا آخر يشبهه؟';
-      break;
-  }
-
   userMessage.value = '';
+  isTyping.value = true;
 
-  setTimeout(() => {
-    messages.value.push({
-      id: Date.now() + 1,
-      text: botResponse,
-      sender: 'bot',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
-  }, 1000);
-}
+  // Check if it's the first user message in this session
+  const isFirstUserMessage = messages.value.filter(m => m.sender === 'user').length === 1;
+
+  if (isFirstUserMessage) {
+    // On first message, show a canned welcome response after a delay
+    setTimeout(() => {
+      messages.value.push({
+        id: Date.now() + 1,
+        text: chatMode.value === 'smart' ? 'مرحبا كيف يمكنني مساعدتك' : 'مرحباً بك، سيقوم أحد ممثلي خدمة العملاء بالرد عليك قريباً.',
+        sender: 'bot',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      isTyping.value = false;
+    }, 1500);
+  } else if (chatMode.value === 'human') {
+    // In human mode, just show a waiting message.
+    isTyping.value = false; // Or maybe a different indicator for human chat
+  } else {
+    // For subsequent messages, call the actual API
+    try {
+      if (!conversationId.value) {
+        const response = await apiService.publicResources.chat.start();
+        conversationId.value = response.data.conversation_id;
+      }
+
+      const response = await apiService.publicResources.chat.reply({
+        conversation_id: conversationId.value,
+        message: messageText
+      });
+
+      const botMessage = response.data.message;
+
+      if (botMessage.type === 'books' || botMessage.data?.books) {
+        const text = botMessage.data?.text || botMessage.text || "وجدت لك كتب:";
+        const books = botMessage.data?.books || botMessage.books || [];
+        messages.value.push({
+          id: Date.now() + 1,
+          type: 'books',
+          text: text,
+          books: books,
+          sender: 'bot',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+      } else {
+        messages.value.push({
+          id: Date.now() + 1,
+          type: 'text',
+          text: botMessage.data || botMessage.text || "عذراً، لم أتمكن من العثور على نتيجة.",
+          sender: 'bot',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error sending message:', error);
+      messages.value.push({
+        id: Date.now() + 1,
+        type: 'text',
+        text: 'عذراً، لم أتمكن من معالجة رسالتك. يرجى المحاولة مرة أخرى.',
+        sender: 'bot',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    } finally {
+      isTyping.value = false;
+    }
+  }
+};
 </script>
+
 
 <style scoped>
 /* Chat Window Animations */

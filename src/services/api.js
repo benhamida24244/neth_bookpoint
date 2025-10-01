@@ -153,6 +153,10 @@ const publicResources = {
     get: (id) => api.get(`/authors/${id}`),
   },
   settings: () => api.get("/settings"),
+  chat: {
+    start: () => api.post("/chat/start"),
+    reply: (data) => api.post("/chat/reply", data),
+  },
 };
 
 // ================================================================

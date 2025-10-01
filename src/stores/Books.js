@@ -9,6 +9,8 @@ export const useBooksStore = defineStore("books", () => {
   const book = ref(null);
   const pagination = ref(null);
   const error = ref(null);
+  const searchResults = ref([]);
+  const isSearchLoading = ref(false);
 
   const allBooks = computed(() => books.value);
   const singleBook = computed(() => book.value);
@@ -120,6 +122,22 @@ export const useBooksStore = defineStore("books", () => {
     await fetchBooks({ publisher_id: publisherId, page });
   }
 
+  async function searchBooks(query) {
+    isSearchLoading.value = true;
+    error.value = null;
+    try {
+      const response = await apiService.publicResources.books.all({ search: query });
+      if (response) {
+        searchResults.value = response.data.data;
+      }
+    } catch (e) {
+      error.value = e.message || "An error occurred.";
+      console.error(`Failed action: searchBooks`, e);
+    } finally {
+      isSearchLoading.value = false;
+    }
+  }
+
   return {
     isLoading,
     books,
@@ -131,6 +149,8 @@ export const useBooksStore = defineStore("books", () => {
     singleBook,
     RecentBooks,
     paginationInfo,
+    searchResults,
+    isSearchLoading,
     fetchBooks,
     fetchBookStats, // <-- Export new action
     fetchBook,
@@ -141,5 +161,6 @@ export const useBooksStore = defineStore("books", () => {
     fetchBooksByAuthor,
     fetchBooksByCategory,
     fetchBooksByPublisher,
+    searchBooks,
   };
 });

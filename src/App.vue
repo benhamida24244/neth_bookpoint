@@ -35,3 +35,9 @@ onMounted(async () => {
 <template>
   <RouterView />
 </template>
+<style>
+html,
+body {
+  overflow-x: hidden;
+}
+</style>
